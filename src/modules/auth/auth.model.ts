@@ -5,11 +5,58 @@ export const USER_ROLES = [
   'super_admin',
   'admin',
   'service_provider',
+  'event_provider',
   'venue_provider',
   'customer'
 ] as const;
 
 export type UserRole = (typeof USER_ROLES)[number];
+
+export const BUSINESS_TYPES = ['individual', 'company'] as const;
+export type BusinessType = (typeof BUSINESS_TYPES)[number];
+
+export const SERVICE_PROVIDER_TYPES = ['general_service', 'event_management'] as const;
+export type ServiceProviderType = (typeof SERVICE_PROVIDER_TYPES)[number];
+
+export interface IVerificationInfo {
+  businessType: BusinessType;
+  companyName?: string;
+  nationalIdOrTradeLicenseUrl: string;
+}
+
+export interface IServiceProviderOnboarding {
+  providerType: ServiceProviderType;
+  serviceAreas: string[];
+  yearsOfExperience?: number;
+  teamSize?: number;
+  specialties: string[];
+  portfolioUrls: string[];
+}
+
+export interface IVenueProviderOnboarding {
+  venueName: string;
+  venueType: string;
+  capacity: number;
+  amenities: string[];
+}
+
+export interface IEventProviderOnboarding {
+  organizationName: string;
+  eventTypes: string[];
+  teamSize?: number;
+  pastEventsCount?: number;
+  portfolioUrls: string[];
+}
+
+export interface IProviderOnboarding {
+  verification: IVerificationInfo;
+  stripeAccountId: string;
+  businessAddress?: string;
+  serviceProvider?: IServiceProviderOnboarding;
+  eventProvider?: IEventProviderOnboarding;
+  venueProvider?: IVenueProviderOnboarding;
+  submittedAt: Date;
+}
 
 export interface IUser extends Document {
   fullName: string;
@@ -18,8 +65,156 @@ export interface IUser extends Document {
   role: UserRole;
   serviceCategories: string[];
   isEmailVerified: boolean;
+  onboarding?: IProviderOnboarding;
   comparePassword(candidate: string): Promise<boolean>;
 }
+
+const verificationSchema = new Schema<IVerificationInfo>(
+  {
+    businessType: {
+      type: String,
+      enum: BUSINESS_TYPES,
+      required: true
+    },
+    companyName: {
+      type: String,
+      trim: true,
+      minlength: 2,
+      maxlength: 120
+    },
+    nationalIdOrTradeLicenseUrl: {
+      type: String,
+      required: true,
+      trim: true
+    }
+  },
+  { _id: false }
+);
+
+const serviceProviderOnboardingSchema = new Schema<IServiceProviderOnboarding>(
+  {
+    providerType: {
+      type: String,
+      enum: SERVICE_PROVIDER_TYPES,
+      required: true
+    },
+    serviceAreas: {
+      type: [String],
+      required: true,
+      default: []
+    },
+    yearsOfExperience: {
+      type: Number,
+      min: 0,
+      max: 80
+    },
+    teamSize: {
+      type: Number,
+      min: 1
+    },
+    specialties: {
+      type: [String],
+      default: []
+    },
+    portfolioUrls: {
+      type: [String],
+      default: []
+    }
+  },
+  { _id: false }
+);
+
+const venueProviderOnboardingSchema = new Schema<IVenueProviderOnboarding>(
+  {
+    venueName: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 2,
+      maxlength: 120
+    },
+    venueType: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 2,
+      maxlength: 60
+    },
+    capacity: {
+      type: Number,
+      required: true,
+      min: 1
+    },
+    amenities: {
+      type: [String],
+      default: []
+    }
+  },
+  { _id: false }
+);
+
+const eventProviderOnboardingSchema = new Schema<IEventProviderOnboarding>(
+  {
+    organizationName: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 2,
+      maxlength: 120
+    },
+    eventTypes: {
+      type: [String],
+      required: true,
+      default: []
+    },
+    teamSize: {
+      type: Number,
+      min: 1
+    },
+    pastEventsCount: {
+      type: Number,
+      min: 0
+    },
+    portfolioUrls: {
+      type: [String],
+      default: []
+    }
+  },
+  { _id: false }
+);
+
+const providerOnboardingSchema = new Schema<IProviderOnboarding>(
+  {
+    verification: {
+      type: verificationSchema,
+      required: true
+    },
+    stripeAccountId: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    businessAddress: {
+      type: String,
+      trim: true,
+      maxlength: 240
+    },
+    serviceProvider: {
+      type: serviceProviderOnboardingSchema
+    },
+    eventProvider: {
+      type: eventProviderOnboardingSchema
+    },
+    venueProvider: {
+      type: venueProviderOnboardingSchema
+    },
+    submittedAt: {
+      type: Date,
+      required: true
+    }
+  },
+  { _id: false }
+);
 
 const userSchema = new Schema<IUser>(
   {
@@ -56,6 +251,9 @@ const userSchema = new Schema<IUser>(
     isEmailVerified: {
       type: Boolean,
       default: false
+    },
+    onboarding: {
+      type: providerOnboardingSchema
     }
   },
   {

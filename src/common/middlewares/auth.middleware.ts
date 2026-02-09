@@ -31,7 +31,8 @@ export const protect = async (req: Request, _res: Response, next: NextFunction):
       email: user.email,
       fullName: user.fullName,
       role: user.role,
-      serviceCategories: user.serviceCategories
+      serviceCategories: user.serviceCategories,
+      onboarding: user.onboarding ?? null
     };
 
     return next();

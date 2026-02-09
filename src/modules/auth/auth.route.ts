@@ -9,6 +9,7 @@ import {
   registerSchema,
   resendVerificationOtpSchema,
   resetPasswordSchema,
+  submitOnboardingSchema,
   verifyEmailOtpSchema
 } from './auth.schema';
 
@@ -77,6 +78,17 @@ router.post(
  *     summary: Reset password with OTP
  */
 router.post('/reset-password', authLimiter, validate(resetPasswordSchema), AuthController.resetPassword);
+
+/**
+ * @openapi
+ * /api/v1/auth/onboarding:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Submit provider onboarding details
+ *     security:
+ *       - bearerAuth: []
+ */
+router.post('/onboarding', protect, validate(submitOnboardingSchema), AuthController.submitOnboarding);
 
 /**
  * @openapi

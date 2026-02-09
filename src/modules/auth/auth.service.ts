@@ -4,7 +4,15 @@ import { buildOtpEmailHtml, sendEmail } from '../../common/utils/email';
 import { signJwt } from '../../common/utils/jwt';
 import { generateOtpCode, hashOtpCode } from '../../common/utils/otp';
 import { AuthOtpModel, OtpPurpose } from './auth-otp.model';
-import { IUser, UserModel, UserRole } from './auth.model';
+import {
+  IEventProviderOnboarding,
+  IServiceProviderOnboarding,
+  IUser,
+  IVenueProviderOnboarding,
+  IVerificationInfo,
+  UserModel,
+  UserRole
+} from './auth.model';
 
 const otpExpiryMs = Number(env.OTP_EXPIRY_MINUTES) * 60 * 1000;
 const otpCooldownMs = Number(env.OTP_RESEND_COOLDOWN_SECONDS) * 1000;
@@ -13,8 +21,18 @@ interface RegisterPayload {
   fullName: string;
   email: string;
   password: string;
-  role: Extract<UserRole, 'customer' | 'service_provider' | 'venue_provider'>;
+  role: Extract<UserRole, 'customer' | 'service_provider' | 'event_provider' | 'venue_provider'>;
   serviceCategories: string[];
+}
+
+interface SubmitOnboardingPayload {
+  userId: string;
+  verification: IVerificationInfo;
+  stripeAccountId: string;
+  businessAddress?: string;
+  serviceProvider?: IServiceProviderOnboarding;
+  eventProvider?: IEventProviderOnboarding;
+  venueProvider?: IVenueProviderOnboarding;
 }
 
 const sendOtpForPurpose = async (
@@ -113,6 +131,56 @@ export class AuthService {
     await sendOtpForPurpose(user, 'email_verification', 'Verify your email', 'Email Verification');
 
     return { user };
+  }
+
+  static async submitOnboarding(payload: SubmitOnboardingPayload) {
+    const user = await UserModel.findById(payload.userId);
+    if (!user) {
+      throw new AppError(404, 'User not found');
+    }
+
+    const hasServiceProvider = Boolean(payload.serviceProvider);
+    const hasEventProvider = Boolean(payload.eventProvider);
+    const hasVenueProvider = Boolean(payload.venueProvider);
+    const profileCount =
+      Number(hasServiceProvider) + Number(hasEventProvider) + Number(hasVenueProvider);
+
+    if (profileCount !== 1) {
+      throw new AppError(
+        400,
+        'Exactly one onboarding profile is required: serviceProvider, eventProvider, or venueProvider'
+      );
+    }
+
+    if (user.role === 'service_provider' && !hasServiceProvider) {
+      throw new AppError(400, 'service_provider must submit serviceProvider onboarding profile');
+    }
+
+    if (user.role === 'event_provider' && !hasEventProvider) {
+      throw new AppError(400, 'event_provider must submit eventProvider onboarding profile');
+    }
+
+    if (user.role === 'venue_provider' && !hasVenueProvider) {
+      throw new AppError(400, 'venue_provider must submit venueProvider onboarding profile');
+    }
+
+    if (!['service_provider', 'event_provider', 'venue_provider'].includes(user.role)) {
+      throw new AppError(403, 'Only provider roles can submit onboarding');
+    }
+
+    user.onboarding = {
+      verification: payload.verification,
+      stripeAccountId: payload.stripeAccountId,
+      businessAddress: payload.businessAddress,
+      serviceProvider: payload.serviceProvider,
+      eventProvider: payload.eventProvider,
+      venueProvider: payload.venueProvider,
+      submittedAt: new Date()
+    };
+
+    await user.save();
+
+    return user;
   }
 
   static async resendVerificationOtp(payload: { email: string }) {

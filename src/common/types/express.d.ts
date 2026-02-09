@@ -7,8 +7,15 @@ declare global {
         userId: string;
         email: string;
         fullName: string;
-        role: 'super_admin' | 'admin' | 'service_provider' | 'venue_provider' | 'customer';
+        role:
+          | 'super_admin'
+          | 'admin'
+          | 'service_provider'
+          | 'event_provider'
+          | 'venue_provider'
+          | 'customer';
         serviceCategories: string[];
+        onboarding?: unknown;
       };
     }
   }

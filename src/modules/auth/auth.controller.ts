@@ -8,7 +8,7 @@ export class AuthController {
       fullName: string;
       email: string;
       password: string;
-      role: 'customer' | 'service_provider' | 'venue_provider';
+      role: 'customer' | 'service_provider' | 'event_provider' | 'venue_provider';
       serviceCategories: string[];
     };
 
@@ -30,7 +30,39 @@ export class AuthController {
           email: user.email,
           role: user.role,
           serviceCategories: user.serviceCategories,
-          isEmailVerified: user.isEmailVerified
+          isEmailVerified: user.isEmailVerified,
+          onboarding: user.onboarding ?? null
+        }
+      }
+    });
+  });
+
+  static submitOnboarding = catchAsync(async (req: Request, res: Response) => {
+    const userId = req.user?.userId;
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: 'Unauthorized'
+      });
+    }
+
+    const user = await AuthService.submitOnboarding({
+      userId,
+      ...req.body
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Onboarding information submitted successfully',
+      data: {
+        user: {
+          id: String(user._id),
+          fullName: user.fullName,
+          email: user.email,
+          role: user.role,
+          serviceCategories: user.serviceCategories,
+          isEmailVerified: user.isEmailVerified,
+          onboarding: user.onboarding ?? null
         }
       }
     });
@@ -61,7 +93,8 @@ export class AuthController {
           email: user.email,
           role: user.role,
           serviceCategories: user.serviceCategories,
-          isEmailVerified: user.isEmailVerified
+          isEmailVerified: user.isEmailVerified,
+          onboarding: user.onboarding ?? null
         }
       }
     });
@@ -82,7 +115,8 @@ export class AuthController {
           email: user.email,
           role: user.role,
           serviceCategories: user.serviceCategories,
-          isEmailVerified: user.isEmailVerified
+          isEmailVerified: user.isEmailVerified,
+          onboarding: user.onboarding ?? null
         }
       }
     });
