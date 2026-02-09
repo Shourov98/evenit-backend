@@ -73,7 +73,10 @@ export class ServiceProviderService {
 
     return ServiceProviderServiceModel.create({
       ownerId,
-      ...normalizeCurrency(payload)
+      ...normalizeCurrency(payload),
+      publishStatus: 'pending',
+      approvedBy: undefined,
+      approvedAt: undefined
     });
   }
 
@@ -163,6 +166,10 @@ export class ServiceProviderService {
       service.availabilityOverrides = normalizedPayload.availabilityOverrides;
     }
 
+    service.publishStatus = 'pending';
+    service.approvedBy = undefined;
+    service.approvedAt = undefined;
+
     await service.save();
     return service;
   }
@@ -173,4 +180,3 @@ export class ServiceProviderService {
     await service.save();
   }
 }
-
