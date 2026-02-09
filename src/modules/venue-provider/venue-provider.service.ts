@@ -70,7 +70,10 @@ export class VenueProviderService {
 
     const result = await VenueProviderVenueModel.create({
       ownerId,
-      ...normalizeCurrency(payload)
+      ...normalizeCurrency(payload),
+      publishStatus: 'pending',
+      approvedBy: undefined,
+      approvedAt: undefined
     });
 
     return result;
@@ -153,6 +156,10 @@ export class VenueProviderService {
     if (normalizedPayload.availabilityOverrides) {
       venue.availabilityOverrides = normalizedPayload.availabilityOverrides;
     }
+
+    venue.publishStatus = 'pending';
+    venue.approvedBy = undefined;
+    venue.approvedAt = undefined;
 
     await venue.save();
     return venue;
