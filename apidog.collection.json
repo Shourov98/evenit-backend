@@ -1,0 +1,262 @@
+{
+  "info": {
+    "name": "Saqib Express API",
+    "_postman_id": "8f4eb3f5-6d8f-437b-a394-20dd2b2779ae",
+    "description": "Auth, onboarding, service provider, and venue provider APIs.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000" },
+    { "key": "token", "value": "" },
+    { "key": "serviceId", "value": "" },
+    { "key": "venueId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "System",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Jane Doe\",\n  \"email\": \"jane@example.com\",\n  \"password\": \"StrongPass123\",\n  \"role\": \"service_provider\",\n  \"serviceCategories\": [\"catering\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Verify Email OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"jane@example.com\",\n  \"otp\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/verify-email",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "verify-email"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"jane@example.com\",\n  \"password\": \"StrongPass123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Submit Onboarding - Service Provider",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"verification\": {\n    \"businessType\": \"individual\",\n    \"nationalIdOrTradeLicenseUrl\": \"https://cdn.example.com/nid.pdf\"\n  },\n  \"stripeAccountId\": \"acct_1234567890abc\",\n  \"serviceProvider\": {\n    \"providerType\": \"general_service\",\n    \"serviceAreas\": [\"Dhaka\"],\n    \"specialties\": [\"Catering\"],\n    \"portfolioUrls\": [\"https://example.com/work\"]\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/onboarding",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "onboarding"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Service Provider",
+      "item": [
+        {
+          "name": "Create Service",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"information\": {\n    \"serviceName\": \"Premium Catering\",\n    \"category\": \"Catering\",\n    \"description\": \"Corporate and wedding catering\",\n    \"serviceArea\": [\"Dhaka\", \"Gazipur\"],\n    \"tags\": [\"wedding\", \"corporate\"]\n  },\n  \"pricing\": {\n    \"amount\": 50000,\n    \"pricingType\": \"package\",\n    \"currency\": \"BDT\",\n    \"discount\": {\n      \"type\": \"percentage\",\n      \"value\": 10\n    }\n  },\n  \"settings\": {\n    \"amenities\": {\n      \"deliveryIncluded\": true,\n      \"setupIncluded\": true,\n      \"staffIncluded\": false\n    },\n    \"capacity\": 300\n  },\n  \"media\": {\n    \"galleryImages\": [\n      \"https://cdn.example.com/service/image-1.jpg\",\n      \"https://cdn.example.com/service/image-2.jpg\"\n    ],\n    \"videoUrl\": \"https://youtube.com/watch?v=abc123\"\n  },\n  \"availabilityOverrides\": [\n    { \"date\": \"2026-02-20\", \"status\": \"booked\" },\n    { \"date\": \"2026-02-21\", \"status\": \"pending\" }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/service-provider/services",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "service-provider", "services"]
+            }
+          }
+        },
+        {
+          "name": "Get My Services",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/service-provider/services",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "service-provider", "services"]
+            }
+          }
+        },
+        {
+          "name": "Get Service By ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/service-provider/services/{{serviceId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "service-provider", "services", "{{serviceId}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Service",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pricing\": {\n    \"amount\": 45000,\n    \"discount\": {\n      \"type\": \"fixed\",\n      \"value\": 5000\n    }\n  },\n  \"availabilityOverrides\": [\n    { \"date\": \"2026-02-25\", \"status\": \"booked\" }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/service-provider/services/{{serviceId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "service-provider", "services", "{{serviceId}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Service",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/service-provider/services/{{serviceId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "service-provider", "services", "{{serviceId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Venue Provider",
+      "item": [
+        {
+          "name": "Create Venue",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"information\": {\n    \"venueName\": \"Royal Hall\",\n    \"venueType\": \"Banquet\",\n    \"description\": \"Large indoor venue\",\n    \"addressLine\": \"Road 12, Dhanmondi\",\n    \"city\": \"Dhaka\",\n    \"area\": \"Dhanmondi\"\n  },\n  \"pricing\": {\n    \"basePrice\": 120000,\n    \"currency\": \"BDT\",\n    \"discount\": {\n      \"type\": \"percentage\",\n      \"value\": 15\n    },\n    \"amenities\": {\n      \"parking\": true,\n      \"airConditioned\": true,\n      \"stage\": true\n    }\n  },\n  \"capacity\": {\n    \"maximumGuests\": 500\n  },\n  \"media\": {\n    \"galleryImages\": [\n      \"https://cdn.example.com/venue/image-1.jpg\",\n      \"https://cdn.example.com/venue/image-2.jpg\"\n    ],\n    \"videoUrl\": \"https://youtube.com/watch?v=venue123\"\n  },\n  \"availabilityOverrides\": [\n    { \"date\": \"2026-03-01\", \"status\": \"booked\" },\n    { \"date\": \"2026-03-02\", \"status\": \"pending\" }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/venue-provider/venues",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "venue-provider", "venues"]
+            }
+          }
+        },
+        {
+          "name": "Get My Venues",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/venue-provider/venues",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "venue-provider", "venues"]
+            }
+          }
+        },
+        {
+          "name": "Get Venue By ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/venue-provider/venues/{{venueId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "venue-provider", "venues", "{{venueId}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Venue",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"capacity\": {\n    \"maximumGuests\": 550\n  },\n  \"availabilityOverrides\": [\n    { \"date\": \"2026-03-03\", \"status\": \"booked\" }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/venue-provider/venues/{{venueId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "venue-provider", "venues", "{{venueId}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Venue",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/venue-provider/venues/{{venueId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "venue-provider", "venues", "{{venueId}}"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

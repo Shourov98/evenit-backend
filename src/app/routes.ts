@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { authRouter } from '../modules/auth/auth.route';
+import { serviceProviderRouter } from '../modules/service-provider/service-provider.route';
 import { venueProviderRouter } from '../modules/venue-provider/venue-provider.route';
 
 const router = Router();
@@ -22,6 +23,7 @@ router.get('/health', (_req, res) => {
 });
 
 router.use('/api/v1/auth', authRouter);
+router.use('/api/v1/service-provider', serviceProviderRouter);
 router.use('/api/v1/venue-provider', venueProviderRouter);
 
 export { router };

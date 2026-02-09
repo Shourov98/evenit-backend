@@ -154,6 +154,16 @@ Then mount router in `src/app/routes.ts`.
 - `POST /api/v1/auth/reset-password`
 - `POST /api/v1/auth/onboarding` (Bearer token)
 - `GET /api/v1/auth/me` (Bearer token)
+- `POST /api/v1/service-provider/services` (Bearer token, service_provider)
+- `GET /api/v1/service-provider/services` (Bearer token, service_provider)
+- `GET /api/v1/service-provider/services/:serviceId` (Bearer token, service_provider)
+- `PATCH /api/v1/service-provider/services/:serviceId` (Bearer token, service_provider)
+- `DELETE /api/v1/service-provider/services/:serviceId` (Bearer token, service_provider)
+- `POST /api/v1/venue-provider/venues` (Bearer token, venue_provider)
+- `GET /api/v1/venue-provider/venues` (Bearer token, venue_provider)
+- `GET /api/v1/venue-provider/venues/:venueId` (Bearer token, venue_provider)
+- `PATCH /api/v1/venue-provider/venues/:venueId` (Bearer token, venue_provider)
+- `DELETE /api/v1/venue-provider/venues/:venueId` (Bearer token, venue_provider)
 - `GET /docs`
 
 ## Auth + Role Design
@@ -194,6 +204,24 @@ Note:
 
 - Payment info / bank card fields are not accepted in onboarding payload.
 - Use `stripeAccountId` instead.
+
+## Service Provider Service API
+
+Base path:
+
+- `/api/v1/service-provider/services`
+
+Fields supported:
+
+- `information`: `serviceName`, `category`, `description`, `serviceArea[]`, `tags[]`
+- `pricing`: `amount`, `pricingType` (`fixed|hourly|daily|package`), `currency`, optional `discount`
+- `settings`: `amenities` (boolean map), optional `capacity`
+- `media`: `galleryImages` (max 10), optional `videoUrl`
+- `availabilityOverrides`: date-level states (`available|pending|booked`)
+
+Calendar behavior:
+
+- Any date not listed in `availabilityOverrides` should be considered `available` by default.
 
 ## Apidog Collection
 
