@@ -41,6 +41,12 @@ export interface IServiceProviderService extends Document {
     videoUrl?: string;
   };
   availabilityOverrides: IServiceAvailabilityOverride[];
+  publishStatus: 'pending' | 'published' | 'rejected';
+  approvedBy?: {
+    name: string;
+    email: string;
+  };
+  approvedAt?: Date;
   isDeleted: boolean;
 }
 
@@ -115,6 +121,19 @@ const serviceProviderServiceSchema = new Schema<IServiceProviderService>(
       type: [serviceAvailabilityOverrideSchema],
       default: []
     },
+    publishStatus: {
+      type: String,
+      enum: ['pending', 'published', 'rejected'],
+      default: 'pending',
+      index: true
+    },
+    approvedBy: {
+      name: { type: String, trim: true },
+      email: { type: String, trim: true, lowercase: true }
+    },
+    approvedAt: {
+      type: Date
+    },
     isDeleted: {
       type: Boolean,
       default: false,
@@ -129,4 +148,3 @@ serviceProviderServiceSchema.index({ ownerId: 1, createdAt: -1 });
 export const ServiceProviderServiceModel: Model<IServiceProviderService> =
   (models.ServiceProviderService as Model<IServiceProviderService>) ||
   model<IServiceProviderService>('ServiceProviderService', serviceProviderServiceSchema);
-
