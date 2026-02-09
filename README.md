@@ -152,6 +152,7 @@ Then mount router in `src/app/routes.ts`.
 - `POST /api/v1/auth/login`
 - `POST /api/v1/auth/forgot-password`
 - `POST /api/v1/auth/reset-password`
+- `POST /api/v1/auth/onboarding` (Bearer token)
 - `GET /api/v1/auth/me` (Bearer token)
 - `GET /docs`
 
@@ -159,11 +160,54 @@ Then mount router in `src/app/routes.ts`.
 
 - Signup fields: `fullName`, `email`, `password`, `role`, `serviceCategories`.
 - `fullName` must include at least 2 words (first + last name).
-- Public signup roles allowed: `customer`, `service_provider`, `venue_provider`.
+- Public signup roles allowed: `customer`, `service_provider`, `event_provider`, `venue_provider`.
 - Restricted roles `admin` and `super_admin` should be created only through protected admin-only flows.
 - `serviceCategories` is required when role is `service_provider`.
 - Login is blocked until email OTP verification is completed.
 - OTP request is unlimited but enforced with a 30-second cooldown per purpose.
+
+## Provider Onboarding API
+
+Endpoint:
+
+- `POST /api/v1/auth/onboarding` (Bearer token required)
+
+Common required fields:
+
+- `verification.businessType` (`individual` or `company`)
+- `verification.nationalIdOrTradeLicenseUrl` (URL)
+- `stripeAccountId` (Stripe connected account id, e.g. `acct_xxx`)
+
+Optional common fields:
+
+- `verification.companyName` (required when businessType is `company`)
+- `businessAddress`
+
+Role-specific onboarding object:
+
+- `service_provider` role must send `serviceProvider`
+- `event_provider` role must send `eventProvider`
+- `venue_provider` role must send `venueProvider`
+- Exactly one of `serviceProvider`, `eventProvider`, `venueProvider` is allowed in one request.
+
+Note:
+
+- Payment info / bank card fields are not accepted in onboarding payload.
+- Use `stripeAccountId` instead.
+
+## Apidog Collection
+
+Use the OpenAPI file at:
+
+- `apidog.openapi.json`
+- `apidog.collection.json` (recommended for Apidog request collection with prefilled sample bodies)
+
+Import in Apidog:
+
+1. Open Apidog.
+2. Create or open a project.
+3. Choose `Import` -> `OpenAPI/Swagger`.
+4. Select `apidog.openapi.json` or `apidog.collection.json`.
 
 ## Test
 

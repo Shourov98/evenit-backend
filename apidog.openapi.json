@@ -1,0 +1,441 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Saqib Express API",
+    "version": "1.0.0",
+    "description": "Auth and provider onboarding APIs for customer, service provider, event provider, and venue provider."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5050",
+      "description": "Local"
+    }
+  ],
+  "tags": [
+    {
+      "name": "System"
+    },
+    {
+      "name": "Auth"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "RegisterRequest": {
+        "type": "object",
+        "required": ["fullName", "email", "password", "role"],
+        "properties": {
+          "fullName": { "type": "string", "example": "Jane Doe" },
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string", "minLength": 8 },
+          "role": {
+            "type": "string",
+            "enum": ["customer", "service_provider", "event_provider", "venue_provider"]
+          },
+          "serviceCategories": {
+            "type": "array",
+            "items": { "type": "string" },
+            "example": ["catering", "photography"]
+          }
+        },
+        "example": {
+          "fullName": "Jane Doe",
+          "email": "jane@example.com",
+          "password": "StrongPass123",
+          "role": "service_provider",
+          "serviceCategories": ["catering"]
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string" }
+        },
+        "example": {
+          "email": "jane@example.com",
+          "password": "StrongPass123"
+        }
+      },
+      "VerifyOtpRequest": {
+        "type": "object",
+        "required": ["email", "otp"],
+        "properties": {
+          "email": { "type": "string", "format": "email" },
+          "otp": { "type": "string", "example": "123456" }
+        },
+        "example": {
+          "email": "jane@example.com",
+          "otp": "123456"
+        }
+      },
+      "EmailRequest": {
+        "type": "object",
+        "required": ["email"],
+        "properties": {
+          "email": { "type": "string", "format": "email" }
+        },
+        "example": {
+          "email": "jane@example.com"
+        }
+      },
+      "ResetPasswordRequest": {
+        "type": "object",
+        "required": ["email", "otp", "newPassword"],
+        "properties": {
+          "email": { "type": "string", "format": "email" },
+          "otp": { "type": "string", "example": "123456" },
+          "newPassword": { "type": "string", "minLength": 8 }
+        },
+        "example": {
+          "email": "jane@example.com",
+          "otp": "123456",
+          "newPassword": "NewStrongPass123"
+        }
+      },
+      "VerificationInfo": {
+        "type": "object",
+        "required": ["businessType", "nationalIdOrTradeLicenseUrl"],
+        "properties": {
+          "businessType": { "type": "string", "enum": ["individual", "company"] },
+          "companyName": { "type": "string" },
+          "nationalIdOrTradeLicenseUrl": { "type": "string", "format": "uri" }
+        }
+      },
+      "ServiceProviderDetails": {
+        "type": "object",
+        "required": ["providerType", "serviceAreas"],
+        "properties": {
+          "providerType": { "type": "string", "enum": ["general_service", "event_management"] },
+          "serviceAreas": { "type": "array", "items": { "type": "string" } },
+          "yearsOfExperience": { "type": "integer", "minimum": 0 },
+          "teamSize": { "type": "integer", "minimum": 1 },
+          "specialties": { "type": "array", "items": { "type": "string" } },
+          "portfolioUrls": { "type": "array", "items": { "type": "string", "format": "uri" } }
+        }
+      },
+      "EventProviderDetails": {
+        "type": "object",
+        "required": ["organizationName", "eventTypes"],
+        "properties": {
+          "organizationName": { "type": "string" },
+          "eventTypes": { "type": "array", "items": { "type": "string" } },
+          "teamSize": { "type": "integer", "minimum": 1 },
+          "pastEventsCount": { "type": "integer", "minimum": 0 },
+          "portfolioUrls": { "type": "array", "items": { "type": "string", "format": "uri" } }
+        }
+      },
+      "VenueProviderDetails": {
+        "type": "object",
+        "required": ["venueName", "venueType", "capacity"],
+        "properties": {
+          "venueName": { "type": "string" },
+          "venueType": { "type": "string" },
+          "capacity": { "type": "integer", "minimum": 1 },
+          "amenities": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "OnboardingRequest": {
+        "type": "object",
+        "required": ["verification", "stripeAccountId"],
+        "properties": {
+          "verification": { "$ref": "#/components/schemas/VerificationInfo" },
+          "stripeAccountId": { "type": "string", "example": "acct_1234567890abc" },
+          "businessAddress": { "type": "string" },
+          "serviceProvider": { "$ref": "#/components/schemas/ServiceProviderDetails" },
+          "eventProvider": { "$ref": "#/components/schemas/EventProviderDetails" },
+          "venueProvider": { "$ref": "#/components/schemas/VenueProviderDetails" }
+        },
+        "description": "Send exactly one profile object among serviceProvider, eventProvider, or venueProvider.",
+        "example": {
+          "verification": {
+            "businessType": "company",
+            "companyName": "Royal Hall Ltd",
+            "nationalIdOrTradeLicenseUrl": "https://cdn.example.com/trade-license.pdf"
+          },
+          "stripeAccountId": "acct_1234567890abc",
+          "businessAddress": "Dhaka",
+          "venueProvider": {
+            "venueName": "Royal Hall",
+            "venueType": "Banquet",
+            "capacity": 500,
+            "amenities": ["Parking", "AC", "Stage"]
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": ["System"],
+        "summary": "Health check",
+        "responses": {
+          "200": {
+            "description": "Healthy"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Register user and send verification OTP",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RegisterRequest" },
+              "examples": {
+                "customerRegister": {
+                  "summary": "Register as customer",
+                  "value": {
+                    "fullName": "John Customer",
+                    "email": "customer@example.com",
+                    "password": "StrongPass123",
+                    "role": "customer",
+                    "serviceCategories": []
+                  }
+                },
+                "serviceProviderRegister": {
+                  "summary": "Register as service provider",
+                  "value": {
+                    "fullName": "Sara Service",
+                    "email": "service@example.com",
+                    "password": "StrongPass123",
+                    "role": "service_provider",
+                    "serviceCategories": ["catering", "photography"]
+                  }
+                },
+                "eventProviderRegister": {
+                  "summary": "Register as event provider",
+                  "value": {
+                    "fullName": "Evan Events",
+                    "email": "event@example.com",
+                    "password": "StrongPass123",
+                    "role": "event_provider",
+                    "serviceCategories": []
+                  }
+                },
+                "venueProviderRegister": {
+                  "summary": "Register as venue provider",
+                  "value": {
+                    "fullName": "Vera Venue",
+                    "email": "venue@example.com",
+                    "password": "StrongPass123",
+                    "role": "venue_provider",
+                    "serviceCategories": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Registered" }
+        }
+      }
+    },
+    "/api/v1/auth/verify-email": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Verify email with OTP",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/VerifyOtpRequest" },
+              "example": {
+                "email": "service@example.com",
+                "otp": "123456"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Verified" }
+        }
+      }
+    },
+    "/api/v1/auth/resend-verification-otp": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Resend email verification OTP",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/EmailRequest" },
+              "example": {
+                "email": "service@example.com"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "OTP sent" }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LoginRequest" },
+              "example": {
+                "email": "service@example.com",
+                "password": "StrongPass123"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Logged in" }
+        }
+      }
+    },
+    "/api/v1/auth/forgot-password": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Request password reset OTP",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/EmailRequest" },
+              "example": {
+                "email": "service@example.com"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Requested" }
+        }
+      }
+    },
+    "/api/v1/auth/reset-password": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Reset password with OTP",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ResetPasswordRequest" },
+              "example": {
+                "email": "service@example.com",
+                "otp": "123456",
+                "newPassword": "NewStrongPass123"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Password reset" }
+        }
+      }
+    },
+    "/api/v1/auth/onboarding": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Submit provider onboarding",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/OnboardingRequest" },
+              "examples": {
+                "venueProvider": {
+                  "summary": "Venue provider onboarding",
+                  "value": {
+                    "verification": {
+                      "businessType": "company",
+                      "companyName": "Royal Hall Ltd",
+                      "nationalIdOrTradeLicenseUrl": "https://cdn.example.com/trade-license.pdf"
+                    },
+                    "stripeAccountId": "acct_1234567890abc",
+                    "businessAddress": "Dhaka",
+                    "venueProvider": {
+                      "venueName": "Royal Hall",
+                      "venueType": "Banquet",
+                      "capacity": 500,
+                      "amenities": ["Parking", "AC"]
+                    }
+                  }
+                },
+                "serviceProvider": {
+                  "summary": "Service provider onboarding",
+                  "value": {
+                    "verification": {
+                      "businessType": "individual",
+                      "nationalIdOrTradeLicenseUrl": "https://cdn.example.com/nid.pdf"
+                    },
+                    "stripeAccountId": "acct_1234567890abc",
+                    "serviceProvider": {
+                      "providerType": "general_service",
+                      "serviceAreas": ["Dhaka"],
+                      "specialties": ["Catering"],
+                      "portfolioUrls": ["https://example.com/work"]
+                    }
+                  }
+                },
+                "eventProvider": {
+                  "summary": "Event provider onboarding",
+                  "value": {
+                    "verification": {
+                      "businessType": "company",
+                      "companyName": "Star Events",
+                      "nationalIdOrTradeLicenseUrl": "https://cdn.example.com/license.pdf"
+                    },
+                    "stripeAccountId": "acct_1234567890abc",
+                    "eventProvider": {
+                      "organizationName": "Star Events",
+                      "eventTypes": ["Wedding", "Corporate"],
+                      "teamSize": 20,
+                      "pastEventsCount": 120
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Onboarding saved" }
+        }
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Get current user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": { "description": "Current user" }
+        }
+      }
+    }
+  }
+}
