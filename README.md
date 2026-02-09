@@ -164,6 +164,10 @@ Then mount router in `src/app/routes.ts`.
 - `GET /api/v1/venue-provider/venues/:venueId` (Bearer token, venue_provider)
 - `PATCH /api/v1/venue-provider/venues/:venueId` (Bearer token, venue_provider)
 - `DELETE /api/v1/venue-provider/venues/:venueId` (Bearer token, venue_provider)
+- `PATCH /api/v1/admin/services/:serviceId/approve` (Bearer token, admin/super_admin)
+- `PATCH /api/v1/admin/services/:serviceId/reject` (Bearer token, admin/super_admin)
+- `PATCH /api/v1/admin/venues/:venueId/approve` (Bearer token, admin/super_admin)
+- `PATCH /api/v1/admin/venues/:venueId/reject` (Bearer token, admin/super_admin)
 - `GET /docs`
 
 ## Auth + Role Design
@@ -222,6 +226,16 @@ Fields supported:
 Calendar behavior:
 
 - Any date not listed in `availabilityOverrides` should be considered `available` by default.
+
+## Approval Workflow
+
+- Any newly created or updated service/venue is stored with `publishStatus: pending`.
+- Only `admin` or `super_admin` can approve/reject publishing.
+- On approval, the record is updated as:
+  - `publishStatus: published`
+  - `approvedBy: { "name": "<admin_or_super_admin_name>", "email": "<admin_or_super_admin_email>" }`
+  - `approvedAt: <timestamp>`
+- On rejection, the record is updated with `publishStatus: rejected`.
 
 ## Apidog Collection
 
