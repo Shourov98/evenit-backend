@@ -23,6 +23,9 @@
     },
     {
       "name": "VenueProvider"
+    },
+    {
+      "name": "Admin"
     }
   ],
   "components": {
@@ -710,6 +713,241 @@
         ],
         "responses": {
           "200": { "description": "Service deleted" }
+        }
+      }
+    },
+    "/api/v1/venue-provider/venues": {
+      "post": {
+        "tags": ["VenueProvider"],
+        "summary": "Create venue (venue_provider only)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "information": {
+                  "venueName": "Royal Hall",
+                  "venueType": "Banquet",
+                  "description": "Large indoor venue",
+                  "addressLine": "Road 12, Dhanmondi",
+                  "city": "Dhaka",
+                  "area": "Dhanmondi"
+                },
+                "pricing": {
+                  "basePrice": 120000,
+                  "currency": "BDT",
+                  "discount": {
+                    "type": "percentage",
+                    "value": 15
+                  },
+                  "amenities": {
+                    "parking": true,
+                    "airConditioned": true,
+                    "stage": true
+                  }
+                },
+                "capacity": {
+                  "maximumGuests": 500
+                },
+                "media": {
+                  "galleryImages": [
+                    "https://cdn.example.com/venue/image-1.jpg",
+                    "https://cdn.example.com/venue/image-2.jpg"
+                  ],
+                  "videoUrl": "https://youtube.com/watch?v=venue123"
+                },
+                "availabilityOverrides": [
+                  { "date": "2026-03-01", "status": "booked" },
+                  { "date": "2026-03-02", "status": "pending" }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Venue created" }
+        }
+      },
+      "get": {
+        "tags": ["VenueProvider"],
+        "summary": "Get my venues (venue_provider only)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": { "description": "Venue list" }
+        }
+      }
+    },
+    "/api/v1/venue-provider/venues/{venueId}": {
+      "get": {
+        "tags": ["VenueProvider"],
+        "summary": "Get venue by id (venue_provider only)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "venueId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Venue details" }
+        }
+      },
+      "patch": {
+        "tags": ["VenueProvider"],
+        "summary": "Update venue by id (venue_provider only)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "venueId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "capacity": {
+                  "maximumGuests": 550
+                },
+                "availabilityOverrides": [
+                  { "date": "2026-03-03", "status": "booked" }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Venue updated" }
+        }
+      },
+      "delete": {
+        "tags": ["VenueProvider"],
+        "summary": "Delete venue by id (venue_provider only)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "venueId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Venue deleted" }
+        }
+      }
+    },
+    "/api/v1/admin/venues/{venueId}/approve": {
+      "patch": {
+        "tags": ["Admin"],
+        "summary": "Approve venue and publish it (admin/super_admin)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "venueId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Venue approved and published" }
+        }
+      }
+    },
+    "/api/v1/admin/venues/{venueId}/reject": {
+      "patch": {
+        "tags": ["Admin"],
+        "summary": "Reject venue (admin/super_admin)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "venueId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Venue rejected" }
+        }
+      }
+    },
+    "/api/v1/admin/services/{serviceId}/approve": {
+      "patch": {
+        "tags": ["Admin"],
+        "summary": "Approve service and publish it (admin/super_admin)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "serviceId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Service approved and published" }
+        }
+      }
+    },
+    "/api/v1/admin/services/{serviceId}/reject": {
+      "patch": {
+        "tags": ["Admin"],
+        "summary": "Reject service (admin/super_admin)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "serviceId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Service rejected" }
         }
       }
     }
