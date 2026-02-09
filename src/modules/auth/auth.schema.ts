@@ -17,7 +17,7 @@ export const registerSchema = z
         fullName: fullNameRule,
         email: z.string().email(),
         password: z.string().min(8).max(64),
-        role: z.enum(signupRoles).default('customer'),
+        role: z.enum(signupRoles),
         serviceCategories: z.array(z.string().min(1)).max(20).optional().default([])
       })
       .superRefine((data, ctx) => {
