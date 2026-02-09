@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { adminManagementRouter } from '../modules/admin-management/admin-management.route';
 import { authRouter } from '../modules/auth/auth.route';
 import { serviceProviderRouter } from '../modules/service-provider/service-provider.route';
 import { venueProviderRouter } from '../modules/venue-provider/venue-provider.route';
@@ -25,5 +26,6 @@ router.get('/health', (_req, res) => {
 router.use('/api/v1/auth', authRouter);
 router.use('/api/v1/service-provider', serviceProviderRouter);
 router.use('/api/v1/venue-provider', venueProviderRouter);
+router.use('/api/v1/admin', adminManagementRouter);
 
 export { router };
