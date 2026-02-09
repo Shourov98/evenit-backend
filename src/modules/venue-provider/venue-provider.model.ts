@@ -38,6 +38,12 @@ export interface IVenue extends Document {
     videoUrl?: string;
   };
   availabilityOverrides: IAvailabilityOverride[];
+  publishStatus: 'pending' | 'published' | 'rejected';
+  approvedBy?: {
+    name: string;
+    email: string;
+  };
+  approvedAt?: Date;
   isDeleted: boolean;
 }
 
@@ -112,6 +118,19 @@ const venueSchema = new Schema<IVenue>(
       type: [availabilityOverrideSchema],
       default: []
     },
+    publishStatus: {
+      type: String,
+      enum: ['pending', 'published', 'rejected'],
+      default: 'pending',
+      index: true
+    },
+    approvedBy: {
+      name: { type: String, trim: true },
+      email: { type: String, trim: true, lowercase: true }
+    },
+    approvedAt: {
+      type: Date
+    },
     isDeleted: {
       type: Boolean,
       default: false,
@@ -125,4 +144,3 @@ venueSchema.index({ ownerId: 1, createdAt: -1 });
 
 export const VenueProviderVenueModel: Model<IVenue> =
   (models.VenueProviderVenue as Model<IVenue>) || model<IVenue>('VenueProviderVenue', venueSchema);
-
