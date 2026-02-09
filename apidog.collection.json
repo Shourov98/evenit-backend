@@ -257,6 +257,59 @@
           }
         }
       ]
+    },
+    {
+      "name": "Admin Approval",
+      "item": [
+        {
+          "name": "Approve Service",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/services/{{serviceId}}/approve",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "services", "{{serviceId}}", "approve"]
+            }
+          }
+        },
+        {
+          "name": "Reject Service",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/services/{{serviceId}}/reject",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "services", "{{serviceId}}", "reject"]
+            }
+          }
+        },
+        {
+          "name": "Approve Venue",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/venues/{{venueId}}/approve",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "venues", "{{venueId}}", "approve"]
+            }
+          }
+        },
+        {
+          "name": "Reject Venue",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/venues/{{venueId}}/reject",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "admin", "venues", "{{venueId}}", "reject"]
+            }
+          }
+        }
+      ]
     }
   ]
 }
