@@ -227,6 +227,20 @@ Calendar behavior:
 
 - Any date not listed in `availabilityOverrides` should be considered `available` by default.
 
+## Global Pagination
+
+List endpoints use a shared pagination utility (`src/common/utils/pagination.ts`) and support:
+
+- `page` (default: `1`)
+- `limit` (default: `10`, max: `100`)
+- `sortBy` (default: `createdAt`)
+- `sortOrder` (`asc` or `desc`, default: `desc`)
+
+Paginated response format:
+
+- `meta`: `page`, `limit`, `total`, `totalPages`, `hasNextPage`, `hasPrevPage`
+- `data`: array of records
+
 ## Approval Workflow
 
 - Any newly created or updated service/venue is stored with `publishStatus: pending`.

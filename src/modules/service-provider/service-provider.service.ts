@@ -1,5 +1,6 @@
 import { isValidObjectId } from 'mongoose';
 import { AppError } from '../../common/errors/AppError';
+import { PaginationOptions, paginateModel } from '../../common/utils/pagination';
 import { ServiceProviderServiceModel } from './service-provider.model';
 
 type CreateServicePayload = {
@@ -80,13 +81,17 @@ export class ServiceProviderService {
     });
   }
 
-  static async getMine(ownerId: string) {
+  static async getMine(ownerId: string, pagination: PaginationOptions) {
     ensureObjectId(ownerId, 'ownerId');
 
-    return ServiceProviderServiceModel.find({
-      ownerId,
-      isDeleted: false
-    }).sort({ createdAt: -1 });
+    return paginateModel(
+      ServiceProviderServiceModel,
+      {
+        ownerId,
+        isDeleted: false
+      },
+      pagination
+    );
   }
 
   static async getById(ownerId: string, serviceId: string) {

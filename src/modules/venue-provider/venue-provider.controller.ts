@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { parsePagination } from '../../common/utils/pagination';
 import { catchAsync } from '../../common/utils/catchAsync';
 import { VenueProviderService } from './venue-provider.service';
 
@@ -26,11 +27,13 @@ export class VenueProviderController {
       return res.status(401).json({ success: false, message: 'Unauthorized' });
     }
 
-    const venues = await VenueProviderService.getMine(userId);
+    const pagination = parsePagination(req.query as Record<string, unknown>);
+    const venues = await VenueProviderService.getMine(userId, pagination);
 
     return res.status(200).json({
       success: true,
-      data: venues
+      meta: venues.meta,
+      data: venues.data
     });
   });
 
@@ -77,4 +80,3 @@ export class VenueProviderController {
     });
   });
 }
-

@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { parsePagination } from '../../common/utils/pagination';
 import { catchAsync } from '../../common/utils/catchAsync';
 import { ServiceProviderService } from './service-provider.service';
 
@@ -26,11 +27,13 @@ export class ServiceProviderController {
       return res.status(401).json({ success: false, message: 'Unauthorized' });
     }
 
-    const services = await ServiceProviderService.getMine(userId);
+    const pagination = parsePagination(req.query as Record<string, unknown>);
+    const services = await ServiceProviderService.getMine(userId, pagination);
 
     return res.status(200).json({
       success: true,
-      data: services
+      meta: services.meta,
+      data: services.data
     });
   });
 
@@ -77,4 +80,3 @@ export class ServiceProviderController {
     });
   });
 }
-

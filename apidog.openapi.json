@@ -629,6 +629,12 @@
             "bearerAuth": []
           }
         ],
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer", "example": 1 } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "example": 10 } },
+          { "name": "sortBy", "in": "query", "schema": { "type": "string", "example": "createdAt" } },
+          { "name": "sortOrder", "in": "query", "schema": { "type": "string", "enum": ["asc", "desc"], "example": "desc" } }
+        ],
         "responses": {
           "200": { "description": "Services list" }
         }
@@ -780,6 +786,12 @@
           {
             "bearerAuth": []
           }
+        ],
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer", "example": 1 } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "example": 10 } },
+          { "name": "sortBy", "in": "query", "schema": { "type": "string", "example": "createdAt" } },
+          { "name": "sortOrder", "in": "query", "schema": { "type": "string", "enum": ["asc", "desc"], "example": "desc" } }
         ],
         "responses": {
           "200": { "description": "Venue list" }
