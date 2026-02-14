@@ -7,6 +7,24 @@ import { createServiceSchema, serviceIdParamSchema, updateServiceSchema } from '
 
 const router = Router();
 
+/**
+ * @openapi
+ * /api/v1/service-provider/services:
+ *   get:
+ *     tags: [ServiceProvider]
+ *     summary: Get published services (public)
+ */
+router.get('/services', ServiceProviderController.getServices);
+
+/**
+ * @openapi
+ * /api/v1/service-provider/services/{serviceId}:
+ *   get:
+ *     tags: [ServiceProvider]
+ *     summary: Get one published service by id (public)
+ */
+router.get('/services/:serviceId', validate(serviceIdParamSchema), ServiceProviderController.getServiceById);
+
 router.use(protect, authorize('service_provider'));
 
 /**
@@ -19,28 +37,6 @@ router.use(protect, authorize('service_provider'));
  *       - bearerAuth: []
  */
 router.post('/services', validate(createServiceSchema), ServiceProviderController.createService);
-
-/**
- * @openapi
- * /api/v1/service-provider/services:
- *   get:
- *     tags: [ServiceProvider]
- *     summary: Get all services of current service provider
- *     security:
- *       - bearerAuth: []
- */
-router.get('/services', ServiceProviderController.getMyServices);
-
-/**
- * @openapi
- * /api/v1/service-provider/services/{serviceId}:
- *   get:
- *     tags: [ServiceProvider]
- *     summary: Get one service by id
- *     security:
- *       - bearerAuth: []
- */
-router.get('/services/:serviceId', validate(serviceIdParamSchema), ServiceProviderController.getServiceById);
 
 /**
  * @openapi
@@ -65,4 +61,3 @@ router.patch('/services/:serviceId', validate(updateServiceSchema), ServiceProvi
 router.delete('/services/:serviceId', validate(serviceIdParamSchema), ServiceProviderController.deleteService);
 
 export const serviceProviderRouter = router;
-

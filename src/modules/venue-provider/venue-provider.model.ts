@@ -11,6 +11,14 @@ export interface IAvailabilityOverride {
   status: VenueAvailabilityStatus;
 }
 
+export interface IVenueReview {
+  reviewerName: string;
+  reviewerAvatarUrl?: string;
+  rating: number;
+  comment: string;
+  createdAt: Date;
+}
+
 export interface IVenue extends Document {
   ownerId: Types.ObjectId;
   information: {
@@ -44,6 +52,7 @@ export interface IVenue extends Document {
     email: string;
   };
   approvedAt?: Date;
+  reviews: IVenueReview[];
   isDeleted: boolean;
 }
 
@@ -130,6 +139,18 @@ const venueSchema = new Schema<IVenue>(
     },
     approvedAt: {
       type: Date
+    },
+    reviews: {
+      type: [
+        {
+          reviewerName: { type: String, required: true, trim: true, minlength: 2, maxlength: 80 },
+          reviewerAvatarUrl: { type: String, trim: true },
+          rating: { type: Number, required: true, min: 1, max: 5 },
+          comment: { type: String, required: true, trim: true, minlength: 2, maxlength: 2000 },
+          createdAt: { type: Date, default: Date.now }
+        }
+      ],
+      default: []
     },
     isDeleted: {
       type: Boolean,

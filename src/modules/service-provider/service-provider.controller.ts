@@ -21,14 +21,9 @@ export class ServiceProviderController {
     });
   });
 
-  static getMyServices = catchAsync(async (req: Request, res: Response) => {
-    const userId = getUserId(req);
-    if (!userId) {
-      return res.status(401).json({ success: false, message: 'Unauthorized' });
-    }
-
+  static getServices = catchAsync(async (req: Request, res: Response) => {
     const pagination = parsePagination(req.query as Record<string, unknown>);
-    const services = await ServiceProviderService.getMine(userId, pagination);
+    const services = await ServiceProviderService.getPublic(pagination);
 
     return res.status(200).json({
       success: true,
@@ -38,12 +33,7 @@ export class ServiceProviderController {
   });
 
   static getServiceById = catchAsync(async (req: Request, res: Response) => {
-    const userId = getUserId(req);
-    if (!userId) {
-      return res.status(401).json({ success: false, message: 'Unauthorized' });
-    }
-
-    const service = await ServiceProviderService.getById(userId, req.params.serviceId);
+    const service = await ServiceProviderService.getPublicById(req.params.serviceId);
 
     return res.status(200).json({
       success: true,

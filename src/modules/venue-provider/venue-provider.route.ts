@@ -7,6 +7,24 @@ import { createVenueSchema, updateVenueSchema, venueIdParamSchema } from './venu
 
 const router = Router();
 
+/**
+ * @openapi
+ * /api/v1/venue-provider/venues:
+ *   get:
+ *     tags: [VenueProvider]
+ *     summary: Get published venues (public)
+ */
+router.get('/venues', VenueProviderController.getVenues);
+
+/**
+ * @openapi
+ * /api/v1/venue-provider/venues/{venueId}:
+ *   get:
+ *     tags: [VenueProvider]
+ *     summary: Get one published venue by id (public)
+ */
+router.get('/venues/:venueId', validate(venueIdParamSchema), VenueProviderController.getVenueById);
+
 router.use(protect, authorize('venue_provider'));
 
 /**
@@ -19,28 +37,6 @@ router.use(protect, authorize('venue_provider'));
  *       - bearerAuth: []
  */
 router.post('/venues', validate(createVenueSchema), VenueProviderController.createVenue);
-
-/**
- * @openapi
- * /api/v1/venue-provider/venues:
- *   get:
- *     tags: [VenueProvider]
- *     summary: Get all venues of current venue provider
- *     security:
- *       - bearerAuth: []
- */
-router.get('/venues', VenueProviderController.getMyVenues);
-
-/**
- * @openapi
- * /api/v1/venue-provider/venues/{venueId}:
- *   get:
- *     tags: [VenueProvider]
- *     summary: Get one venue by id
- *     security:
- *       - bearerAuth: []
- */
-router.get('/venues/:venueId', validate(venueIdParamSchema), VenueProviderController.getVenueById);
 
 /**
  * @openapi
@@ -65,4 +61,3 @@ router.patch('/venues/:venueId', validate(updateVenueSchema), VenueProviderContr
 router.delete('/venues/:venueId', validate(venueIdParamSchema), VenueProviderController.deleteVenue);
 
 export const venueProviderRouter = router;
-

@@ -93,6 +93,33 @@ export class VenueProviderService {
     );
   }
 
+  static async getPublic(pagination: PaginationOptions) {
+    return paginateModel(
+      VenueProviderVenueModel,
+      {
+        isDeleted: false,
+        publishStatus: 'published'
+      },
+      pagination
+    );
+  }
+
+  static async getPublicById(venueId: string) {
+    ensureObjectId(venueId, 'venueId');
+
+    const venue = await VenueProviderVenueModel.findOne({
+      _id: venueId,
+      isDeleted: false,
+      publishStatus: 'published'
+    });
+
+    if (!venue) {
+      throw new AppError(404, 'Venue not found');
+    }
+
+    return venue;
+  }
+
   static async getById(ownerId: string, venueId: string) {
     ensureObjectId(ownerId, 'ownerId');
     ensureObjectId(venueId, 'venueId');

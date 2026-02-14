@@ -21,14 +21,9 @@ export class VenueProviderController {
     });
   });
 
-  static getMyVenues = catchAsync(async (req: Request, res: Response) => {
-    const userId = getUserId(req);
-    if (!userId) {
-      return res.status(401).json({ success: false, message: 'Unauthorized' });
-    }
-
+  static getVenues = catchAsync(async (req: Request, res: Response) => {
     const pagination = parsePagination(req.query as Record<string, unknown>);
-    const venues = await VenueProviderService.getMine(userId, pagination);
+    const venues = await VenueProviderService.getPublic(pagination);
 
     return res.status(200).json({
       success: true,
@@ -38,12 +33,7 @@ export class VenueProviderController {
   });
 
   static getVenueById = catchAsync(async (req: Request, res: Response) => {
-    const userId = getUserId(req);
-    if (!userId) {
-      return res.status(401).json({ success: false, message: 'Unauthorized' });
-    }
-
-    const venue = await VenueProviderService.getById(userId, req.params.venueId);
+    const venue = await VenueProviderService.getPublicById(req.params.venueId);
 
     return res.status(200).json({
       success: true,

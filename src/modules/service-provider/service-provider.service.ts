@@ -94,6 +94,33 @@ export class ServiceProviderService {
     );
   }
 
+  static async getPublic(pagination: PaginationOptions) {
+    return paginateModel(
+      ServiceProviderServiceModel,
+      {
+        isDeleted: false,
+        publishStatus: 'published'
+      },
+      pagination
+    );
+  }
+
+  static async getPublicById(serviceId: string) {
+    ensureObjectId(serviceId, 'serviceId');
+
+    const service = await ServiceProviderServiceModel.findOne({
+      _id: serviceId,
+      isDeleted: false,
+      publishStatus: 'published'
+    });
+
+    if (!service) {
+      throw new AppError(404, 'Service not found');
+    }
+
+    return service;
+  }
+
   static async getById(ownerId: string, serviceId: string) {
     ensureObjectId(ownerId, 'ownerId');
     ensureObjectId(serviceId, 'serviceId');
