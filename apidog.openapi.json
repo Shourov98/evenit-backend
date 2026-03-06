@@ -26,6 +26,9 @@
     },
     {
       "name": "Admin"
+    },
+    {
+      "name": "EventPlanner"
     }
   ],
   "components": {
@@ -39,19 +42,43 @@
     "schemas": {
       "RegisterRequest": {
         "type": "object",
-        "required": ["fullName", "email", "password", "role"],
+        "required": [
+          "fullName",
+          "email",
+          "password",
+          "role"
+        ],
         "properties": {
-          "fullName": { "type": "string", "example": "Jane Doe" },
-          "email": { "type": "string", "format": "email" },
-          "password": { "type": "string", "minLength": 8 },
+          "fullName": {
+            "type": "string",
+            "example": "Jane Doe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8
+          },
           "role": {
             "type": "string",
-            "enum": ["customer", "service_provider", "event_provider", "venue_provider"]
+            "enum": [
+              "customer",
+              "service_provider",
+              "event_provider",
+              "venue_provider"
+            ]
           },
           "serviceCategories": {
             "type": "array",
-            "items": { "type": "string" },
-            "example": ["catering", "photography"]
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "catering",
+              "photography"
+            ]
           }
         },
         "example": {
@@ -59,15 +86,25 @@
           "email": "jane@example.com",
           "password": "StrongPass123",
           "role": "service_provider",
-          "serviceCategories": ["catering"]
+          "serviceCategories": [
+            "catering"
+          ]
         }
       },
       "LoginRequest": {
         "type": "object",
-        "required": ["email", "password"],
+        "required": [
+          "email",
+          "password"
+        ],
         "properties": {
-          "email": { "type": "string", "format": "email" },
-          "password": { "type": "string" }
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string"
+          }
         },
         "example": {
           "email": "jane@example.com",
@@ -76,10 +113,19 @@
       },
       "VerifyOtpRequest": {
         "type": "object",
-        "required": ["email", "otp"],
+        "required": [
+          "email",
+          "otp"
+        ],
         "properties": {
-          "email": { "type": "string", "format": "email" },
-          "otp": { "type": "string", "example": "123456" }
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "otp": {
+            "type": "string",
+            "example": "123456"
+          }
         },
         "example": {
           "email": "jane@example.com",
@@ -88,9 +134,14 @@
       },
       "EmailRequest": {
         "type": "object",
-        "required": ["email"],
+        "required": [
+          "email"
+        ],
         "properties": {
-          "email": { "type": "string", "format": "email" }
+          "email": {
+            "type": "string",
+            "format": "email"
+          }
         },
         "example": {
           "email": "jane@example.com"
@@ -98,11 +149,24 @@
       },
       "ResetPasswordRequest": {
         "type": "object",
-        "required": ["email", "otp", "newPassword"],
+        "required": [
+          "email",
+          "otp",
+          "newPassword"
+        ],
         "properties": {
-          "email": { "type": "string", "format": "email" },
-          "otp": { "type": "string", "example": "123456" },
-          "newPassword": { "type": "string", "minLength": 8 }
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "otp": {
+            "type": "string",
+            "example": "123456"
+          },
+          "newPassword": {
+            "type": "string",
+            "minLength": 8
+          }
         },
         "example": {
           "email": "jane@example.com",
@@ -112,56 +176,155 @@
       },
       "VerificationInfo": {
         "type": "object",
-        "required": ["businessType", "nationalIdOrTradeLicenseUrl"],
+        "required": [
+          "businessType",
+          "nationalIdOrTradeLicenseUrl"
+        ],
         "properties": {
-          "businessType": { "type": "string", "enum": ["individual", "company"] },
-          "companyName": { "type": "string" },
-          "nationalIdOrTradeLicenseUrl": { "type": "string", "format": "uri" }
+          "businessType": {
+            "type": "string",
+            "enum": [
+              "individual",
+              "company"
+            ]
+          },
+          "companyName": {
+            "type": "string"
+          },
+          "nationalIdOrTradeLicenseUrl": {
+            "type": "string",
+            "format": "uri"
+          }
         }
       },
       "ServiceProviderDetails": {
         "type": "object",
-        "required": ["providerType", "serviceAreas"],
+        "required": [
+          "providerType",
+          "serviceAreas"
+        ],
         "properties": {
-          "providerType": { "type": "string", "enum": ["general_service", "event_management"] },
-          "serviceAreas": { "type": "array", "items": { "type": "string" } },
-          "yearsOfExperience": { "type": "integer", "minimum": 0 },
-          "teamSize": { "type": "integer", "minimum": 1 },
-          "specialties": { "type": "array", "items": { "type": "string" } },
-          "portfolioUrls": { "type": "array", "items": { "type": "string", "format": "uri" } }
+          "providerType": {
+            "type": "string",
+            "enum": [
+              "general_service",
+              "event_management"
+            ]
+          },
+          "serviceAreas": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "yearsOfExperience": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "teamSize": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "specialties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "portfolioUrls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
         }
       },
       "EventProviderDetails": {
         "type": "object",
-        "required": ["organizationName", "eventTypes"],
+        "required": [
+          "organizationName",
+          "eventTypes"
+        ],
         "properties": {
-          "organizationName": { "type": "string" },
-          "eventTypes": { "type": "array", "items": { "type": "string" } },
-          "teamSize": { "type": "integer", "minimum": 1 },
-          "pastEventsCount": { "type": "integer", "minimum": 0 },
-          "portfolioUrls": { "type": "array", "items": { "type": "string", "format": "uri" } }
+          "organizationName": {
+            "type": "string"
+          },
+          "eventTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "teamSize": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "pastEventsCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "portfolioUrls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
         }
       },
       "VenueProviderDetails": {
         "type": "object",
-        "required": ["venueName", "venueType", "capacity"],
+        "required": [
+          "venueName",
+          "venueType",
+          "capacity"
+        ],
         "properties": {
-          "venueName": { "type": "string" },
-          "venueType": { "type": "string" },
-          "capacity": { "type": "integer", "minimum": 1 },
-          "amenities": { "type": "array", "items": { "type": "string" } }
+          "venueName": {
+            "type": "string"
+          },
+          "venueType": {
+            "type": "string"
+          },
+          "capacity": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "amenities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
         }
       },
       "OnboardingRequest": {
         "type": "object",
-        "required": ["verification", "stripeAccountId"],
+        "required": [
+          "verification",
+          "stripeAccountId"
+        ],
         "properties": {
-          "verification": { "$ref": "#/components/schemas/VerificationInfo" },
-          "stripeAccountId": { "type": "string", "example": "acct_1234567890abc" },
-          "businessAddress": { "type": "string" },
-          "serviceProvider": { "$ref": "#/components/schemas/ServiceProviderDetails" },
-          "eventProvider": { "$ref": "#/components/schemas/EventProviderDetails" },
-          "venueProvider": { "$ref": "#/components/schemas/VenueProviderDetails" }
+          "verification": {
+            "$ref": "#/components/schemas/VerificationInfo"
+          },
+          "stripeAccountId": {
+            "type": "string",
+            "example": "acct_1234567890abc"
+          },
+          "businessAddress": {
+            "type": "string"
+          },
+          "serviceProvider": {
+            "$ref": "#/components/schemas/ServiceProviderDetails"
+          },
+          "eventProvider": {
+            "$ref": "#/components/schemas/EventProviderDetails"
+          },
+          "venueProvider": {
+            "$ref": "#/components/schemas/VenueProviderDetails"
+          }
         },
         "description": "Send exactly one profile object among serviceProvider, eventProvider, or venueProvider.",
         "example": {
@@ -176,37 +339,91 @@
             "venueName": "Royal Hall",
             "venueType": "Banquet",
             "capacity": 500,
-            "amenities": ["Parking", "AC", "Stage"]
+            "amenities": [
+              "Parking",
+              "AC",
+              "Stage"
+            ]
           }
         }
       },
       "ServiceProviderServiceRequest": {
         "type": "object",
-        "required": ["information", "pricing", "settings", "media"],
+        "required": [
+          "information",
+          "pricing",
+          "settings",
+          "media"
+        ],
         "properties": {
           "information": {
             "type": "object",
-            "required": ["serviceName", "category", "serviceArea"],
+            "required": [
+              "serviceName",
+              "category",
+              "serviceArea"
+            ],
             "properties": {
-              "serviceName": { "type": "string" },
-              "category": { "type": "string" },
-              "description": { "type": "string" },
-              "serviceArea": { "type": "array", "items": { "type": "string" } },
-              "tags": { "type": "array", "items": { "type": "string" } }
+              "serviceName": {
+                "type": "string"
+              },
+              "category": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "serviceArea": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
             }
           },
           "pricing": {
             "type": "object",
-            "required": ["amount", "pricingType", "currency"],
+            "required": [
+              "amount",
+              "pricingType",
+              "currency"
+            ],
             "properties": {
-              "amount": { "type": "number" },
-              "pricingType": { "type": "string", "enum": ["fixed", "hourly", "daily", "package"] },
-              "currency": { "type": "string", "example": "BDT" },
+              "amount": {
+                "type": "number"
+              },
+              "pricingType": {
+                "type": "string",
+                "enum": [
+                  "fixed",
+                  "hourly",
+                  "daily",
+                  "package"
+                ]
+              },
+              "currency": {
+                "type": "string",
+                "example": "BDT"
+              },
               "discount": {
                 "type": "object",
                 "properties": {
-                  "type": { "type": "string", "enum": ["percentage", "fixed"] },
-                  "value": { "type": "number" }
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "percentage",
+                      "fixed"
+                    ]
+                  },
+                  "value": {
+                    "type": "number"
+                  }
                 }
               }
             }
@@ -216,9 +433,13 @@
             "properties": {
               "amenities": {
                 "type": "object",
-                "additionalProperties": { "type": "boolean" }
+                "additionalProperties": {
+                  "type": "boolean"
+                }
               },
-              "capacity": { "type": "integer" }
+              "capacity": {
+                "type": "integer"
+              }
             }
           },
           "media": {
@@ -227,19 +448,38 @@
               "galleryImages": {
                 "type": "array",
                 "maxItems": 10,
-                "items": { "type": "string", "format": "uri" }
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                }
               },
-              "videoUrl": { "type": "string", "format": "uri" }
+              "videoUrl": {
+                "type": "string",
+                "format": "uri"
+              }
             }
           },
           "availabilityOverrides": {
             "type": "array",
             "items": {
               "type": "object",
-              "required": ["date", "status"],
+              "required": [
+                "date",
+                "status"
+              ],
               "properties": {
-                "date": { "type": "string", "example": "2026-02-20" },
-                "status": { "type": "string", "enum": ["available", "pending", "booked"] }
+                "date": {
+                  "type": "string",
+                  "example": "2026-02-20"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "available",
+                    "pending",
+                    "booked"
+                  ]
+                }
               }
             }
           }
@@ -249,8 +489,14 @@
             "serviceName": "Premium Catering",
             "category": "Catering",
             "description": "Corporate and wedding catering",
-            "serviceArea": ["Dhaka", "Gazipur"],
-            "tags": ["wedding", "corporate"]
+            "serviceArea": [
+              "Dhaka",
+              "Gazipur"
+            ],
+            "tags": [
+              "wedding",
+              "corporate"
+            ]
           },
           "pricing": {
             "amount": 50000,
@@ -277,8 +523,14 @@
             "videoUrl": "https://youtube.com/watch?v=abc123"
           },
           "availabilityOverrides": [
-            { "date": "2026-02-20", "status": "booked" },
-            { "date": "2026-02-21", "status": "pending" }
+            {
+              "date": "2026-02-20",
+              "status": "booked"
+            },
+            {
+              "date": "2026-02-21",
+              "status": "pending"
+            }
           ]
         }
       },
@@ -294,8 +546,565 @@
             }
           },
           "availabilityOverrides": [
-            { "date": "2026-02-25", "status": "booked" }
+            {
+              "date": "2026-02-25",
+              "status": "booked"
+            }
           ]
+        }
+      },
+      "ApiError": {
+        "type": "object",
+        "required": [
+          "success",
+          "message"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Unauthorized"
+          },
+          "stack": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "HealthResponse": {
+        "type": "object",
+        "required": [
+          "success",
+          "message"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "OK"
+          }
+        }
+      },
+      "AuthUser": {
+        "type": "object",
+        "required": [
+          "id",
+          "fullName",
+          "email",
+          "role",
+          "serviceCategories",
+          "isEmailVerified"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "65ff8d4ea2b4fdb3a23d8c17"
+          },
+          "fullName": {
+            "type": "string",
+            "example": "Jane Doe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "jane@example.com"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "super_admin",
+              "admin",
+              "service_provider",
+              "event_provider",
+              "venue_provider",
+              "customer"
+            ]
+          },
+          "serviceCategories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "isEmailVerified": {
+            "type": "boolean",
+            "example": true
+          },
+          "onboarding": {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": true
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "nullable": true
+          }
+        }
+      },
+      "AuthTokenUserResponse": {
+        "type": "object",
+        "required": [
+          "success",
+          "message",
+          "data"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Logged in successfully"
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "token",
+              "user"
+            ],
+            "properties": {
+              "token": {
+                "type": "string",
+                "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+              },
+              "user": {
+                "$ref": "#/components/schemas/AuthUser"
+              }
+            }
+          }
+        }
+      },
+      "AuthUserResponse": {
+        "type": "object",
+        "required": [
+          "success",
+          "message",
+          "data"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "User registered successfully. OTP sent to email for verification."
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "user"
+            ],
+            "properties": {
+              "user": {
+                "$ref": "#/components/schemas/AuthUser"
+              }
+            }
+          }
+        }
+      },
+      "MeResponse": {
+        "type": "object",
+        "required": [
+          "success",
+          "data"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "type": "object",
+            "required": [
+              "userId",
+              "email",
+              "fullName",
+              "role",
+              "serviceCategories"
+            ],
+            "properties": {
+              "userId": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "fullName": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "super_admin",
+                  "admin",
+                  "service_provider",
+                  "event_provider",
+                  "venue_provider",
+                  "customer"
+                ]
+              },
+              "serviceCategories": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "onboarding": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "nullable": true
+              }
+            }
+          }
+        }
+      },
+      "MessageResponse": {
+        "type": "object",
+        "required": [
+          "success",
+          "message"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Operation completed successfully"
+          }
+        }
+      },
+      "PaginationMeta": {
+        "type": "object",
+        "required": [
+          "page",
+          "limit",
+          "total",
+          "totalPages",
+          "hasNextPage",
+          "hasPrevPage"
+        ],
+        "properties": {
+          "page": {
+            "type": "integer",
+            "example": 1
+          },
+          "limit": {
+            "type": "integer",
+            "example": 10
+          },
+          "total": {
+            "type": "integer",
+            "example": 25
+          },
+          "totalPages": {
+            "type": "integer",
+            "example": 3
+          },
+          "hasNextPage": {
+            "type": "boolean",
+            "example": true
+          },
+          "hasPrevPage": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "ServiceItem": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "information": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "pricing": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "settings": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "media": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "availabilityOverrides": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "publishStatus": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "published",
+              "rejected"
+            ]
+          },
+          "approvedBy": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": true
+          },
+          "approvedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "VenueItem": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "information": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "pricing": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "capacity": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "media": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "availabilityOverrides": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "publishStatus": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "published",
+              "rejected"
+            ]
+          },
+          "approvedBy": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": true
+          },
+          "approvedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ServiceSingleResponse": {
+        "type": "object",
+        "required": [
+          "success",
+          "data"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/ServiceItem"
+          }
+        }
+      },
+      "VenueSingleResponse": {
+        "type": "object",
+        "required": [
+          "success",
+          "data"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/VenueItem"
+          }
+        }
+      },
+      "ServiceListResponse": {
+        "type": "object",
+        "required": [
+          "success",
+          "meta",
+          "data"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMeta"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServiceItem"
+            }
+          }
+        }
+      },
+      "VenueListResponse": {
+        "type": "object",
+        "required": [
+          "success",
+          "meta",
+          "data"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMeta"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VenueItem"
+            }
+          }
+        }
+      },
+      "EventPlannerItem": {
+        "type": "object",
+        "required": [
+          "_id",
+          "fullName",
+          "email",
+          "role",
+          "serviceCategories",
+          "isEmailVerified"
+        ],
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "event_provider"
+            ]
+          },
+          "serviceCategories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "isEmailVerified": {
+            "type": "boolean"
+          },
+          "onboarding": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "EventPlannerListResponse": {
+        "type": "object",
+        "required": [
+          "success",
+          "meta",
+          "data"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "meta": {
+            "$ref": "#/components/schemas/PaginationMeta"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EventPlannerItem"
+            }
+          }
         }
       }
     }
@@ -303,24 +1112,41 @@
   "paths": {
     "/health": {
       "get": {
-        "tags": ["System"],
+        "tags": [
+          "System"
+        ],
         "summary": "Health check",
         "responses": {
           "200": {
-            "description": "Healthy"
+            "description": "Healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "OK"
+                }
+              }
+            }
           }
         }
       }
     },
     "/api/v1/auth/register": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Register user and send verification OTP",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/RegisterRequest" },
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              },
               "examples": {
                 "customerRegister": {
                   "summary": "Register as customer",
@@ -339,7 +1165,10 @@
                     "email": "service@example.com",
                     "password": "StrongPass123",
                     "role": "service_provider",
-                    "serviceCategories": ["catering", "photography"]
+                    "serviceCategories": [
+                      "catering",
+                      "photography"
+                    ]
                   }
                 },
                 "eventProviderRegister": {
@@ -367,19 +1196,102 @@
           }
         },
         "responses": {
-          "201": { "description": "Registered" }
+          "201": {
+            "description": "Registered successfully and OTP sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthUserResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Validation failed"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Resource not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/auth/verify-email": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Verify email with OTP",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/VerifyOtpRequest" },
+              "schema": {
+                "$ref": "#/components/schemas/VerifyOtpRequest"
+              },
               "example": {
                 "email": "service@example.com",
                 "otp": "123456"
@@ -388,19 +1300,102 @@
           }
         },
         "responses": {
-          "200": { "description": "Verified" }
+          "200": {
+            "description": "Email verified",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthTokenUserResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Validation failed"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Resource not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/auth/resend-verification-otp": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Resend email verification OTP",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/EmailRequest" },
+              "schema": {
+                "$ref": "#/components/schemas/EmailRequest"
+              },
               "example": {
                 "email": "service@example.com"
               }
@@ -408,19 +1403,106 @@
           }
         },
         "responses": {
-          "200": { "description": "OTP sent" }
+          "200": {
+            "description": "Verification OTP sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Verification OTP sent"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Validation failed"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Resource not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/auth/login": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Login",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/LoginRequest" },
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              },
               "example": {
                 "email": "service@example.com",
                 "password": "StrongPass123"
@@ -429,19 +1511,102 @@
           }
         },
         "responses": {
-          "200": { "description": "Logged in" }
+          "200": {
+            "description": "Logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthTokenUserResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Validation failed"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Resource not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/auth/forgot-password": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Request password reset OTP",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/EmailRequest" },
+              "schema": {
+                "$ref": "#/components/schemas/EmailRequest"
+              },
               "example": {
                 "email": "service@example.com"
               }
@@ -449,19 +1614,106 @@
           }
         },
         "responses": {
-          "200": { "description": "Requested" }
+          "200": {
+            "description": "Password reset OTP request processed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "If an account exists for this email, a reset OTP has been sent."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Validation failed"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Resource not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/auth/reset-password": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Reset password with OTP",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/ResetPasswordRequest" },
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordRequest"
+              },
               "example": {
                 "email": "service@example.com",
                 "otp": "123456",
@@ -471,13 +1723,98 @@
           }
         },
         "responses": {
-          "200": { "description": "Password reset" }
+          "200": {
+            "description": "Password reset successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Password reset successful"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Validation failed"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Resource not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/auth/onboarding": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Submit provider onboarding",
         "security": [
           {
@@ -488,7 +1825,9 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/OnboardingRequest" },
+              "schema": {
+                "$ref": "#/components/schemas/OnboardingRequest"
+              },
               "examples": {
                 "venueProvider": {
                   "summary": "Venue provider onboarding",
@@ -504,7 +1843,10 @@
                       "venueName": "Royal Hall",
                       "venueType": "Banquet",
                       "capacity": 500,
-                      "amenities": ["Parking", "AC"]
+                      "amenities": [
+                        "Parking",
+                        "AC"
+                      ]
                     }
                   }
                 },
@@ -518,9 +1860,15 @@
                     "stripeAccountId": "acct_1234567890abc",
                     "serviceProvider": {
                       "providerType": "general_service",
-                      "serviceAreas": ["Dhaka"],
-                      "specialties": ["Catering"],
-                      "portfolioUrls": ["https://example.com/work"]
+                      "serviceAreas": [
+                        "Dhaka"
+                      ],
+                      "specialties": [
+                        "Catering"
+                      ],
+                      "portfolioUrls": [
+                        "https://example.com/work"
+                      ]
                     }
                   }
                 },
@@ -535,7 +1883,10 @@
                     "stripeAccountId": "acct_1234567890abc",
                     "eventProvider": {
                       "organizationName": "Star Events",
-                      "eventTypes": ["Wedding", "Corporate"],
+                      "eventTypes": [
+                        "Wedding",
+                        "Corporate"
+                      ],
                       "teamSize": 20,
                       "pastEventsCount": 120
                     }
@@ -546,13 +1897,109 @@
           }
         },
         "responses": {
-          "200": { "description": "Onboarding saved" }
+          "200": {
+            "description": "Onboarding submitted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthUserResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Onboarding information submitted successfully",
+                  "data": {
+                    "user": {
+                      "id": "65ff8d4ea2b4fdb3a23d8c17",
+                      "fullName": "Jane Doe",
+                      "email": "jane@example.com",
+                      "role": "venue_provider",
+                      "serviceCategories": [],
+                      "isEmailVerified": true,
+                      "onboarding": {}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Validation failed"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Resource not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/auth/me": {
       "get": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Get current user",
         "security": [
           {
@@ -560,13 +2007,94 @@
           }
         ],
         "responses": {
-          "200": { "description": "Current user" }
+          "200": {
+            "description": "Current user profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Validation failed"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Resource not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/service-provider/services": {
       "post": {
-        "tags": ["ServiceProvider"],
+        "tags": [
+          "ServiceProvider"
+        ],
         "summary": "Create service (service_provider only)",
         "security": [
           {
@@ -577,14 +2105,22 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/ServiceProviderServiceRequest" },
+              "schema": {
+                "$ref": "#/components/schemas/ServiceProviderServiceRequest"
+              },
               "example": {
                 "information": {
                   "serviceName": "Premium Catering",
                   "category": "Catering",
                   "description": "Corporate and wedding catering",
-                  "serviceArea": ["Dhaka", "Gazipur"],
-                  "tags": ["wedding", "corporate"]
+                  "serviceArea": [
+                    "Dhaka",
+                    "Gazipur"
+                  ],
+                  "tags": [
+                    "wedding",
+                    "corporate"
+                  ]
                 },
                 "pricing": {
                   "amount": 50000,
@@ -610,19 +2146,114 @@
                   "videoUrl": "https://youtube.com/watch?v=abc123"
                 },
                 "availabilityOverrides": [
-                  { "date": "2026-02-20", "status": "booked" },
-                  { "date": "2026-02-21", "status": "pending" }
+                  {
+                    "date": "2026-02-20",
+                    "status": "booked"
+                  },
+                  {
+                    "date": "2026-02-21",
+                    "status": "pending"
+                  }
                 ]
               }
             }
           }
         },
         "responses": {
-          "201": { "description": "Service created" }
+          "201": {
+            "description": "Service created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceSingleResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Service created successfully",
+                  "data": {
+                    "_id": "65ff8d4ea2b4fdb3a23d8c17",
+                    "publishStatus": "pending"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Validation failed"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Resource not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
         }
       },
       "get": {
-        "tags": ["ServiceProvider"],
+        "tags": [
+          "ServiceProvider"
+        ],
         "summary": "Get my services (service_provider only)",
         "security": [
           {
@@ -630,19 +2261,139 @@
           }
         ],
         "parameters": [
-          { "name": "page", "in": "query", "schema": { "type": "integer", "example": 1 } },
-          { "name": "limit", "in": "query", "schema": { "type": "integer", "example": 10 } },
-          { "name": "sortBy", "in": "query", "schema": { "type": "string", "example": "createdAt" } },
-          { "name": "sortOrder", "in": "query", "schema": { "type": "string", "enum": ["asc", "desc"], "example": "desc" } }
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            },
+            "description": "Page number"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10
+            },
+            "description": "Page size"
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "createdAt"
+            },
+            "description": "Sort field"
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "desc"
+            },
+            "description": "Sort order"
+          }
         ],
         "responses": {
-          "200": { "description": "Services list" }
+          "200": {
+            "description": "Published services list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Validation failed"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Resource not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/service-provider/services/{serviceId}": {
       "get": {
-        "tags": ["ServiceProvider"],
+        "tags": [
+          "ServiceProvider"
+        ],
         "summary": "Get service by id (service_provider only)",
         "security": [
           {
@@ -654,15 +2405,98 @@
             "name": "serviceId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "200": { "description": "Service details" }
+          "200": {
+            "description": "Single published service",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceSingleResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Validation failed"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Resource not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
         }
       },
       "patch": {
-        "tags": ["ServiceProvider"],
+        "tags": [
+          "ServiceProvider"
+        ],
         "summary": "Update service by id (service_provider only)",
         "security": [
           {
@@ -674,14 +2508,18 @@
             "name": "serviceId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/ServiceProviderServiceUpdateRequest" },
+              "schema": {
+                "$ref": "#/components/schemas/ServiceProviderServiceUpdateRequest"
+              },
               "example": {
                 "pricing": {
                   "amount": 45000,
@@ -691,18 +2529,110 @@
                   }
                 },
                 "availabilityOverrides": [
-                  { "date": "2026-02-25", "status": "booked" }
+                  {
+                    "date": "2026-02-25",
+                    "status": "booked"
+                  }
                 ]
               }
             }
           }
         },
         "responses": {
-          "200": { "description": "Service updated" }
+          "200": {
+            "description": "Service updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceSingleResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Service updated successfully",
+                  "data": {
+                    "_id": "65ff8d4ea2b4fdb3a23d8c17",
+                    "publishStatus": "pending"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Validation failed"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Resource not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
         }
       },
       "delete": {
-        "tags": ["ServiceProvider"],
+        "tags": [
+          "ServiceProvider"
+        ],
         "summary": "Delete service by id (service_provider only)",
         "security": [
           {
@@ -714,17 +2644,104 @@
             "name": "serviceId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "200": { "description": "Service deleted" }
+          "200": {
+            "description": "Service deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Service deleted successfully"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Validation failed"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Resource not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/venue-provider/venues": {
       "post": {
-        "tags": ["VenueProvider"],
+        "tags": [
+          "VenueProvider"
+        ],
         "summary": "Create venue (venue_provider only)",
         "security": [
           {
@@ -768,19 +2785,114 @@
                   "videoUrl": "https://youtube.com/watch?v=venue123"
                 },
                 "availabilityOverrides": [
-                  { "date": "2026-03-01", "status": "booked" },
-                  { "date": "2026-03-02", "status": "pending" }
+                  {
+                    "date": "2026-03-01",
+                    "status": "booked"
+                  },
+                  {
+                    "date": "2026-03-02",
+                    "status": "pending"
+                  }
                 ]
               }
             }
           }
         },
         "responses": {
-          "201": { "description": "Venue created" }
+          "201": {
+            "description": "Venue created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VenueSingleResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Venue created successfully",
+                  "data": {
+                    "_id": "65ff8d4ea2b4fdb3a23d8c17",
+                    "publishStatus": "pending"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Validation failed"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Resource not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
         }
       },
       "get": {
-        "tags": ["VenueProvider"],
+        "tags": [
+          "VenueProvider"
+        ],
         "summary": "Get my venues (venue_provider only)",
         "security": [
           {
@@ -788,19 +2900,139 @@
           }
         ],
         "parameters": [
-          { "name": "page", "in": "query", "schema": { "type": "integer", "example": 1 } },
-          { "name": "limit", "in": "query", "schema": { "type": "integer", "example": 10 } },
-          { "name": "sortBy", "in": "query", "schema": { "type": "string", "example": "createdAt" } },
-          { "name": "sortOrder", "in": "query", "schema": { "type": "string", "enum": ["asc", "desc"], "example": "desc" } }
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            },
+            "description": "Page number"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10
+            },
+            "description": "Page size"
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "createdAt"
+            },
+            "description": "Sort field"
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "desc"
+            },
+            "description": "Sort order"
+          }
         ],
         "responses": {
-          "200": { "description": "Venue list" }
+          "200": {
+            "description": "Published venues list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VenueListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Validation failed"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Resource not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/venue-provider/venues/{venueId}": {
       "get": {
-        "tags": ["VenueProvider"],
+        "tags": [
+          "VenueProvider"
+        ],
         "summary": "Get venue by id (venue_provider only)",
         "security": [
           {
@@ -812,15 +3044,98 @@
             "name": "venueId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "200": { "description": "Venue details" }
+          "200": {
+            "description": "Single published venue",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VenueSingleResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Validation failed"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Resource not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
         }
       },
       "patch": {
-        "tags": ["VenueProvider"],
+        "tags": [
+          "VenueProvider"
+        ],
         "summary": "Update venue by id (venue_provider only)",
         "security": [
           {
@@ -832,7 +3147,9 @@
             "name": "venueId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -844,18 +3161,110 @@
                   "maximumGuests": 550
                 },
                 "availabilityOverrides": [
-                  { "date": "2026-03-03", "status": "booked" }
+                  {
+                    "date": "2026-03-03",
+                    "status": "booked"
+                  }
                 ]
               }
             }
           }
         },
         "responses": {
-          "200": { "description": "Venue updated" }
+          "200": {
+            "description": "Venue updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VenueSingleResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Venue updated successfully",
+                  "data": {
+                    "_id": "65ff8d4ea2b4fdb3a23d8c17",
+                    "publishStatus": "pending"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Validation failed"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Resource not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
         }
       },
       "delete": {
-        "tags": ["VenueProvider"],
+        "tags": [
+          "VenueProvider"
+        ],
         "summary": "Delete venue by id (venue_provider only)",
         "security": [
           {
@@ -867,17 +3276,104 @@
             "name": "venueId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "200": { "description": "Venue deleted" }
+          "200": {
+            "description": "Venue deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Venue deleted successfully"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Validation failed"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Resource not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/admin/venues/{venueId}/approve": {
       "patch": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Approve venue and publish it (admin/super_admin)",
         "security": [
           {
@@ -889,17 +3385,108 @@
             "name": "venueId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "200": { "description": "Venue approved and published" }
+          "200": {
+            "description": "Venue approved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VenueSingleResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Venue approved successfully",
+                  "data": {
+                    "_id": "65ff8d4ea2b4fdb3a23d8c17",
+                    "publishStatus": "published"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Validation failed"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Resource not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/admin/venues/{venueId}/reject": {
       "patch": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Reject venue (admin/super_admin)",
         "security": [
           {
@@ -911,17 +3498,108 @@
             "name": "venueId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "200": { "description": "Venue rejected" }
+          "200": {
+            "description": "Venue rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VenueSingleResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Venue rejected successfully",
+                  "data": {
+                    "_id": "65ff8d4ea2b4fdb3a23d8c17",
+                    "publishStatus": "rejected"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Validation failed"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Resource not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/admin/services/{serviceId}/approve": {
       "patch": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Approve service and publish it (admin/super_admin)",
         "security": [
           {
@@ -933,17 +3611,108 @@
             "name": "serviceId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "200": { "description": "Service approved and published" }
+          "200": {
+            "description": "Service approved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceSingleResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Service approved successfully",
+                  "data": {
+                    "_id": "65ff8d4ea2b4fdb3a23d8c17",
+                    "publishStatus": "published"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Validation failed"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Resource not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
         }
       }
     },
     "/api/v1/admin/services/{serviceId}/reject": {
       "patch": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Reject service (admin/super_admin)",
         "security": [
           {
@@ -955,11 +3724,235 @@
             "name": "serviceId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "200": { "description": "Service rejected" }
+          "200": {
+            "description": "Service rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceSingleResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Service rejected successfully",
+                  "data": {
+                    "_id": "65ff8d4ea2b4fdb3a23d8c17",
+                    "publishStatus": "rejected"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Validation failed"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Resource not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/event-planners": {
+      "get": {
+        "tags": [
+          "EventPlanner"
+        ],
+        "summary": "Get all event planners (public)",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            },
+            "description": "Page number"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10
+            },
+            "description": "Page size"
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "createdAt"
+            },
+            "description": "Sort field"
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "desc"
+            },
+            "description": "Sort order"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event planners list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventPlannerListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Validation failed"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Resource not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
         }
       }
     }
