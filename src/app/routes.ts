@@ -3,6 +3,7 @@ import { adminManagementRouter } from '../modules/admin-management/admin-managem
 import { authRouter } from '../modules/auth/auth.route';
 import { eventPlannerRouter } from '../modules/event-planner/event-planner.route';
 import { serviceProviderRouter } from '../modules/service-provider/service-provider.route';
+import { uploadRouter } from '../modules/uploads/upload.route';
 import { venueProviderRouter } from '../modules/venue-provider/venue-provider.route';
 
 const router = Router();
@@ -27,6 +28,7 @@ router.get('/health', (_req, res) => {
 router.use('/api/v1/auth', authRouter);
 router.use('/api/v1/event-planners', eventPlannerRouter);
 router.use('/api/v1/service-provider', serviceProviderRouter);
+router.use('/api/v1/uploads', uploadRouter);
 router.use('/api/v1/venue-provider', venueProviderRouter);
 router.use('/api/v1/admin', adminManagementRouter);
 

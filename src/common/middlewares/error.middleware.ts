@@ -21,6 +21,10 @@ const normalizeError = (error: unknown): AppError | Error => {
     return new AppError(401, 'Unauthorized: token expired');
   }
 
+  if (err?.name === 'MulterError') {
+    return new AppError(400, 'Invalid upload payload');
+  }
+
   return error as Error;
 };
 

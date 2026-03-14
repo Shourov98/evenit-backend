@@ -116,6 +116,10 @@ MONGO_URI=mongodb://127.0.0.1:27017/saqib-express
 JWT_SECRET=replace_with_very_long_secret
 JWT_EXPIRES_IN=7d
 CORS_ORIGIN=http://localhost:3000
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+CLOUDINARY_UPLOAD_FOLDER=evenit
 RESEND_API_KEY=
 RESEND_FROM_EMAIL=onboarding@resend.dev
 OTP_EXPIRY_MINUTES=10
@@ -159,6 +163,7 @@ Then mount router in `src/app/routes.ts`.
 - `GET /api/v1/service-provider/services/:serviceId` (Bearer token, service_provider)
 - `PATCH /api/v1/service-provider/services/:serviceId` (Bearer token, service_provider)
 - `DELETE /api/v1/service-provider/services/:serviceId` (Bearer token, service_provider)
+- `POST /api/v1/uploads/venue-images` (Bearer token, multipart form-data)
 - `POST /api/v1/venue-provider/venues` (Bearer token, venue_provider)
 - `GET /api/v1/venue-provider/venues` (Bearer token, venue_provider)
 - `GET /api/v1/venue-provider/venues/:venueId` (Bearer token, venue_provider)
@@ -226,6 +231,32 @@ Fields supported:
 Calendar behavior:
 
 - Any date not listed in `availabilityOverrides` should be considered `available` by default.
+
+## Venue Image Upload API
+
+Upload venue gallery images first, then send the returned URLs in `media.galleryImages` when creating or updating a venue.
+
+Endpoint:
+
+- `POST /api/v1/uploads/venue-images` (Bearer token required)
+
+Request:
+
+- `multipart/form-data`
+- field name: `images`
+- max files: `10`
+- allowed mime types: `image/jpeg`, `image/png`, `image/webp`, `image/gif`
+- max size per file: `10MB`
+
+Response items include:
+
+- `url`
+- `publicId`
+- `format`
+- `width`
+- `height`
+- `bytes`
+- `originalName`
 
 ## Global Pagination
 
