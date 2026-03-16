@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { adminManagementRouter } from '../modules/admin-management/admin-management.route';
 import { authRouter } from '../modules/auth/auth.route';
+import { bookingRouter } from '../modules/bookings/booking.route';
 import { eventPlannerRouter } from '../modules/event-planner/event-planner.route';
 import { serviceProviderRouter } from '../modules/service-provider/service-provider.route';
 import { uploadRouter } from '../modules/uploads/upload.route';
@@ -26,6 +27,7 @@ router.get('/health', (_req, res) => {
 });
 
 router.use('/api/v1/auth', authRouter);
+router.use('/api/v1/bookings', bookingRouter);
 router.use('/api/v1/event-planners', eventPlannerRouter);
 router.use('/api/v1/service-provider', serviceProviderRouter);
 router.use('/api/v1/uploads', uploadRouter);

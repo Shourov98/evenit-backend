@@ -40,4 +40,40 @@ const buildSpecFromJSDoc = () =>
     apis: ['./src/modules/**/*.ts', './src/app/routes.ts', './dist/modules/**/*.js', './dist/app/routes.js']
   });
 
-export const openApiSpec = loadSpecFromJson() ?? buildSpecFromJSDoc();
+const mergeSpecs = () => {
+  const jsonSpec = loadSpecFromJson() as Record<string, any> | null;
+  const jsDocSpec = buildSpecFromJSDoc() as Record<string, any>;
+
+  if (!jsonSpec) {
+    return jsDocSpec;
+  }
+
+  return {
+    ...jsonSpec,
+    ...jsDocSpec,
+    info: {
+      ...(jsonSpec.info || {}),
+      ...(jsDocSpec.info || {})
+    },
+    servers: jsDocSpec.servers || jsonSpec.servers,
+    tags: [...(jsonSpec.tags || []), ...(jsDocSpec.tags || [])],
+    components: {
+      ...(jsonSpec.components || {}),
+      ...(jsDocSpec.components || {}),
+      schemas: {
+        ...(jsonSpec.components?.schemas || {}),
+        ...(jsDocSpec.components?.schemas || {})
+      },
+      securitySchemes: {
+        ...(jsonSpec.components?.securitySchemes || {}),
+        ...(jsDocSpec.components?.securitySchemes || {})
+      }
+    },
+    paths: {
+      ...(jsonSpec.paths || {}),
+      ...(jsDocSpec.paths || {})
+    }
+  };
+};
+
+export const openApiSpec = mergeSpecs();

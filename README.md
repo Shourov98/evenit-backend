@@ -120,6 +120,8 @@ CLOUDINARY_CLOUD_NAME=
 CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=
 CLOUDINARY_UPLOAD_FOLDER=evenit
+STRIPE_SECRET_KEY=
+PLATFORM_FEE_PERCENT=10
 RESEND_API_KEY=
 RESEND_FROM_EMAIL=onboarding@resend.dev
 OTP_EXPIRY_MINUTES=10
@@ -158,6 +160,15 @@ Then mount router in `src/app/routes.ts`.
 - `POST /api/v1/auth/reset-password`
 - `POST /api/v1/auth/onboarding` (Bearer token)
 - `GET /api/v1/auth/me` (Bearer token)
+- `POST /api/v1/bookings` (Bearer token, customer)
+- `GET /api/v1/bookings/my` (Bearer token, customer)
+- `GET /api/v1/bookings/provider` (Bearer token, provider roles)
+- `GET /api/v1/bookings/:bookingId` (Bearer token, booking owner/provider/admin)
+- `PATCH /api/v1/bookings/:bookingId/approve` (Bearer token, provider roles)
+- `PATCH /api/v1/bookings/:bookingId/reject` (Bearer token, provider roles)
+- `PATCH /api/v1/bookings/:bookingId/cancel` (Bearer token, customer)
+- `POST /api/v1/bookings/:bookingId/payment-intent` (Bearer token, customer)
+- `POST /api/v1/bookings/:bookingId/verify-payment` (Bearer token, customer)
 - `POST /api/v1/service-provider/services` (Bearer token, service_provider)
 - `GET /api/v1/service-provider/services` (Bearer token, service_provider)
 - `GET /api/v1/service-provider/services/:serviceId` (Bearer token, service_provider)
@@ -257,6 +268,40 @@ Response items include:
 - `height`
 - `bytes`
 - `originalName`
+
+## Booking Flow
+
+The booking module supports a shared booking resource for venue and service bookings. Event bookings are intentionally blocked until a real event entity exists in the system.
+
+Current flow:
+
+1. Customer creates a booking with `targetType`, `targetId`, `bookingDate`, and one or more `timeSlots`.
+2. The selected slots are reserved immediately in `pending` status, so overlapping requests are rejected.
+3. The provider approves or rejects the booking.
+4. After approval, the customer creates a Stripe PaymentIntent from the booking endpoint.
+5. After the frontend confirms payment with Stripe, it calls the verify-payment endpoint to mark the booking as paid and confirmed.
+
+Booking statuses:
+
+- `pending`
+- `approved`
+- `rejected`
+- `confirmed`
+- `cancelled`
+- `completed`
+
+Payment statuses:
+
+- `unpaid`
+- `requires_payment`
+- `paid`
+- `failed`
+- `refunded`
+
+Important:
+
+- Do not send raw card data to this backend.
+- Use Stripe.js or Stripe Elements on the frontend with the returned `clientSecret`.
 
 ## Global Pagination
 

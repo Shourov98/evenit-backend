@@ -11,12 +11,39 @@ router.use(protect, authorize('admin', 'super_admin'));
 
 /**
  * @openapi
+ * tags:
+ *   - name: Admin
+ *     description: Admin and super-admin moderation endpoints for services and venues
+ */
+
+/**
+ * @openapi
  * /api/v1/admin/venues/{venueId}/approve:
  *   patch:
  *     tags: [Admin]
  *     summary: Approve venue and publish it
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: venueId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         example: 65f1a9d0f1b2c3d4e5f60718
+ *     responses:
+ *       200:
+ *         description: Venue approved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/VenueResponse'
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Venue not found
  */
 router.patch('/venues/:venueId/approve', validate(venueIdParamSchema), AdminManagementController.approveVenue);
 
@@ -28,6 +55,25 @@ router.patch('/venues/:venueId/approve', validate(venueIdParamSchema), AdminMana
  *     summary: Reject venue
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: venueId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Venue rejected successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/VenueResponse'
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Venue not found
  */
 router.patch('/venues/:venueId/reject', validate(venueIdParamSchema), AdminManagementController.rejectVenue);
 
@@ -39,6 +85,25 @@ router.patch('/venues/:venueId/reject', validate(venueIdParamSchema), AdminManag
  *     summary: Approve service and publish it
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: serviceId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Service approved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ServiceResponse'
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Service not found
  */
 router.patch(
   '/services/:serviceId/approve',
@@ -54,6 +119,25 @@ router.patch(
  *     summary: Reject service
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: serviceId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Service rejected successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ServiceResponse'
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Service not found
  */
 router.patch(
   '/services/:serviceId/reject',
@@ -62,4 +146,3 @@ router.patch(
 );
 
 export const adminManagementRouter = router;
-
