@@ -19,15 +19,6 @@ export const registerSchema = z
         password: z.string().min(8).max(64),
         role: z.enum(signupRoles),
         serviceCategories: z.array(z.string().min(1)).max(20).optional().default([])
-      })
-      .superRefine((data, ctx) => {
-        if (data.role === 'service_provider' && data.serviceCategories.length === 0) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ['serviceCategories'],
-            message: 'serviceCategories is required for service_provider role'
-          });
-        }
       }),
     params: z.object({}).optional().default({}),
     query: z.object({}).optional().default({})
@@ -94,6 +85,16 @@ const verificationSchema = z
     }
   });
 
+const onboardingBaseShape = {
+  verification: verificationSchema,
+  stripeAccountId: z
+    .string()
+    .min(1)
+    .max(128)
+    .regex(/^acct_[A-Za-z0-9]+$/, 'stripeAccountId must be a valid Stripe account id'),
+  businessAddress: z.string().min(3).max(240).optional()
+};
+
 const serviceProviderDetailsSchema = z.object({
   providerType: z.enum(['general_service', 'event_management']).default('general_service'),
   serviceAreas: z.array(z.string().min(1)).min(1).max(30),
@@ -118,34 +119,35 @@ const venueProviderDetailsSchema = z.object({
   amenities: z.array(z.string().min(1)).max(80).optional().default([])
 });
 
-export const submitOnboardingSchema = z.object({
+export const submitServiceProviderOnboardingSchema = z.object({
   body: z
     .object({
-      verification: verificationSchema,
-      stripeAccountId: z
-        .string()
-        .min(1)
-        .max(128)
-        .regex(/^acct_[A-Za-z0-9]+$/, 'stripeAccountId must be a valid Stripe account id'),
-      businessAddress: z.string().min(3).max(240).optional(),
-      serviceProvider: serviceProviderDetailsSchema.optional(),
-      eventProvider: eventProviderDetailsSchema.optional(),
-      venueProvider: venueProviderDetailsSchema.optional()
+      ...onboardingBaseShape,
+      ...serviceProviderDetailsSchema.shape
     })
-    .strict()
-    .superRefine((data, ctx) => {
-      const variantCount =
-        Number(Boolean(data.serviceProvider)) +
-        Number(Boolean(data.eventProvider)) +
-        Number(Boolean(data.venueProvider));
+    .strict(),
+  params: z.object({}).optional().default({}),
+  query: z.object({}).optional().default({})
+});
 
-      if (variantCount !== 1) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Exactly one onboarding profile is required: serviceProvider, eventProvider, or venueProvider'
-        });
-      }
-    }),
+export const submitEventProviderOnboardingSchema = z.object({
+  body: z
+    .object({
+      ...onboardingBaseShape,
+      ...eventProviderDetailsSchema.shape
+    })
+    .strict(),
+  params: z.object({}).optional().default({}),
+  query: z.object({}).optional().default({})
+});
+
+export const submitVenueProviderOnboardingSchema = z.object({
+  body: z
+    .object({
+      ...onboardingBaseShape,
+      ...venueProviderDetailsSchema.shape
+    })
+    .strict(),
   params: z.object({}).optional().default({}),
   query: z.object({}).optional().default({})
 });

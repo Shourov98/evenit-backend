@@ -158,7 +158,9 @@ Then mount router in `src/app/routes.ts`.
 - `POST /api/v1/auth/login`
 - `POST /api/v1/auth/forgot-password`
 - `POST /api/v1/auth/reset-password`
-- `POST /api/v1/auth/onboarding` (Bearer token)
+- `POST /api/v1/auth/onboarding/service-provider` (Bearer token)
+- `POST /api/v1/auth/onboarding/event-provider` (Bearer token)
+- `POST /api/v1/auth/onboarding/venue-provider` (Bearer token)
 - `GET /api/v1/auth/me` (Bearer token)
 - `POST /api/v1/bookings` (Bearer token, customer)
 - `GET /api/v1/bookings/my` (Bearer token, customer)
@@ -188,11 +190,11 @@ Then mount router in `src/app/routes.ts`.
 
 ## Auth + Role Design
 
-- Signup fields: `fullName`, `email`, `password`, `role`, `serviceCategories`.
+- Signup fields: `fullName`, `email`, `password`, `role`, optional `serviceCategories`.
 - `fullName` must include at least 2 words (first + last name).
 - Public signup roles allowed: `customer`, `service_provider`, `event_provider`, `venue_provider`.
 - Restricted roles `admin` and `super_admin` should be created only through protected admin-only flows.
-- `serviceCategories` is required when role is `service_provider`.
+- `serviceCategories` is optional for all public signup roles.
 - Login is blocked until email OTP verification is completed.
 - OTP request is unlimited but enforced with a 30-second cooldown per purpose.
 
@@ -200,7 +202,9 @@ Then mount router in `src/app/routes.ts`.
 
 Endpoint:
 
-- `POST /api/v1/auth/onboarding` (Bearer token required)
+- `POST /api/v1/auth/onboarding/service-provider` (Bearer token required)
+- `POST /api/v1/auth/onboarding/event-provider` (Bearer token required)
+- `POST /api/v1/auth/onboarding/venue-provider` (Bearer token required)
 
 Common required fields:
 
@@ -213,12 +217,11 @@ Optional common fields:
 - `verification.companyName` (required when businessType is `company`)
 - `businessAddress`
 
-Role-specific onboarding object:
+Role-specific required fields:
 
-- `service_provider` role must send `serviceProvider`
-- `event_provider` role must send `eventProvider`
-- `venue_provider` role must send `venueProvider`
-- Exactly one of `serviceProvider`, `eventProvider`, `venueProvider` is allowed in one request.
+- Service provider onboarding: `providerType`, `serviceAreas`, optional `yearsOfExperience`, `teamSize`, `specialties`, `portfolioUrls`
+- Event provider onboarding: `organizationName`, `eventTypes`, optional `teamSize`, `pastEventsCount`, `portfolioUrls`
+- Venue provider onboarding: `venueName`, `venueType`, `capacity`, optional `amenities`
 
 Note:
 

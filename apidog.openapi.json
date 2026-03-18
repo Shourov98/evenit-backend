@@ -299,11 +299,13 @@
           }
         }
       },
-      "OnboardingRequest": {
+      "ServiceProviderOnboardingRequest": {
         "type": "object",
         "required": [
           "verification",
-          "stripeAccountId"
+          "stripeAccountId",
+          "providerType",
+          "serviceAreas"
         ],
         "properties": {
           "verification": {
@@ -316,17 +318,142 @@
           "businessAddress": {
             "type": "string"
           },
-          "serviceProvider": {
-            "$ref": "#/components/schemas/ServiceProviderDetails"
+          "providerType": {
+            "type": "string",
+            "enum": ["general_service", "event_management"]
           },
-          "eventProvider": {
-            "$ref": "#/components/schemas/EventProviderDetails"
+          "serviceAreas": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
-          "venueProvider": {
-            "$ref": "#/components/schemas/VenueProviderDetails"
+          "yearsOfExperience": {
+            "type": "integer"
+          },
+          "teamSize": {
+            "type": "integer"
+          },
+          "specialties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "portfolioUrls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
           }
         },
-        "description": "Send exactly one profile object among serviceProvider, eventProvider, or venueProvider.",
+        "description": "Service provider onboarding payload.",
+        "example": {
+          "verification": {
+            "businessType": "individual",
+            "nationalIdOrTradeLicenseUrl": "https://cdn.example.com/nid.pdf"
+          },
+          "stripeAccountId": "acct_1234567890abc",
+          "providerType": "general_service",
+          "serviceAreas": ["Dhaka"],
+          "specialties": ["Catering"],
+          "portfolioUrls": ["https://example.com/work"]
+        }
+      },
+      "EventProviderOnboardingRequest": {
+        "type": "object",
+        "required": [
+          "verification",
+          "stripeAccountId",
+          "organizationName",
+          "eventTypes"
+        ],
+        "properties": {
+          "verification": {
+            "$ref": "#/components/schemas/VerificationInfo"
+          },
+          "stripeAccountId": {
+            "type": "string",
+            "example": "acct_1234567890abc"
+          },
+          "businessAddress": {
+            "type": "string"
+          },
+          "organizationName": {
+            "type": "string"
+          },
+          "eventTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "teamSize": {
+            "type": "integer"
+          },
+          "pastEventsCount": {
+            "type": "integer"
+          },
+          "portfolioUrls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        },
+        "description": "Event provider onboarding payload.",
+        "example": {
+          "verification": {
+            "businessType": "company",
+            "companyName": "Star Events",
+            "nationalIdOrTradeLicenseUrl": "https://cdn.example.com/license.pdf"
+          },
+          "stripeAccountId": "acct_1234567890abc",
+          "organizationName": "Star Events",
+          "eventTypes": ["Wedding", "Corporate"],
+          "teamSize": 20,
+          "pastEventsCount": 120
+        }
+      },
+      "VenueProviderOnboardingRequest": {
+        "type": "object",
+        "required": [
+          "verification",
+          "stripeAccountId",
+          "venueName",
+          "venueType",
+          "capacity"
+        ],
+        "properties": {
+          "verification": {
+            "$ref": "#/components/schemas/VerificationInfo"
+          },
+          "stripeAccountId": {
+            "type": "string",
+            "example": "acct_1234567890abc"
+          },
+          "businessAddress": {
+            "type": "string"
+          },
+          "venueName": {
+            "type": "string"
+          },
+          "venueType": {
+            "type": "string"
+          },
+          "capacity": {
+            "type": "integer"
+          },
+          "amenities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "description": "Venue provider onboarding payload.",
         "example": {
           "verification": {
             "businessType": "company",
@@ -335,16 +462,10 @@
           },
           "stripeAccountId": "acct_1234567890abc",
           "businessAddress": "Dhaka",
-          "venueProvider": {
-            "venueName": "Royal Hall",
-            "venueType": "Banquet",
-            "capacity": 500,
-            "amenities": [
-              "Parking",
-              "AC",
-              "Stage"
-            ]
-          }
+          "venueName": "Royal Hall",
+          "venueType": "Banquet",
+          "capacity": 500,
+          "amenities": ["Parking", "AC", "Stage"]
         }
       },
       "ServiceProviderServiceRequest": {
@@ -1165,10 +1286,7 @@
                     "email": "service@example.com",
                     "password": "StrongPass123",
                     "role": "service_provider",
-                    "serviceCategories": [
-                      "catering",
-                      "photography"
-                    ]
+                    "serviceCategories": []
                   }
                 },
                 "eventProviderRegister": {
@@ -1810,12 +1928,12 @@
         }
       }
     },
-    "/api/v1/auth/onboarding": {
+    "/api/v1/auth/onboarding/service-provider": {
       "post": {
         "tags": [
           "Auth"
         ],
-        "summary": "Submit provider onboarding",
+        "summary": "Submit service provider onboarding",
         "security": [
           {
             "bearerAuth": []
@@ -1826,30 +1944,9 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/OnboardingRequest"
+                "$ref": "#/components/schemas/ServiceProviderOnboardingRequest"
               },
               "examples": {
-                "venueProvider": {
-                  "summary": "Venue provider onboarding",
-                  "value": {
-                    "verification": {
-                      "businessType": "company",
-                      "companyName": "Royal Hall Ltd",
-                      "nationalIdOrTradeLicenseUrl": "https://cdn.example.com/trade-license.pdf"
-                    },
-                    "stripeAccountId": "acct_1234567890abc",
-                    "businessAddress": "Dhaka",
-                    "venueProvider": {
-                      "venueName": "Royal Hall",
-                      "venueType": "Banquet",
-                      "capacity": 500,
-                      "amenities": [
-                        "Parking",
-                        "AC"
-                      ]
-                    }
-                  }
-                },
                 "serviceProvider": {
                   "summary": "Service provider onboarding",
                   "value": {
@@ -1858,38 +1955,16 @@
                       "nationalIdOrTradeLicenseUrl": "https://cdn.example.com/nid.pdf"
                     },
                     "stripeAccountId": "acct_1234567890abc",
-                    "serviceProvider": {
-                      "providerType": "general_service",
-                      "serviceAreas": [
-                        "Dhaka"
-                      ],
-                      "specialties": [
-                        "Catering"
-                      ],
-                      "portfolioUrls": [
-                        "https://example.com/work"
-                      ]
-                    }
-                  }
-                },
-                "eventProvider": {
-                  "summary": "Event provider onboarding",
-                  "value": {
-                    "verification": {
-                      "businessType": "company",
-                      "companyName": "Star Events",
-                      "nationalIdOrTradeLicenseUrl": "https://cdn.example.com/license.pdf"
-                    },
-                    "stripeAccountId": "acct_1234567890abc",
-                    "eventProvider": {
-                      "organizationName": "Star Events",
-                      "eventTypes": [
-                        "Wedding",
-                        "Corporate"
-                      ],
-                      "teamSize": 20,
-                      "pastEventsCount": 120
-                    }
+                    "providerType": "general_service",
+                    "serviceAreas": [
+                      "Dhaka"
+                    ],
+                    "specialties": [
+                      "Catering"
+                    ],
+                    "portfolioUrls": [
+                      "https://example.com/work"
+                    ]
                   }
                 }
               }
@@ -3949,6 +4024,117 @@
                 "example": {
                   "success": false,
                   "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/onboarding/event-provider": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Submit event provider onboarding",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventProviderOnboardingRequest"
+              },
+              "examples": {
+                "eventProvider": {
+                  "summary": "Event provider onboarding",
+                  "value": {
+                    "verification": {
+                      "businessType": "company",
+                      "companyName": "Star Events",
+                      "nationalIdOrTradeLicenseUrl": "https://cdn.example.com/license.pdf"
+                    },
+                    "stripeAccountId": "acct_1234567890abc",
+                    "organizationName": "Star Events",
+                    "eventTypes": [
+                      "Wedding",
+                      "Corporate"
+                    ],
+                    "teamSize": 20,
+                    "pastEventsCount": 120
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Onboarding submitted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthUserResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/onboarding/venue-provider": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Submit venue provider onboarding",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VenueProviderOnboardingRequest"
+              },
+              "examples": {
+                "venueProvider": {
+                  "summary": "Venue provider onboarding",
+                  "value": {
+                    "verification": {
+                      "businessType": "company",
+                      "companyName": "Royal Hall Ltd",
+                      "nationalIdOrTradeLicenseUrl": "https://cdn.example.com/trade-license.pdf"
+                    },
+                    "stripeAccountId": "acct_1234567890abc",
+                    "businessAddress": "Dhaka",
+                    "venueName": "Royal Hall",
+                    "venueType": "Banquet",
+                    "capacity": 500,
+                    "amenities": [
+                      "Parking",
+                      "AC"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Onboarding submitted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthUserResponse"
                 }
               }
             }

@@ -25,15 +25,19 @@ interface RegisterPayload {
   serviceCategories: string[];
 }
 
-interface SubmitOnboardingPayload {
+interface SubmitOnboardingCommonPayload {
   userId: string;
   verification: IVerificationInfo;
   stripeAccountId: string;
   businessAddress?: string;
-  serviceProvider?: IServiceProviderOnboarding;
-  eventProvider?: IEventProviderOnboarding;
-  venueProvider?: IVenueProviderOnboarding;
 }
+
+type SubmitServiceProviderOnboardingPayload = SubmitOnboardingCommonPayload &
+  IServiceProviderOnboarding;
+type SubmitEventProviderOnboardingPayload = SubmitOnboardingCommonPayload &
+  IEventProviderOnboarding;
+type SubmitVenueProviderOnboardingPayload = SubmitOnboardingCommonPayload &
+  IVenueProviderOnboarding;
 
 const sendOtpForPurpose = async (
   user: IUser,
@@ -114,6 +118,22 @@ const verifyOtp = async (payload: {
 };
 
 export class AuthService {
+  private static async getUserForOnboarding(
+    userId: string,
+    role: Extract<UserRole, 'service_provider' | 'event_provider' | 'venue_provider'>
+  ) {
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      throw new AppError(404, 'User not found');
+    }
+
+    if (user.role !== role) {
+      throw new AppError(400, `${role} can only submit ${role} onboarding`);
+    }
+
+    return user;
+  }
+
   static async register(payload: RegisterPayload) {
     const existing = await UserModel.findOne({ email: payload.email.toLowerCase() });
     if (existing) {
@@ -133,48 +153,67 @@ export class AuthService {
     return { user };
   }
 
-  static async submitOnboarding(payload: SubmitOnboardingPayload) {
-    const user = await UserModel.findById(payload.userId);
-    if (!user) {
-      throw new AppError(404, 'User not found');
-    }
-
-    const hasServiceProvider = Boolean(payload.serviceProvider);
-    const hasEventProvider = Boolean(payload.eventProvider);
-    const hasVenueProvider = Boolean(payload.venueProvider);
-    const profileCount =
-      Number(hasServiceProvider) + Number(hasEventProvider) + Number(hasVenueProvider);
-
-    if (profileCount !== 1) {
-      throw new AppError(
-        400,
-        'Exactly one onboarding profile is required: serviceProvider, eventProvider, or venueProvider'
-      );
-    }
-
-    if (user.role === 'service_provider' && !hasServiceProvider) {
-      throw new AppError(400, 'service_provider must submit serviceProvider onboarding profile');
-    }
-
-    if (user.role === 'event_provider' && !hasEventProvider) {
-      throw new AppError(400, 'event_provider must submit eventProvider onboarding profile');
-    }
-
-    if (user.role === 'venue_provider' && !hasVenueProvider) {
-      throw new AppError(400, 'venue_provider must submit venueProvider onboarding profile');
-    }
-
-    if (!['service_provider', 'event_provider', 'venue_provider'].includes(user.role)) {
-      throw new AppError(403, 'Only provider roles can submit onboarding');
-    }
-
+  static async submitServiceProviderOnboarding(payload: SubmitServiceProviderOnboardingPayload) {
+    const user = await AuthService.getUserForOnboarding(payload.userId, 'service_provider');
     user.onboarding = {
       verification: payload.verification,
       stripeAccountId: payload.stripeAccountId,
       businessAddress: payload.businessAddress,
-      serviceProvider: payload.serviceProvider,
-      eventProvider: payload.eventProvider,
-      venueProvider: payload.venueProvider,
+      serviceProvider: {
+        providerType: payload.providerType,
+        serviceAreas: payload.serviceAreas,
+        yearsOfExperience: payload.yearsOfExperience,
+        teamSize: payload.teamSize,
+        specialties: payload.specialties,
+        portfolioUrls: payload.portfolioUrls
+      },
+      eventProvider: undefined,
+      venueProvider: undefined,
+      submittedAt: new Date()
+    };
+
+    await user.save();
+
+    return user;
+  }
+
+  static async submitEventProviderOnboarding(payload: SubmitEventProviderOnboardingPayload) {
+    const user = await AuthService.getUserForOnboarding(payload.userId, 'event_provider');
+    user.onboarding = {
+      verification: payload.verification,
+      stripeAccountId: payload.stripeAccountId,
+      businessAddress: payload.businessAddress,
+      serviceProvider: undefined,
+      eventProvider: {
+        organizationName: payload.organizationName,
+        eventTypes: payload.eventTypes,
+        teamSize: payload.teamSize,
+        pastEventsCount: payload.pastEventsCount,
+        portfolioUrls: payload.portfolioUrls
+      },
+      venueProvider: undefined,
+      submittedAt: new Date()
+    };
+
+    await user.save();
+
+    return user;
+  }
+
+  static async submitVenueProviderOnboarding(payload: SubmitVenueProviderOnboardingPayload) {
+    const user = await AuthService.getUserForOnboarding(payload.userId, 'venue_provider');
+    user.onboarding = {
+      verification: payload.verification,
+      stripeAccountId: payload.stripeAccountId,
+      businessAddress: payload.businessAddress,
+      serviceProvider: undefined,
+      eventProvider: undefined,
+      venueProvider: {
+        venueName: payload.venueName,
+        venueType: payload.venueType,
+        capacity: payload.capacity,
+        amenities: payload.amenities
+      },
       submittedAt: new Date()
     };
 

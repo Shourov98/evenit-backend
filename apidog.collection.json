@@ -38,7 +38,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"fullName\": \"Jane Doe\",\n  \"email\": \"jane@example.com\",\n  \"password\": \"StrongPass123\",\n  \"role\": \"service_provider\",\n  \"serviceCategories\": [\"catering\"]\n}"
+              "raw": "{\n  \"fullName\": \"Jane Doe\",\n  \"email\": \"jane@example.com\",\n  \"password\": \"StrongPass123\",\n  \"role\": \"service_provider\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/auth/register",
@@ -89,12 +89,12 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"verification\": {\n    \"businessType\": \"individual\",\n    \"nationalIdOrTradeLicenseUrl\": \"https://cdn.example.com/nid.pdf\"\n  },\n  \"stripeAccountId\": \"acct_1234567890abc\",\n  \"serviceProvider\": {\n    \"providerType\": \"general_service\",\n    \"serviceAreas\": [\"Dhaka\"],\n    \"specialties\": [\"Catering\"],\n    \"portfolioUrls\": [\"https://example.com/work\"]\n  }\n}"
+              "raw": "{\n  \"verification\": {\n    \"businessType\": \"individual\",\n    \"nationalIdOrTradeLicenseUrl\": \"https://cdn.example.com/nid.pdf\"\n  },\n  \"stripeAccountId\": \"acct_1234567890abc\",\n  \"providerType\": \"general_service\",\n  \"serviceAreas\": [\"Dhaka\"],\n  \"specialties\": [\"Catering\"],\n  \"portfolioUrls\": [\"https://example.com/work\"]\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/auth/onboarding",
+              "raw": "{{baseUrl}}/api/v1/auth/onboarding/service-provider",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "auth", "onboarding"]
+              "path": ["api", "v1", "auth", "onboarding", "service-provider"]
             }
           }
         }

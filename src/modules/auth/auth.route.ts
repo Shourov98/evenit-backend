@@ -9,7 +9,9 @@ import {
   registerSchema,
   resendVerificationOtpSchema,
   resetPasswordSchema,
-  submitOnboardingSchema,
+  submitEventProviderOnboardingSchema,
+  submitServiceProviderOnboardingSchema,
+  submitVenueProviderOnboardingSchema,
   verifyEmailOtpSchema
 } from './auth.schema';
 
@@ -207,9 +209,9 @@ const router = Router();
  *           items:
  *             type: string
  *           example: ["wifi", "parking", "ac"]
- *     AuthOnboardingRequest:
+ *     ServiceProviderOnboardingRequest:
  *       type: object
- *       required: [verification, stripeAccountId]
+ *       required: [verification, stripeAccountId, providerType, serviceAreas]
  *       properties:
  *         verification:
  *           $ref: '#/components/schemas/VerificationInfoInput'
@@ -219,12 +221,88 @@ const router = Router();
  *         businessAddress:
  *           type: string
  *           example: Farmgate, Dhaka
- *         serviceProvider:
- *           $ref: '#/components/schemas/ServiceProviderOnboardingInput'
- *         eventProvider:
- *           $ref: '#/components/schemas/EventProviderOnboardingInput'
- *         venueProvider:
- *           $ref: '#/components/schemas/VenueProviderOnboardingInput'
+ *         providerType:
+ *           type: string
+ *           enum: [general_service, event_management]
+ *           example: general_service
+ *         serviceAreas:
+ *           type: array
+ *           items:
+ *             type: string
+ *           example: [Dhaka, Gazipur]
+ *         yearsOfExperience:
+ *           type: integer
+ *           example: 5
+ *         teamSize:
+ *           type: integer
+ *           example: 12
+ *         specialties:
+ *           type: array
+ *           items:
+ *             type: string
+ *           example: [Photography, Lighting]
+ *         portfolioUrls:
+ *           type: array
+ *           items:
+ *             type: string
+ *             format: uri
+ *     EventProviderOnboardingRequest:
+ *       type: object
+ *       required: [verification, stripeAccountId, organizationName, eventTypes]
+ *       properties:
+ *         verification:
+ *           $ref: '#/components/schemas/VerificationInfoInput'
+ *         stripeAccountId:
+ *           type: string
+ *           example: acct_1Example123456789
+ *         businessAddress:
+ *           type: string
+ *           example: Farmgate, Dhaka
+ *         organizationName:
+ *           type: string
+ *           example: Premium Events BD
+ *         eventTypes:
+ *           type: array
+ *           items:
+ *             type: string
+ *           example: [Wedding, Corporate]
+ *         teamSize:
+ *           type: integer
+ *           example: 20
+ *         pastEventsCount:
+ *           type: integer
+ *           example: 120
+ *         portfolioUrls:
+ *           type: array
+ *           items:
+ *             type: string
+ *             format: uri
+ *     VenueProviderOnboardingRequest:
+ *       type: object
+ *       required: [verification, stripeAccountId, venueName, venueType, capacity]
+ *       properties:
+ *         verification:
+ *           $ref: '#/components/schemas/VerificationInfoInput'
+ *         stripeAccountId:
+ *           type: string
+ *           example: acct_1Example123456789
+ *         businessAddress:
+ *           type: string
+ *           example: Farmgate, Dhaka
+ *         venueName:
+ *           type: string
+ *           example: Grand Hall
+ *         venueType:
+ *           type: string
+ *           example: Banquet
+ *         capacity:
+ *           type: integer
+ *           example: 500
+ *         amenities:
+ *           type: array
+ *           items:
+ *             type: string
+ *           example: [wifi, parking, ac]
  *     AuthUserResponse:
  *       type: object
  *       properties:
@@ -451,10 +529,10 @@ router.post('/reset-password', authLimiter, validate(resetPasswordSchema), AuthC
 
 /**
  * @openapi
- * /api/v1/auth/onboarding:
+ * /api/v1/auth/onboarding/service-provider:
  *   post:
  *     tags: [Auth]
- *     summary: Submit provider onboarding details
+ *     summary: Submit service provider onboarding details
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -462,7 +540,7 @@ router.post('/reset-password', authLimiter, validate(resetPasswordSchema), AuthC
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/AuthOnboardingRequest'
+ *             $ref: '#/components/schemas/ServiceProviderOnboardingRequest'
  *     responses:
  *       200:
  *         description: Onboarding submitted successfully
@@ -475,7 +553,78 @@ router.post('/reset-password', authLimiter, validate(resetPasswordSchema), AuthC
  *       401:
  *         description: Unauthorized
  */
-router.post('/onboarding', protect, validate(submitOnboardingSchema), AuthController.submitOnboarding);
+router.post(
+  '/onboarding/service-provider',
+  protect,
+  validate(submitServiceProviderOnboardingSchema),
+  AuthController.submitServiceProviderOnboarding
+);
+
+/**
+ * @openapi
+ * /api/v1/auth/onboarding/event-provider:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Submit event provider onboarding details
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/EventProviderOnboardingRequest'
+ *     responses:
+ *       200:
+ *         description: Onboarding submitted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AuthUserResponse'
+ *       400:
+ *         description: Validation error
+ *       401:
+ *         description: Unauthorized
+ */
+router.post(
+  '/onboarding/event-provider',
+  protect,
+  validate(submitEventProviderOnboardingSchema),
+  AuthController.submitEventProviderOnboarding
+);
+
+/**
+ * @openapi
+ * /api/v1/auth/onboarding/venue-provider:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Submit venue provider onboarding details
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/VenueProviderOnboardingRequest'
+ *     responses:
+ *       200:
+ *         description: Onboarding submitted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AuthUserResponse'
+ *       400:
+ *         description: Validation error
+ *       401:
+ *         description: Unauthorized
+ */
+router.post(
+  '/onboarding/venue-provider',
+  protect,
+  validate(submitVenueProviderOnboardingSchema),
+  AuthController.submitVenueProviderOnboarding
+);
 
 /**
  * @openapi

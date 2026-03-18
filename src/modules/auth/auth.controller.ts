@@ -9,7 +9,7 @@ export class AuthController {
       email: string;
       password: string;
       role: 'customer' | 'service_provider' | 'event_provider' | 'venue_provider';
-      serviceCategories: string[];
+      serviceCategories?: string[];
     };
 
     const { user } = await AuthService.register({
@@ -17,7 +17,7 @@ export class AuthController {
       email,
       password,
       role,
-      serviceCategories
+      serviceCategories: serviceCategories ?? []
     });
 
     return res.status(201).json({
@@ -37,16 +37,82 @@ export class AuthController {
     });
   });
 
-  static submitOnboarding = catchAsync(async (req: Request, res: Response) => {
+  private static getAuthorizedUserId(req: Request, res: Response) {
     const userId = req.user?.userId;
     if (!userId) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         message: 'Unauthorized'
       });
+      return null;
     }
 
-    const user = await AuthService.submitOnboarding({
+    return userId;
+  }
+
+  static submitServiceProviderOnboarding = catchAsync(async (req: Request, res: Response) => {
+    const userId = AuthController.getAuthorizedUserId(req, res);
+    if (!userId) {
+      return;
+    }
+
+    const user = await AuthService.submitServiceProviderOnboarding({
+      userId,
+      ...req.body
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Onboarding information submitted successfully',
+      data: {
+        user: {
+          id: String(user._id),
+          fullName: user.fullName,
+          email: user.email,
+          role: user.role,
+          serviceCategories: user.serviceCategories,
+          isEmailVerified: user.isEmailVerified,
+          onboarding: user.onboarding ?? null
+        }
+      }
+    });
+  });
+
+  static submitEventProviderOnboarding = catchAsync(async (req: Request, res: Response) => {
+    const userId = AuthController.getAuthorizedUserId(req, res);
+    if (!userId) {
+      return;
+    }
+
+    const user = await AuthService.submitEventProviderOnboarding({
+      userId,
+      ...req.body
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Onboarding information submitted successfully',
+      data: {
+        user: {
+          id: String(user._id),
+          fullName: user.fullName,
+          email: user.email,
+          role: user.role,
+          serviceCategories: user.serviceCategories,
+          isEmailVerified: user.isEmailVerified,
+          onboarding: user.onboarding ?? null
+        }
+      }
+    });
+  });
+
+  static submitVenueProviderOnboarding = catchAsync(async (req: Request, res: Response) => {
+    const userId = AuthController.getAuthorizedUserId(req, res);
+    if (!userId) {
+      return;
+    }
+
+    const user = await AuthService.submitVenueProviderOnboarding({
       userId,
       ...req.body
     });
