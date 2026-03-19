@@ -24,13 +24,26 @@ export interface IVerificationInfo {
   nationalIdOrTradeLicenseUrl: string;
 }
 
+export interface IServiceProviderVerificationInfo {
+  businessType: BusinessType;
+  companyName?: string;
+  nationalIdOrTradeLicenseFiles: string[];
+}
+
+export interface IServiceProviderProfileInfo {
+  serviceName: string;
+  serviceCategory: string;
+  serviceDescription?: string;
+  coverageArea: string[];
+  verification: IServiceProviderVerificationInfo;
+}
+
 export interface IServiceProviderOnboarding {
-  providerType: ServiceProviderType;
-  serviceAreas: string[];
-  yearsOfExperience?: number;
-  teamSize?: number;
-  specialties: string[];
-  portfolioUrls: string[];
+  _id: string;
+  name: string;
+  email: string;
+  profileInfo: IServiceProviderProfileInfo;
+  services: string[];
 }
 
 export interface IVenueProviderOnboarding {
@@ -50,7 +63,7 @@ export interface IEventProviderOnboarding {
 
 export interface IProviderOnboarding {
   verification: IVerificationInfo;
-  stripeAccountId: string;
+  stripeAccountId?: string;
   businessAddress?: string;
   serviceProvider?: IServiceProviderOnboarding;
   eventProvider?: IEventProviderOnboarding;
@@ -93,30 +106,68 @@ const verificationSchema = new Schema<IVerificationInfo>(
 
 const serviceProviderOnboardingSchema = new Schema<IServiceProviderOnboarding>(
   {
-    providerType: {
+    _id: {
       type: String,
-      enum: SERVICE_PROVIDER_TYPES,
       required: true
     },
-    serviceAreas: {
-      type: [String],
+    name: {
+      type: String,
       required: true,
-      default: []
+      trim: true,
+      minlength: 2,
+      maxlength: 120
     },
-    yearsOfExperience: {
-      type: Number,
-      min: 0,
-      max: 80
+    email: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true
     },
-    teamSize: {
-      type: Number,
-      min: 1
+    profileInfo: {
+      serviceName: {
+        type: String,
+        required: true,
+        trim: true,
+        minlength: 2,
+        maxlength: 120
+      },
+      serviceCategory: {
+        type: String,
+        required: true,
+        trim: true,
+        minlength: 2,
+        maxlength: 80
+      },
+      serviceDescription: {
+        type: String,
+        trim: true,
+        maxlength: 2000
+      },
+      coverageArea: {
+        type: [String],
+        required: true,
+        default: []
+      },
+      verification: {
+        businessType: {
+          type: String,
+          enum: BUSINESS_TYPES,
+          required: true
+        },
+        companyName: {
+          type: String,
+          trim: true,
+          minlength: 2,
+          maxlength: 120
+        },
+        nationalIdOrTradeLicenseFiles: {
+          type: [String],
+          required: true,
+          default: []
+        }
+      }
     },
-    specialties: {
-      type: [String],
-      default: []
-    },
-    portfolioUrls: {
+    services: {
       type: [String],
       default: []
     }
@@ -191,7 +242,6 @@ const providerOnboardingSchema = new Schema<IProviderOnboarding>(
     },
     stripeAccountId: {
       type: String,
-      required: true,
       trim: true
     },
     businessAddress: {

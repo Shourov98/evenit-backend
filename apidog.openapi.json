@@ -302,63 +302,106 @@
       "ServiceProviderOnboardingRequest": {
         "type": "object",
         "required": [
-          "verification",
-          "stripeAccountId",
-          "providerType",
-          "serviceAreas"
+          "_id",
+          "name",
+          "email",
+          "profileInfo",
+          "services"
         ],
         "properties": {
-          "verification": {
-            "$ref": "#/components/schemas/VerificationInfo"
+          "_id": {
+            "type": "string",
+            "example": "65f1a9d0f1b2c3d4e5f60001"
+          },
+          "name": {
+            "type": "string",
+            "example": "Jane Doe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "jane@example.com"
           },
           "stripeAccountId": {
             "type": "string",
             "example": "acct_1234567890abc"
           },
-          "businessAddress": {
-            "type": "string"
+          "profileInfo": {
+            "type": "object",
+            "required": [
+              "serviceName",
+              "serviceCategory",
+              "coverageArea",
+              "verification"
+            ],
+            "properties": {
+              "serviceName": {
+                "type": "string"
+              },
+              "serviceCategory": {
+                "type": "string"
+              },
+              "serviceDescription": {
+                "type": "string"
+              },
+              "coverageArea": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "verification": {
+                "type": "object",
+                "required": [
+                  "businessType",
+                  "nationalIdOrTradeLicenseFiles"
+                ],
+                "properties": {
+                  "businessType": {
+                    "type": "string",
+                    "enum": ["individual", "company"]
+                  },
+                  "companyName": {
+                    "type": "string"
+                  },
+                  "nationalIdOrTradeLicenseFiles": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uri"
+                    }
+                  }
+                }
+              }
+            }
           },
-          "providerType": {
-            "type": "string",
-            "enum": ["general_service", "event_management"]
-          },
-          "serviceAreas": {
+          "services": {
             "type": "array",
             "items": {
               "type": "string"
-            }
-          },
-          "yearsOfExperience": {
-            "type": "integer"
-          },
-          "teamSize": {
-            "type": "integer"
-          },
-          "specialties": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "portfolioUrls": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uri"
             }
           }
         },
         "description": "Service provider onboarding payload.",
         "example": {
-          "verification": {
-            "businessType": "individual",
-            "nationalIdOrTradeLicenseUrl": "https://cdn.example.com/nid.pdf"
-          },
+          "_id": "65f1a9d0f1b2c3d4e5f60001",
+          "name": "Jane Doe",
+          "email": "jane@example.com",
           "stripeAccountId": "acct_1234567890abc",
-          "providerType": "general_service",
-          "serviceAreas": ["Dhaka"],
-          "specialties": ["Catering"],
-          "portfolioUrls": ["https://example.com/work"]
+          "profileInfo": {
+            "serviceName": "Premium Catering",
+            "serviceCategory": "Catering",
+            "serviceDescription": "Corporate and wedding catering services",
+            "coverageArea": ["Dhaka"],
+            "verification": {
+              "businessType": "individual",
+              "nationalIdOrTradeLicenseFiles": [
+                "https://cdn.example.com/nid-front.jpg",
+                "https://cdn.example.com/trade-license.pdf"
+              ]
+            }
+          },
+          "services": []
         }
       },
       "EventProviderOnboardingRequest": {
@@ -1950,21 +1993,26 @@
                 "serviceProvider": {
                   "summary": "Service provider onboarding",
                   "value": {
-                    "verification": {
-                      "businessType": "individual",
-                      "nationalIdOrTradeLicenseUrl": "https://cdn.example.com/nid.pdf"
-                    },
+                    "_id": "65f1a9d0f1b2c3d4e5f60001",
+                    "name": "Jane Doe",
+                    "email": "jane@example.com",
                     "stripeAccountId": "acct_1234567890abc",
-                    "providerType": "general_service",
-                    "serviceAreas": [
-                      "Dhaka"
-                    ],
-                    "specialties": [
-                      "Catering"
-                    ],
-                    "portfolioUrls": [
-                      "https://example.com/work"
-                    ]
+                    "profileInfo": {
+                      "serviceName": "Premium Catering",
+                      "serviceCategory": "Catering",
+                      "serviceDescription": "Corporate and wedding catering services",
+                      "coverageArea": [
+                        "Dhaka"
+                      ],
+                      "verification": {
+                        "businessType": "individual",
+                        "nationalIdOrTradeLicenseFiles": [
+                          "https://cdn.example.com/nid-front.jpg",
+                          "https://cdn.example.com/trade-license.pdf"
+                        ]
+                      }
+                    },
+                    "services": []
                   }
                 }
               }

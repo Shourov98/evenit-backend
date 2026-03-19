@@ -139,35 +139,43 @@ const router = Router();
  *           type: string
  *           format: uri
  *           example: https://example.com/trade-license.pdf
- *     ServiceProviderOnboardingInput:
+ *     ServiceProviderVerificationInput:
  *       type: object
- *       required: [providerType, serviceAreas]
+ *       required: [businessType, nationalIdOrTradeLicenseFiles]
  *       properties:
- *         providerType:
+ *         businessType:
  *           type: string
- *           enum: [general_service, event_management]
- *           example: general_service
- *         serviceAreas:
- *           type: array
- *           items:
- *             type: string
- *           example: ["Dhaka", "Gazipur"]
- *         yearsOfExperience:
- *           type: integer
- *           example: 5
- *         teamSize:
- *           type: integer
- *           example: 12
- *         specialties:
- *           type: array
- *           items:
- *             type: string
- *           example: ["Photography", "Lighting"]
- *         portfolioUrls:
+ *           enum: [individual, company]
+ *           example: individual
+ *         companyName:
+ *           type: string
+ *           example: Evenit Ltd
+ *         nationalIdOrTradeLicenseFiles:
  *           type: array
  *           items:
  *             type: string
  *             format: uri
+ *           example: ["https://example.com/nid-front.jpg", "https://example.com/trade-license.pdf"]
+ *     ServiceProviderProfileInfoInput:
+ *       type: object
+ *       required: [serviceName, serviceCategory, coverageArea, verification]
+ *       properties:
+ *         serviceName:
+ *           type: string
+ *           example: Premium Catering
+ *         serviceCategory:
+ *           type: string
+ *           example: Catering
+ *         serviceDescription:
+ *           type: string
+ *           example: Corporate and wedding catering services
+ *         coverageArea:
+ *           type: array
+ *           items:
+ *             type: string
+ *           example: ["Dhaka", "Gazipur"]
+ *         verification:
+ *           $ref: '#/components/schemas/ServiceProviderVerificationInput'
  *     EventProviderOnboardingInput:
  *       type: object
  *       required: [organizationName, eventTypes]
@@ -211,41 +219,28 @@ const router = Router();
  *           example: ["wifi", "parking", "ac"]
  *     ServiceProviderOnboardingRequest:
  *       type: object
- *       required: [verification, stripeAccountId, providerType, serviceAreas]
+ *       required: [_id, name, email, profileInfo, services]
  *       properties:
- *         verification:
- *           $ref: '#/components/schemas/VerificationInfoInput'
+ *         _id:
+ *           type: string
+ *           example: 65f1a9d0f1b2c3d4e5f60001
+ *         name:
+ *           type: string
+ *           example: Marvin McKinney
+ *         email:
+ *           type: string
+ *           format: email
+ *           example: marvin@example.com
  *         stripeAccountId:
  *           type: string
  *           example: acct_1Example123456789
- *         businessAddress:
- *           type: string
- *           example: Farmgate, Dhaka
- *         providerType:
- *           type: string
- *           enum: [general_service, event_management]
- *           example: general_service
- *         serviceAreas:
+ *         profileInfo:
+ *           $ref: '#/components/schemas/ServiceProviderProfileInfoInput'
+ *         services:
  *           type: array
  *           items:
  *             type: string
- *           example: [Dhaka, Gazipur]
- *         yearsOfExperience:
- *           type: integer
- *           example: 5
- *         teamSize:
- *           type: integer
- *           example: 12
- *         specialties:
- *           type: array
- *           items:
- *             type: string
- *           example: [Photography, Lighting]
- *         portfolioUrls:
- *           type: array
- *           items:
- *             type: string
- *             format: uri
+ *           example: []
  *     EventProviderOnboardingRequest:
  *       type: object
  *       required: [verification, stripeAccountId, organizationName, eventTypes]

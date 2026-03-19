@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+const objectIdRegex = /^[a-fA-F0-9]{24}$/;
+
 const fullNameRule = z
   .string()
   .min(3)
@@ -95,13 +97,26 @@ const onboardingBaseShape = {
   businessAddress: z.string().min(3).max(240).optional()
 };
 
-const serviceProviderDetailsSchema = z.object({
-  providerType: z.enum(['general_service', 'event_management']).default('general_service'),
-  serviceAreas: z.array(z.string().min(1)).min(1).max(30),
-  yearsOfExperience: z.number().int().min(0).max(80).optional(),
-  teamSize: z.number().int().min(1).max(100000).optional(),
-  specialties: z.array(z.string().min(1)).max(50).optional().default([]),
-  portfolioUrls: z.array(z.string().url()).max(20).optional().default([])
+const serviceProviderProfileInfoSchema = z.object({
+  serviceName: z.string().min(2).max(120),
+  serviceCategory: z.string().min(2).max(80),
+  serviceDescription: z.string().max(2000).optional(),
+  coverageArea: z.array(z.string().min(1)).min(1).max(30),
+  verification: z
+    .object({
+      businessType: z.enum(['individual', 'company']),
+      companyName: z.string().min(2).max(120).optional(),
+      nationalIdOrTradeLicenseFiles: z.array(z.string().url()).min(1).max(10)
+    })
+    .superRefine((data, ctx) => {
+      if (data.businessType === 'company' && !data.companyName) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['companyName'],
+          message: 'companyName is required when businessType is company'
+        });
+      }
+    })
 });
 
 const eventProviderDetailsSchema = z.object({
@@ -122,8 +137,17 @@ const venueProviderDetailsSchema = z.object({
 export const submitServiceProviderOnboardingSchema = z.object({
   body: z
     .object({
-      ...onboardingBaseShape,
-      ...serviceProviderDetailsSchema.shape
+      _id: z.string().regex(objectIdRegex, 'Invalid _id'),
+      name: z.string().min(2).max(120),
+      email: z.string().email(),
+      stripeAccountId: z
+        .string()
+        .min(1)
+        .max(128)
+        .regex(/^acct_[A-Za-z0-9]+$/, 'stripeAccountId must be a valid Stripe account id')
+        .optional(),
+      profileInfo: serviceProviderProfileInfoSchema,
+      services: z.array(z.string()).optional().default([])
     })
     .strict(),
   params: z.object({}).optional().default({}),

@@ -28,12 +28,19 @@ interface RegisterPayload {
 interface SubmitOnboardingCommonPayload {
   userId: string;
   verification: IVerificationInfo;
-  stripeAccountId: string;
+  stripeAccountId?: string;
   businessAddress?: string;
 }
 
-type SubmitServiceProviderOnboardingPayload = SubmitOnboardingCommonPayload &
-  IServiceProviderOnboarding;
+interface SubmitServiceProviderOnboardingPayload {
+  userId: string;
+  _id: string;
+  name: string;
+  email: string;
+  stripeAccountId?: string;
+  profileInfo: IServiceProviderOnboarding['profileInfo'];
+  services: string[];
+}
 type SubmitEventProviderOnboardingPayload = SubmitOnboardingCommonPayload &
   IEventProviderOnboarding;
 type SubmitVenueProviderOnboardingPayload = SubmitOnboardingCommonPayload &
@@ -155,17 +162,32 @@ export class AuthService {
 
   static async submitServiceProviderOnboarding(payload: SubmitServiceProviderOnboardingPayload) {
     const user = await AuthService.getUserForOnboarding(payload.userId, 'service_provider');
+    if (payload._id !== String(user._id)) {
+      throw new AppError(400, '_id must match the authenticated service provider');
+    }
+
+    if (payload.email.toLowerCase() !== user.email.toLowerCase()) {
+      throw new AppError(400, 'email must match the authenticated service provider');
+    }
+
+    if (payload.name.trim() !== user.fullName) {
+      throw new AppError(400, 'name must match the authenticated service provider');
+    }
+
     user.onboarding = {
-      verification: payload.verification,
+      verification: {
+        businessType: payload.profileInfo.verification.businessType,
+        companyName: payload.profileInfo.verification.companyName,
+        nationalIdOrTradeLicenseUrl:
+          payload.profileInfo.verification.nationalIdOrTradeLicenseFiles[0]
+      },
       stripeAccountId: payload.stripeAccountId,
-      businessAddress: payload.businessAddress,
       serviceProvider: {
-        providerType: payload.providerType,
-        serviceAreas: payload.serviceAreas,
-        yearsOfExperience: payload.yearsOfExperience,
-        teamSize: payload.teamSize,
-        specialties: payload.specialties,
-        portfolioUrls: payload.portfolioUrls
+        _id: payload._id,
+        name: payload.name,
+        email: payload.email.toLowerCase(),
+        profileInfo: payload.profileInfo,
+        services: payload.services
       },
       eventProvider: undefined,
       venueProvider: undefined,

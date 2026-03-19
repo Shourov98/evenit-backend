@@ -206,27 +206,19 @@ Endpoint:
 - `POST /api/v1/auth/onboarding/event-provider` (Bearer token required)
 - `POST /api/v1/auth/onboarding/venue-provider` (Bearer token required)
 
-Common required fields:
-
-- `verification.businessType` (`individual` or `company`)
-- `verification.nationalIdOrTradeLicenseUrl` (URL)
-- `stripeAccountId` (Stripe connected account id, e.g. `acct_xxx`)
-
-Optional common fields:
-
-- `verification.companyName` (required when businessType is `company`)
-- `businessAddress`
-
 Role-specific required fields:
 
-- Service provider onboarding: `providerType`, `serviceAreas`, optional `yearsOfExperience`, `teamSize`, `specialties`, `portfolioUrls`
+- Service provider onboarding: `_id`, `name`, `email`, `profileInfo`, `services`
+- `profileInfo`: `serviceName`, `serviceCategory` (single value), optional `serviceDescription`, `coverageArea[]`, `verification`
+- Service provider `profileInfo.verification`: `businessType`, optional `companyName`, `nationalIdOrTradeLicenseFiles[]` (uploaded image/doc/pdf URLs)
+- `stripeAccountId` is optional for service provider onboarding and can be submitted later before payouts are needed
 - Event provider onboarding: `organizationName`, `eventTypes`, optional `teamSize`, `pastEventsCount`, `portfolioUrls`
 - Venue provider onboarding: `venueName`, `venueType`, `capacity`, optional `amenities`
 
 Note:
 
 - Payment info / bank card fields are not accepted in onboarding payload.
-- Use `stripeAccountId` instead.
+- For event and venue providers, use `stripeAccountId`.
 
 ## Service Provider Service API
 
