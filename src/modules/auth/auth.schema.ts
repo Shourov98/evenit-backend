@@ -10,7 +10,7 @@ const fullNameRule = z
     message: 'fullName must include at least first name and last name'
   });
 
-const signupRoles = ['customer', 'service_provider', 'event_provider', 'venue_provider'] as const;
+const signupRoles = ['customer', 'service_provider', 'event_planner', 'venue_provider'] as const;
 
 export const registerSchema = z
   .object({
@@ -120,18 +120,52 @@ const serviceProviderProfileInfoSchema = z.object({
 });
 
 const eventProviderDetailsSchema = z.object({
-  organizationName: z.string().min(2).max(120),
-  eventTypes: z.array(z.string().min(1)).min(1).max(30),
-  teamSize: z.number().int().min(1).max(100000).optional(),
-  pastEventsCount: z.number().int().min(0).max(1000000).optional(),
-  portfolioUrls: z.array(z.string().url()).max(20).optional().default([])
+  _id: z.string().regex(objectIdRegex, 'Invalid _id'),
+  fullName: z.string().min(2).max(120),
+  email: z.string().email(),
+  stripeAccountId: z
+    .string()
+    .min(1)
+    .max(128)
+    .regex(/^acct_[A-Za-z0-9]+$/, 'stripeAccountId must be a valid Stripe account id'),
+  profileInfo: z.object({
+    name: z.string().min(2).max(120),
+    description: z.string().max(2000).optional(),
+    coverageArea: z.array(z.string().min(1)).min(1).max(30),
+    address: z.string().min(3).max(240),
+    verification: z
+      .object({
+        businessType: z.enum(['individual', 'company']),
+        companyName: z.string().min(2).max(120).optional(),
+        nationalIdOrTradeLicenseFiles: z.array(z.string().url()).min(1).max(10)
+      })
+      .superRefine((data, ctx) => {
+        if (data.businessType === 'company' && !data.companyName) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['companyName'],
+            message: 'companyName is required when businessType is company'
+          });
+        }
+      })
+  })
 });
 
 const venueProviderDetailsSchema = z.object({
-  venueName: z.string().min(2).max(120),
-  venueType: z.string().min(2).max(60),
-  capacity: z.number().int().min(1).max(1000000),
-  amenities: z.array(z.string().min(1)).max(80).optional().default([])
+  _id: z.string().regex(objectIdRegex, 'Invalid _id'),
+  fullName: z.string().min(2).max(120),
+  email: z.string().email(),
+  stripeAccountId: z
+    .string()
+    .min(1)
+    .max(128)
+    .regex(/^acct_[A-Za-z0-9]+$/, 'stripeAccountId must be a valid Stripe account id'),
+  businessName: z.string().min(2).max(120),
+  businessType: z.enum(['individual', 'company']),
+  legalBusinessName: z.string().min(2).max(120),
+  registrationNo: z.string().min(2).max(120),
+  businessMail: z.string().email(),
+  businessPhoneNo: z.string().min(5).max(30)
 });
 
 export const submitServiceProviderOnboardingSchema = z.object({
@@ -157,7 +191,6 @@ export const submitServiceProviderOnboardingSchema = z.object({
 export const submitEventProviderOnboardingSchema = z.object({
   body: z
     .object({
-      ...onboardingBaseShape,
       ...eventProviderDetailsSchema.shape
     })
     .strict(),
@@ -168,7 +201,6 @@ export const submitEventProviderOnboardingSchema = z.object({
 export const submitVenueProviderOnboardingSchema = z.object({
   body: z
     .object({
-      ...onboardingBaseShape,
       ...venueProviderDetailsSchema.shape
     })
     .strict(),

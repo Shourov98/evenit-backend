@@ -8,7 +8,7 @@ export class AuthController {
       fullName: string;
       email: string;
       password: string;
-      role: 'customer' | 'service_provider' | 'event_provider' | 'venue_provider';
+      role: 'customer' | 'service_provider' | 'event_planner' | 'venue_provider';
       serviceCategories?: string[];
     };
 

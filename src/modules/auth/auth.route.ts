@@ -39,7 +39,7 @@ const router = Router();
  *           example: marvin@example.com
  *         role:
  *           type: string
- *           enum: [customer, service_provider, event_provider, venue_provider, admin, super_admin]
+ *           enum: [customer, service_provider, event_planner, venue_provider, admin, super_admin]
  *           example: customer
  *         serviceCategories:
  *           type: array
@@ -71,7 +71,7 @@ const router = Router();
  *           example: strongPass123
  *         role:
  *           type: string
- *           enum: [customer, service_provider, event_provider, venue_provider]
+ *           enum: [customer, service_provider, event_planner, venue_provider]
  *           example: customer
  *         serviceCategories:
  *           type: array
@@ -176,47 +176,80 @@ const router = Router();
  *           example: ["Dhaka", "Gazipur"]
  *         verification:
  *           $ref: '#/components/schemas/ServiceProviderVerificationInput'
- *     EventProviderOnboardingInput:
+ *     EventPlannerOnboardingInput:
  *       type: object
- *       required: [organizationName, eventTypes]
+ *       required: [_id, fullName, email, stripeAccountId, profileInfo]
  *       properties:
- *         organizationName:
+ *         _id:
  *           type: string
- *           example: Premium Events BD
- *         eventTypes:
- *           type: array
- *           items:
- *             type: string
- *           example: ["Wedding", "Corporate"]
- *         teamSize:
- *           type: integer
- *           example: 20
- *         pastEventsCount:
- *           type: integer
- *           example: 120
- *         portfolioUrls:
- *           type: array
- *           items:
- *             type: string
- *             format: uri
+ *           example: 65f1a9d0f1b2c3d4e5f60002
+ *         fullName:
+ *           type: string
+ *           example: Star Events
+ *         email:
+ *           type: string
+ *           format: email
+ *           example: planner@example.com
+ *         stripeAccountId:
+ *           type: string
+ *           example: acct_1Example123456789
+ *         profileInfo:
+ *           type: object
+ *           required: [name, coverageArea, address, verification]
+ *           properties:
+ *             name:
+ *               type: string
+ *               example: Star Events
+ *             description:
+ *               type: string
+ *               example: Wedding and corporate event planning
+ *             coverageArea:
+ *               type: array
+ *               items:
+ *                 type: string
+ *               example: ["Dhaka", "Chattogram"]
+ *             address:
+ *               type: string
+ *               example: Banani, Dhaka
+ *             verification:
+ *               $ref: '#/components/schemas/ServiceProviderVerificationInput'
  *     VenueProviderOnboardingInput:
  *       type: object
- *       required: [venueName, venueType, capacity]
+ *       required: [_id, fullName, email, stripeAccountId, businessName, businessType, legalBusinessName, registrationNo, businessMail, businessPhoneNo]
  *       properties:
- *         venueName:
+ *         _id:
  *           type: string
- *           example: Grand Hall
- *         venueType:
+ *           example: 65f1a9d0f1b2c3d4e5f60003
+ *         fullName:
  *           type: string
- *           example: Banquet
- *         capacity:
- *           type: integer
- *           example: 500
- *         amenities:
- *           type: array
- *           items:
- *             type: string
- *           example: ["wifi", "parking", "ac"]
+ *           example: Royal Hall Owner
+ *         email:
+ *           type: string
+ *           format: email
+ *           example: venue@example.com
+ *         stripeAccountId:
+ *           type: string
+ *           example: acct_1Example123456789
+ *         businessName:
+ *           type: string
+ *           example: Royal Hall
+ *         businessType:
+ *           type: string
+ *           enum: [individual, company]
+ *           example: company
+ *         legalBusinessName:
+ *           type: string
+ *           example: Royal Hall Ltd
+ *         registrationNo:
+ *           type: string
+ *           example: TRD-123456
+ *         businessMail:
+ *           type: string
+ *           format: email
+ *           example: info@royalhall.com
+ *         businessPhoneNo:
+ *           type: string
+ *           example: +8801700000000
  *     ServiceProviderOnboardingRequest:
  *       type: object
  *       required: [_id, name, email, profileInfo, services]
@@ -241,63 +274,62 @@ const router = Router();
  *           items:
  *             type: string
  *           example: []
- *     EventProviderOnboardingRequest:
+ *     EventPlannerOnboardingRequest:
  *       type: object
- *       required: [verification, stripeAccountId, organizationName, eventTypes]
+ *       required: [_id, fullName, email, stripeAccountId, profileInfo]
  *       properties:
- *         verification:
- *           $ref: '#/components/schemas/VerificationInfoInput'
+ *         _id:
+ *           type: string
+ *           example: 65f1a9d0f1b2c3d4e5f60002
+ *         fullName:
+ *           type: string
+ *           example: Star Events
+ *         email:
+ *           type: string
+ *           format: email
+ *           example: planner@example.com
  *         stripeAccountId:
  *           type: string
  *           example: acct_1Example123456789
- *         businessAddress:
- *           type: string
- *           example: Farmgate, Dhaka
- *         organizationName:
- *           type: string
- *           example: Premium Events BD
- *         eventTypes:
- *           type: array
- *           items:
- *             type: string
- *           example: [Wedding, Corporate]
- *         teamSize:
- *           type: integer
- *           example: 20
- *         pastEventsCount:
- *           type: integer
- *           example: 120
- *         portfolioUrls:
- *           type: array
- *           items:
- *             type: string
- *             format: uri
+ *         profileInfo:
+ *           $ref: '#/components/schemas/EventPlannerOnboardingInput'
  *     VenueProviderOnboardingRequest:
  *       type: object
- *       required: [verification, stripeAccountId, venueName, venueType, capacity]
+ *       required: [_id, fullName, email, stripeAccountId, businessName, businessType, legalBusinessName, registrationNo, businessMail, businessPhoneNo]
  *       properties:
- *         verification:
- *           $ref: '#/components/schemas/VerificationInfoInput'
+ *         _id:
+ *           type: string
+ *           example: 65f1a9d0f1b2c3d4e5f60003
+ *         fullName:
+ *           type: string
+ *           example: Royal Hall Owner
+ *         email:
+ *           type: string
+ *           format: email
+ *           example: venue@example.com
  *         stripeAccountId:
  *           type: string
  *           example: acct_1Example123456789
- *         businessAddress:
+ *         businessName:
  *           type: string
- *           example: Farmgate, Dhaka
- *         venueName:
+ *           example: Royal Hall
+ *         businessType:
  *           type: string
- *           example: Grand Hall
- *         venueType:
+ *           enum: [individual, company]
+ *           example: company
+ *         legalBusinessName:
  *           type: string
- *           example: Banquet
- *         capacity:
- *           type: integer
- *           example: 500
- *         amenities:
- *           type: array
- *           items:
- *             type: string
- *           example: [wifi, parking, ac]
+ *           example: Royal Hall Ltd
+ *         registrationNo:
+ *           type: string
+ *           example: TRD-123456
+ *         businessMail:
+ *           type: string
+ *           format: email
+ *           example: info@royalhall.com
+ *         businessPhoneNo:
+ *           type: string
+ *           example: +8801700000000
  *     AuthUserResponse:
  *       type: object
  *       properties:
@@ -557,10 +589,10 @@ router.post(
 
 /**
  * @openapi
- * /api/v1/auth/onboarding/event-provider:
+ * /api/v1/auth/onboarding/event-planner:
  *   post:
  *     tags: [Auth]
- *     summary: Submit event provider onboarding details
+ *     summary: Submit event planner onboarding details
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -568,7 +600,7 @@ router.post(
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/EventProviderOnboardingRequest'
+ *             $ref: '#/components/schemas/EventPlannerOnboardingRequest'
  *     responses:
  *       200:
  *         description: Onboarding submitted successfully
@@ -582,7 +614,7 @@ router.post(
  *         description: Unauthorized
  */
 router.post(
-  '/onboarding/event-provider',
+  '/onboarding/event-planner',
   protect,
   validate(submitEventProviderOnboardingSchema),
   AuthController.submitEventProviderOnboarding

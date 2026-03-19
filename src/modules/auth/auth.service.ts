@@ -21,7 +21,7 @@ interface RegisterPayload {
   fullName: string;
   email: string;
   password: string;
-  role: Extract<UserRole, 'customer' | 'service_provider' | 'event_provider' | 'venue_provider'>;
+  role: Extract<UserRole, 'customer' | 'service_provider' | 'event_planner' | 'venue_provider'>;
   serviceCategories: string[];
 }
 
@@ -127,7 +127,7 @@ const verifyOtp = async (payload: {
 export class AuthService {
   private static async getUserForOnboarding(
     userId: string,
-    role: Extract<UserRole, 'service_provider' | 'event_provider' | 'venue_provider'>
+    role: Extract<UserRole, 'service_provider' | 'event_planner' | 'venue_provider'>
   ) {
     const user = await UserModel.findById(userId);
     if (!user) {
@@ -200,18 +200,33 @@ export class AuthService {
   }
 
   static async submitEventProviderOnboarding(payload: SubmitEventProviderOnboardingPayload) {
-    const user = await AuthService.getUserForOnboarding(payload.userId, 'event_provider');
+    const user = await AuthService.getUserForOnboarding(payload.userId, 'event_planner');
+    if (payload._id !== String(user._id)) {
+      throw new AppError(400, '_id must match the authenticated event planner');
+    }
+
+    if (payload.email.toLowerCase() !== user.email.toLowerCase()) {
+      throw new AppError(400, 'email must match the authenticated event planner');
+    }
+
+    if (payload.fullName.trim() !== user.fullName) {
+      throw new AppError(400, 'fullName must match the authenticated event planner');
+    }
+
     user.onboarding = {
-      verification: payload.verification,
+      verification: {
+        businessType: payload.profileInfo.verification.businessType,
+        companyName: payload.profileInfo.verification.companyName,
+        nationalIdOrTradeLicenseUrl:
+          payload.profileInfo.verification.nationalIdOrTradeLicenseFiles[0]
+      },
       stripeAccountId: payload.stripeAccountId,
-      businessAddress: payload.businessAddress,
       serviceProvider: undefined,
       eventProvider: {
-        organizationName: payload.organizationName,
-        eventTypes: payload.eventTypes,
-        teamSize: payload.teamSize,
-        pastEventsCount: payload.pastEventsCount,
-        portfolioUrls: payload.portfolioUrls
+        _id: payload._id,
+        fullName: payload.fullName,
+        email: payload.email.toLowerCase(),
+        profileInfo: payload.profileInfo
       },
       venueProvider: undefined,
       submittedAt: new Date()
@@ -224,17 +239,38 @@ export class AuthService {
 
   static async submitVenueProviderOnboarding(payload: SubmitVenueProviderOnboardingPayload) {
     const user = await AuthService.getUserForOnboarding(payload.userId, 'venue_provider');
+    if (payload._id !== String(user._id)) {
+      throw new AppError(400, '_id must match the authenticated venue provider');
+    }
+
+    if (payload.email.toLowerCase() !== user.email.toLowerCase()) {
+      throw new AppError(400, 'email must match the authenticated venue provider');
+    }
+
+    if (payload.fullName.trim() !== user.fullName) {
+      throw new AppError(400, 'fullName must match the authenticated venue provider');
+    }
+
     user.onboarding = {
-      verification: payload.verification,
+      verification: {
+        businessType: payload.businessType,
+        companyName: payload.legalBusinessName,
+        nationalIdOrTradeLicenseUrl: payload.registrationNo
+      },
       stripeAccountId: payload.stripeAccountId,
-      businessAddress: payload.businessAddress,
       serviceProvider: undefined,
       eventProvider: undefined,
       venueProvider: {
-        venueName: payload.venueName,
-        venueType: payload.venueType,
-        capacity: payload.capacity,
-        amenities: payload.amenities
+        _id: payload._id,
+        fullName: payload.fullName,
+        email: payload.email.toLowerCase(),
+        stripeAccountId: payload.stripeAccountId,
+        businessName: payload.businessName,
+        businessType: payload.businessType,
+        legalBusinessName: payload.legalBusinessName,
+        registrationNo: payload.registrationNo,
+        businessMail: payload.businessMail.toLowerCase(),
+        businessPhoneNo: payload.businessPhoneNo
       },
       submittedAt: new Date()
     };

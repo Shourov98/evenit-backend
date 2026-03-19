@@ -5,7 +5,7 @@ export const USER_ROLES = [
   'super_admin',
   'admin',
   'service_provider',
-  'event_provider',
+  'event_planner',
   'venue_provider',
   'customer'
 ] as const;
@@ -47,18 +47,29 @@ export interface IServiceProviderOnboarding {
 }
 
 export interface IVenueProviderOnboarding {
-  venueName: string;
-  venueType: string;
-  capacity: number;
-  amenities: string[];
+  _id: string;
+  fullName: string;
+  email: string;
+  stripeAccountId: string;
+  businessName: string;
+  businessType: BusinessType;
+  legalBusinessName: string;
+  registrationNo: string;
+  businessMail: string;
+  businessPhoneNo: string;
 }
 
 export interface IEventProviderOnboarding {
-  organizationName: string;
-  eventTypes: string[];
-  teamSize?: number;
-  pastEventsCount?: number;
-  portfolioUrls: string[];
+  _id: string;
+  fullName: string;
+  email: string;
+  profileInfo: {
+    name: string;
+    description?: string;
+    coverageArea: string[];
+    address: string;
+    verification: IServiceProviderVerificationInfo;
+  };
 }
 
 export interface IProviderOnboarding {
@@ -177,28 +188,66 @@ const serviceProviderOnboardingSchema = new Schema<IServiceProviderOnboarding>(
 
 const venueProviderOnboardingSchema = new Schema<IVenueProviderOnboarding>(
   {
-    venueName: {
+    _id: {
+      type: String,
+      required: true
+    },
+    fullName: {
       type: String,
       required: true,
       trim: true,
       minlength: 2,
       maxlength: 120
     },
-    venueType: {
+    email: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true
+    },
+    stripeAccountId: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    businessName: {
       type: String,
       required: true,
       trim: true,
       minlength: 2,
-      maxlength: 60
+      maxlength: 120
     },
-    capacity: {
-      type: Number,
+    businessType: {
+      type: String,
       required: true,
-      min: 1
+      enum: BUSINESS_TYPES
     },
-    amenities: {
-      type: [String],
-      default: []
+    legalBusinessName: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 2,
+      maxlength: 120
+    },
+    registrationNo: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 2,
+      maxlength: 120
+    },
+    businessMail: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true
+    },
+    businessPhoneNo: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 5,
+      maxlength: 30
     }
   },
   { _id: false }
@@ -206,29 +255,66 @@ const venueProviderOnboardingSchema = new Schema<IVenueProviderOnboarding>(
 
 const eventProviderOnboardingSchema = new Schema<IEventProviderOnboarding>(
   {
-    organizationName: {
+    _id: {
+      required: true,
+      type: String
+    },
+    fullName: {
       type: String,
       required: true,
       trim: true,
       minlength: 2,
       maxlength: 120
     },
-    eventTypes: {
-      type: [String],
+    email: {
+      type: String,
       required: true,
-      default: []
+      trim: true,
+      lowercase: true
     },
-    teamSize: {
-      type: Number,
-      min: 1
-    },
-    pastEventsCount: {
-      type: Number,
-      min: 0
-    },
-    portfolioUrls: {
-      type: [String],
-      default: []
+    profileInfo: {
+      name: {
+        type: String,
+        required: true,
+        trim: true,
+        minlength: 2,
+        maxlength: 120
+      },
+      description: {
+        type: String,
+        trim: true,
+        maxlength: 2000
+      },
+      coverageArea: {
+        type: [String],
+        required: true,
+        default: []
+      },
+      address: {
+        type: String,
+        required: true,
+        trim: true,
+        minlength: 3,
+        maxlength: 240
+      },
+      verification: {
+        businessType: {
+          type: String,
+          enum: BUSINESS_TYPES,
+          required: true
+        },
+        companyName: {
+          type: String,
+          trim: true,
+          minlength: 2,
+          maxlength: 120
+        },
+        nationalIdOrTradeLicenseFiles: {
+          type: [String],
+          required: true,
+          default: []
+        }
+      }
     }
   },
   { _id: false }

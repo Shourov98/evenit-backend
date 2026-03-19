@@ -66,7 +66,7 @@
             "enum": [
               "customer",
               "service_provider",
-              "event_provider",
+              "event_planner",
               "venue_provider"
             ]
           },
@@ -404,111 +404,170 @@
           "services": []
         }
       },
-      "EventProviderOnboardingRequest": {
+      "EventPlannerOnboardingRequest": {
         "type": "object",
         "required": [
-          "verification",
+          "_id",
+          "fullName",
+          "email",
           "stripeAccountId",
-          "organizationName",
-          "eventTypes"
+          "profileInfo"
         ],
         "properties": {
-          "verification": {
-            "$ref": "#/components/schemas/VerificationInfo"
+          "_id": {
+            "type": "string",
+            "example": "65f1a9d0f1b2c3d4e5f60002"
+          },
+          "fullName": {
+            "type": "string",
+            "example": "Star Events"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "planner@example.com"
           },
           "stripeAccountId": {
             "type": "string",
             "example": "acct_1234567890abc"
           },
-          "businessAddress": {
-            "type": "string"
-          },
-          "organizationName": {
-            "type": "string"
-          },
-          "eventTypes": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "teamSize": {
-            "type": "integer"
-          },
-          "pastEventsCount": {
-            "type": "integer"
-          },
-          "portfolioUrls": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uri"
+          "profileInfo": {
+            "type": "object",
+            "required": [
+              "name",
+              "coverageArea",
+              "address",
+              "verification"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "coverageArea": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "address": {
+                "type": "string"
+              },
+              "verification": {
+                "type": "object",
+                "required": [
+                  "businessType",
+                  "nationalIdOrTradeLicenseFiles"
+                ],
+                "properties": {
+                  "businessType": {
+                    "type": "string",
+                    "enum": ["individual", "company"]
+                  },
+                  "companyName": {
+                    "type": "string"
+                  },
+                  "nationalIdOrTradeLicenseFiles": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uri"
+                    }
+                  }
+                }
+              }
             }
           }
         },
-        "description": "Event provider onboarding payload.",
+        "description": "Event planner onboarding payload.",
         "example": {
-          "verification": {
-            "businessType": "company",
-            "companyName": "Star Events",
-            "nationalIdOrTradeLicenseUrl": "https://cdn.example.com/license.pdf"
-          },
+          "_id": "65f1a9d0f1b2c3d4e5f60002",
+          "fullName": "Star Events",
+          "email": "planner@example.com",
           "stripeAccountId": "acct_1234567890abc",
-          "organizationName": "Star Events",
-          "eventTypes": ["Wedding", "Corporate"],
-          "teamSize": 20,
-          "pastEventsCount": 120
+          "profileInfo": {
+            "name": "Star Events",
+            "description": "Wedding and corporate event planning",
+            "coverageArea": ["Dhaka", "Chattogram"],
+            "address": "Banani, Dhaka",
+            "verification": {
+              "businessType": "company",
+              "companyName": "Star Events",
+              "nationalIdOrTradeLicenseFiles": [
+                "https://cdn.example.com/license-front.jpg",
+                "https://cdn.example.com/license.pdf"
+              ]
+            }
+          }
         }
       },
       "VenueProviderOnboardingRequest": {
         "type": "object",
         "required": [
-          "verification",
+          "_id",
+          "fullName",
+          "email",
           "stripeAccountId",
-          "venueName",
-          "venueType",
-          "capacity"
+          "businessName",
+          "businessType",
+          "legalBusinessName",
+          "registrationNo",
+          "businessMail",
+          "businessPhoneNo"
         ],
         "properties": {
-          "verification": {
-            "$ref": "#/components/schemas/VerificationInfo"
+          "_id": {
+            "type": "string",
+            "example": "65f1a9d0f1b2c3d4e5f60003"
+          },
+          "fullName": {
+            "type": "string",
+            "example": "Royal Hall Owner"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "venue@example.com"
           },
           "stripeAccountId": {
             "type": "string",
             "example": "acct_1234567890abc"
           },
-          "businessAddress": {
+          "businessName": {
             "type": "string"
           },
-          "venueName": {
+          "businessType": {
+            "type": "string",
+            "enum": ["individual", "company"]
+          },
+          "legalBusinessName": {
             "type": "string"
           },
-          "venueType": {
+          "registrationNo": {
             "type": "string"
           },
-          "capacity": {
-            "type": "integer"
+          "businessMail": {
+            "type": "string",
+            "format": "email"
           },
-          "amenities": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
+          "businessPhoneNo": {
+            "type": "string"
           }
         },
         "description": "Venue provider onboarding payload.",
         "example": {
-          "verification": {
-            "businessType": "company",
-            "companyName": "Royal Hall Ltd",
-            "nationalIdOrTradeLicenseUrl": "https://cdn.example.com/trade-license.pdf"
-          },
+          "_id": "65f1a9d0f1b2c3d4e5f60003",
+          "fullName": "Royal Hall Owner",
+          "email": "venue@example.com",
           "stripeAccountId": "acct_1234567890abc",
-          "businessAddress": "Dhaka",
-          "venueName": "Royal Hall",
-          "venueType": "Banquet",
-          "capacity": 500,
-          "amenities": ["Parking", "AC", "Stage"]
+          "businessName": "Royal Hall",
+          "businessType": "company",
+          "legalBusinessName": "Royal Hall Ltd",
+          "registrationNo": "TRD-123456",
+          "businessMail": "info@royalhall.com",
+          "businessPhoneNo": "+8801700000000"
         }
       },
       "ServiceProviderServiceRequest": {
@@ -785,7 +844,7 @@
               "super_admin",
               "admin",
               "service_provider",
-              "event_provider",
+              "event_planner",
               "venue_provider",
               "customer"
             ]
@@ -914,7 +973,7 @@
                   "super_admin",
                   "admin",
                   "service_provider",
-                  "event_provider",
+                  "event_planner",
                   "venue_provider",
                   "customer"
                 ]
@@ -1221,7 +1280,7 @@
           "role": {
             "type": "string",
             "enum": [
-              "event_provider"
+              "event_planner"
             ]
           },
           "serviceCategories": {
@@ -1338,7 +1397,7 @@
                     "fullName": "Evan Events",
                     "email": "event@example.com",
                     "password": "StrongPass123",
-                    "role": "event_provider",
+                    "role": "event_planner",
                     "serviceCategories": []
                   }
                 },
@@ -4079,12 +4138,12 @@
         }
       }
     },
-    "/api/v1/auth/onboarding/event-provider": {
+    "/api/v1/auth/onboarding/event-planner": {
       "post": {
         "tags": [
           "Auth"
         ],
-        "summary": "Submit event provider onboarding",
+        "summary": "Submit event planner onboarding",
         "security": [
           {
             "bearerAuth": []
@@ -4095,25 +4154,33 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/EventProviderOnboardingRequest"
+                "$ref": "#/components/schemas/EventPlannerOnboardingRequest"
               },
               "examples": {
-                "eventProvider": {
-                  "summary": "Event provider onboarding",
+                "eventPlanner": {
+                  "summary": "Event planner onboarding",
                   "value": {
-                    "verification": {
-                      "businessType": "company",
-                      "companyName": "Star Events",
-                      "nationalIdOrTradeLicenseUrl": "https://cdn.example.com/license.pdf"
-                    },
+                    "_id": "65f1a9d0f1b2c3d4e5f60002",
+                    "fullName": "Star Events",
+                    "email": "planner@example.com",
                     "stripeAccountId": "acct_1234567890abc",
-                    "organizationName": "Star Events",
-                    "eventTypes": [
-                      "Wedding",
-                      "Corporate"
-                    ],
-                    "teamSize": 20,
-                    "pastEventsCount": 120
+                    "profileInfo": {
+                      "name": "Star Events",
+                      "description": "Wedding and corporate event planning",
+                      "coverageArea": [
+                        "Dhaka",
+                        "Chattogram"
+                      ],
+                      "address": "Banani, Dhaka",
+                      "verification": {
+                        "businessType": "company",
+                        "companyName": "Star Events",
+                        "nationalIdOrTradeLicenseFiles": [
+                          "https://cdn.example.com/license-front.jpg",
+                          "https://cdn.example.com/license.pdf"
+                        ]
+                      }
+                    }
                   }
                 }
               }
@@ -4156,20 +4223,16 @@
                 "venueProvider": {
                   "summary": "Venue provider onboarding",
                   "value": {
-                    "verification": {
-                      "businessType": "company",
-                      "companyName": "Royal Hall Ltd",
-                      "nationalIdOrTradeLicenseUrl": "https://cdn.example.com/trade-license.pdf"
-                    },
+                    "_id": "65f1a9d0f1b2c3d4e5f60003",
+                    "fullName": "Royal Hall Owner",
+                    "email": "venue@example.com",
                     "stripeAccountId": "acct_1234567890abc",
-                    "businessAddress": "Dhaka",
-                    "venueName": "Royal Hall",
-                    "venueType": "Banquet",
-                    "capacity": 500,
-                    "amenities": [
-                      "Parking",
-                      "AC"
-                    ]
+                    "businessName": "Royal Hall",
+                    "businessType": "company",
+                    "legalBusinessName": "Royal Hall Ltd",
+                    "registrationNo": "TRD-123456",
+                    "businessMail": "info@royalhall.com",
+                    "businessPhoneNo": "+8801700000000"
                   }
                 }
               }

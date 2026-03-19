@@ -11,7 +11,7 @@ declare global {
           | 'super_admin'
           | 'admin'
           | 'service_provider'
-          | 'event_provider'
+          | 'event_planner'
           | 'venue_provider'
           | 'customer';
         serviceCategories: string[];

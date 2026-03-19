@@ -6,7 +6,7 @@ export class EventPlannerService {
     return paginateModel(
       UserModel,
       {
-        role: 'event_provider',
+        role: 'event_planner',
         isEmailVerified: true
       },
       pagination

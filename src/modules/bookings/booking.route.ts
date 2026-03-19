@@ -380,7 +380,7 @@ router.get('/my', authorize('customer'), BookingController.getMyBookings);
  *             schema:
  *               $ref: '#/components/schemas/BookingListResponse'
  */
-router.get('/provider', authorize('venue_provider', 'service_provider', 'event_provider'), BookingController.getProviderBookings);
+router.get('/provider', authorize('venue_provider', 'service_provider', 'event_planner'), BookingController.getProviderBookings);
 
 /**
  * @openapi
@@ -449,7 +449,7 @@ router.get('/:bookingId', validate(bookingIdParamSchema), BookingController.getB
  */
 router.patch(
   '/:bookingId/approve',
-  authorize('venue_provider', 'service_provider', 'event_provider'),
+  authorize('venue_provider', 'service_provider', 'event_planner'),
   validate(bookingIdParamSchema),
   BookingController.approveBooking
 );
@@ -491,7 +491,7 @@ router.patch(
  */
 router.patch(
   '/:bookingId/reject',
-  authorize('venue_provider', 'service_provider', 'event_provider'),
+  authorize('venue_provider', 'service_provider', 'event_planner'),
   validate(rejectBookingSchema),
   BookingController.rejectBooking
 );

@@ -25,7 +25,7 @@ const router = Router();
  *           example: planner@example.com
  *         role:
  *           type: string
- *           example: event_provider
+ *           example: event_planner
  *         serviceCategories:
  *           type: array
  *           items:
@@ -77,7 +77,7 @@ const router = Router();
  *   get:
  *     tags: [EventPlanner]
  *     summary: Get all event planners (public)
- *     description: Returns verified users whose role is `event_provider`.
+ *     description: Returns verified users whose role is `event_planner`.
  *     parameters:
  *       - in: query
  *         name: page

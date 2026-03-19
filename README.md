@@ -159,7 +159,7 @@ Then mount router in `src/app/routes.ts`.
 - `POST /api/v1/auth/forgot-password`
 - `POST /api/v1/auth/reset-password`
 - `POST /api/v1/auth/onboarding/service-provider` (Bearer token)
-- `POST /api/v1/auth/onboarding/event-provider` (Bearer token)
+- `POST /api/v1/auth/onboarding/event-planner` (Bearer token)
 - `POST /api/v1/auth/onboarding/venue-provider` (Bearer token)
 - `GET /api/v1/auth/me` (Bearer token)
 - `POST /api/v1/bookings` (Bearer token, customer)
@@ -192,7 +192,7 @@ Then mount router in `src/app/routes.ts`.
 
 - Signup fields: `fullName`, `email`, `password`, `role`, optional `serviceCategories`.
 - `fullName` must include at least 2 words (first + last name).
-- Public signup roles allowed: `customer`, `service_provider`, `event_provider`, `venue_provider`.
+- Public signup roles allowed: `customer`, `service_provider`, `event_planner`, `venue_provider`.
 - Restricted roles `admin` and `super_admin` should be created only through protected admin-only flows.
 - `serviceCategories` is optional for all public signup roles.
 - Login is blocked until email OTP verification is completed.
@@ -203,7 +203,7 @@ Then mount router in `src/app/routes.ts`.
 Endpoint:
 
 - `POST /api/v1/auth/onboarding/service-provider` (Bearer token required)
-- `POST /api/v1/auth/onboarding/event-provider` (Bearer token required)
+- `POST /api/v1/auth/onboarding/event-planner` (Bearer token required)
 - `POST /api/v1/auth/onboarding/venue-provider` (Bearer token required)
 
 Role-specific required fields:
@@ -212,8 +212,10 @@ Role-specific required fields:
 - `profileInfo`: `serviceName`, `serviceCategory` (single value), optional `serviceDescription`, `coverageArea[]`, `verification`
 - Service provider `profileInfo.verification`: `businessType`, optional `companyName`, `nationalIdOrTradeLicenseFiles[]` (uploaded image/doc/pdf URLs)
 - `stripeAccountId` is optional for service provider onboarding and can be submitted later before payouts are needed
-- Event provider onboarding: `organizationName`, `eventTypes`, optional `teamSize`, `pastEventsCount`, `portfolioUrls`
-- Venue provider onboarding: `venueName`, `venueType`, `capacity`, optional `amenities`
+- Event planner onboarding: `_id`, `fullName`, `email`, `stripeAccountId`, `profileInfo`
+- Event planner `profileInfo`: `name`, optional `description`, `coverageArea[]`, `address`, `verification`
+- Event planner `profileInfo.verification`: `businessType`, optional `companyName`, `nationalIdOrTradeLicenseFiles[]`
+- Venue provider onboarding: `_id`, `fullName`, `email`, `stripeAccountId`, `businessName`, `businessType`, `legalBusinessName`, `registrationNo`, `businessMail`, `businessPhoneNo`
 
 Note:
 
