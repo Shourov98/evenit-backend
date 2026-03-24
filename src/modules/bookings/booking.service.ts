@@ -88,17 +88,35 @@ const applyDiscount = (
   return Math.max(0, subtotal - discount.value);
 };
 
-const ensureVenueAvailability = (venue: IVenue, bookingDate: string): void => {
+const parseTimeSlotHour = (timeSlot: string): number => Number.parseInt(timeSlot.split(':')[0] || '', 10);
+
+const ensureVenueAvailability = (venue: IVenue, bookingDate: string, timeSlots: string[]): void => {
   const override = venue.availabilityOverrides.find((item) => item.date === bookingDate);
-  if (override && override.status !== 'available') {
-    throw new AppError(409, `Venue is ${override.status} on ${bookingDate}`);
+  if (!override) {
+    return;
+  }
+
+  const selectedHours = timeSlots.map(parseTimeSlotHour);
+  for (const hour of selectedHours) {
+    const slot = override.slots.find((item) => item.hour === hour);
+    if (slot && slot.status !== 'available') {
+      throw new AppError(409, `Venue is ${slot.status} on ${bookingDate} at ${String(hour).padStart(2, '0')}:00`);
+    }
   }
 };
 
-const ensureServiceAvailability = (service: IServiceProviderService, bookingDate: string): void => {
+const ensureServiceAvailability = (service: IServiceProviderService, bookingDate: string, timeSlots: string[]): void => {
   const override = service.availabilityOverrides.find((item) => item.date === bookingDate);
-  if (override && override.status !== 'available') {
-    throw new AppError(409, `Service is ${override.status} on ${bookingDate}`);
+  if (!override) {
+    return;
+  }
+
+  const selectedHours = timeSlots.map(parseTimeSlotHour);
+  for (const hour of selectedHours) {
+    const slot = override.slots.find((item) => item.hour === hour);
+    if (slot && slot.status !== 'available') {
+      throw new AppError(409, `Service is ${slot.status} on ${bookingDate} at ${String(hour).padStart(2, '0')}:00`);
+    }
   }
 };
 
@@ -138,7 +156,7 @@ export class BookingService {
         throw new AppError(404, 'Venue not found');
       }
 
-      ensureVenueAvailability(venue, payload.bookingDate);
+      ensureVenueAvailability(venue, payload.bookingDate, timeSlots);
       providerId = venue.ownerId;
       subtotal = venue.pricing.basePrice * durationHours;
       currency = venue.pricing.currency;
@@ -153,7 +171,7 @@ export class BookingService {
         throw new AppError(404, 'Service not found');
       }
 
-      ensureServiceAvailability(service, payload.bookingDate);
+      ensureServiceAvailability(service, payload.bookingDate, timeSlots);
       providerId = service.ownerId;
       subtotal = applyDiscount(computeServiceSubtotal(service, durationHours), service.pricing.discount);
       currency = service.pricing.currency;

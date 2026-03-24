@@ -6,9 +6,14 @@ export type VenueAvailabilityStatus = (typeof VENUE_AVAILABILITY_STATUSES)[numbe
 const DISCOUNT_TYPES = ['percentage', 'fixed'] as const;
 export type DiscountType = (typeof DISCOUNT_TYPES)[number];
 
+export interface IAvailabilitySlot {
+  hour: number;
+  status: VenueAvailabilityStatus;
+}
+
 export interface IAvailabilityOverride {
   date: string;
-  status: VenueAvailabilityStatus;
+  slots: IAvailabilitySlot[];
 }
 
 export interface IVenueReview {
@@ -56,6 +61,23 @@ export interface IVenue extends Document {
   isDeleted: boolean;
 }
 
+const availabilitySlotSchema = new Schema<IAvailabilitySlot>(
+  {
+    hour: {
+      type: Number,
+      required: true,
+      min: 8,
+      max: 23
+    },
+    status: {
+      type: String,
+      enum: VENUE_AVAILABILITY_STATUSES,
+      required: true
+    }
+  },
+  { _id: false }
+);
+
 const availabilityOverrideSchema = new Schema<IAvailabilityOverride>(
   {
     date: {
@@ -63,10 +85,9 @@ const availabilityOverrideSchema = new Schema<IAvailabilityOverride>(
       required: true,
       match: /^\d{4}-\d{2}-\d{2}$/
     },
-    status: {
-      type: String,
-      enum: VENUE_AVAILABILITY_STATUSES,
-      required: true
+    slots: {
+      type: [availabilitySlotSchema],
+      default: []
     }
   },
   { _id: false }

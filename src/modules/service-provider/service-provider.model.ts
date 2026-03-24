@@ -9,9 +9,14 @@ export type ServiceDiscountType = (typeof DISCOUNT_TYPES)[number];
 const PRICING_TYPES = ['fixed', 'hourly', 'daily', 'package'] as const;
 export type ServicePricingType = (typeof PRICING_TYPES)[number];
 
+export interface IServiceAvailabilitySlot {
+  hour: number;
+  status: ServiceAvailabilityStatus;
+}
+
 export interface IServiceAvailabilityOverride {
   date: string;
-  status: ServiceAvailabilityStatus;
+  slots: IServiceAvailabilitySlot[];
 }
 
 export interface IServiceReview {
@@ -59,6 +64,23 @@ export interface IServiceProviderService extends Document {
   isDeleted: boolean;
 }
 
+const serviceAvailabilitySlotSchema = new Schema<IServiceAvailabilitySlot>(
+  {
+    hour: {
+      type: Number,
+      required: true,
+      min: 8,
+      max: 23
+    },
+    status: {
+      type: String,
+      enum: SERVICE_AVAILABILITY_STATUSES,
+      required: true
+    }
+  },
+  { _id: false }
+);
+
 const serviceAvailabilityOverrideSchema = new Schema<IServiceAvailabilityOverride>(
   {
     date: {
@@ -66,10 +88,9 @@ const serviceAvailabilityOverrideSchema = new Schema<IServiceAvailabilityOverrid
       required: true,
       match: /^\d{4}-\d{2}-\d{2}$/
     },
-    status: {
-      type: String,
-      enum: SERVICE_AVAILABILITY_STATUSES,
-      required: true
+    slots: {
+      type: [serviceAvailabilitySlotSchema],
+      default: []
     }
   },
   { _id: false }

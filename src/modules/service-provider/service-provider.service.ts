@@ -30,7 +30,10 @@ type CreateServicePayload = {
   };
   availabilityOverrides: Array<{
     date: string;
-    status: 'available' | 'pending' | 'booked';
+    slots: Array<{
+      hour: number;
+      status: 'available' | 'pending' | 'booked';
+    }>;
   }>;
 };
 

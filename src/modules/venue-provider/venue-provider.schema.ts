@@ -3,9 +3,14 @@ import { z } from 'zod';
 const objectIdRegex = /^[a-fA-F0-9]{24}$/;
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 
+const availabilitySlotSchema = z.object({
+  hour: z.number().int().min(8).max(23),
+  status: z.enum(['available', 'pending', 'booked'])
+});
+
 const availabilityOverrideSchema = z.object({
   date: z.string().regex(dateRegex, 'date must be in YYYY-MM-DD format'),
-  status: z.enum(['available', 'pending', 'booked'])
+  slots: z.array(availabilitySlotSchema).min(1).max(16)
 });
 
 const venueBodySchema = z.object({
@@ -88,7 +93,7 @@ const updateVenueBodySchema = z
 
 const withUniqueAvailabilityDates = <T extends z.ZodTypeAny>(schema: T) =>
   schema.superRefine((data, ctx) => {
-    const payload = data as { availabilityOverrides?: Array<{ date: string }> };
+    const payload = data as { availabilityOverrides?: Array<{ date: string; slots: Array<{ hour: number }> }> };
     const seen = new Set<string>();
     const availability = payload.availabilityOverrides || [];
     for (const item of availability) {
@@ -101,6 +106,19 @@ const withUniqueAvailabilityDates = <T extends z.ZodTypeAny>(schema: T) =>
         return;
       }
       seen.add(item.date);
+
+      const seenHours = new Set<number>();
+      for (const slot of item.slots) {
+        if (seenHours.has(slot.hour)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['availabilityOverrides'],
+            message: `availabilityOverrides for ${item.date} cannot contain duplicate hours`
+          });
+          return;
+        }
+        seenHours.add(slot.hour);
+      }
     }
   });
 

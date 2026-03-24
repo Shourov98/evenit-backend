@@ -16,16 +16,34 @@ const router = Router();
  *   schemas:
  *     AvailabilityOverride:
  *       type: object
- *       required: [date, status]
+ *       required: [date, slots]
  *       properties:
  *         date:
  *           type: string
  *           format: date
  *           example: 2026-03-20
- *         status:
- *           type: string
- *           enum: [available, pending, booked]
- *           example: available
+ *         slots:
+ *           type: array
+ *           items:
+ *             type: object
+ *             required: [hour, status]
+ *             properties:
+ *               hour:
+ *                 type: integer
+ *                 minimum: 8
+ *                 maximum: 23
+ *                 example: 8
+ *               status:
+ *                 type: string
+ *                 enum: [available, pending, booked]
+ *                 example: available
+ *           example:
+ *             - hour: 8
+ *               status: available
+ *             - hour: 9
+ *               status: booked
+ *             - hour: 10
+ *               status: pending
  *     ServiceCreateRequest:
  *       type: object
  *       required: [information, pricing, settings, media]
