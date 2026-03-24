@@ -270,7 +270,8 @@ export class AuthService {
         legalBusinessName: payload.legalBusinessName,
         registrationNo: payload.registrationNo,
         businessMail: payload.businessMail.toLowerCase(),
-        businessPhoneNo: payload.businessPhoneNo
+        businessPhoneNo: payload.businessPhoneNo,
+        venueProfile: payload.venueProfile
       },
       submittedAt: new Date()
     };

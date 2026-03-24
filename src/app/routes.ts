@@ -11,6 +11,23 @@ const router = Router();
 
 /**
  * @openapi
+ * /:
+ *   get:
+ *     tags: [System]
+ *     summary: Root status
+ *     responses:
+ *       200:
+ *         description: API root
+ */
+router.get('/', (_req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'EvenIt backend is running 🚀✨🔥'
+  });
+});
+
+/**
+ * @openapi
  * /health:
  *   get:
  *     tags: [System]
