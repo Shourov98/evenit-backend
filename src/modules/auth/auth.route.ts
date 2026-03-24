@@ -243,101 +243,23 @@ const router = Router();
  *         businessPhoneNo:
  *           type: string
  *           example: +8801700000000
- *         venueProfile:
+ *         media:
  *           type: object
- *           required: [information, pricing, capacity, media]
+ *           required: [galleryImages]
  *           properties:
- *             information:
- *               type: object
- *               required: [venueName, venueType, streetAddress, city, state, country, postcode, mapLocation]
- *               properties:
- *                 venueName:
- *                   type: string
- *                   example: Royal Hall
- *                 venueType:
- *                   type: string
- *                   example: Banquet
- *                 description:
- *                   type: string
- *                   example: Premium indoor venue for weddings and corporate events.
- *                 streetAddress:
- *                   type: string
- *                   example: 123 Main Road
- *                 city:
- *                   type: string
- *                   example: Dhaka
- *                 state:
- *                   type: string
- *                   example: Dhaka
- *                 country:
- *                   type: string
- *                   example: Bangladesh
- *                 postcode:
- *                   type: string
- *                   example: 1215
- *                 area:
- *                   type: string
- *                   example: Farmgate
- *                 mapLocation:
- *                   type: object
- *                   required: [latitude, longitude]
- *                   properties:
- *                     latitude:
- *                       type: number
- *                       example: 23.777176
- *                     longitude:
- *                       type: number
- *                       example: 90.399452
- *             pricing:
- *               type: object
- *               required: [basePrice]
- *               properties:
- *                 basePrice:
- *                   type: number
- *                   example: 50000
- *                 currency:
- *                   type: string
- *                   example: BDT
- *                 discount:
- *                   type: object
- *                   properties:
- *                     type:
- *                       type: string
- *                       enum: [percentage, fixed]
- *                     value:
- *                       type: number
- *                 amenities:
- *                   type: object
- *                   additionalProperties:
- *                     type: boolean
- *                   example:
- *                     wifi: true
- *                     parking: true
- *                     ac: true
- *             capacity:
- *               type: object
- *               required: [maximumGuests]
- *               properties:
- *                 maximumGuests:
- *                   type: integer
- *                   example: 300
- *             media:
- *               type: object
- *               required: [galleryImages]
- *               properties:
- *                 galleryImages:
- *                   type: array
- *                   items:
- *                     type: string
- *                     format: uri
- *                   example:
- *                     - https://cdn.example.com/venues/royal-hall-1.jpg
- *                     - https://cdn.example.com/venues/royal-hall-2.jpg
- *                     - https://cdn.example.com/venues/royal-hall-3.jpg
- *                 videoUrl:
- *                   type: string
- *                   format: uri
- *                   example: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+ *             galleryImages:
+ *               type: array
+ *               items:
+ *                 type: string
+ *                 format: uri
+ *               example:
+ *                 - https://cdn.example.com/venues/royal-hall-1.jpg
+ *                 - https://cdn.example.com/venues/royal-hall-2.jpg
+ *                 - https://cdn.example.com/venues/royal-hall-3.jpg
+ *             videoUrl:
+ *               type: string
+ *               format: uri
+ *               example: https://www.youtube.com/watch?v=dQw4w9WgXcQ
  *     ServiceProviderOnboardingRequest:
  *       type: object
  *       required: [_id, name, email, profileInfo]
@@ -383,7 +305,7 @@ const router = Router();
  *           $ref: '#/components/schemas/EventPlannerOnboardingInput'
  *     VenueProviderOnboardingRequest:
  *       type: object
- *       required: [_id, fullName, email, stripeAccountId, businessName, businessType, legalBusinessName, registrationNo, businessMail, businessPhoneNo, venueProfile]
+ *       required: [_id, fullName, email, stripeAccountId, businessName, businessType, businessMail, businessPhoneNo]
  *       properties:
  *         _id:
  *           type: string
@@ -418,101 +340,6 @@ const router = Router();
  *         businessPhoneNo:
  *           type: string
  *           example: +8801700000000
- *         venueProfile:
- *           type: object
- *           required: [information, pricing, capacity, media]
- *           properties:
- *             information:
- *               type: object
- *               required: [venueName, venueType, streetAddress, city, state, country, postcode, mapLocation]
- *               properties:
- *                 venueName:
- *                   type: string
- *                   example: Royal Hall
- *                 venueType:
- *                   type: string
- *                   example: Banquet
- *                 description:
- *                   type: string
- *                   example: Premium indoor venue for weddings and corporate events.
- *                 streetAddress:
- *                   type: string
- *                   example: 123 Main Road
- *                 city:
- *                   type: string
- *                   example: Dhaka
- *                 state:
- *                   type: string
- *                   example: Dhaka
- *                 country:
- *                   type: string
- *                   example: Bangladesh
- *                 postcode:
- *                   type: string
- *                   example: 1215
- *                 area:
- *                   type: string
- *                   example: Farmgate
- *                 mapLocation:
- *                   type: object
- *                   required: [latitude, longitude]
- *                   properties:
- *                     latitude:
- *                       type: number
- *                       example: 23.777176
- *                     longitude:
- *                       type: number
- *                       example: 90.399452
- *             pricing:
- *               type: object
- *               required: [basePrice]
- *               properties:
- *                 basePrice:
- *                   type: number
- *                   example: 50000
- *                 currency:
- *                   type: string
- *                   example: BDT
- *                 discount:
- *                   type: object
- *                   properties:
- *                     type:
- *                       type: string
- *                       enum: [percentage, fixed]
- *                     value:
- *                       type: number
- *                 amenities:
- *                   type: object
- *                   additionalProperties:
- *                     type: boolean
- *                   example:
- *                     wifi: true
- *                     parking: true
- *                     ac: true
- *             capacity:
- *               type: object
- *               required: [maximumGuests]
- *               properties:
- *                 maximumGuests:
- *                   type: integer
- *                   example: 300
- *             media:
- *               type: object
- *               required: [galleryImages]
- *               properties:
- *                 galleryImages:
- *                   type: array
- *                   items:
- *                     type: string
- *                     format: uri
- *                   example:
- *                     - https://cdn.example.com/venues/royal-hall-1.jpg
- *                     - https://cdn.example.com/venues/royal-hall-2.jpg
- *                     - https://cdn.example.com/venues/royal-hall-3.jpg
- *                 videoUrl:
- *                   type: string
- *                   format: uri
- *                   example: https://www.youtube.com/watch?v=dQw4w9WgXcQ
  *     AuthUserResponse:
  *       type: object
  *       properties:
@@ -524,6 +351,26 @@ const router = Router();
  *         data:
  *           type: object
  *           properties:
+ *             user:
+ *               $ref: '#/components/schemas/AuthUser'
+ *     AuthOnboardingResponse:
+ *       type: object
+ *       properties:
+ *         success:
+ *           type: boolean
+ *           example: true
+ *         message:
+ *           type: string
+ *           example: Onboarding information submitted successfully
+ *         data:
+ *           type: object
+ *           properties:
+ *             onboarding:
+ *               type: object
+ *               nullable: true
+ *               example:
+ *                 stripeAccountId: acct_1Example123456789
+ *                 submittedAt: 2026-03-24T10:30:00.000Z
  *             user:
  *               $ref: '#/components/schemas/AuthUser'
  *     AuthTokenResponse:
@@ -597,7 +444,7 @@ const router = Router();
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/AuthUserResponse'
+ *               $ref: '#/components/schemas/AuthOnboardingResponse'
  *       400:
  *         description: Validation error
  *       409:
@@ -755,7 +602,7 @@ router.post('/reset-password', authLimiter, validate(resetPasswordSchema), AuthC
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/AuthUserResponse'
+ *               $ref: '#/components/schemas/AuthOnboardingResponse'
  *       400:
  *         description: Validation error
  *       401:
@@ -788,7 +635,7 @@ router.post(
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/AuthUserResponse'
+ *               $ref: '#/components/schemas/AuthOnboardingResponse'
  *       400:
  *         description: Validation error
  *       401:

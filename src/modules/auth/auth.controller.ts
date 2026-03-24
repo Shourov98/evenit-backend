@@ -65,6 +65,7 @@ export class AuthController {
       success: true,
       message: 'Onboarding information submitted successfully',
       data: {
+        onboarding: user.onboarding ?? null,
         user: {
           id: String(user._id),
           fullName: user.fullName,
@@ -93,6 +94,7 @@ export class AuthController {
       success: true,
       message: 'Onboarding information submitted successfully',
       data: {
+        onboarding: user.onboarding ?? null,
         user: {
           id: String(user._id),
           fullName: user.fullName,
@@ -121,6 +123,7 @@ export class AuthController {
       success: true,
       message: 'Onboarding information submitted successfully',
       data: {
+        onboarding: user.onboarding ?? null,
         user: {
           id: String(user._id),
           fullName: user.fullName,

@@ -53,43 +53,10 @@ export interface IVenueProviderOnboarding {
   stripeAccountId: string;
   businessName: string;
   businessType: BusinessType;
-  legalBusinessName: string;
-  registrationNo: string;
+  legalBusinessName?: string;
+  registrationNo?: string;
   businessMail: string;
   businessPhoneNo: string;
-  venueProfile: {
-    information: {
-      venueName: string;
-      venueType: string;
-      description?: string;
-      streetAddress: string;
-      city: string;
-      state: string;
-      country: string;
-      postcode: string;
-      area?: string;
-      mapLocation: {
-        latitude: number;
-        longitude: number;
-      };
-    };
-    pricing: {
-      basePrice: number;
-      currency: string;
-      discount?: {
-        type: 'percentage' | 'fixed';
-        value: number;
-      };
-      amenities: Record<string, boolean>;
-    };
-    capacity: {
-      maximumGuests: number;
-    };
-    media: {
-      galleryImages: string[];
-      videoUrl?: string;
-    };
-  };
 }
 
 export interface IEventProviderOnboarding {
@@ -257,14 +224,12 @@ const venueProviderOnboardingSchema = new Schema<IVenueProviderOnboarding>(
     },
     legalBusinessName: {
       type: String,
-      required: true,
       trim: true,
       minlength: 2,
       maxlength: 120
     },
     registrationNo: {
       type: String,
-      required: true,
       trim: true,
       minlength: 2,
       maxlength: 120
@@ -281,136 +246,6 @@ const venueProviderOnboardingSchema = new Schema<IVenueProviderOnboarding>(
       trim: true,
       minlength: 5,
       maxlength: 30
-    },
-    venueProfile: {
-      information: {
-        venueName: {
-          type: String,
-          required: true,
-          trim: true,
-          minlength: 2,
-          maxlength: 120
-        },
-        venueType: {
-          type: String,
-          required: true,
-          trim: true,
-          minlength: 2,
-          maxlength: 60
-        },
-        description: {
-          type: String,
-          trim: true,
-          maxlength: 2000
-        },
-        streetAddress: {
-          type: String,
-          required: true,
-          trim: true,
-          minlength: 3,
-          maxlength: 240
-        },
-        city: {
-          type: String,
-          required: true,
-          trim: true,
-          minlength: 2,
-          maxlength: 80
-        },
-        state: {
-          type: String,
-          required: true,
-          trim: true,
-          minlength: 2,
-          maxlength: 80
-        },
-        country: {
-          type: String,
-          required: true,
-          trim: true,
-          minlength: 2,
-          maxlength: 80
-        },
-        postcode: {
-          type: String,
-          required: true,
-          trim: true,
-          minlength: 2,
-          maxlength: 20
-        },
-        area: {
-          type: String,
-          trim: true,
-          maxlength: 80
-        },
-        mapLocation: {
-          latitude: {
-            type: Number,
-            required: true,
-            min: -90,
-            max: 90
-          },
-          longitude: {
-            type: Number,
-            required: true,
-            min: -180,
-            max: 180
-          }
-        }
-      },
-      pricing: {
-        basePrice: {
-          type: Number,
-          required: true,
-          min: 0
-        },
-        currency: {
-          type: String,
-          required: true,
-          trim: true,
-          uppercase: true,
-          minlength: 3,
-          maxlength: 3
-        },
-        discount: {
-          type: {
-            type: String,
-            enum: ['percentage', 'fixed']
-          },
-          value: {
-            type: Number,
-            min: 0
-          }
-        },
-        amenities: {
-          type: Map,
-          of: Boolean,
-          default: {}
-        }
-      },
-      capacity: {
-        maximumGuests: {
-          type: Number,
-          required: true,
-          min: 1
-        }
-      },
-      media: {
-        galleryImages: {
-          type: [String],
-          default: [],
-          validate: {
-            validator(value: string[]) {
-              return value.length <= 10;
-            },
-            message: 'galleryImages can contain at most 10 images'
-          }
-        },
-        videoUrl: {
-          type: String,
-          trim: true
-        }
-      }
     }
   },
   { _id: false }

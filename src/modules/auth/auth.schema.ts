@@ -87,56 +87,6 @@ const verificationSchema = z
     }
   });
 
-const youtubeUrlRule = z
-  .string()
-  .url()
-  .refine((value) => {
-    try {
-      const url = new URL(value);
-      return ['youtube.com', 'www.youtube.com', 'youtu.be'].includes(url.hostname.toLowerCase());
-    } catch {
-      return false;
-    }
-  }, 'videoUrl must be a valid YouTube URL');
-
-const coordinateSchema = z.object({
-  latitude: z.number().min(-90).max(90),
-  longitude: z.number().min(-180).max(180)
-});
-
-const venueProfileSchema = z.object({
-  information: z.object({
-    venueName: z.string().min(2).max(120),
-    venueType: z.string().min(2).max(60),
-    description: z.string().max(2000).optional(),
-    streetAddress: z.string().min(3).max(240),
-    city: z.string().min(2).max(80),
-    state: z.string().min(2).max(80),
-    country: z.string().min(2).max(80),
-    postcode: z.string().min(2).max(20),
-    area: z.string().max(80).optional(),
-    mapLocation: coordinateSchema
-  }),
-  pricing: z.object({
-    basePrice: z.number().min(0),
-    currency: z.string().length(3).default('BDT'),
-    discount: z
-      .object({
-        type: z.enum(['percentage', 'fixed']),
-        value: z.number().min(0)
-      })
-      .optional(),
-    amenities: z.record(z.boolean()).optional().default({})
-  }),
-  capacity: z.object({
-    maximumGuests: z.number().int().min(1)
-  }),
-  media: z.object({
-    galleryImages: z.array(z.string().url()).max(10),
-    videoUrl: youtubeUrlRule.optional()
-  })
-});
-
 const onboardingBaseShape = {
   verification: verificationSchema,
   stripeAccountId: z
@@ -212,11 +162,10 @@ const venueProviderDetailsSchema = z.object({
     .regex(/^acct_[A-Za-z0-9]+$/, 'stripeAccountId must be a valid Stripe account id'),
   businessName: z.string().min(2).max(120),
   businessType: z.enum(['individual', 'company']),
-  legalBusinessName: z.string().min(2).max(120),
-  registrationNo: z.string().min(2).max(120),
+  legalBusinessName: z.string().min(2).max(120).optional(),
+  registrationNo: z.string().min(2).max(120).optional(),
   businessMail: z.string().email(),
-  businessPhoneNo: z.string().min(5).max(30),
-  venueProfile: venueProfileSchema
+  businessPhoneNo: z.string().min(5).max(30)
 });
 
 export const submitServiceProviderOnboardingSchema = z.object({

@@ -255,7 +255,7 @@ export class AuthService {
       verification: {
         businessType: payload.businessType,
         companyName: payload.legalBusinessName,
-        nationalIdOrTradeLicenseUrl: payload.registrationNo
+        nationalIdOrTradeLicenseUrl: payload.registrationNo ?? ''
       },
       stripeAccountId: payload.stripeAccountId,
       serviceProvider: undefined,
@@ -270,8 +270,7 @@ export class AuthService {
         legalBusinessName: payload.legalBusinessName,
         registrationNo: payload.registrationNo,
         businessMail: payload.businessMail.toLowerCase(),
-        businessPhoneNo: payload.businessPhoneNo,
-        venueProfile: payload.venueProfile
+        businessPhoneNo: payload.businessPhoneNo
       },
       submittedAt: new Date()
     };
