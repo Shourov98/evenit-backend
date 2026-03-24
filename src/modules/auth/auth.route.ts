@@ -51,9 +51,7 @@ const router = Router();
  *           example: false
  *         onboarding:
  *           nullable: true
- *           oneOf:
- *             - type: object
- *             - type: 'null'
+ *           type: object
  *     AuthRegisterRequest:
  *       type: object
  *       required: [fullName, email, password, role]
@@ -73,11 +71,6 @@ const router = Router();
  *           type: string
  *           enum: [customer, service_provider, event_planner, venue_provider]
  *           example: customer
- *         serviceCategories:
- *           type: array
- *           items:
- *             type: string
- *           example: ["photography", "catering"]
  *     AuthLoginRequest:
  *       type: object
  *       required: [email, password]
@@ -252,7 +245,7 @@ const router = Router();
  *           example: +8801700000000
  *     ServiceProviderOnboardingRequest:
  *       type: object
- *       required: [_id, name, email, profileInfo, services]
+ *       required: [_id, name, email, profileInfo]
  *       properties:
  *         _id:
  *           type: string
@@ -384,9 +377,7 @@ const router = Router();
  *                 type: string
  *             onboarding:
  *               nullable: true
- *               oneOf:
- *                 - type: object
- *                 - type: 'null'
+ *               type: object
  *     AuthMessageResponse:
  *       type: object
  *       properties:

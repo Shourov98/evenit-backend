@@ -69,26 +69,13 @@
               "event_planner",
               "venue_provider"
             ]
-          },
-          "serviceCategories": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "example": [
-              "catering",
-              "photography"
-            ]
           }
         },
         "example": {
           "fullName": "Jane Doe",
           "email": "jane@example.com",
           "password": "StrongPass123",
-          "role": "service_provider",
-          "serviceCategories": [
-            "catering"
-          ]
+          "role": "service_provider"
         }
       },
       "LoginRequest": {
@@ -1377,8 +1364,7 @@
                     "fullName": "John Customer",
                     "email": "customer@example.com",
                     "password": "StrongPass123",
-                    "role": "customer",
-                    "serviceCategories": []
+                    "role": "customer"
                   }
                 },
                 "serviceProviderRegister": {
@@ -1387,8 +1373,7 @@
                     "fullName": "Sara Service",
                     "email": "service@example.com",
                     "password": "StrongPass123",
-                    "role": "service_provider",
-                    "serviceCategories": []
+                    "role": "service_provider"
                   }
                 },
                 "eventProviderRegister": {
@@ -1397,8 +1382,7 @@
                     "fullName": "Evan Events",
                     "email": "event@example.com",
                     "password": "StrongPass123",
-                    "role": "event_planner",
-                    "serviceCategories": []
+                    "role": "event_planner"
                   }
                 },
                 "venueProviderRegister": {
@@ -1407,8 +1391,7 @@
                     "fullName": "Vera Venue",
                     "email": "venue@example.com",
                     "password": "StrongPass123",
-                    "role": "venue_provider",
-                    "serviceCategories": []
+                    "role": "venue_provider"
                   }
                 }
               }

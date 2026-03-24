@@ -2,6 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import swaggerJsdoc from 'swagger-jsdoc';
 
+const isDistRuntime = __filename.includes(`${path.sep}dist${path.sep}`);
+
 const loadSpecFromJson = () => {
   const jsonPath = path.resolve(process.cwd(), 'apidog.openapi.json');
   if (!fs.existsSync(jsonPath)) {
@@ -37,7 +39,9 @@ const buildSpecFromJSDoc = () =>
         }
       }
     },
-    apis: ['./src/modules/**/*.ts', './src/app/routes.ts', './dist/modules/**/*.js', './dist/app/routes.js']
+    apis: isDistRuntime
+      ? ['./dist/modules/**/*.js', './dist/app/routes.js']
+      : ['./src/modules/**/*.ts', './src/app/routes.ts']
   });
 
 const mergeSpecs = () => {

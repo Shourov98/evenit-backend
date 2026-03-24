@@ -35,9 +35,7 @@ const router = Router();
  *           example: true
  *         onboarding:
  *           nullable: true
- *           oneOf:
- *             - type: object
- *             - type: 'null'
+ *           type: object
  *         createdAt:
  *           type: string
  *           format: date-time

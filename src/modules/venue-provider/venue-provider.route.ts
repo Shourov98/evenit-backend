@@ -139,9 +139,7 @@ const router = Router();
  *           enum: [pending, published, rejected]
  *         approvedBy:
  *           nullable: true
- *           oneOf:
- *             - type: object
- *             - type: 'null'
+ *           type: object
  *         approvedAt:
  *           type: string
  *           format: date-time
