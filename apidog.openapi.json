@@ -40,7 +40,7 @@
       }
     },
     "schemas": {
-      "RegisterRequest": {
+      "CustomerRegisterRequest": {
         "type": "object",
         "required": [
           "fullName",
@@ -64,10 +64,7 @@
           "role": {
             "type": "string",
             "enum": [
-              "customer",
-              "service_provider",
-              "event_planner",
-              "venue_provider"
+              "customer"
             ]
           }
         },
@@ -75,7 +72,132 @@
           "fullName": "Jane Doe",
           "email": "jane@example.com",
           "password": "StrongPass123",
-          "role": "service_provider"
+          "role": "customer"
+        }
+      },
+      "ServiceProviderRegisterRequest": {
+        "type": "object",
+        "required": [
+          "fullName",
+          "email",
+          "password",
+          "role"
+        ],
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "example": "Sara Service"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "service@example.com"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "example": "StrongPass123"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "service_provider"
+            ]
+          },
+          "serviceCategories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "catering",
+              "photography"
+            ]
+          }
+        },
+        "example": {
+          "fullName": "Sara Service",
+          "email": "service@example.com",
+          "password": "StrongPass123",
+          "role": "service_provider",
+          "serviceCategories": [
+            "catering",
+            "photography"
+          ]
+        }
+      },
+      "EventPlannerRegisterRequest": {
+        "type": "object",
+        "required": [
+          "fullName",
+          "email",
+          "password",
+          "role"
+        ],
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "example": "Evan Events"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "event@example.com"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "example": "StrongPass123"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "event_planner"
+            ]
+          }
+        },
+        "example": {
+          "fullName": "Evan Events",
+          "email": "event@example.com",
+          "password": "StrongPass123",
+          "role": "event_planner"
+        }
+      },
+      "VenueProviderRegisterRequest": {
+        "type": "object",
+        "required": [
+          "fullName",
+          "email",
+          "password",
+          "role"
+        ],
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "example": "Vera Venue"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "venue@example.com"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "example": "StrongPass123"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "venue_provider"
+            ]
+          }
+        },
+        "example": {
+          "fullName": "Vera Venue",
+          "email": "venue@example.com",
+          "password": "StrongPass123",
+          "role": "venue_provider"
         }
       },
       "LoginRequest": {
@@ -1355,7 +1477,20 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RegisterRequest"
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/CustomerRegisterRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ServiceProviderRegisterRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/EventPlannerRegisterRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/VenueProviderRegisterRequest"
+                  }
+                ]
               },
               "examples": {
                 "customerRegister": {
