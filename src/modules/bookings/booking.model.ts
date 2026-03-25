@@ -6,7 +6,7 @@ export type BookingTargetType = (typeof BOOKING_TARGET_TYPES)[number];
 export const BOOKING_STATUSES = ['pending', 'approved', 'rejected', 'confirmed', 'cancelled', 'completed'] as const;
 export type BookingStatus = (typeof BOOKING_STATUSES)[number];
 
-export const PAYMENT_STATUSES = ['unpaid', 'requires_payment', 'paid', 'failed', 'refunded'] as const;
+export const PAYMENT_STATUSES = ['covered_by_subscription'] as const;
 export type PaymentStatus = (typeof PAYMENT_STATUSES)[number];
 
 export interface IBooking extends Document {
@@ -30,8 +30,7 @@ export interface IBooking extends Document {
   status: BookingStatus;
   payment: {
     status: PaymentStatus;
-    paymentIntentId?: string;
-    paidAt?: Date;
+    coveredAt?: Date;
   };
   approvedAt?: Date;
   rejectedAt?: Date;
@@ -113,13 +112,9 @@ const bookingSchema = new Schema<IBooking>(
       status: {
         type: String,
         enum: PAYMENT_STATUSES,
-        default: 'unpaid'
+        default: 'covered_by_subscription'
       },
-      paymentIntentId: {
-        type: String,
-        trim: true
-      },
-      paidAt: {
+      coveredAt: {
         type: Date
       }
     },

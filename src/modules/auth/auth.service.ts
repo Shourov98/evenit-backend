@@ -5,6 +5,7 @@ import { signJwt } from '../../common/utils/jwt';
 import { generateOtpCode, hashOtpCode } from '../../common/utils/otp';
 import { AuthOtpModel, OtpPurpose } from './auth-otp.model';
 import {
+  createDefaultUserSubscription,
   IEventProviderOnboarding,
   IServiceProviderOnboarding,
   IUser,
@@ -120,6 +121,15 @@ const verifyOtp = async (payload: {
 
   record.consumedAt = new Date();
   await record.save();
+
+  return user;
+};
+
+const ensureUserSubscription = async (user: IUser): Promise<IUser> => {
+  if (!user.subscription) {
+    user.subscription = createDefaultUserSubscription(user.role);
+    await user.save();
+  }
 
   return user;
 };
@@ -294,7 +304,9 @@ export class AuthService {
   }
 
   static async verifyEmailOtp(payload: { email: string; otp: string }) {
-    const user = await verifyOtp({ ...payload, purpose: 'email_verification' });
+    const user = await ensureUserSubscription(
+      await verifyOtp({ ...payload, purpose: 'email_verification' })
+    );
     user.isEmailVerified = true;
     await user.save();
 
@@ -319,6 +331,7 @@ export class AuthService {
       throw new AppError(403, 'Email is not verified. Please verify your email first.');
     }
 
+    await ensureUserSubscription(user);
     const token = signJwt({ userId: String(user._id), role: user.role });
     return { token, user };
   }

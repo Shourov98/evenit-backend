@@ -54,11 +54,3 @@ export const createPaymentIntentSchema = z.object({
   params: bookingIdParamsSchema,
   query: z.object({}).optional().default({})
 });
-
-export const verifyPaymentSchema = z.object({
-  body: z.object({
-    paymentIntentId: z.string().min(1)
-  }),
-  params: bookingIdParamsSchema,
-  query: z.object({}).optional().default({})
-});

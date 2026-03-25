@@ -82,6 +82,19 @@ export interface IProviderOnboarding {
   submittedAt: Date;
 }
 
+export const SUBSCRIPTION_STATUSES = ['subscribed', 'not_subscribed'] as const;
+export type SubscriptionStatus = (typeof SUBSCRIPTION_STATUSES)[number];
+
+export interface IUserSubscription {
+  status: SubscriptionStatus;
+  activatedAt: Date;
+}
+
+export const createDefaultUserSubscription = (_role: UserRole): IUserSubscription => ({
+  status: 'subscribed',
+  activatedAt: new Date()
+});
+
 export interface IUser extends Document {
   fullName: string;
   email: string;
@@ -89,6 +102,7 @@ export interface IUser extends Document {
   role: UserRole;
   serviceCategories: string[];
   isEmailVerified: boolean;
+  subscription: IUserSubscription;
   onboarding?: IProviderOnboarding;
   comparePassword(candidate: string): Promise<boolean>;
 }
@@ -350,6 +364,23 @@ const providerOnboardingSchema = new Schema<IProviderOnboarding>(
   { _id: false }
 );
 
+const userSubscriptionSchema = new Schema<IUserSubscription>(
+  {
+    status: {
+      type: String,
+      enum: SUBSCRIPTION_STATUSES,
+      required: true,
+      default: 'subscribed'
+    },
+    activatedAt: {
+      type: Date,
+      required: true,
+      default: Date.now
+    }
+  },
+  { _id: false }
+);
+
 const userSchema = new Schema<IUser>(
   {
     fullName: {
@@ -385,6 +416,13 @@ const userSchema = new Schema<IUser>(
     isEmailVerified: {
       type: Boolean,
       default: false
+    },
+    subscription: {
+      type: userSubscriptionSchema,
+      required: true,
+      default: function defaultSubscription(this: IUser) {
+        return createDefaultUserSubscription(this.role ?? 'customer');
+      }
     },
     onboarding: {
       type: providerOnboardingSchema

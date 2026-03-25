@@ -289,16 +289,12 @@ Booking statuses:
 
 Payment statuses:
 
-- `unpaid`
-- `requires_payment`
-- `paid`
-- `failed`
-- `refunded`
+- `covered_by_subscription`
 
 Important:
 
-- Do not send raw card data to this backend.
-- Use Stripe.js or Stripe Elements on the frontend with the returned `clientSecret`.
+- Every user has a subscription record.
+- Bookings are covered by subscription; there is no booking payment flow.
 
 ## Global Pagination
 

@@ -6,9 +6,7 @@ import { BookingController } from './booking.controller';
 import {
   bookingIdParamSchema,
   createBookingSchema,
-  createPaymentIntentSchema,
-  rejectBookingSchema,
-  verifyPaymentSchema
+  rejectBookingSchema
 } from './booking.schema';
 
 const router = Router();
@@ -65,14 +63,6 @@ router.use(protect);
  *         reason:
  *           type: string
  *           example: Selected slots are unavailable due to maintenance.
- *     BookingVerifyPaymentRequest:
- *       type: object
- *       required:
- *         - paymentIntentId
- *       properties:
- *         paymentIntentId:
- *           type: string
- *           example: pi_3QxExample123456789
  *     Booking:
  *       type: object
  *       properties:
@@ -140,13 +130,9 @@ router.use(protect);
  *           properties:
  *             status:
  *               type: string
- *               enum: [unpaid, requires_payment, paid, failed, refunded]
- *               example: unpaid
- *             paymentIntentId:
- *               type: string
- *               nullable: true
- *               example: pi_3QxExample123456789
- *             paidAt:
+ *               enum: [covered_by_subscription]
+ *               example: covered_by_subscription
+ *             coveredAt:
  *               type: string
  *               format: date-time
  *               nullable: true
@@ -213,43 +199,6 @@ router.use(protect);
  *           example: Booking created successfully
  *         data:
  *           $ref: '#/components/schemas/Booking'
- *     PaymentIntentResponse:
- *       type: object
- *       properties:
- *         success:
- *           type: boolean
- *           example: true
- *         message:
- *           type: string
- *           example: Payment intent created successfully
- *         data:
- *           type: object
- *           properties:
- *             booking:
- *               $ref: '#/components/schemas/Booking'
- *             paymentIntentId:
- *               type: string
- *               example: pi_3QxExample123456789
- *             clientSecret:
- *               type: string
- *               example: pi_3QxExample123456789_secret_abc123
- *     VerifyPaymentResponse:
- *       type: object
- *       properties:
- *         success:
- *           type: boolean
- *           example: true
- *         message:
- *           type: string
- *           example: Payment verification completed
- *         data:
- *           type: object
- *           properties:
- *             booking:
- *               $ref: '#/components/schemas/Booking'
- *             paymentIntentStatus:
- *               type: string
- *               example: succeeded
  *     ErrorResponse:
  *       type: object
  *       properties:
@@ -292,7 +241,7 @@ router.use(protect);
  *       401:
  *         description: Unauthorized
  *       403:
- *         description: Only customers can create bookings
+ *         description: Only subscribed customers can create bookings
  *       404:
  *         description: Target resource not found
  *       409:
@@ -424,7 +373,7 @@ router.get('/:bookingId', validate(bookingIdParamSchema), BookingController.getB
  *   patch:
  *     tags: [Bookings]
  *     summary: Approve a booking
- *     description: Provider approves a pending booking. Approval enables payment for the customer.
+ *     description: Provider approves a pending booking. Approved bookings are confirmed immediately because bookings are covered by subscription.
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -502,7 +451,7 @@ router.patch(
  *   patch:
  *     tags: [Bookings]
  *     summary: Cancel a booking
- *     description: Customer cancels a booking before payment is completed.
+ *     description: Customer cancels a booking before completion.
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -526,87 +475,5 @@ router.patch(
  *         description: Booking not found
  */
 router.patch('/:bookingId/cancel', authorize('customer'), validate(bookingIdParamSchema), BookingController.cancelBooking);
-
-/**
- * @openapi
- * /api/v1/bookings/{bookingId}/payment-intent:
- *   post:
- *     tags: [Bookings]
- *     summary: Create payment intent for approved booking
- *     description: Creates a Stripe PaymentIntent for an approved booking. Use the returned client secret with Stripe.js or Stripe Elements on the frontend.
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: bookingId
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Payment intent created
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/PaymentIntentResponse'
- *       400:
- *         description: Booking not approved or provider payout account missing
- *       403:
- *         description: Only the customer can pay
- *       404:
- *         description: Booking not found
- *       500:
- *         description: Stripe is not configured
- */
-router.post(
-  '/:bookingId/payment-intent',
-  authorize('customer'),
-  validate(createPaymentIntentSchema),
-  BookingController.createPaymentIntent
-);
-
-/**
- * @openapi
- * /api/v1/bookings/{bookingId}/verify-payment:
- *   post:
- *     tags: [Bookings]
- *     summary: Verify payment and confirm booking
- *     description: After the frontend confirms the payment with Stripe, call this endpoint to sync payment status into the booking record.
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: bookingId
- *         required: true
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/BookingVerifyPaymentRequest'
- *     responses:
- *       200:
- *         description: Payment verification result
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/VerifyPaymentResponse'
- *       400:
- *         description: Payment intent does not match the booking
- *       403:
- *         description: Only the customer can verify
- *       404:
- *         description: Booking not found
- *       500:
- *         description: Stripe is not configured
- */
-router.post(
-  '/:bookingId/verify-payment',
-  authorize('customer'),
-  validate(verifyPaymentSchema),
-  BookingController.verifyPayment
-);
 
 export const bookingRouter = router;

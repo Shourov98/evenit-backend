@@ -49,6 +49,16 @@ const router = Router();
  *         isEmailVerified:
  *           type: boolean
  *           example: false
+ *         subscription:
+ *           type: object
+ *           properties:
+ *             status:
+ *               type: string
+ *               enum: [subscribed, not_subscribed]
+ *               example: subscribed
+ *             activatedAt:
+ *               type: string
+ *               format: date-time
  *         onboarding:
  *           nullable: true
  *           type: object

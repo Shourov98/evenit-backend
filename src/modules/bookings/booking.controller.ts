@@ -90,26 +90,4 @@ export class BookingController {
       data: booking
     });
   });
-
-  static createPaymentIntent = catchAsync(async (req: Request, res: Response) => {
-    const user = getUser(req);
-    const result = await BookingService.createPaymentIntent(req.params.bookingId, user.userId);
-
-    return res.status(200).json({
-      success: true,
-      message: 'Payment intent created successfully',
-      data: result
-    });
-  });
-
-  static verifyPayment = catchAsync(async (req: Request, res: Response) => {
-    const user = getUser(req);
-    const result = await BookingService.verifyPayment(req.params.bookingId, user.userId, req.body.paymentIntentId);
-
-    return res.status(200).json({
-      success: true,
-      message: 'Payment verification completed',
-      data: result
-    });
-  });
 }

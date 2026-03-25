@@ -2,8 +2,7 @@ import { isValidObjectId, Types } from 'mongoose';
 import { AppError } from '../../common/errors/AppError';
 import { PaginationOptions, paginateModel } from '../../common/utils/pagination';
 import { env } from '../../config/env';
-import { getStripe, hasStripeConfig } from '../../config/stripe';
-import { UserModel } from '../auth/auth.model';
+import { createDefaultUserSubscription, UserModel } from '../auth/auth.model';
 import { IServiceProviderService, ServiceProviderServiceModel } from '../service-provider/service-provider.model';
 import { IBooking, BookingModel } from './booking.model';
 import { IVenue, VenueProviderVenueModel } from '../venue-provider/venue-provider.model';
@@ -40,15 +39,6 @@ const getPlatformFeePercent = (): number => {
   }
 
   return parsed;
-};
-
-const toMinorUnitAmount = (amount: number): number => {
-  const rounded = Math.round(amount * 100);
-  if (rounded < 0) {
-    throw new AppError(400, 'Invalid payment amount');
-  }
-
-  return rounded;
 };
 
 const canAccessBooking = (booking: IBooking, actorId: string, role: string): boolean => {
@@ -133,6 +123,13 @@ export class BookingService {
     if (!customer || customer.role !== 'customer') {
       throw new AppError(403, 'Only customers can create bookings');
     }
+    if (!customer.subscription) {
+      customer.subscription = createDefaultUserSubscription(customer.role);
+      await customer.save();
+    }
+    if (customer.subscription.status !== 'subscribed') {
+      throw new AppError(403, 'A subscribed account is required to create a booking');
+    }
 
     const timeSlots = sortTimeSlots(payload.timeSlots);
     const durationHours = payload.durationHours ?? timeSlots.length;
@@ -213,7 +210,7 @@ export class BookingService {
       },
       status: 'pending',
       payment: {
-        status: 'unpaid'
+        status: 'covered_by_subscription'
       }
     });
   }
@@ -268,11 +265,12 @@ export class BookingService {
       throw new AppError(400, 'Only pending bookings can be approved');
     }
 
-    booking.status = 'approved';
+    booking.status = 'confirmed';
     booking.approvedAt = new Date();
     booking.rejectedAt = undefined;
     booking.rejectionReason = undefined;
-    booking.payment.status = 'requires_payment';
+    booking.payment.status = 'covered_by_subscription';
+    booking.payment.coveredAt = new Date();
     await booking.save();
 
     return booking;
@@ -291,7 +289,8 @@ export class BookingService {
     booking.status = 'rejected';
     booking.rejectedAt = new Date();
     booking.rejectionReason = reason;
-    booking.payment.status = 'unpaid';
+    booking.payment.status = 'covered_by_subscription';
+    booking.payment.coveredAt = undefined;
     await booking.save();
 
     return booking;
@@ -307,107 +306,10 @@ export class BookingService {
       throw new AppError(400, 'Booking cannot be cancelled');
     }
 
-    if (booking.payment.status === 'paid') {
-      throw new AppError(400, 'Paid bookings cannot be cancelled from this endpoint');
-    }
-
     booking.status = 'cancelled';
     booking.cancelledAt = new Date();
     await booking.save();
 
     return booking;
-  }
-
-  static async createPaymentIntent(bookingId: string, customerId: string) {
-    const booking = await this.getById(bookingId, customerId, 'customer');
-    if (String(booking.customerId) !== customerId) {
-      throw new AppError(403, 'Only the customer can pay for this booking');
-    }
-
-    if (!hasStripeConfig()) {
-      throw new AppError(500, 'Stripe is not configured');
-    }
-
-    if (booking.status !== 'approved') {
-      throw new AppError(400, 'Booking must be approved before payment');
-    }
-
-    if (booking.payment.status === 'paid') {
-      throw new AppError(400, 'Booking is already paid');
-    }
-
-    const provider = await UserModel.findById(booking.providerId);
-    const destinationAccount = provider?.onboarding?.stripeAccountId;
-    if (!destinationAccount) {
-      throw new AppError(400, 'Provider payout account is not configured');
-    }
-
-    const stripe = getStripe();
-    const amount = toMinorUnitAmount(booking.pricing.totalAmount);
-    const applicationFeeAmount = toMinorUnitAmount(booking.pricing.platformFeeAmount);
-
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount,
-      currency: booking.pricing.currency.toLowerCase(),
-      automatic_payment_methods: {
-        enabled: true
-      },
-      metadata: {
-        bookingId: String(booking._id),
-        targetType: booking.targetType,
-        targetId: String(booking.targetId),
-        customerId: String(booking.customerId),
-        providerId: String(booking.providerId)
-      },
-      transfer_data: {
-        destination: destinationAccount
-      },
-      application_fee_amount: applicationFeeAmount
-    });
-
-    booking.payment.paymentIntentId = paymentIntent.id;
-    booking.payment.status = 'requires_payment';
-    await booking.save();
-
-    return {
-      booking,
-      paymentIntentId: paymentIntent.id,
-      clientSecret: paymentIntent.client_secret
-    };
-  }
-
-  static async verifyPayment(bookingId: string, customerId: string, paymentIntentId: string) {
-    const booking = await this.getById(bookingId, customerId, 'customer');
-    if (String(booking.customerId) !== customerId) {
-      throw new AppError(403, 'Only the customer can verify this payment');
-    }
-
-    if (!hasStripeConfig()) {
-      throw new AppError(500, 'Stripe is not configured');
-    }
-
-    if (booking.payment.paymentIntentId !== paymentIntentId) {
-      throw new AppError(400, 'Payment intent does not match this booking');
-    }
-
-    const paymentIntent = await getStripe().paymentIntents.retrieve(paymentIntentId);
-    if (paymentIntent.metadata.bookingId !== String(booking._id)) {
-      throw new AppError(400, 'Payment intent metadata does not match this booking');
-    }
-
-    if (paymentIntent.status === 'succeeded') {
-      booking.payment.status = 'paid';
-      booking.payment.paidAt = new Date();
-      booking.status = 'confirmed';
-      await booking.save();
-    } else if (paymentIntent.status === 'requires_payment_method') {
-      booking.payment.status = 'failed';
-      await booking.save();
-    }
-
-    return {
-      booking,
-      paymentIntentStatus: paymentIntent.status
-    };
   }
 }

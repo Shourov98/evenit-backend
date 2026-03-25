@@ -15,6 +15,10 @@ declare global {
           | 'venue_provider'
           | 'customer';
         serviceCategories: string[];
+        subscription: {
+          status: 'subscribed' | 'not_subscribed';
+          activatedAt: Date;
+        };
         onboarding?: unknown;
       };
     }
