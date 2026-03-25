@@ -52,6 +52,10 @@ const router = Router();
  *         subscription:
  *           type: object
  *           properties:
+ *             plan:
+ *               type: string
+ *               enum: [customer_plan, event_planner_plan, service_provider_plan, venue_provider_plan, admin_plan, super_admin_plan]
+ *               example: customer_plan
  *             status:
  *               type: string
  *               enum: [subscribed, not_subscribed]
@@ -59,6 +63,22 @@ const router = Router();
  *             activatedAt:
  *               type: string
  *               format: date-time
+ *             payment:
+ *               type: object
+ *               properties:
+ *                 amount:
+ *                   type: number
+ *                   example: 499
+ *                 currency:
+ *                   type: string
+ *                   example: EUR
+ *                 status:
+ *                   type: string
+ *                   enum: [paid, unpaid]
+ *                   example: paid
+ *                 paidAt:
+ *                   type: string
+ *                   format: date-time
  *         onboarding:
  *           nullable: true
  *           type: object

@@ -6,6 +6,7 @@ import { generateOtpCode, hashOtpCode } from '../../common/utils/otp';
 import { AuthOtpModel, OtpPurpose } from './auth-otp.model';
 import {
   createDefaultUserSubscription,
+  hydrateUserSubscription,
   IEventProviderOnboarding,
   IServiceProviderOnboarding,
   IUser,
@@ -126,8 +127,9 @@ const verifyOtp = async (payload: {
 };
 
 const ensureUserSubscription = async (user: IUser): Promise<IUser> => {
-  if (!user.subscription) {
-    user.subscription = createDefaultUserSubscription(user.role);
+  const hydratedSubscription = hydrateUserSubscription(user.role, user.subscription);
+  if (JSON.stringify(user.subscription) !== JSON.stringify(hydratedSubscription)) {
+    user.subscription = hydratedSubscription;
     await user.save();
   }
 

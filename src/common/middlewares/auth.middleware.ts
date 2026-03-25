@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { AppError } from '../errors/AppError';
 import { env } from '../../config/env';
-import { createDefaultUserSubscription, UserModel } from '../../modules/auth/auth.model';
+import { createDefaultUserSubscription, hydrateUserSubscription, UserModel } from '../../modules/auth/auth.model';
 
 interface JwtPayload {
   userId: string;
@@ -25,8 +25,9 @@ export const protect = async (req: Request, _res: Response, next: NextFunction):
     if (!user) {
       return next(new AppError(401, 'Unauthorized: user not found'));
     }
-    if (!user.subscription) {
-      user.subscription = createDefaultUserSubscription(user.role);
+    const hydratedSubscription = hydrateUserSubscription(user.role, user.subscription);
+    if (JSON.stringify(user.subscription) !== JSON.stringify(hydratedSubscription)) {
+      user.subscription = hydratedSubscription;
       await user.save();
     }
 

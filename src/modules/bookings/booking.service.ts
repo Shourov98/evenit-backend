@@ -2,7 +2,7 @@ import { isValidObjectId, Types } from 'mongoose';
 import { AppError } from '../../common/errors/AppError';
 import { PaginationOptions, paginateModel } from '../../common/utils/pagination';
 import { env } from '../../config/env';
-import { createDefaultUserSubscription, UserModel } from '../auth/auth.model';
+import { hydrateUserSubscription, UserModel } from '../auth/auth.model';
 import { IServiceProviderService, ServiceProviderServiceModel } from '../service-provider/service-provider.model';
 import { IBooking, BookingModel } from './booking.model';
 import { IVenue, VenueProviderVenueModel } from '../venue-provider/venue-provider.model';
@@ -123,8 +123,9 @@ export class BookingService {
     if (!customer || customer.role !== 'customer') {
       throw new AppError(403, 'Only customers can create bookings');
     }
-    if (!customer.subscription) {
-      customer.subscription = createDefaultUserSubscription(customer.role);
+    const hydratedSubscription = hydrateUserSubscription(customer.role, customer.subscription);
+    if (JSON.stringify(customer.subscription) !== JSON.stringify(hydratedSubscription)) {
+      customer.subscription = hydratedSubscription;
       await customer.save();
     }
     if (customer.subscription.status !== 'subscribed') {

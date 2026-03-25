@@ -85,15 +85,81 @@ export interface IProviderOnboarding {
 export const SUBSCRIPTION_STATUSES = ['subscribed', 'not_subscribed'] as const;
 export type SubscriptionStatus = (typeof SUBSCRIPTION_STATUSES)[number];
 
-export interface IUserSubscription {
-  status: SubscriptionStatus;
-  activatedAt: Date;
+export const SUBSCRIPTION_PLANS = [
+  'customer_plan',
+  'event_planner_plan',
+  'service_provider_plan',
+  'venue_provider_plan',
+  'admin_plan',
+  'super_admin_plan'
+] as const;
+export type SubscriptionPlan = (typeof SUBSCRIPTION_PLANS)[number];
+
+export const SUBSCRIPTION_PAYMENT_STATUSES = ['paid', 'unpaid'] as const;
+export type SubscriptionPaymentStatus = (typeof SUBSCRIPTION_PAYMENT_STATUSES)[number];
+
+export interface IUserSubscriptionPayment {
+  amount: number;
+  currency: string;
+  status: SubscriptionPaymentStatus;
+  paidAt?: Date;
 }
 
-export const createDefaultUserSubscription = (_role: UserRole): IUserSubscription => ({
+export interface IUserSubscription {
+  plan: SubscriptionPlan;
+  status: SubscriptionStatus;
+  activatedAt: Date;
+  payment: IUserSubscriptionPayment;
+}
+
+export const DEFAULT_SUBSCRIPTION_PLANS: Record<UserRole, SubscriptionPlan> = {
+  customer: 'customer_plan',
+  event_planner: 'event_planner_plan',
+  service_provider: 'service_provider_plan',
+  venue_provider: 'venue_provider_plan',
+  admin: 'admin_plan',
+  super_admin: 'super_admin_plan'
+};
+
+export const DEFAULT_SUBSCRIPTION_PAYMENTS: Record<
+  UserRole,
+  Pick<IUserSubscriptionPayment, 'amount' | 'currency'>
+> = {
+  customer: { amount: 499, currency: 'EUR' },
+  event_planner: { amount: 1499, currency: 'EUR' },
+  service_provider: { amount: 999, currency: 'EUR' },
+  venue_provider: { amount: 1999, currency: 'EUR' },
+  admin: { amount: 0, currency: 'EUR' },
+  super_admin: { amount: 0, currency: 'EUR' }
+};
+
+export const createDefaultUserSubscription = (role: UserRole): IUserSubscription => ({
+  plan: DEFAULT_SUBSCRIPTION_PLANS[role],
   status: 'subscribed',
-  activatedAt: new Date()
+  activatedAt: new Date(),
+  payment: {
+    ...DEFAULT_SUBSCRIPTION_PAYMENTS[role],
+    status: 'paid',
+    paidAt: new Date()
+  }
 });
+
+export const hydrateUserSubscription = (
+  role: UserRole,
+  subscription?: Partial<IUserSubscription> | null
+): IUserSubscription => {
+  const defaults = createDefaultUserSubscription(role);
+  const payment = {
+    ...defaults.payment,
+    ...(subscription?.payment ?? {})
+  };
+
+  return {
+    ...defaults,
+    ...(subscription ?? {}),
+    payment
+  };
+};
 
 export interface IUser extends Document {
   fullName: string;
@@ -366,6 +432,11 @@ const providerOnboardingSchema = new Schema<IProviderOnboarding>(
 
 const userSubscriptionSchema = new Schema<IUserSubscription>(
   {
+    plan: {
+      type: String,
+      enum: SUBSCRIPTION_PLANS,
+      required: true
+    },
     status: {
       type: String,
       enum: SUBSCRIPTION_STATUSES,
@@ -376,6 +447,28 @@ const userSubscriptionSchema = new Schema<IUserSubscription>(
       type: Date,
       required: true,
       default: Date.now
+    },
+    payment: {
+      amount: {
+        type: Number,
+        required: true,
+        min: 0
+      },
+      currency: {
+        type: String,
+        required: true,
+        uppercase: true,
+        minlength: 3,
+        maxlength: 3
+      },
+      status: {
+        type: String,
+        enum: SUBSCRIPTION_PAYMENT_STATUSES,
+        required: true
+      },
+      paidAt: {
+        type: Date
+      }
     }
   },
   { _id: false }

@@ -8,12 +8,16 @@ export const sendEmail = async (payload: { to: string; subject: string; html: st
     throw new Error('RESEND_API_KEY is not configured');
   }
 
-  await resend.emails.send({
+  const result = await resend.emails.send({
     from: env.RESEND_FROM_EMAIL,
     to: payload.to,
     subject: payload.subject,
     html: payload.html
   });
+
+  if (result.error) {
+    throw new Error(`Resend email send failed: ${result.error.message}`);
+  }
 };
 
 export const buildOtpEmailHtml = (otp: string, purposeLabel: string): string => {

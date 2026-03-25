@@ -16,8 +16,21 @@ declare global {
           | 'customer';
         serviceCategories: string[];
         subscription: {
+          plan:
+            | 'customer_plan'
+            | 'event_planner_plan'
+            | 'service_provider_plan'
+            | 'venue_provider_plan'
+            | 'admin_plan'
+            | 'super_admin_plan';
           status: 'subscribed' | 'not_subscribed';
           activatedAt: Date;
+          payment: {
+            amount: number;
+            currency: string;
+            status: 'paid' | 'unpaid';
+            paidAt?: Date;
+          };
         };
         onboarding?: unknown;
       };
