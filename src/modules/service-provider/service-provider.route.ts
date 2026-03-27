@@ -47,6 +47,47 @@ const router = Router();
  *     ServiceCreateRequest:
  *       type: object
  *       required: [information, pricing, settings, media]
+ *       example:
+ *         information:
+ *           serviceName: Premium Catering
+ *           category: Catering
+ *           description: Corporate and wedding catering service.
+ *           serviceArea:
+ *             - Dhaka
+ *             - Gazipur
+ *           tags:
+ *             - wedding
+ *             - corporate
+ *         pricing:
+ *           amount: 50000
+ *           pricingType: package
+ *           currency: BDT
+ *           discount:
+ *             type: percentage
+ *             value: 10
+ *         settings:
+ *           amenities:
+ *             deliveryIncluded: true
+ *             setupIncluded: true
+ *           capacity: 300
+ *         media:
+ *           galleryImages:
+ *             - https://cdn.example.com/services/catering-1.jpg
+ *             - https://cdn.example.com/services/catering-2.jpg
+ *           videoUrl: https://www.youtube.com/watch?v=abc123
+ *         availabilityOverrides:
+ *           - date: 2026-03-20
+ *             slots:
+ *               - hour: 10
+ *                 status: booked
+ *               - hour: 11
+ *                 status: booked
+ *           - date: 2026-03-21
+ *             slots:
+ *               - hour: 14
+ *                 status: pending
+ *               - hour: 15
+ *                 status: pending
  *       properties:
  *         information:
  *           type: object
@@ -108,17 +149,23 @@ const router = Router();
  *               example: 5
  *         media:
  *           type: object
+ *           description: galleryImages and videoUrl must be valid URLs when provided.
  *           properties:
  *             galleryImages:
  *               type: array
  *               items:
  *                 type: string
  *                 format: uri
+ *               example:
+ *                 - https://cdn.example.com/services/catering-1.jpg
+ *                 - https://cdn.example.com/services/catering-2.jpg
  *             videoUrl:
  *               type: string
  *               format: uri
+ *               example: https://www.youtube.com/watch?v=abc123
  *         availabilityOverrides:
  *           type: array
+ *           description: Each date requires a slots array. A plain date plus status is not valid.
  *           items:
  *             $ref: '#/components/schemas/AvailabilityOverride'
  *     ServiceUpdateRequest:
@@ -294,6 +341,50 @@ router.use(protect, authorize('service_provider'));
  *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/ServiceCreateRequest'
+ *           examples:
+ *             validService:
+ *               summary: Valid service creation payload
+ *               value:
+ *                 information:
+ *                   serviceName: Premium Catering
+ *                   category: Catering
+ *                   description: Corporate and wedding catering service.
+ *                   serviceArea:
+ *                     - Dhaka
+ *                     - Gazipur
+ *                   tags:
+ *                     - wedding
+ *                     - corporate
+ *                 pricing:
+ *                   amount: 50000
+ *                   pricingType: package
+ *                   currency: BDT
+ *                   discount:
+ *                     type: percentage
+ *                     value: 10
+ *                 settings:
+ *                   amenities:
+ *                     deliveryIncluded: true
+ *                     setupIncluded: true
+ *                   capacity: 300
+ *                 media:
+ *                   galleryImages:
+ *                     - https://cdn.example.com/services/catering-1.jpg
+ *                     - https://cdn.example.com/services/catering-2.jpg
+ *                   videoUrl: https://www.youtube.com/watch?v=abc123
+ *                 availabilityOverrides:
+ *                   - date: 2026-03-20
+ *                     slots:
+ *                       - hour: 10
+ *                         status: booked
+ *                       - hour: 11
+ *                         status: booked
+ *                   - date: 2026-03-21
+ *                     slots:
+ *                       - hour: 14
+ *                         status: pending
+ *                       - hour: 15
+ *                         status: pending
  *     responses:
  *       201:
  *         description: Service created successfully
