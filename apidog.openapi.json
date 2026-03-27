@@ -3,7 +3,7 @@
   "info": {
     "title": "Saqib Express API",
     "version": "1.0.0",
-    "description": "Auth and provider onboarding APIs for customer, service provider, event provider, and venue provider."
+    "description": "Production-grade modular Express API with TypeScript"
   },
   "servers": [
     {
@@ -29,6 +29,38 @@
     },
     {
       "name": "EventPlanner"
+    },
+    {
+      "name": "Admin",
+      "description": "Admin and super-admin moderation endpoints for services and venues"
+    },
+    {
+      "name": "Auth",
+      "description": "Registration, login, OTP verification, onboarding, and current-user endpoints"
+    },
+    {
+      "name": "Bookings",
+      "description": "Customer and provider booking lifecycle"
+    },
+    {
+      "name": "EventPlanner",
+      "description": "Public listing of verified event providers"
+    },
+    {
+      "name": "Public",
+      "description": "Public landing-page content endpoints"
+    },
+    {
+      "name": "ServiceProvider",
+      "description": "Public listing and provider management for services"
+    },
+    {
+      "name": "Uploads",
+      "description": "Authenticated file upload endpoints"
+    },
+    {
+      "name": "VenueProvider",
+      "description": "Public listing and provider management for venues"
     }
   ],
   "components": {
@@ -229,16 +261,13 @@
         "properties": {
           "email": {
             "type": "string",
-            "format": "email"
+            "format": "email",
+            "example": "marvin@example.com"
           },
           "otp": {
             "type": "string",
             "example": "123456"
           }
-        },
-        "example": {
-          "email": "jane@example.com",
-          "otp": "123456"
         }
       },
       "EmailRequest": {
@@ -266,7 +295,8 @@
         "properties": {
           "email": {
             "type": "string",
-            "format": "email"
+            "format": "email",
+            "example": "marvin@example.com"
           },
           "otp": {
             "type": "string",
@@ -274,13 +304,9 @@
           },
           "newPassword": {
             "type": "string",
-            "minLength": 8
+            "format": "password",
+            "example": "newStrongPass123"
           }
-        },
-        "example": {
-          "email": "jane@example.com",
-          "otp": "123456",
-          "newPassword": "NewStrongPass123"
         }
       },
       "VerificationInfo": {
@@ -414,8 +440,7 @@
           "_id",
           "name",
           "email",
-          "profileInfo",
-          "services"
+          "profileInfo"
         ],
         "properties": {
           "_id": {
@@ -424,93 +449,27 @@
           },
           "name": {
             "type": "string",
-            "example": "Jane Doe"
+            "example": "Marvin McKinney"
           },
           "email": {
             "type": "string",
             "format": "email",
-            "example": "jane@example.com"
+            "example": "marvin@example.com"
           },
           "stripeAccountId": {
             "type": "string",
-            "example": "acct_1234567890abc"
+            "example": "acct_1Example123456789"
           },
           "profileInfo": {
-            "type": "object",
-            "required": [
-              "serviceName",
-              "serviceCategory",
-              "coverageArea",
-              "verification"
-            ],
-            "properties": {
-              "serviceName": {
-                "type": "string"
-              },
-              "serviceCategory": {
-                "type": "string"
-              },
-              "serviceDescription": {
-                "type": "string"
-              },
-              "coverageArea": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "verification": {
-                "type": "object",
-                "required": [
-                  "businessType",
-                  "nationalIdOrTradeLicenseFiles"
-                ],
-                "properties": {
-                  "businessType": {
-                    "type": "string",
-                    "enum": ["individual", "company"]
-                  },
-                  "companyName": {
-                    "type": "string"
-                  },
-                  "nationalIdOrTradeLicenseFiles": {
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "format": "uri"
-                    }
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/schemas/ServiceProviderProfileInfoInput"
           },
           "services": {
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "example": []
           }
-        },
-        "description": "Service provider onboarding payload.",
-        "example": {
-          "_id": "65f1a9d0f1b2c3d4e5f60001",
-          "name": "Jane Doe",
-          "email": "jane@example.com",
-          "stripeAccountId": "acct_1234567890abc",
-          "profileInfo": {
-            "serviceName": "Premium Catering",
-            "serviceCategory": "Catering",
-            "serviceDescription": "Corporate and wedding catering services",
-            "coverageArea": ["Dhaka"],
-            "verification": {
-              "businessType": "individual",
-              "nationalIdOrTradeLicenseFiles": [
-                "https://cdn.example.com/nid-front.jpg",
-                "https://cdn.example.com/trade-license.pdf"
-              ]
-            }
-          },
-          "services": []
         }
       },
       "EventPlannerOnboardingRequest": {
@@ -538,77 +497,10 @@
           },
           "stripeAccountId": {
             "type": "string",
-            "example": "acct_1234567890abc"
+            "example": "acct_1Example123456789"
           },
           "profileInfo": {
-            "type": "object",
-            "required": [
-              "name",
-              "coverageArea",
-              "address",
-              "verification"
-            ],
-            "properties": {
-              "name": {
-                "type": "string"
-              },
-              "description": {
-                "type": "string"
-              },
-              "coverageArea": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "address": {
-                "type": "string"
-              },
-              "verification": {
-                "type": "object",
-                "required": [
-                  "businessType",
-                  "nationalIdOrTradeLicenseFiles"
-                ],
-                "properties": {
-                  "businessType": {
-                    "type": "string",
-                    "enum": ["individual", "company"]
-                  },
-                  "companyName": {
-                    "type": "string"
-                  },
-                  "nationalIdOrTradeLicenseFiles": {
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "format": "uri"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "description": "Event planner onboarding payload.",
-        "example": {
-          "_id": "65f1a9d0f1b2c3d4e5f60002",
-          "fullName": "Star Events",
-          "email": "planner@example.com",
-          "stripeAccountId": "acct_1234567890abc",
-          "profileInfo": {
-            "name": "Star Events",
-            "description": "Wedding and corporate event planning",
-            "coverageArea": ["Dhaka", "Chattogram"],
-            "address": "Banani, Dhaka",
-            "verification": {
-              "businessType": "company",
-              "companyName": "Star Events",
-              "nationalIdOrTradeLicenseFiles": [
-                "https://cdn.example.com/license-front.jpg",
-                "https://cdn.example.com/license.pdf"
-              ]
-            }
+            "$ref": "#/components/schemas/EventPlannerOnboardingInput"
           }
         }
       },
@@ -621,8 +513,6 @@
           "stripeAccountId",
           "businessName",
           "businessType",
-          "legalBusinessName",
-          "registrationNo",
           "businessMail",
           "businessPhoneNo"
         ],
@@ -642,41 +532,37 @@
           },
           "stripeAccountId": {
             "type": "string",
-            "example": "acct_1234567890abc"
+            "example": "acct_1Example123456789"
           },
           "businessName": {
-            "type": "string"
+            "type": "string",
+            "example": "Royal Hall"
           },
           "businessType": {
             "type": "string",
-            "enum": ["individual", "company"]
+            "enum": [
+              "individual",
+              "company"
+            ],
+            "example": "company"
           },
           "legalBusinessName": {
-            "type": "string"
+            "type": "string",
+            "example": "Royal Hall Ltd"
           },
           "registrationNo": {
-            "type": "string"
+            "type": "string",
+            "example": "TRD-123456"
           },
           "businessMail": {
             "type": "string",
-            "format": "email"
+            "format": "email",
+            "example": "info@royalhall.com"
           },
           "businessPhoneNo": {
-            "type": "string"
+            "type": "string",
+            "example": 8801700000000
           }
-        },
-        "description": "Venue provider onboarding payload.",
-        "example": {
-          "_id": "65f1a9d0f1b2c3d4e5f60003",
-          "fullName": "Royal Hall Owner",
-          "email": "venue@example.com",
-          "stripeAccountId": "acct_1234567890abc",
-          "businessName": "Royal Hall",
-          "businessType": "company",
-          "legalBusinessName": "Royal Hall Ltd",
-          "registrationNo": "TRD-123456",
-          "businessMail": "info@royalhall.com",
-          "businessPhoneNo": "+8801700000000"
         }
       },
       "ServiceProviderServiceRequest": {
@@ -925,60 +811,109 @@
       },
       "AuthUser": {
         "type": "object",
-        "required": [
-          "id",
-          "fullName",
-          "email",
-          "role",
-          "serviceCategories",
-          "isEmailVerified"
-        ],
         "properties": {
           "id": {
             "type": "string",
-            "example": "65ff8d4ea2b4fdb3a23d8c17"
+            "example": "65f1a9d0f1b2c3d4e5f60001"
           },
           "fullName": {
             "type": "string",
-            "example": "Jane Doe"
+            "example": "Marvin McKinney"
           },
           "email": {
             "type": "string",
             "format": "email",
-            "example": "jane@example.com"
+            "example": "marvin@example.com"
           },
           "role": {
             "type": "string",
             "enum": [
-              "super_admin",
-              "admin",
+              "customer",
               "service_provider",
               "event_planner",
               "venue_provider",
-              "customer"
-            ]
+              "admin",
+              "super_admin"
+            ],
+            "example": "customer"
           },
           "serviceCategories": {
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "example": []
           },
           "isEmailVerified": {
             "type": "boolean",
-            "example": true
+            "example": false
+          },
+          "subscription": {
+            "type": "object",
+            "properties": {
+              "plan": {
+                "type": "string",
+                "enum": [
+                  "customer_plan",
+                  "event_planner_plan",
+                  "service_provider_plan",
+                  "venue_provider_plan",
+                  "admin_plan",
+                  "super_admin_plan"
+                ],
+                "example": "customer_plan"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "subscribed",
+                  "not_subscribed"
+                ],
+                "example": "not_subscribed"
+              },
+              "activatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              },
+              "payment": {
+                "type": "object",
+                "properties": {
+                  "amount": {
+                    "type": "number",
+                    "example": 500
+                  },
+                  "currency": {
+                    "type": "string",
+                    "example": "GBP"
+                  },
+                  "billingCycle": {
+                    "type": "string",
+                    "enum": [
+                      "monthly",
+                      "yearly"
+                    ],
+                    "example": "monthly"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "paid",
+                      "unpaid"
+                    ],
+                    "example": "unpaid"
+                  },
+                  "paidAt": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
           },
           "onboarding": {
-            "oneOf": [
-              {
-                "type": "object",
-                "additionalProperties": true
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "nullable": true
+            "nullable": true,
+            "type": "object"
           }
         }
       },
@@ -1018,25 +953,16 @@
       },
       "AuthUserResponse": {
         "type": "object",
-        "required": [
-          "success",
-          "message",
-          "data"
-        ],
         "properties": {
           "success": {
             "type": "boolean",
             "example": true
           },
           "message": {
-            "type": "string",
-            "example": "User registered successfully. OTP sent to email for verification."
+            "type": "string"
           },
           "data": {
             "type": "object",
-            "required": [
-              "user"
-            ],
             "properties": {
               "user": {
                 "$ref": "#/components/schemas/AuthUser"
@@ -1321,46 +1247,76 @@
       },
       "ServiceListResponse": {
         "type": "object",
-        "required": [
-          "success",
-          "meta",
-          "data"
-        ],
         "properties": {
           "success": {
             "type": "boolean",
             "example": true
           },
           "meta": {
-            "$ref": "#/components/schemas/PaginationMeta"
+            "type": "object",
+            "properties": {
+              "page": {
+                "type": "integer"
+              },
+              "limit": {
+                "type": "integer"
+              },
+              "total": {
+                "type": "integer"
+              },
+              "totalPages": {
+                "type": "integer"
+              },
+              "hasNextPage": {
+                "type": "boolean"
+              },
+              "hasPrevPage": {
+                "type": "boolean"
+              }
+            }
           },
           "data": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ServiceItem"
+              "$ref": "#/components/schemas/ServiceEntity"
             }
           }
         }
       },
       "VenueListResponse": {
         "type": "object",
-        "required": [
-          "success",
-          "meta",
-          "data"
-        ],
         "properties": {
           "success": {
             "type": "boolean",
             "example": true
           },
           "meta": {
-            "$ref": "#/components/schemas/PaginationMeta"
+            "type": "object",
+            "properties": {
+              "page": {
+                "type": "integer"
+              },
+              "limit": {
+                "type": "integer"
+              },
+              "total": {
+                "type": "integer"
+              },
+              "totalPages": {
+                "type": "integer"
+              },
+              "hasNextPage": {
+                "type": "boolean"
+              },
+              "hasPrevPage": {
+                "type": "boolean"
+              }
+            }
           },
           "data": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/VenueItem"
+              "$ref": "#/components/schemas/VenueEntity"
             }
           }
         }
@@ -1418,24 +1374,1380 @@
       },
       "EventPlannerListResponse": {
         "type": "object",
-        "required": [
-          "success",
-          "meta",
-          "data"
-        ],
         "properties": {
           "success": {
             "type": "boolean",
             "example": true
           },
           "meta": {
-            "$ref": "#/components/schemas/PaginationMeta"
+            "type": "object",
+            "properties": {
+              "page": {
+                "type": "integer"
+              },
+              "limit": {
+                "type": "integer"
+              },
+              "total": {
+                "type": "integer"
+              },
+              "totalPages": {
+                "type": "integer"
+              },
+              "hasNextPage": {
+                "type": "boolean"
+              },
+              "hasPrevPage": {
+                "type": "boolean"
+              }
+            }
           },
           "data": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/EventPlannerItem"
+              "$ref": "#/components/schemas/EventPlannerEntity"
             }
+          }
+        }
+      },
+      "AuthRegisterRequest": {
+        "type": "object",
+        "required": [
+          "fullName",
+          "email",
+          "password",
+          "role"
+        ],
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "example": "Marvin McKinney"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "marvin@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "strongPass123"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "customer",
+              "service_provider",
+              "event_planner",
+              "venue_provider"
+            ],
+            "example": "customer"
+          }
+        }
+      },
+      "AuthLoginRequest": {
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "marvin@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "strongPass123"
+          }
+        }
+      },
+      "EmailOnlyRequest": {
+        "type": "object",
+        "required": [
+          "email"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "marvin@example.com"
+          }
+        }
+      },
+      "VerificationInfoInput": {
+        "type": "object",
+        "required": [
+          "businessType",
+          "nationalIdOrTradeLicenseUrl"
+        ],
+        "properties": {
+          "businessType": {
+            "type": "string",
+            "enum": [
+              "individual",
+              "company"
+            ],
+            "example": "company"
+          },
+          "companyName": {
+            "type": "string",
+            "example": "Evenit Ltd"
+          },
+          "nationalIdOrTradeLicenseUrl": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://example.com/trade-license.pdf"
+          }
+        }
+      },
+      "ServiceProviderVerificationInput": {
+        "type": "object",
+        "required": [
+          "businessType",
+          "nationalIdOrTradeLicenseFiles"
+        ],
+        "properties": {
+          "businessType": {
+            "type": "string",
+            "enum": [
+              "individual",
+              "company"
+            ],
+            "example": "individual"
+          },
+          "companyName": {
+            "type": "string",
+            "example": "Evenit Ltd"
+          },
+          "nationalIdOrTradeLicenseFiles": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            },
+            "example": [
+              "https://example.com/nid-front.jpg",
+              "https://example.com/trade-license.pdf"
+            ]
+          }
+        }
+      },
+      "ServiceProviderProfileInfoInput": {
+        "type": "object",
+        "required": [
+          "serviceName",
+          "serviceCategory",
+          "coverageArea",
+          "verification"
+        ],
+        "properties": {
+          "serviceName": {
+            "type": "string",
+            "example": "Premium Catering"
+          },
+          "serviceCategory": {
+            "type": "string",
+            "example": "Catering"
+          },
+          "serviceDescription": {
+            "type": "string",
+            "example": "Corporate and wedding catering services"
+          },
+          "coverageArea": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "Dhaka",
+              "Gazipur"
+            ]
+          },
+          "verification": {
+            "$ref": "#/components/schemas/ServiceProviderVerificationInput"
+          }
+        }
+      },
+      "EventPlannerOnboardingInput": {
+        "type": "object",
+        "required": [
+          "_id",
+          "fullName",
+          "email",
+          "stripeAccountId",
+          "profileInfo"
+        ],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "65f1a9d0f1b2c3d4e5f60002"
+          },
+          "fullName": {
+            "type": "string",
+            "example": "Star Events"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "planner@example.com"
+          },
+          "stripeAccountId": {
+            "type": "string",
+            "example": "acct_1Example123456789"
+          },
+          "profileInfo": {
+            "type": "object",
+            "required": [
+              "name",
+              "coverageArea",
+              "address",
+              "verification"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "example": "Star Events"
+              },
+              "description": {
+                "type": "string",
+                "example": "Wedding and corporate event planning"
+              },
+              "coverageArea": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "example": [
+                  "Dhaka",
+                  "Chattogram"
+                ]
+              },
+              "address": {
+                "type": "string",
+                "example": "Banani, Dhaka"
+              },
+              "verification": {
+                "$ref": "#/components/schemas/ServiceProviderVerificationInput"
+              }
+            }
+          }
+        }
+      },
+      "VenueProviderOnboardingInput": {
+        "type": "object",
+        "required": [
+          "_id",
+          "fullName",
+          "email",
+          "stripeAccountId",
+          "businessName",
+          "businessType",
+          "legalBusinessName",
+          "registrationNo",
+          "businessMail",
+          "businessPhoneNo"
+        ],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "65f1a9d0f1b2c3d4e5f60003"
+          },
+          "fullName": {
+            "type": "string",
+            "example": "Royal Hall Owner"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "venue@example.com"
+          },
+          "stripeAccountId": {
+            "type": "string",
+            "example": "acct_1Example123456789"
+          },
+          "businessName": {
+            "type": "string",
+            "example": "Royal Hall"
+          },
+          "businessType": {
+            "type": "string",
+            "enum": [
+              "individual",
+              "company"
+            ],
+            "example": "company"
+          },
+          "legalBusinessName": {
+            "type": "string",
+            "example": "Royal Hall Ltd"
+          },
+          "registrationNo": {
+            "type": "string",
+            "example": "TRD-123456"
+          },
+          "businessMail": {
+            "type": "string",
+            "format": "email",
+            "example": "info@royalhall.com"
+          },
+          "businessPhoneNo": {
+            "type": "string",
+            "example": 8801700000000
+          },
+          "media": {
+            "type": "object",
+            "required": [
+              "galleryImages"
+            ],
+            "properties": {
+              "galleryImages": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "example": [
+                  "https://cdn.example.com/venues/royal-hall-1.jpg",
+                  "https://cdn.example.com/venues/royal-hall-2.jpg",
+                  "https://cdn.example.com/venues/royal-hall-3.jpg"
+                ]
+              },
+              "videoUrl": {
+                "type": "string",
+                "format": "uri",
+                "example": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+              }
+            }
+          }
+        }
+      },
+      "AuthOnboardingResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Onboarding information submitted successfully"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "onboarding": {
+                "type": "object",
+                "nullable": true,
+                "example": {
+                  "stripeAccountId": "acct_1Example123456789",
+                  "submittedAt": "2026-03-24T10:30:00.000Z"
+                }
+              },
+              "user": {
+                "$ref": "#/components/schemas/AuthUser"
+              }
+            }
+          }
+        }
+      },
+      "AuthTokenResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "token": {
+                "type": "string",
+                "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.example"
+              },
+              "user": {
+                "$ref": "#/components/schemas/AuthUser"
+              }
+            }
+          }
+        }
+      },
+      "AuthMeResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "userId": {
+                "type": "string",
+                "example": "65f1a9d0f1b2c3d4e5f60001"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "fullName": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string"
+              },
+              "serviceCategories": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "onboarding": {
+                "nullable": true,
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "AuthMessageResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Verification OTP sent"
+          }
+        }
+      },
+      "BookingCreateRequest": {
+        "type": "object",
+        "required": [
+          "targetType",
+          "targetId",
+          "bookingDate",
+          "timeSlots"
+        ],
+        "properties": {
+          "targetType": {
+            "type": "string",
+            "enum": [
+              "venue",
+              "service",
+              "event"
+            ],
+            "example": "venue"
+          },
+          "targetId": {
+            "type": "string",
+            "example": "65f1a9d0f1b2c3d4e5f60718"
+          },
+          "bookingDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-03-20"
+          },
+          "timeSlots": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "example": "14:00"
+            },
+            "example": [
+              "14:00",
+              "15:00",
+              "16:00"
+            ]
+          },
+          "durationHours": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 24,
+            "example": 3
+          },
+          "location": {
+            "type": "string",
+            "example": "Farmgate, Dhaka"
+          },
+          "specialInstructions": {
+            "type": "string",
+            "example": "Need stage lighting and extra chairs."
+          }
+        }
+      },
+      "BookingRejectRequest": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "example": "Selected slots are unavailable due to maintenance."
+          }
+        }
+      },
+      "Booking": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "65f1a9d0f1b2c3d4e5f60799"
+          },
+          "customerId": {
+            "type": "string",
+            "example": "65f1a9d0f1b2c3d4e5f60001"
+          },
+          "providerId": {
+            "type": "string",
+            "example": "65f1a9d0f1b2c3d4e5f60002"
+          },
+          "targetType": {
+            "type": "string",
+            "enum": [
+              "venue",
+              "service",
+              "event"
+            ],
+            "example": "venue"
+          },
+          "targetId": {
+            "type": "string",
+            "example": "65f1a9d0f1b2c3d4e5f60718"
+          },
+          "bookingDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-03-20"
+          },
+          "timeSlots": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "14:00",
+              "15:00",
+              "16:00"
+            ]
+          },
+          "durationHours": {
+            "type": "integer",
+            "example": 3
+          },
+          "location": {
+            "type": "string",
+            "example": "Farmgate, Dhaka"
+          },
+          "specialInstructions": {
+            "type": "string",
+            "example": "Need stage lighting and extra chairs."
+          },
+          "pricing": {
+            "type": "object",
+            "properties": {
+              "unitAmount": {
+                "type": "number",
+                "example": 5000
+              },
+              "subtotal": {
+                "type": "number",
+                "example": 15000
+              },
+              "taxAmount": {
+                "type": "number",
+                "example": 0
+              },
+              "platformFeeAmount": {
+                "type": "number",
+                "example": 1500
+              },
+              "totalAmount": {
+                "type": "number",
+                "example": 15000
+              },
+              "currency": {
+                "type": "string",
+                "example": "BDT"
+              }
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "approved",
+              "rejected",
+              "confirmed",
+              "cancelled",
+              "completed"
+            ],
+            "example": "pending"
+          },
+          "payment": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "covered_by_subscription"
+                ],
+                "example": "covered_by_subscription"
+              },
+              "coveredAt": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              }
+            }
+          },
+          "approvedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "rejectedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "rejectionReason": {
+            "type": "string",
+            "nullable": true
+          },
+          "cancelledAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "BookingListResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "page": {
+                "type": "integer",
+                "example": 1
+              },
+              "limit": {
+                "type": "integer",
+                "example": 10
+              },
+              "total": {
+                "type": "integer",
+                "example": 1
+              },
+              "totalPages": {
+                "type": "integer",
+                "example": 1
+              },
+              "hasNextPage": {
+                "type": "boolean",
+                "example": false
+              },
+              "hasPrevPage": {
+                "type": "boolean",
+                "example": false
+              }
+            }
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Booking"
+            }
+          }
+        }
+      },
+      "BookingResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Booking created successfully"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Booking"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "One or more selected time slots are already booked"
+          }
+        }
+      },
+      "EventPlannerEntity": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "65f1a9d0f1b2c3d4e5f60077"
+          },
+          "fullName": {
+            "type": "string",
+            "example": "Premium Wedding & Event Planner"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "planner@example.com"
+          },
+          "role": {
+            "type": "string",
+            "example": "event_planner"
+          },
+          "serviceCategories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "isEmailVerified": {
+            "type": "boolean",
+            "example": true
+          },
+          "onboarding": {
+            "nullable": true,
+            "type": "object"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PublicServiceListResponse": {
+        "$ref": "#/components/schemas/ServiceListResponse"
+      },
+      "PublicVenueListResponse": {
+        "$ref": "#/components/schemas/VenueListResponse"
+      },
+      "PublicEventPlannerListResponse": {
+        "$ref": "#/components/schemas/EventPlannerListResponse"
+      },
+      "AvailabilityOverride": {
+        "type": "object",
+        "required": [
+          "date",
+          "slots"
+        ],
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-03-20"
+          },
+          "slots": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "hour",
+                "status"
+              ],
+              "properties": {
+                "hour": {
+                  "type": "integer",
+                  "minimum": 8,
+                  "maximum": 23,
+                  "example": 8
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "available",
+                    "pending",
+                    "booked"
+                  ],
+                  "example": "available"
+                }
+              }
+            },
+            "example": [
+              {
+                "hour": 8,
+                "status": "available"
+              },
+              {
+                "hour": 9,
+                "status": "booked"
+              },
+              {
+                "hour": 10,
+                "status": "pending"
+              }
+            ]
+          }
+        }
+      },
+      "ServiceCreateRequest": {
+        "type": "object",
+        "required": [
+          "information",
+          "pricing",
+          "settings",
+          "media"
+        ],
+        "properties": {
+          "information": {
+            "type": "object",
+            "required": [
+              "serviceName",
+              "category",
+              "serviceArea"
+            ],
+            "properties": {
+              "serviceName": {
+                "type": "string",
+                "example": "Wedding Photography"
+              },
+              "category": {
+                "type": "string",
+                "example": "Photography"
+              },
+              "description": {
+                "type": "string",
+                "example": "Full-day wedding photography service."
+              },
+              "serviceArea": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "example": [
+                  "Dhaka",
+                  "Gazipur"
+                ]
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "example": [
+                  "wedding",
+                  "premium"
+                ]
+              }
+            }
+          },
+          "pricing": {
+            "type": "object",
+            "required": [
+              "amount"
+            ],
+            "properties": {
+              "amount": {
+                "type": "number",
+                "example": 15000
+              },
+              "pricingType": {
+                "type": "string",
+                "enum": [
+                  "fixed",
+                  "hourly",
+                  "daily",
+                  "package"
+                ],
+                "example": "fixed"
+              },
+              "currency": {
+                "type": "string",
+                "example": "BDT"
+              },
+              "discount": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "percentage",
+                      "fixed"
+                    ]
+                  },
+                  "value": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          },
+          "settings": {
+            "type": "object",
+            "properties": {
+              "amenities": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "boolean"
+                },
+                "example": {
+                  "homeService": true,
+                  "emergencySupport": false
+                }
+              },
+              "capacity": {
+                "type": "integer",
+                "example": 5
+              }
+            }
+          },
+          "media": {
+            "type": "object",
+            "properties": {
+              "galleryImages": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              },
+              "videoUrl": {
+                "type": "string",
+                "format": "uri"
+              }
+            }
+          },
+          "availabilityOverrides": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AvailabilityOverride"
+            }
+          }
+        }
+      },
+      "ServiceUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "information": {
+            "type": "object"
+          },
+          "pricing": {
+            "type": "object"
+          },
+          "settings": {
+            "type": "object"
+          },
+          "media": {
+            "type": "object"
+          },
+          "availabilityOverrides": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AvailabilityOverride"
+            }
+          }
+        }
+      },
+      "ServiceEntity": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "ownerId": {
+            "type": "string"
+          },
+          "information": {
+            "type": "object"
+          },
+          "pricing": {
+            "type": "object"
+          },
+          "settings": {
+            "type": "object"
+          },
+          "media": {
+            "type": "object"
+          },
+          "availabilityOverrides": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AvailabilityOverride"
+            }
+          },
+          "publishStatus": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "published",
+              "rejected"
+            ]
+          },
+          "approvedBy": {
+            "nullable": true,
+            "type": "object"
+          },
+          "approvedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "reviews": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "isDeleted": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ServiceResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/ServiceEntity"
+          }
+        }
+      },
+      "UploadResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Images uploaded successfully"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        }
+      },
+      "VenueAvailabilityOverride": {
+        "type": "object",
+        "required": [
+          "date",
+          "slots"
+        ],
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-03-20"
+          },
+          "slots": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "hour",
+                "status"
+              ],
+              "properties": {
+                "hour": {
+                  "type": "integer",
+                  "minimum": 8,
+                  "maximum": 23,
+                  "example": 8
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "available",
+                    "pending",
+                    "booked"
+                  ],
+                  "example": "available"
+                }
+              }
+            },
+            "example": [
+              {
+                "hour": 8,
+                "status": "available"
+              },
+              {
+                "hour": 9,
+                "status": "booked"
+              },
+              {
+                "hour": 10,
+                "status": "pending"
+              }
+            ]
+          }
+        }
+      },
+      "VenueCreateRequest": {
+        "type": "object",
+        "required": [
+          "information",
+          "pricing",
+          "capacity",
+          "media"
+        ],
+        "properties": {
+          "information": {
+            "type": "object",
+            "required": [
+              "venueName",
+              "venueType",
+              "addressLine",
+              "city"
+            ],
+            "properties": {
+              "venueName": {
+                "type": "string",
+                "example": "Grand Hall"
+              },
+              "venueType": {
+                "type": "string",
+                "example": "Banquet"
+              },
+              "description": {
+                "type": "string",
+                "example": "Premium event venue in central Dhaka."
+              },
+              "addressLine": {
+                "type": "string",
+                "example": "123 Main Road"
+              },
+              "city": {
+                "type": "string",
+                "example": "Dhaka"
+              },
+              "area": {
+                "type": "string",
+                "example": "Farmgate"
+              }
+            }
+          },
+          "pricing": {
+            "type": "object",
+            "required": [
+              "basePrice"
+            ],
+            "properties": {
+              "basePrice": {
+                "type": "number",
+                "example": 5000
+              },
+              "currency": {
+                "type": "string",
+                "example": "BDT"
+              },
+              "discount": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "percentage",
+                      "fixed"
+                    ]
+                  },
+                  "value": {
+                    "type": "number"
+                  }
+                }
+              },
+              "amenities": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "boolean"
+                },
+                "example": {
+                  "wifi": true,
+                  "parking": true,
+                  "ac": true
+                }
+              }
+            }
+          },
+          "capacity": {
+            "type": "object",
+            "required": [
+              "maximumGuests"
+            ],
+            "properties": {
+              "maximumGuests": {
+                "type": "integer",
+                "example": 300
+              }
+            }
+          },
+          "media": {
+            "type": "object",
+            "properties": {
+              "galleryImages": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              },
+              "videoUrl": {
+                "type": "string",
+                "format": "uri"
+              }
+            }
+          },
+          "availabilityOverrides": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VenueAvailabilityOverride"
+            }
+          }
+        }
+      },
+      "VenueUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "information": {
+            "type": "object"
+          },
+          "pricing": {
+            "type": "object"
+          },
+          "capacity": {
+            "type": "object"
+          },
+          "media": {
+            "type": "object"
+          },
+          "availabilityOverrides": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VenueAvailabilityOverride"
+            }
+          }
+        }
+      },
+      "VenueEntity": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "ownerId": {
+            "type": "string"
+          },
+          "information": {
+            "type": "object"
+          },
+          "pricing": {
+            "type": "object"
+          },
+          "capacity": {
+            "type": "object"
+          },
+          "media": {
+            "type": "object"
+          },
+          "availabilityOverrides": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VenueAvailabilityOverride"
+            }
+          },
+          "publishStatus": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "published",
+              "rejected"
+            ]
+          },
+          "approvedBy": {
+            "nullable": true,
+            "type": "object"
+          },
+          "approvedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "reviews": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "isDeleted": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "VenueResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/VenueEntity"
           }
         }
       }
@@ -1450,18 +2762,7 @@
         "summary": "Health check",
         "responses": {
           "200": {
-            "description": "Healthy",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HealthResponse"
-                },
-                "example": {
-                  "success": true,
-                  "message": "OK"
-                }
-              }
-            }
+            "description": "Healthy"
           }
         }
       }
@@ -1477,142 +2778,27 @@
           "content": {
             "application/json": {
               "schema": {
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/CustomerRegisterRequest"
-                  },
-                  {
-                    "$ref": "#/components/schemas/ServiceProviderRegisterRequest"
-                  },
-                  {
-                    "$ref": "#/components/schemas/EventPlannerRegisterRequest"
-                  },
-                  {
-                    "$ref": "#/components/schemas/VenueProviderRegisterRequest"
-                  }
-                ]
-              },
-              "examples": {
-                "customerRegister": {
-                  "summary": "Register as customer",
-                  "value": {
-                    "fullName": "John Customer",
-                    "email": "customer@example.com",
-                    "password": "StrongPass123",
-                    "role": "customer"
-                  }
-                },
-                "serviceProviderRegister": {
-                  "summary": "Register as service provider",
-                  "value": {
-                    "fullName": "Sara Service",
-                    "email": "service@example.com",
-                    "password": "StrongPass123",
-                    "role": "service_provider"
-                  }
-                },
-                "eventProviderRegister": {
-                  "summary": "Register as event provider",
-                  "value": {
-                    "fullName": "Evan Events",
-                    "email": "event@example.com",
-                    "password": "StrongPass123",
-                    "role": "event_planner"
-                  }
-                },
-                "venueProviderRegister": {
-                  "summary": "Register as venue provider",
-                  "value": {
-                    "fullName": "Vera Venue",
-                    "email": "venue@example.com",
-                    "password": "StrongPass123",
-                    "role": "venue_provider"
-                  }
-                }
+                "$ref": "#/components/schemas/AuthRegisterRequest"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Registered successfully and OTP sent",
+            "description": "User registered and OTP sent",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuthUserResponse"
+                  "$ref": "#/components/schemas/AuthOnboardingResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Validation failed"
-                }
-              }
-            }
+            "description": "Validation error"
           },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Unauthorized"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Forbidden"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Resource not found"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Internal Server Error"
-                }
-              }
-            }
+          "409": {
+            "description": "Duplicate value detected"
           }
         }
       }
@@ -1629,10 +2815,6 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/VerifyOtpRequest"
-              },
-              "example": {
-                "email": "service@example.com",
-                "otp": "123456"
               }
             }
           }
@@ -1643,80 +2825,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuthTokenUserResponse"
+                  "$ref": "#/components/schemas/AuthTokenResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Validation failed"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Unauthorized"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Forbidden"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Resource not found"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Internal Server Error"
-                }
-              }
-            }
+            "description": "Invalid OTP or validation error"
           }
         }
       }
@@ -1732,95 +2847,18 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/EmailRequest"
-              },
-              "example": {
-                "email": "service@example.com"
+                "$ref": "#/components/schemas/EmailOnlyRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Verification OTP sent",
+            "description": "OTP sent",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MessageResponse"
-                },
-                "example": {
-                  "success": true,
-                  "message": "Verification OTP sent"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Validation failed"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Unauthorized"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Forbidden"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Resource not found"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Internal Server Error"
+                  "$ref": "#/components/schemas/AuthMessageResponse"
                 }
               }
             }
@@ -1833,101 +2871,36 @@
         "tags": [
           "Auth"
         ],
-        "summary": "Login",
+        "summary": "Login user (email must be verified)",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LoginRequest"
-              },
-              "example": {
-                "email": "service@example.com",
-                "password": "StrongPass123"
+                "$ref": "#/components/schemas/AuthLoginRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Logged in",
+            "description": "Login successful",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuthTokenUserResponse"
+                  "$ref": "#/components/schemas/AuthTokenResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Validation failed"
-                }
-              }
-            }
+            "description": "Validation error"
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Unauthorized"
-                }
-              }
-            }
+            "description": "Invalid credentials"
           },
           "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Forbidden"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Resource not found"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Internal Server Error"
-                }
-              }
-            }
+            "description": "Email not verified"
           }
         }
       }
@@ -1937,101 +2910,24 @@
         "tags": [
           "Auth"
         ],
-        "summary": "Request password reset OTP",
+        "summary": "Send password reset OTP",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/EmailRequest"
-              },
-              "example": {
-                "email": "service@example.com"
+                "$ref": "#/components/schemas/EmailOnlyRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Password reset OTP request processed",
+            "description": "Reset OTP handling response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MessageResponse"
-                },
-                "example": {
-                  "success": true,
-                  "message": "If an account exists for this email, a reset OTP has been sent."
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Validation failed"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Unauthorized"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Forbidden"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Resource not found"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Internal Server Error"
+                  "$ref": "#/components/schemas/AuthMessageResponse"
                 }
               }
             }
@@ -2051,11 +2947,6 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/ResetPasswordRequest"
-              },
-              "example": {
-                "email": "service@example.com",
-                "otp": "123456",
-                "newPassword": "NewStrongPass123"
               }
             }
           }
@@ -2066,84 +2957,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MessageResponse"
-                },
-                "example": {
-                  "success": true,
-                  "message": "Password reset successful"
+                  "$ref": "#/components/schemas/AuthMessageResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Validation failed"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Unauthorized"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Forbidden"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Resource not found"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Internal Server Error"
-                }
-              }
-            }
+            "description": "Validation error or invalid OTP"
           }
         }
       }
@@ -2153,7 +2973,7 @@
         "tags": [
           "Auth"
         ],
-        "summary": "Submit service provider onboarding",
+        "summary": "Submit service provider onboarding details",
         "security": [
           {
             "bearerAuth": []
@@ -2165,132 +2985,26 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/ServiceProviderOnboardingRequest"
-              },
-              "examples": {
-                "serviceProvider": {
-                  "summary": "Service provider onboarding",
-                  "value": {
-                    "_id": "65f1a9d0f1b2c3d4e5f60001",
-                    "name": "Jane Doe",
-                    "email": "jane@example.com",
-                    "stripeAccountId": "acct_1234567890abc",
-                    "profileInfo": {
-                      "serviceName": "Premium Catering",
-                      "serviceCategory": "Catering",
-                      "serviceDescription": "Corporate and wedding catering services",
-                      "coverageArea": [
-                        "Dhaka"
-                      ],
-                      "verification": {
-                        "businessType": "individual",
-                        "nationalIdOrTradeLicenseFiles": [
-                          "https://cdn.example.com/nid-front.jpg",
-                          "https://cdn.example.com/trade-license.pdf"
-                        ]
-                      }
-                    },
-                    "services": []
-                  }
-                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Onboarding submitted",
+            "description": "Onboarding submitted successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuthUserResponse"
-                },
-                "example": {
-                  "success": true,
-                  "message": "Onboarding information submitted successfully",
-                  "data": {
-                    "user": {
-                      "id": "65ff8d4ea2b4fdb3a23d8c17",
-                      "fullName": "Jane Doe",
-                      "email": "jane@example.com",
-                      "role": "venue_provider",
-                      "serviceCategories": [],
-                      "isEmailVerified": true,
-                      "onboarding": {}
-                    }
-                  }
+                  "$ref": "#/components/schemas/AuthOnboardingResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Validation failed"
-                }
-              }
-            }
+            "description": "Validation error"
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Unauthorized"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Forbidden"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Resource not found"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Internal Server Error"
-                }
-              }
-            }
+            "description": "Unauthorized"
           }
         }
       }
@@ -2308,94 +3022,79 @@
         ],
         "responses": {
           "200": {
-            "description": "Current user profile",
+            "description": "Current authenticated user",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MeResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Validation failed"
+                  "$ref": "#/components/schemas/AuthMeResponse"
                 }
               }
             }
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Unauthorized"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Forbidden"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Resource not found"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Internal Server Error"
-                }
-              }
-            }
+            "description": "Unauthorized"
           }
         }
       }
     },
     "/api/v1/service-provider/services": {
+      "get": {
+        "tags": [
+          "ServiceProvider"
+        ],
+        "summary": "Get published services (public)",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortBy",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortOrder",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated published services",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceListResponse"
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "tags": [
           "ServiceProvider"
         ],
-        "summary": "Create service (service_provider only)",
+        "summary": "Create a service",
         "security": [
           {
             "bearerAuth": []
@@ -2406,285 +3105,30 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ServiceProviderServiceRequest"
-              },
-              "example": {
-                "information": {
-                  "serviceName": "Premium Catering",
-                  "category": "Catering",
-                  "description": "Corporate and wedding catering",
-                  "serviceArea": [
-                    "Dhaka",
-                    "Gazipur"
-                  ],
-                  "tags": [
-                    "wedding",
-                    "corporate"
-                  ]
-                },
-                "pricing": {
-                  "amount": 50000,
-                  "pricingType": "package",
-                  "currency": "BDT",
-                  "discount": {
-                    "type": "percentage",
-                    "value": 10
-                  }
-                },
-                "settings": {
-                  "amenities": {
-                    "deliveryIncluded": true,
-                    "setupIncluded": true
-                  },
-                  "capacity": 300
-                },
-                "media": {
-                  "galleryImages": [
-                    "https://cdn.example.com/service/image-1.jpg",
-                    "https://cdn.example.com/service/image-2.jpg"
-                  ],
-                  "videoUrl": "https://youtube.com/watch?v=abc123"
-                },
-                "availabilityOverrides": [
-                  {
-                    "date": "2026-02-20",
-                    "status": "booked"
-                  },
-                  {
-                    "date": "2026-02-21",
-                    "status": "pending"
-                  }
-                ]
+                "$ref": "#/components/schemas/ServiceCreateRequest"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Service created",
+            "description": "Service created successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ServiceSingleResponse"
-                },
-                "example": {
-                  "success": true,
-                  "message": "Service created successfully",
-                  "data": {
-                    "_id": "65ff8d4ea2b4fdb3a23d8c17",
-                    "publishStatus": "pending"
-                  }
+                  "$ref": "#/components/schemas/ServiceResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Validation failed"
-                }
-              }
-            }
+            "description": "Validation error"
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Unauthorized"
-                }
-              }
-            }
+            "description": "Unauthorized"
           },
           "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Forbidden"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Resource not found"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Internal Server Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "ServiceProvider"
-        ],
-        "summary": "Get my services (service_provider only)",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "default": 1
-            },
-            "description": "Page number"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 10
-            },
-            "description": "Page size"
-          },
-          {
-            "name": "sortBy",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "default": "createdAt"
-            },
-            "description": "Sort field"
-          },
-          {
-            "name": "sortOrder",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "asc",
-                "desc"
-              ],
-              "default": "desc"
-            },
-            "description": "Sort order"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Published services list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ServiceListResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Validation failed"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Unauthorized"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Forbidden"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Resource not found"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Internal Server Error"
-                }
-              }
-            }
+            "description": "Forbidden"
           }
         }
       }
@@ -2694,16 +3138,11 @@
         "tags": [
           "ServiceProvider"
         ],
-        "summary": "Get service by id (service_provider only)",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
+        "summary": "Get one published service by id (public)",
         "parameters": [
           {
-            "name": "serviceId",
             "in": "path",
+            "name": "serviceId",
             "required": true,
             "schema": {
               "type": "string"
@@ -2712,84 +3151,26 @@
         ],
         "responses": {
           "200": {
-            "description": "Single published service",
+            "description": "Service details",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ServiceSingleResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Validation failed"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Unauthorized"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Forbidden"
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/ServiceEntity"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Resource not found"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Internal Server Error"
-                }
-              }
-            }
+            "description": "Service not found"
           }
         }
       },
@@ -2797,7 +3178,7 @@
         "tags": [
           "ServiceProvider"
         ],
-        "summary": "Update service by id (service_provider only)",
+        "summary": "Update service by id",
         "security": [
           {
             "bearerAuth": []
@@ -2805,8 +3186,8 @@
         ],
         "parameters": [
           {
-            "name": "serviceId",
             "in": "path",
+            "name": "serviceId",
             "required": true,
             "schema": {
               "type": "string"
@@ -2818,114 +3199,30 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ServiceProviderServiceUpdateRequest"
-              },
-              "example": {
-                "pricing": {
-                  "amount": 45000,
-                  "discount": {
-                    "type": "fixed",
-                    "value": 5000
-                  }
-                },
-                "availabilityOverrides": [
-                  {
-                    "date": "2026-02-25",
-                    "status": "booked"
-                  }
-                ]
+                "$ref": "#/components/schemas/ServiceUpdateRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Service updated",
+            "description": "Service updated successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ServiceSingleResponse"
-                },
-                "example": {
-                  "success": true,
-                  "message": "Service updated successfully",
-                  "data": {
-                    "_id": "65ff8d4ea2b4fdb3a23d8c17",
-                    "publishStatus": "pending"
-                  }
+                  "$ref": "#/components/schemas/ServiceResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Validation failed"
-                }
-              }
-            }
+            "description": "Validation error"
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Unauthorized"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Forbidden"
-                }
-              }
-            }
+            "description": "Unauthorized"
           },
           "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Resource not found"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Internal Server Error"
-                }
-              }
-            }
+            "description": "Service not found"
           }
         }
       },
@@ -2933,7 +3230,7 @@
         "tags": [
           "ServiceProvider"
         ],
-        "summary": "Delete service by id (service_provider only)",
+        "summary": "Delete service by id",
         "security": [
           {
             "bearerAuth": []
@@ -2941,8 +3238,8 @@
         ],
         "parameters": [
           {
-            "name": "serviceId",
             "in": "path",
+            "name": "serviceId",
             "required": true,
             "schema": {
               "type": "string"
@@ -2951,98 +3248,92 @@
         ],
         "responses": {
           "200": {
-            "description": "Service deleted",
+            "description": "Service deleted successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MessageResponse"
-                },
-                "example": {
-                  "success": true,
-                  "message": "Service deleted successfully"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Validation failed"
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Service deleted successfully"
+                    }
+                  }
                 }
               }
             }
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Unauthorized"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Forbidden"
-                }
-              }
-            }
+            "description": "Unauthorized"
           },
           "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Resource not found"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Internal Server Error"
-                }
-              }
-            }
+            "description": "Service not found"
           }
         }
       }
     },
     "/api/v1/venue-provider/venues": {
+      "get": {
+        "tags": [
+          "VenueProvider"
+        ],
+        "summary": "Get published venues (public)",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortBy",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortOrder",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated published venues",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VenueListResponse"
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "tags": [
           "VenueProvider"
         ],
-        "summary": "Create venue (venue_provider only)",
+        "summary": "Create a venue",
         "security": [
           {
             "bearerAuth": []
@@ -3052,278 +3343,31 @@
           "required": true,
           "content": {
             "application/json": {
-              "example": {
-                "information": {
-                  "venueName": "Royal Hall",
-                  "venueType": "Banquet",
-                  "description": "Large indoor venue",
-                  "addressLine": "Road 12, Dhanmondi",
-                  "city": "Dhaka",
-                  "area": "Dhanmondi"
-                },
-                "pricing": {
-                  "basePrice": 120000,
-                  "currency": "BDT",
-                  "discount": {
-                    "type": "percentage",
-                    "value": 15
-                  },
-                  "amenities": {
-                    "parking": true,
-                    "airConditioned": true,
-                    "stage": true
-                  }
-                },
-                "capacity": {
-                  "maximumGuests": 500
-                },
-                "media": {
-                  "galleryImages": [
-                    "https://cdn.example.com/venue/image-1.jpg",
-                    "https://cdn.example.com/venue/image-2.jpg"
-                  ],
-                  "videoUrl": "https://youtube.com/watch?v=venue123"
-                },
-                "availabilityOverrides": [
-                  {
-                    "date": "2026-03-01",
-                    "status": "booked"
-                  },
-                  {
-                    "date": "2026-03-02",
-                    "status": "pending"
-                  }
-                ]
+              "schema": {
+                "$ref": "#/components/schemas/VenueCreateRequest"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Venue created",
+            "description": "Venue created successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/VenueSingleResponse"
-                },
-                "example": {
-                  "success": true,
-                  "message": "Venue created successfully",
-                  "data": {
-                    "_id": "65ff8d4ea2b4fdb3a23d8c17",
-                    "publishStatus": "pending"
-                  }
+                  "$ref": "#/components/schemas/VenueResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Validation failed"
-                }
-              }
-            }
+            "description": "Validation error"
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Unauthorized"
-                }
-              }
-            }
+            "description": "Unauthorized"
           },
           "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Forbidden"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Resource not found"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Internal Server Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "VenueProvider"
-        ],
-        "summary": "Get my venues (venue_provider only)",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "default": 1
-            },
-            "description": "Page number"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 10
-            },
-            "description": "Page size"
-          },
-          {
-            "name": "sortBy",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "default": "createdAt"
-            },
-            "description": "Sort field"
-          },
-          {
-            "name": "sortOrder",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "asc",
-                "desc"
-              ],
-              "default": "desc"
-            },
-            "description": "Sort order"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Published venues list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/VenueListResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Validation failed"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Unauthorized"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Forbidden"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Resource not found"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Internal Server Error"
-                }
-              }
-            }
+            "description": "Forbidden"
           }
         }
       }
@@ -3333,16 +3377,11 @@
         "tags": [
           "VenueProvider"
         ],
-        "summary": "Get venue by id (venue_provider only)",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
+        "summary": "Get one published venue by id (public)",
         "parameters": [
           {
-            "name": "venueId",
             "in": "path",
+            "name": "venueId",
             "required": true,
             "schema": {
               "type": "string"
@@ -3351,84 +3390,26 @@
         ],
         "responses": {
           "200": {
-            "description": "Single published venue",
+            "description": "Venue details",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/VenueSingleResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Validation failed"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Unauthorized"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Forbidden"
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/VenueEntity"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Resource not found"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Internal Server Error"
-                }
-              }
-            }
+            "description": "Venue not found"
           }
         }
       },
@@ -3436,7 +3417,7 @@
         "tags": [
           "VenueProvider"
         ],
-        "summary": "Update venue by id (venue_provider only)",
+        "summary": "Update venue by id",
         "security": [
           {
             "bearerAuth": []
@@ -3444,8 +3425,8 @@
         ],
         "parameters": [
           {
-            "name": "venueId",
             "in": "path",
+            "name": "venueId",
             "required": true,
             "schema": {
               "type": "string"
@@ -3456,108 +3437,31 @@
           "required": true,
           "content": {
             "application/json": {
-              "example": {
-                "capacity": {
-                  "maximumGuests": 550
-                },
-                "availabilityOverrides": [
-                  {
-                    "date": "2026-03-03",
-                    "status": "booked"
-                  }
-                ]
+              "schema": {
+                "$ref": "#/components/schemas/VenueUpdateRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Venue updated",
+            "description": "Venue updated successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/VenueSingleResponse"
-                },
-                "example": {
-                  "success": true,
-                  "message": "Venue updated successfully",
-                  "data": {
-                    "_id": "65ff8d4ea2b4fdb3a23d8c17",
-                    "publishStatus": "pending"
-                  }
+                  "$ref": "#/components/schemas/VenueResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Validation failed"
-                }
-              }
-            }
+            "description": "Validation error"
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Unauthorized"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Forbidden"
-                }
-              }
-            }
+            "description": "Unauthorized"
           },
           "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Resource not found"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Internal Server Error"
-                }
-              }
-            }
+            "description": "Venue not found"
           }
         }
       },
@@ -3565,7 +3469,7 @@
         "tags": [
           "VenueProvider"
         ],
-        "summary": "Delete venue by id (venue_provider only)",
+        "summary": "Delete venue by id",
         "security": [
           {
             "bearerAuth": []
@@ -3573,8 +3477,8 @@
         ],
         "parameters": [
           {
-            "name": "venueId",
             "in": "path",
+            "name": "venueId",
             "required": true,
             "schema": {
               "type": "string"
@@ -3583,88 +3487,30 @@
         ],
         "responses": {
           "200": {
-            "description": "Venue deleted",
+            "description": "Venue deleted successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MessageResponse"
-                },
-                "example": {
-                  "success": true,
-                  "message": "Venue deleted successfully"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Validation failed"
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Venue deleted successfully"
+                    }
+                  }
                 }
               }
             }
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Unauthorized"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Forbidden"
-                }
-              }
-            }
+            "description": "Unauthorized"
           },
           "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Resource not found"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Internal Server Error"
-                }
-              }
-            }
+            "description": "Venue not found"
           }
         }
       }
@@ -3674,7 +3520,7 @@
         "tags": [
           "Admin"
         ],
-        "summary": "Approve venue and publish it (admin/super_admin)",
+        "summary": "Approve venue and publish it",
         "security": [
           {
             "bearerAuth": []
@@ -3682,102 +3528,34 @@
         ],
         "parameters": [
           {
-            "name": "venueId",
             "in": "path",
+            "name": "venueId",
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "65f1a9d0f1b2c3d4e5f60718"
           }
         ],
         "responses": {
           "200": {
-            "description": "Venue approved",
+            "description": "Venue approved successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/VenueSingleResponse"
-                },
-                "example": {
-                  "success": true,
-                  "message": "Venue approved successfully",
-                  "data": {
-                    "_id": "65ff8d4ea2b4fdb3a23d8c17",
-                    "publishStatus": "published"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Validation failed"
+                  "$ref": "#/components/schemas/VenueResponse"
                 }
               }
             }
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Unauthorized"
-                }
-              }
-            }
+            "description": "Unauthorized"
           },
           "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Forbidden"
-                }
-              }
-            }
+            "description": "Forbidden"
           },
           "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Resource not found"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Internal Server Error"
-                }
-              }
-            }
+            "description": "Venue not found"
           }
         }
       }
@@ -3787,7 +3565,7 @@
         "tags": [
           "Admin"
         ],
-        "summary": "Reject venue (admin/super_admin)",
+        "summary": "Reject venue",
         "security": [
           {
             "bearerAuth": []
@@ -3795,8 +3573,8 @@
         ],
         "parameters": [
           {
-            "name": "venueId",
             "in": "path",
+            "name": "venueId",
             "required": true,
             "schema": {
               "type": "string"
@@ -3805,92 +3583,23 @@
         ],
         "responses": {
           "200": {
-            "description": "Venue rejected",
+            "description": "Venue rejected successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/VenueSingleResponse"
-                },
-                "example": {
-                  "success": true,
-                  "message": "Venue rejected successfully",
-                  "data": {
-                    "_id": "65ff8d4ea2b4fdb3a23d8c17",
-                    "publishStatus": "rejected"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Validation failed"
+                  "$ref": "#/components/schemas/VenueResponse"
                 }
               }
             }
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Unauthorized"
-                }
-              }
-            }
+            "description": "Unauthorized"
           },
           "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Forbidden"
-                }
-              }
-            }
+            "description": "Forbidden"
           },
           "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Resource not found"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Internal Server Error"
-                }
-              }
-            }
+            "description": "Venue not found"
           }
         }
       }
@@ -3900,7 +3609,7 @@
         "tags": [
           "Admin"
         ],
-        "summary": "Approve service and publish it (admin/super_admin)",
+        "summary": "Approve service and publish it",
         "security": [
           {
             "bearerAuth": []
@@ -3908,8 +3617,8 @@
         ],
         "parameters": [
           {
-            "name": "serviceId",
             "in": "path",
+            "name": "serviceId",
             "required": true,
             "schema": {
               "type": "string"
@@ -3918,92 +3627,23 @@
         ],
         "responses": {
           "200": {
-            "description": "Service approved",
+            "description": "Service approved successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ServiceSingleResponse"
-                },
-                "example": {
-                  "success": true,
-                  "message": "Service approved successfully",
-                  "data": {
-                    "_id": "65ff8d4ea2b4fdb3a23d8c17",
-                    "publishStatus": "published"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Validation failed"
+                  "$ref": "#/components/schemas/ServiceResponse"
                 }
               }
             }
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Unauthorized"
-                }
-              }
-            }
+            "description": "Unauthorized"
           },
           "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Forbidden"
-                }
-              }
-            }
+            "description": "Forbidden"
           },
           "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Resource not found"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Internal Server Error"
-                }
-              }
-            }
+            "description": "Service not found"
           }
         }
       }
@@ -4013,7 +3653,7 @@
         "tags": [
           "Admin"
         ],
-        "summary": "Reject service (admin/super_admin)",
+        "summary": "Reject service",
         "security": [
           {
             "bearerAuth": []
@@ -4021,8 +3661,8 @@
         ],
         "parameters": [
           {
-            "name": "serviceId",
             "in": "path",
+            "name": "serviceId",
             "required": true,
             "schema": {
               "type": "string"
@@ -4031,92 +3671,23 @@
         ],
         "responses": {
           "200": {
-            "description": "Service rejected",
+            "description": "Service rejected successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ServiceSingleResponse"
-                },
-                "example": {
-                  "success": true,
-                  "message": "Service rejected successfully",
-                  "data": {
-                    "_id": "65ff8d4ea2b4fdb3a23d8c17",
-                    "publishStatus": "rejected"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Validation failed"
+                  "$ref": "#/components/schemas/ServiceResponse"
                 }
               }
             }
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Unauthorized"
-                }
-              }
-            }
+            "description": "Unauthorized"
           },
           "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Forbidden"
-                }
-              }
-            }
+            "description": "Forbidden"
           },
           "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Resource not found"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Internal Server Error"
-                }
-              }
-            }
+            "description": "Service not found"
           }
         }
       }
@@ -4127,128 +3698,48 @@
           "EventPlanner"
         ],
         "summary": "Get all event planners (public)",
+        "description": "Returns verified users whose role is `event_planner`.",
         "parameters": [
           {
+            "in": "query",
             "name": "page",
-            "in": "query",
             "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "default": 1
-            },
-            "description": "Page number"
+              "type": "integer"
+            }
           },
           {
+            "in": "query",
             "name": "limit",
-            "in": "query",
             "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 10
-            },
-            "description": "Page size"
+              "type": "integer"
+            }
           },
           {
+            "in": "query",
             "name": "sortBy",
-            "in": "query",
             "schema": {
-              "type": "string",
-              "default": "createdAt"
-            },
-            "description": "Sort field"
+              "type": "string"
+            }
           },
           {
-            "name": "sortOrder",
             "in": "query",
+            "name": "sortOrder",
             "schema": {
               "type": "string",
               "enum": [
                 "asc",
                 "desc"
-              ],
-              "default": "desc"
-            },
-            "description": "Sort order"
+              ]
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Event planners list",
+            "description": "Paginated event planner list",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/EventPlannerListResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Validation failed"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Unauthorized"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Forbidden"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Resource not found"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                },
-                "example": {
-                  "success": false,
-                  "message": "Internal Server Error"
                 }
               }
             }
@@ -4261,7 +3752,7 @@
         "tags": [
           "Auth"
         ],
-        "summary": "Submit event planner onboarding",
+        "summary": "Submit event planner onboarding details",
         "security": [
           {
             "bearerAuth": []
@@ -4273,48 +3764,26 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/EventPlannerOnboardingRequest"
-              },
-              "examples": {
-                "eventPlanner": {
-                  "summary": "Event planner onboarding",
-                  "value": {
-                    "_id": "65f1a9d0f1b2c3d4e5f60002",
-                    "fullName": "Star Events",
-                    "email": "planner@example.com",
-                    "stripeAccountId": "acct_1234567890abc",
-                    "profileInfo": {
-                      "name": "Star Events",
-                      "description": "Wedding and corporate event planning",
-                      "coverageArea": [
-                        "Dhaka",
-                        "Chattogram"
-                      ],
-                      "address": "Banani, Dhaka",
-                      "verification": {
-                        "businessType": "company",
-                        "companyName": "Star Events",
-                        "nationalIdOrTradeLicenseFiles": [
-                          "https://cdn.example.com/license-front.jpg",
-                          "https://cdn.example.com/license.pdf"
-                        ]
-                      }
-                    }
-                  }
-                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Onboarding submitted",
+            "description": "Onboarding submitted successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuthUserResponse"
+                  "$ref": "#/components/schemas/AuthOnboardingResponse"
                 }
               }
             }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -4324,7 +3793,7 @@
         "tags": [
           "Auth"
         ],
-        "summary": "Submit venue provider onboarding",
+        "summary": "Submit venue provider onboarding details",
         "security": [
           {
             "bearerAuth": []
@@ -4336,30 +3805,13 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/VenueProviderOnboardingRequest"
-              },
-              "examples": {
-                "venueProvider": {
-                  "summary": "Venue provider onboarding",
-                  "value": {
-                    "_id": "65f1a9d0f1b2c3d4e5f60003",
-                    "fullName": "Royal Hall Owner",
-                    "email": "venue@example.com",
-                    "stripeAccountId": "acct_1234567890abc",
-                    "businessName": "Royal Hall",
-                    "businessType": "company",
-                    "legalBusinessName": "Royal Hall Ltd",
-                    "registrationNo": "TRD-123456",
-                    "businessMail": "info@royalhall.com",
-                    "businessPhoneNo": "+8801700000000"
-                  }
-                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Onboarding submitted",
+            "description": "Onboarding submitted successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -4367,6 +3819,624 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v1/bookings": {
+      "post": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Create a booking",
+        "description": "Creates a customer booking for a venue or service. Event bookings are currently blocked by the backend.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookingCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Booking created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed or unsupported booking target",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Only subscribed customers can create bookings"
+          },
+          "404": {
+            "description": "Target resource not found"
+          },
+          "409": {
+            "description": "Time slot conflict"
+          }
+        }
+      }
+    },
+    "/api/v1/bookings/my": {
+      "get": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Get customer bookings",
+        "description": "Returns paginated bookings created by the authenticated customer.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortBy",
+            "schema": {
+              "type": "string",
+              "default": "createdAt"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortOrder",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "desc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Customer bookings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/bookings/provider": {
+      "get": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Get provider bookings",
+        "description": "Returns paginated bookings assigned to the authenticated provider.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortBy",
+            "schema": {
+              "type": "string",
+              "default": "createdAt"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortOrder",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "desc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Provider bookings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/bookings/{bookingId}": {
+      "get": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Get one booking by id",
+        "description": "Returns a single booking if the current user is the customer, provider, or an admin.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "bookingId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "65f1a9d0f1b2c3d4e5f60799"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Booking details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Booking"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Booking not found"
+          }
+        }
+      }
+    },
+    "/api/v1/bookings/{bookingId}/approve": {
+      "patch": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Approve a booking",
+        "description": "Provider approves a pending booking. Approved bookings are confirmed immediately because bookings are covered by subscription.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "bookingId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Booking approved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Booking is not pending"
+          },
+          "403": {
+            "description": "Only the assigned provider can approve"
+          },
+          "404": {
+            "description": "Booking not found"
+          }
+        }
+      }
+    },
+    "/api/v1/bookings/{bookingId}/reject": {
+      "patch": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Reject a booking",
+        "description": "Provider rejects a pending booking and may optionally provide a reason.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "bookingId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookingRejectRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Booking rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Booking is not pending"
+          },
+          "403": {
+            "description": "Only the assigned provider can reject"
+          },
+          "404": {
+            "description": "Booking not found"
+          }
+        }
+      }
+    },
+    "/api/v1/bookings/{bookingId}/cancel": {
+      "patch": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Cancel a booking",
+        "description": "Customer cancels a booking before completion.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "bookingId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Booking cancelled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Booking cannot be cancelled"
+          },
+          "403": {
+            "description": "Only the customer can cancel"
+          },
+          "404": {
+            "description": "Booking not found"
+          }
+        }
+      }
+    },
+    "/api/v1/public/services": {
+      "get": {
+        "tags": [
+          "Public"
+        ],
+        "summary": "Get published services without authentication",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortBy",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortOrder",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated published services",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicServiceListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/public/venues": {
+      "get": {
+        "tags": [
+          "Public"
+        ],
+        "summary": "Get published venues without authentication",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortBy",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortOrder",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated published venues",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicVenueListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/public/event-planners": {
+      "get": {
+        "tags": [
+          "Public"
+        ],
+        "summary": "Get public event planners without authentication",
+        "description": "Returns verified event planners who completed event planner onboarding.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortBy",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortOrder",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated event planners",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicEventPlannerListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/uploads/venue-images": {
+      "post": {
+        "tags": [
+          "Uploads"
+        ],
+        "summary": "Upload venue gallery images to Cloudinary",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "images"
+                ],
+                "properties": {
+                  "images": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Uploaded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Images must be sent using the images field"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "tags": [
+          "System"
+        ],
+        "summary": "Root status",
+        "responses": {
+          "200": {
+            "description": "API root"
           }
         }
       }

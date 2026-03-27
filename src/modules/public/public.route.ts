@@ -8,6 +8,14 @@ const router = Router();
  * tags:
  *   - name: Public
  *     description: Public landing-page content endpoints
+ * components:
+ *   schemas:
+ *     PublicServiceListResponse:
+ *       $ref: '#/components/schemas/ServiceListResponse'
+ *     PublicVenueListResponse:
+ *       $ref: '#/components/schemas/VenueListResponse'
+ *     PublicEventPlannerListResponse:
+ *       $ref: '#/components/schemas/EventPlannerListResponse'
  */
 
 /**
@@ -37,6 +45,10 @@ const router = Router();
  *     responses:
  *       200:
  *         description: Paginated published services
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PublicServiceListResponse'
  */
 router.get('/services', PublicController.getPublishedServices);
 
@@ -67,6 +79,10 @@ router.get('/services', PublicController.getPublishedServices);
  *     responses:
  *       200:
  *         description: Paginated published venues
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PublicVenueListResponse'
  */
 router.get('/venues', PublicController.getPublishedVenues);
 
@@ -98,6 +114,10 @@ router.get('/venues', PublicController.getPublishedVenues);
  *     responses:
  *       200:
  *         description: Paginated event planners
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PublicEventPlannerListResponse'
  */
 router.get('/event-planners', PublicController.getPublishedEventPlanners);
 

@@ -31,8 +31,7 @@ export const applySecurityMiddleware = (app: Express): void => {
   app.use(helmet());
   app.use(
     cors({
-      origin: env.CORS_ORIGIN === '*' ? true : env.CORS_ORIGIN.split(','),
-      credentials: true
+      origin: '*'
     })
   );
   app.use(compression());
