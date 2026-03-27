@@ -59,23 +59,28 @@ const router = Router();
  *             status:
  *               type: string
  *               enum: [subscribed, not_subscribed]
- *               example: subscribed
+ *               example: not_subscribed
  *             activatedAt:
  *               type: string
  *               format: date-time
+ *               nullable: true
  *             payment:
  *               type: object
  *               properties:
  *                 amount:
  *                   type: number
- *                   example: 499
+ *                   example: 500
  *                 currency:
  *                   type: string
- *                   example: EUR
+ *                   example: GBP
+ *                 billingCycle:
+ *                   type: string
+ *                   enum: [monthly, yearly]
+ *                   example: monthly
  *                 status:
  *                   type: string
  *                   enum: [paid, unpaid]
- *                   example: paid
+ *                   example: unpaid
  *                 paidAt:
  *                   type: string
  *                   format: date-time

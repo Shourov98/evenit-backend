@@ -294,6 +294,11 @@ Payment statuses:
 Important:
 
 - Every user has a subscription record.
+- New users default to `not_subscribed` with role-based pricing:
+- `customer`: `customer_plan`, `GBP 5/month`
+- `event_planner`: `event_planner_plan`, `GBP 20/month`
+- `service_provider`: `service_provider_plan`, `GBP 5/month`
+- `venue_provider`: `venue_provider_plan`, `GBP 500/year`
 - Bookings are covered by subscription; there is no booking payment flow.
 
 ## Global Pagination

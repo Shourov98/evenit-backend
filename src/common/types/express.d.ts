@@ -24,10 +24,11 @@ declare global {
             | 'admin_plan'
             | 'super_admin_plan';
           status: 'subscribed' | 'not_subscribed';
-          activatedAt: Date;
+          activatedAt?: Date;
           payment: {
             amount: number;
             currency: string;
+            billingCycle: 'monthly' | 'yearly';
             status: 'paid' | 'unpaid';
             paidAt?: Date;
           };

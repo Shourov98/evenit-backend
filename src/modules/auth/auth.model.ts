@@ -98,9 +98,13 @@ export type SubscriptionPlan = (typeof SUBSCRIPTION_PLANS)[number];
 export const SUBSCRIPTION_PAYMENT_STATUSES = ['paid', 'unpaid'] as const;
 export type SubscriptionPaymentStatus = (typeof SUBSCRIPTION_PAYMENT_STATUSES)[number];
 
+export const SUBSCRIPTION_BILLING_CYCLES = ['monthly', 'yearly'] as const;
+export type SubscriptionBillingCycle = (typeof SUBSCRIPTION_BILLING_CYCLES)[number];
+
 export interface IUserSubscriptionPayment {
   amount: number;
   currency: string;
+  billingCycle: SubscriptionBillingCycle;
   status: SubscriptionPaymentStatus;
   paidAt?: Date;
 }
@@ -108,8 +112,13 @@ export interface IUserSubscriptionPayment {
 export interface IUserSubscription {
   plan: SubscriptionPlan;
   status: SubscriptionStatus;
-  activatedAt: Date;
+  activatedAt?: Date;
   payment: IUserSubscriptionPayment;
+}
+
+export interface IUserSubscriptionInput
+  extends Partial<Omit<IUserSubscription, 'payment'>> {
+  payment?: Partial<IUserSubscriptionPayment>;
 }
 
 export const DEFAULT_SUBSCRIPTION_PLANS: Record<UserRole, SubscriptionPlan> = {
@@ -123,30 +132,28 @@ export const DEFAULT_SUBSCRIPTION_PLANS: Record<UserRole, SubscriptionPlan> = {
 
 export const DEFAULT_SUBSCRIPTION_PAYMENTS: Record<
   UserRole,
-  Pick<IUserSubscriptionPayment, 'amount' | 'currency'>
+  Pick<IUserSubscriptionPayment, 'amount' | 'currency' | 'billingCycle'>
 > = {
-  customer: { amount: 499, currency: 'EUR' },
-  event_planner: { amount: 1499, currency: 'EUR' },
-  service_provider: { amount: 999, currency: 'EUR' },
-  venue_provider: { amount: 1999, currency: 'EUR' },
-  admin: { amount: 0, currency: 'EUR' },
-  super_admin: { amount: 0, currency: 'EUR' }
+  customer: { amount: 500, currency: 'GBP', billingCycle: 'monthly' },
+  event_planner: { amount: 2000, currency: 'GBP', billingCycle: 'monthly' },
+  service_provider: { amount: 500, currency: 'GBP', billingCycle: 'monthly' },
+  venue_provider: { amount: 50000, currency: 'GBP', billingCycle: 'yearly' },
+  admin: { amount: 0, currency: 'GBP', billingCycle: 'monthly' },
+  super_admin: { amount: 0, currency: 'GBP', billingCycle: 'monthly' }
 };
 
 export const createDefaultUserSubscription = (role: UserRole): IUserSubscription => ({
   plan: DEFAULT_SUBSCRIPTION_PLANS[role],
-  status: 'subscribed',
-  activatedAt: new Date(),
+  status: 'not_subscribed',
   payment: {
     ...DEFAULT_SUBSCRIPTION_PAYMENTS[role],
-    status: 'paid',
-    paidAt: new Date()
+    status: 'unpaid'
   }
 });
 
 export const hydrateUserSubscription = (
   role: UserRole,
-  subscription?: Partial<IUserSubscription> | null
+  subscription?: IUserSubscriptionInput | null
 ): IUserSubscription => {
   const defaults = createDefaultUserSubscription(role);
   const payment = {
@@ -441,12 +448,10 @@ const userSubscriptionSchema = new Schema<IUserSubscription>(
       type: String,
       enum: SUBSCRIPTION_STATUSES,
       required: true,
-      default: 'subscribed'
+      default: 'not_subscribed'
     },
     activatedAt: {
-      type: Date,
-      required: true,
-      default: Date.now
+      type: Date
     },
     payment: {
       amount: {
@@ -460,6 +465,11 @@ const userSubscriptionSchema = new Schema<IUserSubscription>(
         uppercase: true,
         minlength: 3,
         maxlength: 3
+      },
+      billingCycle: {
+        type: String,
+        enum: SUBSCRIPTION_BILLING_CYCLES,
+        required: true
       },
       status: {
         type: String,
