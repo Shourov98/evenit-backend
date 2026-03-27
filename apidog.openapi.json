@@ -61,6 +61,38 @@
     {
       "name": "VenueProvider",
       "description": "Public listing and provider management for venues"
+    },
+    {
+      "name": "Admin",
+      "description": "Admin and super-admin moderation endpoints for services and venues"
+    },
+    {
+      "name": "Auth",
+      "description": "Registration, login, OTP verification, onboarding, and current-user endpoints"
+    },
+    {
+      "name": "Bookings",
+      "description": "Customer and provider booking lifecycle"
+    },
+    {
+      "name": "EventPlanner",
+      "description": "Public listing of verified event providers"
+    },
+    {
+      "name": "Public",
+      "description": "Public landing-page content endpoints"
+    },
+    {
+      "name": "ServiceProvider",
+      "description": "Public listing and provider management for services"
+    },
+    {
+      "name": "Uploads",
+      "description": "Authenticated file upload endpoints"
+    },
+    {
+      "name": "VenueProvider",
+      "description": "Public listing and provider management for venues"
     }
   ],
   "components": {
