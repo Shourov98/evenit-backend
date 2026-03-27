@@ -1,6 +1,6 @@
 import { env } from '../../config/env';
 import { AppError } from '../../common/errors/AppError';
-import { buildOtpEmailHtml, sendEmail } from '../../common/utils/email';
+import { sendOtpEmail } from '../../common/utils/email';
 import { signJwt } from '../../common/utils/jwt';
 import { generateOtpCode, hashOtpCode } from '../../common/utils/otp';
 import { AuthOtpModel, OtpPurpose } from './auth-otp.model';
@@ -53,7 +53,7 @@ const sendOtpForPurpose = async (
   purpose: OtpPurpose,
   subject: string,
   purposeLabel: string
-): Promise<void> => {
+): Promise<'email' | 'console'> => {
   const now = new Date();
   const existing = await AuthOtpModel.findOne({
     userId: user._id,
@@ -86,10 +86,11 @@ const sendOtpForPurpose = async (
     resendAvailableAt
   });
 
-  await sendEmail({
+  return sendOtpEmail({
     to: user.email,
+    otp,
     subject,
-    html: buildOtpEmailHtml(otp, purposeLabel)
+    purposeLabel
   });
 };
 
@@ -167,9 +168,14 @@ export class AuthService {
       serviceCategories: payload.role === 'service_provider' ? payload.serviceCategories : []
     });
 
-    await sendOtpForPurpose(user, 'email_verification', 'Verify your email', 'Email Verification');
+    const deliveryMode = await sendOtpForPurpose(
+      user,
+      'email_verification',
+      'Verify your email',
+      'Email Verification'
+    );
 
-    return { user };
+    return { user, deliveryMode };
   }
 
   static async submitServiceProviderOnboarding(payload: SubmitServiceProviderOnboardingPayload) {
@@ -302,7 +308,14 @@ export class AuthService {
       throw new AppError(400, 'Email is already verified');
     }
 
-    await sendOtpForPurpose(user, 'email_verification', 'Verify your email', 'Email Verification');
+    const deliveryMode = await sendOtpForPurpose(
+      user,
+      'email_verification',
+      'Verify your email',
+      'Email Verification'
+    );
+
+    return { deliveryMode };
   }
 
   static async verifyEmailOtp(payload: { email: string; otp: string }) {
@@ -342,10 +355,17 @@ export class AuthService {
     const user = await UserModel.findOne({ email: payload.email.toLowerCase() });
 
     if (!user) {
-      return;
+      return { deliveryMode: 'email' as const };
     }
 
-    await sendOtpForPurpose(user, 'password_reset', 'Reset your password', 'Password Reset');
+    const deliveryMode = await sendOtpForPurpose(
+      user,
+      'password_reset',
+      'Reset your password',
+      'Password Reset'
+    );
+
+    return { deliveryMode };
   }
 
   static async resetPassword(payload: { email: string; otp: string; newPassword: string }) {

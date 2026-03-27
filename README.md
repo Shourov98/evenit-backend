@@ -9,6 +9,7 @@ High-standard Express backend starter with TypeScript and module-first architect
 - JWT auth (`fullName`, `email`, `password`)
 - Email OTP verification with Resend
 - Forgot password via OTP (30s resend cooldown)
+- OTP falls back to terminal output if email delivery is not configured or fails
 - MongoDB (Mongoose) setup
 - Global error handling
 - Validation middleware (`zod`)

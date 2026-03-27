@@ -12,7 +12,7 @@ export class AuthController {
       serviceCategories?: string[];
     };
 
-    const { user } = await AuthService.register({
+    const { user, deliveryMode } = await AuthService.register({
       fullName,
       email,
       password,
@@ -22,7 +22,10 @@ export class AuthController {
 
     return res.status(201).json({
       success: true,
-      message: 'User registered successfully. OTP sent to email for verification.',
+      message:
+        deliveryMode === 'console'
+          ? 'User registered successfully. OTP printed in the server terminal for verification.'
+          : 'User registered successfully. OTP sent to email for verification.',
       data: {
         user: {
           id: String(user._id),
@@ -143,11 +146,14 @@ export class AuthController {
 
   static resendVerificationOtp = catchAsync(async (req: Request, res: Response) => {
     const { email } = req.body as { email: string };
-    await AuthService.resendVerificationOtp({ email });
+    const { deliveryMode } = await AuthService.resendVerificationOtp({ email });
 
     return res.status(200).json({
       success: true,
-      message: 'Verification OTP sent'
+      message:
+        deliveryMode === 'console'
+          ? 'Verification OTP printed in the server terminal.'
+          : 'Verification OTP sent'
     });
   });
 
@@ -198,11 +204,14 @@ export class AuthController {
 
   static forgotPasswordRequest = catchAsync(async (req: Request, res: Response) => {
     const { email } = req.body as { email: string };
-    await AuthService.forgotPasswordRequest({ email });
+    const { deliveryMode } = await AuthService.forgotPasswordRequest({ email });
 
     return res.status(200).json({
       success: true,
-      message: 'If an account exists for this email, a reset OTP has been sent.'
+      message:
+        deliveryMode === 'console'
+          ? 'If an account exists for this email, the reset OTP was printed in the server terminal.'
+          : 'If an account exists for this email, a reset OTP has been sent.'
     });
   });
 
