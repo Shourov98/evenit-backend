@@ -47,6 +47,40 @@ const router = Router();
  *     VenueCreateRequest:
  *       type: object
  *       required: [information, pricing, capacity, media]
+ *       example:
+ *         information:
+ *           venueName: Grand Hall
+ *           venueType: Banquet
+ *           description: Premium event venue in central Dhaka.
+ *           addressLine: 123 Main Road
+ *           city: Dhaka
+ *           area: Farmgate
+ *         pricing:
+ *           basePrice: 5000
+ *           currency: BDT
+ *           discount:
+ *             type: percentage
+ *             value: 10
+ *           amenities:
+ *             wifi: true
+ *             parking: true
+ *             ac: true
+ *         capacity:
+ *           maximumGuests: 300
+ *         media:
+ *           galleryImages:
+ *             - https://cdn.example.com/venues/grand-hall-1.jpg
+ *             - https://cdn.example.com/venues/grand-hall-2.jpg
+ *           videoUrl: https://www.youtube.com/watch?v=abc123
+ *         availabilityOverrides:
+ *           - date: 2026-03-20
+ *             slots:
+ *               - hour: 8
+ *                 status: available
+ *               - hour: 9
+ *                 status: booked
+ *               - hour: 10
+ *                 status: pending
  *       properties:
  *         information:
  *           type: object
@@ -105,15 +139,20 @@ const router = Router();
  *               example: 300
  *         media:
  *           type: object
+ *           description: galleryImages and videoUrl must be valid URLs when provided.
  *           properties:
  *             galleryImages:
  *               type: array
  *               items:
  *                 type: string
  *                 format: uri
+ *               example:
+ *                 - https://cdn.example.com/venues/grand-hall-1.jpg
+ *                 - https://cdn.example.com/venues/grand-hall-2.jpg
  *             videoUrl:
  *               type: string
  *               format: uri
+ *               example: https://www.youtube.com/watch?v=abc123
  *         availabilityOverrides:
  *           type: array
  *           items:
@@ -291,6 +330,43 @@ router.use(protect, authorize('venue_provider'));
  *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/VenueCreateRequest'
+ *           examples:
+ *             validVenue:
+ *               summary: Valid venue creation payload
+ *               value:
+ *                 information:
+ *                   venueName: Grand Hall
+ *                   venueType: Banquet
+ *                   description: Premium event venue in central Dhaka.
+ *                   addressLine: 123 Main Road
+ *                   city: Dhaka
+ *                   area: Farmgate
+ *                 pricing:
+ *                   basePrice: 5000
+ *                   currency: BDT
+ *                   discount:
+ *                     type: percentage
+ *                     value: 10
+ *                   amenities:
+ *                     wifi: true
+ *                     parking: true
+ *                     ac: true
+ *                 capacity:
+ *                   maximumGuests: 300
+ *                 media:
+ *                   galleryImages:
+ *                     - https://cdn.example.com/venues/grand-hall-1.jpg
+ *                     - https://cdn.example.com/venues/grand-hall-2.jpg
+ *                   videoUrl: https://www.youtube.com/watch?v=abc123
+ *                 availabilityOverrides:
+ *                   - date: 2026-03-20
+ *                     slots:
+ *                       - hour: 8
+ *                         status: available
+ *                       - hour: 9
+ *                         status: booked
+ *                       - hour: 10
+ *                         status: pending
  *     responses:
  *       201:
  *         description: Venue created successfully
