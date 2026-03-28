@@ -2280,6 +2280,12 @@
       "PublicServiceListResponse": {
         "$ref": "#/components/schemas/ServiceListResponse"
       },
+      "AdminPendingVenueListResponse": {
+        "$ref": "#/components/schemas/VenueListResponse"
+      },
+      "AdminPendingServiceListResponse": {
+        "$ref": "#/components/schemas/ServiceListResponse"
+      },
       "PublicVenueListResponse": {
         "$ref": "#/components/schemas/VenueListResponse"
       },
@@ -3894,6 +3900,138 @@
           },
           "404": {
             "description": "Venue not found"
+          }
+        }
+      }
+    },
+    "/api/v1/admin/venues/pending": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get pending venue approval requests",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortBy",
+            "schema": {
+              "type": "string"
+            },
+            "example": "createdAt"
+          },
+          {
+            "in": "query",
+            "name": "sortOrder",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated pending venue approval requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminPendingVenueListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/v1/admin/services/pending": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get pending service approval requests",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortBy",
+            "schema": {
+              "type": "string"
+            },
+            "example": "createdAt"
+          },
+          {
+            "in": "query",
+            "name": "sortOrder",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated pending service approval requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminPendingServiceListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
         }
       }

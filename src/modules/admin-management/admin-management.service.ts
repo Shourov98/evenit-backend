@@ -1,3 +1,4 @@
+import { PaginationOptions, paginateModel } from '../../common/utils/pagination';
 import { AppError } from '../../common/errors/AppError';
 import { ServiceProviderServiceModel } from '../service-provider/service-provider.model';
 import { VenueProviderVenueModel } from '../venue-provider/venue-provider.model';
@@ -8,6 +9,28 @@ interface ApproverInfo {
 }
 
 export class AdminManagementService {
+  static async getPendingVenues(pagination: PaginationOptions) {
+    return paginateModel(
+      VenueProviderVenueModel,
+      {
+        isDeleted: false,
+        publishStatus: 'pending'
+      },
+      pagination
+    );
+  }
+
+  static async getPendingServices(pagination: PaginationOptions) {
+    return paginateModel(
+      ServiceProviderServiceModel,
+      {
+        isDeleted: false,
+        publishStatus: 'pending'
+      },
+      pagination
+    );
+  }
+
   static async approveVenue(venueId: string, approver: ApproverInfo) {
     const venue = await VenueProviderVenueModel.findOne({ _id: venueId, isDeleted: false });
     if (!venue) {
@@ -64,4 +87,3 @@ export class AdminManagementService {
     return service;
   }
 }
-

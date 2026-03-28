@@ -59,6 +59,8 @@ export interface IVenue extends Document {
   approvedAt?: Date;
   reviews: IVenueReview[];
   isDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const availabilitySlotSchema = new Schema<IAvailabilitySlot>(

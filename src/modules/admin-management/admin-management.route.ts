@@ -3,7 +3,7 @@ import { authorize } from '../../common/middlewares/authorize.middleware';
 import { protect } from '../../common/middlewares/auth.middleware';
 import { validate } from '../../common/middlewares/validate.middleware';
 import { AdminManagementController } from './admin-management.controller';
-import { serviceIdParamSchema, venueIdParamSchema } from './admin-management.schema';
+import { approvalRequestsQuerySchema, serviceIdParamSchema, venueIdParamSchema } from './admin-management.schema';
 
 const router = Router();
 
@@ -14,7 +14,95 @@ router.use(protect, authorize('admin', 'super_admin'));
  * tags:
  *   - name: Admin
  *     description: Admin and super-admin moderation endpoints for services and venues
+ * components:
+ *   schemas:
+ *     AdminPendingVenueListResponse:
+ *       $ref: '#/components/schemas/VenueListResponse'
+ *     AdminPendingServiceListResponse:
+ *       $ref: '#/components/schemas/ServiceListResponse'
  */
+
+/**
+ * @openapi
+ * /api/v1/admin/venues/pending:
+ *   get:
+ *     tags: [Admin]
+ *     summary: Get pending venue approval requests
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           example: createdAt
+ *       - in: query
+ *         name: sortOrder
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *     responses:
+ *       200:
+ *         description: Paginated pending venue approval requests
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AdminPendingVenueListResponse'
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ */
+router.get('/venues/pending', validate(approvalRequestsQuerySchema), AdminManagementController.getPendingVenues);
+
+/**
+ * @openapi
+ * /api/v1/admin/services/pending:
+ *   get:
+ *     tags: [Admin]
+ *     summary: Get pending service approval requests
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           example: createdAt
+ *       - in: query
+ *         name: sortOrder
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *     responses:
+ *       200:
+ *         description: Paginated pending service approval requests
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AdminPendingServiceListResponse'
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ */
+router.get('/services/pending', validate(approvalRequestsQuerySchema), AdminManagementController.getPendingServices);
 
 /**
  * @openapi

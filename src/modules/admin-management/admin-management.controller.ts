@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { catchAsync } from '../../common/utils/catchAsync';
+import { parsePagination } from '../../common/utils/pagination';
 import { AdminManagementService } from './admin-management.service';
 
 const getApprover = (req: Request): { name: string; email: string } | null => {
@@ -14,6 +15,28 @@ const getApprover = (req: Request): { name: string; email: string } | null => {
 };
 
 export class AdminManagementController {
+  static getPendingVenues = catchAsync(async (req: Request, res: Response) => {
+    const pagination = parsePagination(req.query as Record<string, unknown>);
+    const venues = await AdminManagementService.getPendingVenues(pagination);
+
+    return res.status(200).json({
+      success: true,
+      meta: venues.meta,
+      data: venues.data
+    });
+  });
+
+  static getPendingServices = catchAsync(async (req: Request, res: Response) => {
+    const pagination = parsePagination(req.query as Record<string, unknown>);
+    const services = await AdminManagementService.getPendingServices(pagination);
+
+    return res.status(200).json({
+      success: true,
+      meta: services.meta,
+      data: services.data
+    });
+  });
+
   static approveVenue = catchAsync(async (req: Request, res: Response) => {
     const approver = getApprover(req);
     if (!approver) {
@@ -60,4 +83,3 @@ export class AdminManagementController {
     });
   });
 }
-

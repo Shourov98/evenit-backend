@@ -62,6 +62,8 @@ export interface IServiceProviderService extends Document {
   approvedAt?: Date;
   reviews: IServiceReview[];
   isDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const serviceAvailabilitySlotSchema = new Schema<IServiceAvailabilitySlot>(
