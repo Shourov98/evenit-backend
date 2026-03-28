@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { authorize } from '../../common/middlewares/authorize.middleware';
 import { protect } from '../../common/middlewares/auth.middleware';
+import { parseMultipartJsonBody } from '../../common/middlewares/multipart-json.middleware';
+import { imageUpload } from '../../common/middlewares/upload.middleware';
 import { validate } from '../../common/middlewares/validate.middleware';
 import { ServiceProviderController } from './service-provider.controller';
 import { createServiceSchema, serviceIdParamSchema, updateServiceSchema } from './service-provider.schema';
@@ -338,53 +340,28 @@ router.use(protect, authorize('service_provider'));
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
- *             $ref: '#/components/schemas/ServiceCreateRequest'
+ *             type: object
+ *             required: [payload]
+ *             properties:
+ *               payload:
+ *                 type: string
+ *                 description: JSON string matching ServiceCreateRequest without uploaded image URLs.
+ *                 example: '{"information":{"serviceName":"Premium Catering","category":"Catering","description":"Corporate and wedding catering service.","serviceArea":["Dhaka","Gazipur"],"tags":["wedding","corporate"]},"pricing":{"amount":50000,"pricingType":"package","currency":"BDT","discount":{"type":"percentage","value":10}},"settings":{"amenities":{"deliveryIncluded":true,"setupIncluded":true},"capacity":300},"media":{"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityOverrides":[{"date":"2026-03-20","slots":[{"hour":10,"status":"booked"},{"hour":11,"status":"booked"}]},{"date":"2026-03-21","slots":[{"hour":14,"status":"pending"},{"hour":15,"status":"pending"}]}]}'
+ *               images:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *               image:
+ *                 type: string
+ *                 format: binary
  *           examples:
  *             validService:
  *               summary: Valid service creation payload
- *               value:
- *                 information:
- *                   serviceName: Premium Catering
- *                   category: Catering
- *                   description: Corporate and wedding catering service.
- *                   serviceArea:
- *                     - Dhaka
- *                     - Gazipur
- *                   tags:
- *                     - wedding
- *                     - corporate
- *                 pricing:
- *                   amount: 50000
- *                   pricingType: package
- *                   currency: BDT
- *                   discount:
- *                     type: percentage
- *                     value: 10
- *                 settings:
- *                   amenities:
- *                     deliveryIncluded: true
- *                     setupIncluded: true
- *                   capacity: 300
- *                 media:
- *                   galleryImages:
- *                     - https://cdn.example.com/services/catering-1.jpg
- *                     - https://cdn.example.com/services/catering-2.jpg
- *                   videoUrl: https://www.youtube.com/watch?v=abc123
- *                 availabilityOverrides:
- *                   - date: 2026-03-20
- *                     slots:
- *                       - hour: 10
- *                         status: booked
- *                       - hour: 11
- *                         status: booked
- *                   - date: 2026-03-21
- *                     slots:
- *                       - hour: 14
- *                         status: pending
- *                       - hour: 15
- *                         status: pending
+*               value:
+*                 payload: '{"information":{"serviceName":"Premium Catering","category":"Catering","description":"Corporate and wedding catering service.","serviceArea":["Dhaka","Gazipur"],"tags":["wedding","corporate"]},"pricing":{"amount":50000,"pricingType":"package","currency":"BDT","discount":{"type":"percentage","value":10}},"settings":{"amenities":{"deliveryIncluded":true,"setupIncluded":true},"capacity":300},"media":{"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityOverrides":[{"date":"2026-03-20","slots":[{"hour":10,"status":"booked"},{"hour":11,"status":"booked"}]},{"date":"2026-03-21","slots":[{"hour":14,"status":"pending"},{"hour":15,"status":"pending"}]}]}'
  *     responses:
  *       201:
  *         description: Service created successfully
@@ -399,7 +376,16 @@ router.use(protect, authorize('service_provider'));
  *       403:
  *         description: Forbidden
  */
-router.post('/services', validate(createServiceSchema), ServiceProviderController.createService);
+router.post(
+  '/services',
+  imageUpload.fields([
+    { name: 'images', maxCount: 10 },
+    { name: 'image', maxCount: 10 }
+  ]),
+  parseMultipartJsonBody('payload'),
+  validate(createServiceSchema),
+  ServiceProviderController.createService
+);
 
 /**
  * @openapi

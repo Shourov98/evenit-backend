@@ -18,6 +18,9 @@ export const env = cleanEnv(process.env, {
   PLATFORM_FEE_PERCENT: str({ default: '10' }),
   RESEND_API_KEY: str({ default: '' }),
   RESEND_FROM_EMAIL: str({ default: 'onboarding@resend.dev' }),
+  ADMIN_NAME: str({ default: 'Admin' }),
+  ADMIN_EMAIL: str({ default: '' }),
+  ADMIN_PASSWORD: str({ default: '' }),
   OTP_EXPIRY_MINUTES: str({ default: '10' }),
   OTP_RESEND_COOLDOWN_SECONDS: str({ default: '30' })
 });

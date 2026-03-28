@@ -34,7 +34,7 @@ const uploadBuffer = (buffer: Buffer, folder: string): Promise<UploadApiResponse
   });
 
 export class UploadService {
-  static async uploadVenueImages(files: Express.Multer.File[]): Promise<UploadedImage[]> {
+  static async uploadImages(files: Express.Multer.File[], folderSegment = 'uploads'): Promise<UploadedImage[]> {
     if (!hasCloudinaryConfig()) {
       throw new AppError(500, 'Cloudinary is not configured');
     }
@@ -43,7 +43,12 @@ export class UploadService {
       throw new AppError(400, 'At least one image is required');
     }
 
-    const folder = `${env.CLOUDINARY_UPLOAD_FOLDER}/venues`;
+    const normalizedFolderSegment = folderSegment
+      .trim()
+      .replace(/^\/+|\/+$/g, '')
+      .replace(/[^a-zA-Z0-9/_-]/g, '');
+
+    const folder = `${env.CLOUDINARY_UPLOAD_FOLDER}/${normalizedFolderSegment || 'uploads'}`;
 
     const uploads = await Promise.all(
       files.map(async (file) => {
@@ -62,5 +67,9 @@ export class UploadService {
     );
 
     return uploads;
+  }
+
+  static async uploadVenueImages(files: Express.Multer.File[]): Promise<UploadedImage[]> {
+    return this.uploadImages(files, 'venues');
   }
 }

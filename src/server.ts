@@ -3,11 +3,13 @@ import mongoose from 'mongoose';
 import { app } from './app/app';
 import { env } from './config/env';
 import { connectDatabase } from './config/database';
+import { seedAdminUser } from './modules/auth/admin-seed';
 
 const server = http.createServer(app);
 
 const start = async (): Promise<void> => {
   await connectDatabase(env.MONGO_URI);
+  await seedAdminUser();
 
   server.listen(env.PORT, () => {
     console.log(`Server running on http://localhost:${env.PORT}`);

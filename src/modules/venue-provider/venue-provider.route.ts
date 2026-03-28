@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { authorize } from '../../common/middlewares/authorize.middleware';
 import { protect } from '../../common/middlewares/auth.middleware';
+import { parseMultipartJsonBody } from '../../common/middlewares/multipart-json.middleware';
+import { imageUpload } from '../../common/middlewares/upload.middleware';
 import { validate } from '../../common/middlewares/validate.middleware';
 import { VenueProviderController } from './venue-provider.controller';
 import { createVenueSchema, updateVenueSchema, venueIdParamSchema } from './venue-provider.schema';
@@ -327,46 +329,28 @@ router.use(protect, authorize('venue_provider'));
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
- *             $ref: '#/components/schemas/VenueCreateRequest'
+ *             type: object
+ *             required: [payload]
+ *             properties:
+ *               payload:
+ *                 type: string
+ *                 description: JSON string matching VenueCreateRequest without uploaded image URLs.
+ *                 example: '{"information":{"venueName":"Grand Hall","venueType":"Banquet","description":"Premium event venue in central Dhaka.","addressLine":"123 Main Road","city":"Dhaka","area":"Farmgate"},"pricing":{"basePrice":5000,"currency":"BDT","discount":{"type":"percentage","value":10},"amenities":{"wifi":true,"parking":true,"ac":true}},"capacity":{"maximumGuests":300},"media":{"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityOverrides":[{"date":"2026-03-20","slots":[{"hour":8,"status":"available"},{"hour":9,"status":"booked"},{"hour":10,"status":"pending"}]}]}'
+ *               images:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *               image:
+ *                 type: string
+ *                 format: binary
  *           examples:
  *             validVenue:
  *               summary: Valid venue creation payload
  *               value:
- *                 information:
- *                   venueName: Grand Hall
- *                   venueType: Banquet
- *                   description: Premium event venue in central Dhaka.
- *                   addressLine: 123 Main Road
- *                   city: Dhaka
- *                   area: Farmgate
- *                 pricing:
- *                   basePrice: 5000
- *                   currency: BDT
- *                   discount:
- *                     type: percentage
- *                     value: 10
- *                   amenities:
- *                     wifi: true
- *                     parking: true
- *                     ac: true
- *                 capacity:
- *                   maximumGuests: 300
- *                 media:
- *                   galleryImages:
- *                     - https://cdn.example.com/venues/grand-hall-1.jpg
- *                     - https://cdn.example.com/venues/grand-hall-2.jpg
- *                   videoUrl: https://www.youtube.com/watch?v=abc123
- *                 availabilityOverrides:
- *                   - date: 2026-03-20
- *                     slots:
- *                       - hour: 8
- *                         status: available
- *                       - hour: 9
- *                         status: booked
- *                       - hour: 10
- *                         status: pending
+ *                 payload: '{"information":{"venueName":"Grand Hall","venueType":"Banquet","description":"Premium event venue in central Dhaka.","addressLine":"123 Main Road","city":"Dhaka","area":"Farmgate"},"pricing":{"basePrice":5000,"currency":"BDT","discount":{"type":"percentage","value":10},"amenities":{"wifi":true,"parking":true,"ac":true}},"capacity":{"maximumGuests":300},"media":{"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityOverrides":[{"date":"2026-03-20","slots":[{"hour":8,"status":"available"},{"hour":9,"status":"booked"},{"hour":10,"status":"pending"}]}]}'
  *     responses:
  *       201:
  *         description: Venue created successfully
@@ -381,7 +365,16 @@ router.use(protect, authorize('venue_provider'));
  *       403:
  *         description: Forbidden
  */
-router.post('/venues', validate(createVenueSchema), VenueProviderController.createVenue);
+router.post(
+  '/venues',
+  imageUpload.fields([
+    { name: 'images', maxCount: 10 },
+    { name: 'image', maxCount: 10 }
+  ]),
+  parseMultipartJsonBody('payload'),
+  validate(createVenueSchema),
+  VenueProviderController.createVenue
+);
 
 /**
  * @openapi

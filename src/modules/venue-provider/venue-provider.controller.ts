@@ -1,9 +1,12 @@
 import { Request, Response } from 'express';
 import { parsePagination } from '../../common/utils/pagination';
 import { catchAsync } from '../../common/utils/catchAsync';
+import { UploadService } from '../uploads/upload.service';
 import { VenueProviderService } from './venue-provider.service';
 
 const getUserId = (req: Request): string | null => req.user?.userId || null;
+const getFiles = (req: Request): Express.Multer.File[] =>
+  Array.isArray(req.files) ? req.files : req.files ? Object.values(req.files).flat() : [];
 
 export class VenueProviderController {
   static createVenue = catchAsync(async (req: Request, res: Response) => {
@@ -12,7 +15,18 @@ export class VenueProviderController {
       return res.status(401).json({ success: false, message: 'Unauthorized' });
     }
 
-    const venue = await VenueProviderService.create(userId, req.body);
+    const files = getFiles(req);
+    const uploadedImages = files.length ? await UploadService.uploadImages(files, 'venues') : [];
+    const uploadedImageUrls = uploadedImages.map((item) => item.url);
+    const payload = {
+      ...req.body,
+      media: {
+        ...(req.body.media || {}),
+        galleryImages: [...(req.body.media?.galleryImages || []), ...uploadedImageUrls]
+      }
+    };
+
+    const venue = await VenueProviderService.create(userId, payload);
 
     return res.status(201).json({
       success: true,
