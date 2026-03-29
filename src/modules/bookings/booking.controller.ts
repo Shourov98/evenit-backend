@@ -24,6 +24,44 @@ export class BookingController {
     });
   });
 
+  static createServiceBooking = catchAsync(async (req: Request, res: Response) => {
+    const user = getUser(req);
+    const booking = await BookingService.createForTarget(user.userId, 'service', req.params.serviceId, req.body);
+
+    return res.status(201).json({
+      success: true,
+      message: 'Service booking created successfully',
+      data: booking
+    });
+  });
+
+  static createVenueBooking = catchAsync(async (req: Request, res: Response) => {
+    const user = getUser(req);
+    const booking = await BookingService.createForTarget(user.userId, 'venue', req.params.venueId, req.body);
+
+    return res.status(201).json({
+      success: true,
+      message: 'Venue booking created successfully',
+      data: booking
+    });
+  });
+
+  static createEventPlannerBooking = catchAsync(async (req: Request, res: Response) => {
+    const user = getUser(req);
+    const booking = await BookingService.createForTarget(
+      user.userId,
+      'event',
+      req.params.eventPlannerId,
+      req.body
+    );
+
+    return res.status(201).json({
+      success: true,
+      message: 'Event planner booking created successfully',
+      data: booking
+    });
+  });
+
   static getMyBookings = catchAsync(async (req: Request, res: Response) => {
     const user = getUser(req);
     const pagination = parsePagination(req.query as Record<string, unknown>);

@@ -111,13 +111,22 @@ const ensureServiceAvailability = (service: IServiceProviderService, bookingDate
 };
 
 export class BookingService {
+  static async createForTarget(
+    customerId: string,
+    targetType: CreateBookingPayload['targetType'],
+    targetId: string,
+    payload: Omit<CreateBookingPayload, 'targetType' | 'targetId'>
+  ) {
+    return this.create(customerId, {
+      ...payload,
+      targetType,
+      targetId
+    });
+  }
+
   static async create(customerId: string, payload: CreateBookingPayload) {
     ensureObjectId(customerId, 'customerId');
     ensureObjectId(payload.targetId, 'targetId');
-
-    if (payload.targetType === 'event') {
-      throw new AppError(400, 'Event booking is not implemented yet');
-    }
 
     const customer = await UserModel.findById(customerId);
     if (!customer || customer.role !== 'customer') {
@@ -158,7 +167,7 @@ export class BookingService {
       providerId = venue.ownerId;
       subtotal = venue.pricing.basePrice * durationHours;
       currency = venue.pricing.currency;
-    } else {
+    } else if (payload.targetType === 'service') {
       const service = await ServiceProviderServiceModel.findOne({
         _id: payload.targetId,
         isDeleted: false,
@@ -173,6 +182,21 @@ export class BookingService {
       providerId = service.ownerId;
       subtotal = applyDiscount(computeServiceSubtotal(service, durationHours), service.pricing.discount);
       currency = service.pricing.currency;
+    } else {
+      const eventPlanner = await UserModel.findOne({
+        _id: payload.targetId,
+        role: 'event_planner',
+        isEmailVerified: true,
+        'onboarding.eventProvider': { $exists: true }
+      });
+
+      if (!eventPlanner) {
+        throw new AppError(404, 'Event planner not found');
+      }
+
+      providerId = eventPlanner._id as Types.ObjectId;
+      subtotal = 0;
+      currency = 'BDT';
     }
 
     const conflictingBookings = await BookingModel.find({

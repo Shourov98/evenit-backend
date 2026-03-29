@@ -5,7 +5,10 @@ import { validate } from '../../common/middlewares/validate.middleware';
 import { BookingController } from './booking.controller';
 import {
   bookingIdParamSchema,
+  createEventPlannerBookingSchema,
   createBookingSchema,
+  createServiceBookingSchema,
+  createVenueBookingSchema,
   rejectBookingSchema
 } from './booking.schema';
 
@@ -216,7 +219,7 @@ router.use(protect);
  *   post:
  *     tags: [Bookings]
  *     summary: Create a booking
- *     description: Creates a customer booking for a venue or service. Event bookings are currently blocked by the backend.
+ *     description: Creates a customer booking for a venue, service, or event planner.
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -248,6 +251,189 @@ router.use(protect);
  *         description: Time slot conflict
  */
 router.post('/', authorize('customer'), validate(createBookingSchema), BookingController.createBooking);
+
+/**
+ * @openapi
+ * /api/v1/bookings/services/{serviceId}:
+ *   post:
+ *     tags: [Bookings]
+ *     summary: Create a booking request for a service
+ *     description: Creates a customer booking request for a published service.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: serviceId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [bookingDate, timeSlots]
+ *             properties:
+ *               bookingDate:
+ *                 type: string
+ *                 format: date
+ *                 example: 2026-03-20
+ *               timeSlots:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   example: "14:00"
+ *               durationHours:
+ *                 type: integer
+ *                 minimum: 1
+ *                 maximum: 24
+ *               location:
+ *                 type: string
+ *               specialInstructions:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Service booking created successfully
+ *       400:
+ *         description: Validation failed
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Only subscribed customers can create bookings
+ *       404:
+ *         description: Service not found
+ *       409:
+ *         description: Time slot conflict
+ */
+router.post(
+  '/services/:serviceId',
+  authorize('customer'),
+  validate(createServiceBookingSchema),
+  BookingController.createServiceBooking
+);
+
+/**
+ * @openapi
+ * /api/v1/bookings/venues/{venueId}:
+ *   post:
+ *     tags: [Bookings]
+ *     summary: Create a booking request for a venue
+ *     description: Creates a customer booking request for a published venue.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: venueId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [bookingDate, timeSlots]
+ *             properties:
+ *               bookingDate:
+ *                 type: string
+ *                 format: date
+ *                 example: 2026-03-20
+ *               timeSlots:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   example: "14:00"
+ *               durationHours:
+ *                 type: integer
+ *                 minimum: 1
+ *                 maximum: 24
+ *               location:
+ *                 type: string
+ *               specialInstructions:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Venue booking created successfully
+ *       400:
+ *         description: Validation failed
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Only subscribed customers can create bookings
+ *       404:
+ *         description: Venue not found
+ *       409:
+ *         description: Time slot conflict
+ */
+router.post(
+  '/venues/:venueId',
+  authorize('customer'),
+  validate(createVenueBookingSchema),
+  BookingController.createVenueBooking
+);
+
+/**
+ * @openapi
+ * /api/v1/bookings/event-planners/{eventPlannerId}:
+ *   post:
+ *     tags: [Bookings]
+ *     summary: Create a booking request for an event planner
+ *     description: Creates a customer booking request for a verified event planner.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: eventPlannerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [bookingDate, timeSlots]
+ *             properties:
+ *               bookingDate:
+ *                 type: string
+ *                 format: date
+ *                 example: 2026-03-20
+ *               timeSlots:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   example: "14:00"
+ *               durationHours:
+ *                 type: integer
+ *                 minimum: 1
+ *                 maximum: 24
+ *               location:
+ *                 type: string
+ *               specialInstructions:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Event planner booking created successfully
+ *       400:
+ *         description: Validation failed
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Only subscribed customers can create bookings
+ *       404:
+ *         description: Event planner not found
+ *       409:
+ *         description: Time slot conflict
+ */
+router.post(
+  '/event-planners/:eventPlannerId',
+  authorize('customer'),
+  validate(createEventPlannerBookingSchema),
+  BookingController.createEventPlannerBooking
+);
 
 /**
  * @openapi
