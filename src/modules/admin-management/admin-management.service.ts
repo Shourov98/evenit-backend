@@ -1,5 +1,6 @@
 import { PaginationOptions, paginateModel } from '../../common/utils/pagination';
 import { AppError } from '../../common/errors/AppError';
+import { createDefaultUserSubscription, UserModel } from '../auth/auth.model';
 import { ServiceProviderServiceModel } from '../service-provider/service-provider.model';
 import { VenueProviderVenueModel } from '../venue-provider/venue-provider.model';
 
@@ -9,6 +10,46 @@ interface ApproverInfo {
 }
 
 export class AdminManagementService {
+  static async createAdmin(payload: { fullName: string; email: string; password: string }) {
+    const existing = await UserModel.findOne({ email: payload.email.toLowerCase() });
+    if (existing) {
+      throw new AppError(409, 'Email already in use');
+    }
+
+    return UserModel.create({
+      fullName: payload.fullName,
+      email: payload.email.toLowerCase(),
+      password: payload.password,
+      role: 'admin',
+      serviceCategories: [],
+      isEmailVerified: true,
+      isBlocked: false,
+      subscription: createDefaultUserSubscription('admin')
+    });
+  }
+
+  static async blockAdmin(adminUserId: string) {
+    const admin = await UserModel.findOne({ _id: adminUserId, role: 'admin' });
+    if (!admin) {
+      throw new AppError(404, 'Admin not found');
+    }
+
+    admin.isBlocked = true;
+    await admin.save();
+    return admin;
+  }
+
+  static async unblockAdmin(adminUserId: string) {
+    const admin = await UserModel.findOne({ _id: adminUserId, role: 'admin' });
+    if (!admin) {
+      throw new AppError(404, 'Admin not found');
+    }
+
+    admin.isBlocked = false;
+    await admin.save();
+    return admin;
+  }
+
   static async getAllVenues(pagination: PaginationOptions) {
     return paginateModel(
       VenueProviderVenueModel,

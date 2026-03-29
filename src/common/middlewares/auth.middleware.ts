@@ -25,6 +25,11 @@ export const protect = async (req: Request, _res: Response, next: NextFunction):
     if (!user) {
       return next(new AppError(401, 'Unauthorized: user not found'));
     }
+
+    if (user.isBlocked) {
+      return next(new AppError(403, 'Your account has been blocked'));
+    }
+
     const hydratedSubscription = hydrateUserSubscription(user.role, user.subscription);
     if (JSON.stringify(user.subscription) !== JSON.stringify(hydratedSubscription)) {
       user.subscription = hydratedSubscription;
@@ -37,6 +42,7 @@ export const protect = async (req: Request, _res: Response, next: NextFunction):
       fullName: user.fullName,
       role: user.role,
       serviceCategories: user.serviceCategories,
+      isBlocked: user.isBlocked,
       subscription: user.subscription,
       onboarding: user.onboarding ?? null
     };

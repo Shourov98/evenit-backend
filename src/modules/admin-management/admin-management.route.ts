@@ -3,7 +3,13 @@ import { authorize } from '../../common/middlewares/authorize.middleware';
 import { protect } from '../../common/middlewares/auth.middleware';
 import { validate } from '../../common/middlewares/validate.middleware';
 import { AdminManagementController } from './admin-management.controller';
-import { approvalRequestsQuerySchema, serviceIdParamSchema, venueIdParamSchema } from './admin-management.schema';
+import {
+  adminUserIdParamSchema,
+  approvalRequestsQuerySchema,
+  createAdminSchema,
+  serviceIdParamSchema,
+  venueIdParamSchema
+} from './admin-management.schema';
 
 const router = Router();
 
@@ -21,6 +27,99 @@ router.use(protect, authorize('admin', 'super_admin'));
  *     AdminPendingServiceListResponse:
  *       $ref: '#/components/schemas/ServiceListResponse'
  */
+
+/**
+ * @openapi
+ * /api/v1/admin/admin-users:
+ *   post:
+ *     tags: [Admin]
+ *     summary: Create an admin user
+ *     description: Only super_admin can create admin users.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [fullName, email, password]
+ *             properties:
+ *               fullName:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               password:
+ *                 type: string
+ *                 format: password
+ *     responses:
+ *       201:
+ *         description: Admin created successfully
+ *       403:
+ *         description: Forbidden
+ */
+router.post('/admin-users', authorize('super_admin'), validate(createAdminSchema), AdminManagementController.createAdmin);
+
+/**
+ * @openapi
+ * /api/v1/admin/admin-users/{adminUserId}/block:
+ *   patch:
+ *     tags: [Admin]
+ *     summary: Block an admin user
+ *     description: Only super_admin can block admin users.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: adminUserId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Admin blocked successfully
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Admin not found
+ */
+router.patch(
+  '/admin-users/:adminUserId/block',
+  authorize('super_admin'),
+  validate(adminUserIdParamSchema),
+  AdminManagementController.blockAdmin
+);
+
+/**
+ * @openapi
+ * /api/v1/admin/admin-users/{adminUserId}/unblock:
+ *   patch:
+ *     tags: [Admin]
+ *     summary: Unblock an admin user
+ *     description: Only super_admin can unblock admin users.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: adminUserId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Admin unblocked successfully
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Admin not found
+ */
+router.patch(
+  '/admin-users/:adminUserId/unblock',
+  authorize('super_admin'),
+  validate(adminUserIdParamSchema),
+  AdminManagementController.unblockAdmin
+);
 
 /**
  * @openapi

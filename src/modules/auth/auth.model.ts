@@ -175,6 +175,7 @@ export interface IUser extends Document {
   role: UserRole;
   serviceCategories: string[];
   isEmailVerified: boolean;
+  isBlocked: boolean;
   subscription: IUserSubscription;
   onboarding?: IProviderOnboarding;
   comparePassword(candidate: string): Promise<boolean>;
@@ -519,6 +520,11 @@ const userSchema = new Schema<IUser>(
     isEmailVerified: {
       type: Boolean,
       default: false
+    },
+    isBlocked: {
+      type: Boolean,
+      default: false,
+      index: true
     },
     subscription: {
       type: userSubscriptionSchema,

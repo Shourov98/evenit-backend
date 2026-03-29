@@ -28,3 +28,21 @@ export const serviceIdParamSchema = z.object({
   }),
   query: z.object({}).optional().default({})
 });
+
+export const createAdminSchema = z.object({
+  body: z.object({
+    fullName: z.string().min(3).max(80),
+    email: z.string().email(),
+    password: z.string().min(8).max(64)
+  }),
+  params: z.object({}).optional().default({}),
+  query: z.object({}).optional().default({})
+});
+
+export const adminUserIdParamSchema = z.object({
+  body: z.object({}).optional().default({}),
+  params: z.object({
+    adminUserId: z.string().regex(objectIdRegex, 'Invalid adminUserId')
+  }),
+  query: z.object({}).optional().default({})
+});

@@ -15,6 +15,36 @@ const getApprover = (req: Request): { name: string; email: string } | null => {
 };
 
 export class AdminManagementController {
+  static createAdmin = catchAsync(async (req: Request, res: Response) => {
+    const admin = await AdminManagementService.createAdmin(req.body);
+
+    return res.status(201).json({
+      success: true,
+      message: 'Admin created successfully',
+      data: admin
+    });
+  });
+
+  static blockAdmin = catchAsync(async (req: Request, res: Response) => {
+    const admin = await AdminManagementService.blockAdmin(req.params.adminUserId);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Admin blocked successfully',
+      data: admin
+    });
+  });
+
+  static unblockAdmin = catchAsync(async (req: Request, res: Response) => {
+    const admin = await AdminManagementService.unblockAdmin(req.params.adminUserId);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Admin unblocked successfully',
+      data: admin
+    });
+  });
+
   static getAllVenues = catchAsync(async (req: Request, res: Response) => {
     const pagination = parsePagination(req.query as Record<string, unknown>);
     const venues = await AdminManagementService.getAllVenues(pagination);

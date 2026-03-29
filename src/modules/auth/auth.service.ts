@@ -154,6 +154,10 @@ export class AuthService {
       throw new AppError(403, 'Email is not verified. Please verify your email first.');
     }
 
+    if (user.isBlocked) {
+      throw new AppError(403, 'Your account has been blocked');
+    }
+
     await ensureUserSubscription(user);
     const token = signJwt({ userId: String(user._id), role: user.role });
 

@@ -15,6 +15,7 @@ declare global {
           | 'venue_provider'
           | 'customer';
         serviceCategories: string[];
+        isBlocked?: boolean;
         subscription: {
           plan:
             | 'customer_plan'
