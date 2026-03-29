@@ -138,6 +138,28 @@ const ensureUserSubscription = async (user: IUser): Promise<IUser> => {
 };
 
 export class AuthService {
+  private static async authenticateUser(payload: { email: string; password: string }) {
+    const user = await UserModel.findOne({ email: payload.email.toLowerCase() }).select('+password');
+
+    if (!user) {
+      throw new AppError(401, 'Invalid credentials');
+    }
+
+    const isValid = await user.comparePassword(payload.password);
+    if (!isValid) {
+      throw new AppError(401, 'Invalid credentials');
+    }
+
+    if (!user.isEmailVerified) {
+      throw new AppError(403, 'Email is not verified. Please verify your email first.');
+    }
+
+    await ensureUserSubscription(user);
+    const token = signJwt({ userId: String(user._id), role: user.role });
+
+    return { token, user };
+  }
+
   private static async getUserForOnboarding(
     userId: string,
     role: Extract<UserRole, 'service_provider' | 'event_planner' | 'venue_provider'>
@@ -331,24 +353,21 @@ export class AuthService {
   }
 
   static async login(payload: { email: string; password: string }) {
-    const user = await UserModel.findOne({ email: payload.email.toLowerCase() }).select('+password');
-
-    if (!user) {
-      throw new AppError(401, 'Invalid credentials');
+    const result = await this.authenticateUser(payload);
+    if (result.user.role === 'admin' || result.user.role === 'super_admin') {
+      throw new AppError(403, 'Admin users must use the admin login endpoint');
     }
 
-    const isValid = await user.comparePassword(payload.password);
-    if (!isValid) {
-      throw new AppError(401, 'Invalid credentials');
+    return result;
+  }
+
+  static async adminLogin(payload: { email: string; password: string }) {
+    const result = await this.authenticateUser(payload);
+    if (result.user.role !== 'admin' && result.user.role !== 'super_admin') {
+      throw new AppError(403, 'Only admin or super_admin can use the admin login endpoint');
     }
 
-    if (!user.isEmailVerified) {
-      throw new AppError(403, 'Email is not verified. Please verify your email first.');
-    }
-
-    await ensureUserSubscription(user);
-    const token = signJwt({ userId: String(user._id), role: user.role });
-    return { token, user };
+    return result;
   }
 
   static async forgotPasswordRequest(payload: { email: string }) {

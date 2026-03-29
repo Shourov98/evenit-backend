@@ -202,6 +202,28 @@ export class AuthController {
     });
   });
 
+  static adminLogin = catchAsync(async (req: Request, res: Response) => {
+    const { email, password } = req.body as { email: string; password: string };
+    const { token, user } = await AuthService.adminLogin({ email, password });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Admin logged in successfully',
+      data: {
+        token,
+        user: {
+          id: String(user._id),
+          fullName: user.fullName,
+          email: user.email,
+          role: user.role,
+          serviceCategories: user.serviceCategories,
+          isEmailVerified: user.isEmailVerified,
+          onboarding: user.onboarding ?? null
+        }
+      }
+    });
+  });
+
   static forgotPasswordRequest = catchAsync(async (req: Request, res: Response) => {
     const { email } = req.body as { email: string };
     const { deliveryMode } = await AuthService.forgotPasswordRequest({ email });

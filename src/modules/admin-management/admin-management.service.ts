@@ -9,6 +9,26 @@ interface ApproverInfo {
 }
 
 export class AdminManagementService {
+  static async getAllVenues(pagination: PaginationOptions) {
+    return paginateModel(
+      VenueProviderVenueModel,
+      {
+        isDeleted: false
+      },
+      pagination
+    );
+  }
+
+  static async getAllServices(pagination: PaginationOptions) {
+    return paginateModel(
+      ServiceProviderServiceModel,
+      {
+        isDeleted: false
+      },
+      pagination
+    );
+  }
+
   static async getPendingVenues(pagination: PaginationOptions) {
     return paginateModel(
       VenueProviderVenueModel,

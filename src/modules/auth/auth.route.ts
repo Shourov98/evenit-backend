@@ -562,9 +562,37 @@ router.post(
  *       401:
  *         description: Invalid credentials
  *       403:
- *         description: Email not verified
+ *         description: Email not verified or admin users must use the admin login endpoint
  */
 router.post('/login', authLimiter, validate(loginSchema), AuthController.login);
+
+/**
+ * @openapi
+ * /api/v1/auth/admin/login:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Login admin or super-admin
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/AuthLoginRequest'
+ *     responses:
+ *       200:
+ *         description: Admin login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AuthTokenResponse'
+ *       400:
+ *         description: Validation error
+ *       401:
+ *         description: Invalid credentials
+ *       403:
+ *         description: Email not verified or user is not an admin
+ */
+router.post('/admin/login', authLimiter, validate(loginSchema), AuthController.adminLogin);
 
 /**
  * @openapi

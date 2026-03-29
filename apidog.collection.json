@@ -80,6 +80,22 @@
           }
         },
         {
+          "name": "Admin Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"StrongAdminPass123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/admin/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "admin", "login"]
+            }
+          }
+        },
+        {
           "name": "Submit Onboarding - Service Provider",
           "request": {
             "method": "POST",

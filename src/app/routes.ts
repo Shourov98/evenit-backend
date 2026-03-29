@@ -5,6 +5,7 @@ import { bookingRouter } from '../modules/bookings/booking.route';
 import { eventPlannerRouter } from '../modules/event-planner/event-planner.route';
 import { publicRouter } from '../modules/public/public.route';
 import { serviceProviderRouter } from '../modules/service-provider/service-provider.route';
+import { subscriptionRouter } from '../modules/subscriptions/subscription.route';
 import { uploadRouter } from '../modules/uploads/upload.route';
 import { venueProviderRouter } from '../modules/venue-provider/venue-provider.route';
 
@@ -49,6 +50,7 @@ router.use('/api/v1/bookings', bookingRouter);
 router.use('/api/v1/event-planners', eventPlannerRouter);
 router.use('/api/v1/public', publicRouter);
 router.use('/api/v1/service-provider', serviceProviderRouter);
+router.use('/api/v1/subscriptions', subscriptionRouter);
 router.use('/api/v1/uploads', uploadRouter);
 router.use('/api/v1/venue-provider', venueProviderRouter);
 router.use('/api/v1/admin', adminManagementRouter);

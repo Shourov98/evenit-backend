@@ -15,6 +15,28 @@ const getApprover = (req: Request): { name: string; email: string } | null => {
 };
 
 export class AdminManagementController {
+  static getAllVenues = catchAsync(async (req: Request, res: Response) => {
+    const pagination = parsePagination(req.query as Record<string, unknown>);
+    const venues = await AdminManagementService.getAllVenues(pagination);
+
+    return res.status(200).json({
+      success: true,
+      meta: venues.meta,
+      data: venues.data
+    });
+  });
+
+  static getAllServices = catchAsync(async (req: Request, res: Response) => {
+    const pagination = parsePagination(req.query as Record<string, unknown>);
+    const services = await AdminManagementService.getAllServices(pagination);
+
+    return res.status(200).json({
+      success: true,
+      meta: services.meta,
+      data: services.data
+    });
+  });
+
   static getPendingVenues = catchAsync(async (req: Request, res: Response) => {
     const pagination = parsePagination(req.query as Record<string, unknown>);
     const venues = await AdminManagementService.getPendingVenues(pagination);

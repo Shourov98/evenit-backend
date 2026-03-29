@@ -24,6 +24,88 @@ router.use(protect, authorize('admin', 'super_admin'));
 
 /**
  * @openapi
+ * /api/v1/admin/venues:
+ *   get:
+ *     tags: [Admin]
+ *     summary: Get all venues for admin moderation
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           example: createdAt
+ *       - in: query
+ *         name: sortOrder
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *     responses:
+ *       200:
+ *         description: Paginated venues including pending, published, and rejected items
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AdminPendingVenueListResponse'
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ */
+router.get('/venues', validate(approvalRequestsQuerySchema), AdminManagementController.getAllVenues);
+
+/**
+ * @openapi
+ * /api/v1/admin/services:
+ *   get:
+ *     tags: [Admin]
+ *     summary: Get all services for admin moderation
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           example: createdAt
+ *       - in: query
+ *         name: sortOrder
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *     responses:
+ *       200:
+ *         description: Paginated services including pending, published, and rejected items
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AdminPendingServiceListResponse'
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ */
+router.get('/services', validate(approvalRequestsQuerySchema), AdminManagementController.getAllServices);
+
+/**
+ * @openapi
  * /api/v1/admin/venues/pending:
  *   get:
  *     tags: [Admin]
