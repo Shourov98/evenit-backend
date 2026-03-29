@@ -3,6 +3,7 @@ import { z } from 'zod';
 const objectIdRegex = /^[a-fA-F0-9]{24}$/;
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 const timeSlotRegex = /^([01]\d|2[0-3]):00$/;
+const bookingStatusFilterValues = ['pending', 'approved', 'rejected', 'completed', 'confirmed', 'cancelled'] as const;
 const isAllowedBookingHour = (timeSlot: string): boolean => {
   const hour = Number.parseInt(timeSlot.split(':')[0] || '', 10);
   return Number.isInteger(hour) && hour >= 8 && hour <= 23;
@@ -97,8 +98,14 @@ export const rejectBookingSchema = z.object({
   query: z.object({}).optional().default({})
 });
 
-export const createPaymentIntentSchema = z.object({
+export const bookingListQuerySchema = z.object({
   body: z.object({}).optional().default({}),
-  params: bookingIdParamsSchema,
-  query: z.object({}).optional().default({})
+  params: z.object({}).optional().default({}),
+  query: z.object({
+    page: z.coerce.number().int().positive().optional(),
+    limit: z.coerce.number().int().positive().optional(),
+    sortBy: z.string().trim().min(1).optional(),
+    sortOrder: z.enum(['asc', 'desc']).optional(),
+    status: z.enum(bookingStatusFilterValues).optional()
+  })
 });

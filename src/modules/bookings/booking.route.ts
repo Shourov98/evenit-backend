@@ -5,6 +5,7 @@ import { validate } from '../../common/middlewares/validate.middleware';
 import { BookingController } from './booking.controller';
 import {
   bookingIdParamSchema,
+  bookingListQuerySchema,
   createEventPlannerBookingSchema,
   createBookingSchema,
   createServiceBookingSchema,
@@ -466,6 +467,12 @@ router.post(
  *           type: string
  *           enum: [asc, desc]
  *           default: desc
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [pending, approved, rejected, completed, confirmed, cancelled]
+ *         description: Filter bookings by status. `approved` also matches confirmed bookings.
  *     responses:
  *       200:
  *         description: Customer bookings
@@ -474,7 +481,7 @@ router.post(
  *             schema:
  *               $ref: '#/components/schemas/BookingListResponse'
  */
-router.get('/my', authorize('customer'), BookingController.getMyBookings);
+router.get('/my', authorize('customer'), validate(bookingListQuerySchema), BookingController.getMyBookings);
 
 /**
  * @openapi
@@ -507,6 +514,12 @@ router.get('/my', authorize('customer'), BookingController.getMyBookings);
  *           type: string
  *           enum: [asc, desc]
  *           default: desc
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [pending, approved, rejected, completed, confirmed, cancelled]
+ *         description: Filter bookings by status. `approved` also matches confirmed bookings.
  *     responses:
  *       200:
  *         description: Provider bookings
@@ -515,7 +528,168 @@ router.get('/my', authorize('customer'), BookingController.getMyBookings);
  *             schema:
  *               $ref: '#/components/schemas/BookingListResponse'
  */
-router.get('/provider', authorize('venue_provider', 'service_provider', 'event_planner'), BookingController.getProviderBookings);
+router.get(
+  '/provider',
+  authorize('venue_provider', 'service_provider', 'event_planner'),
+  validate(bookingListQuerySchema),
+  BookingController.getProviderBookings
+);
+
+/**
+ * @openapi
+ * /api/v1/bookings/service-provider:
+ *   get:
+ *     tags: [Bookings]
+ *     summary: Get service provider booking requests
+ *     description: Returns paginated bookings assigned to the authenticated service provider.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           default: createdAt
+ *       - in: query
+ *         name: sortOrder
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *           default: desc
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [pending, approved, rejected, completed, confirmed, cancelled]
+ *         description: Filter bookings by status. `approved` also matches confirmed bookings.
+ *     responses:
+ *       200:
+ *         description: Service provider bookings
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/BookingListResponse'
+ */
+router.get(
+  '/service-provider',
+  authorize('service_provider'),
+  validate(bookingListQuerySchema),
+  BookingController.getServiceProviderBookings
+);
+
+/**
+ * @openapi
+ * /api/v1/bookings/venue-provider:
+ *   get:
+ *     tags: [Bookings]
+ *     summary: Get venue provider booking requests
+ *     description: Returns paginated bookings assigned to the authenticated venue provider.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           default: createdAt
+ *       - in: query
+ *         name: sortOrder
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *           default: desc
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [pending, approved, rejected, completed, confirmed, cancelled]
+ *         description: Filter bookings by status. `approved` also matches confirmed bookings.
+ *     responses:
+ *       200:
+ *         description: Venue provider bookings
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/BookingListResponse'
+ */
+router.get(
+  '/venue-provider',
+  authorize('venue_provider'),
+  validate(bookingListQuerySchema),
+  BookingController.getVenueProviderBookings
+);
+
+/**
+ * @openapi
+ * /api/v1/bookings/event-planner:
+ *   get:
+ *     tags: [Bookings]
+ *     summary: Get event planner booking requests
+ *     description: Returns paginated bookings assigned to the authenticated event planner.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           default: createdAt
+ *       - in: query
+ *         name: sortOrder
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *           default: desc
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [pending, approved, rejected, completed, confirmed, cancelled]
+ *         description: Filter bookings by status. `approved` also matches confirmed bookings.
+ *     responses:
+ *       200:
+ *         description: Event planner bookings
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/BookingListResponse'
+ */
+router.get(
+  '/event-planner',
+  authorize('event_planner'),
+  validate(bookingListQuerySchema),
+  BookingController.getEventPlannerBookings
+);
 
 /**
  * @openapi
@@ -591,6 +765,81 @@ router.patch(
 
 /**
  * @openapi
+ * /api/v1/bookings/service-provider/{bookingId}/approve:
+ *   patch:
+ *     tags: [Bookings]
+ *     summary: Approve a booking as service provider
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: bookingId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Booking approved
+ */
+router.patch(
+  '/service-provider/:bookingId/approve',
+  authorize('service_provider'),
+  validate(bookingIdParamSchema),
+  BookingController.approveServiceProviderBooking
+);
+
+/**
+ * @openapi
+ * /api/v1/bookings/venue-provider/{bookingId}/approve:
+ *   patch:
+ *     tags: [Bookings]
+ *     summary: Approve a booking as venue provider
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: bookingId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Booking approved
+ */
+router.patch(
+  '/venue-provider/:bookingId/approve',
+  authorize('venue_provider'),
+  validate(bookingIdParamSchema),
+  BookingController.approveVenueProviderBooking
+);
+
+/**
+ * @openapi
+ * /api/v1/bookings/event-planner/{bookingId}/approve:
+ *   patch:
+ *     tags: [Bookings]
+ *     summary: Approve a booking as event planner
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: bookingId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Booking approved
+ */
+router.patch(
+  '/event-planner/:bookingId/approve',
+  authorize('event_planner'),
+  validate(bookingIdParamSchema),
+  BookingController.approveEventPlannerBooking
+);
+
+/**
+ * @openapi
  * /api/v1/bookings/{bookingId}/reject:
  *   patch:
  *     tags: [Bookings]
@@ -629,6 +878,81 @@ router.patch(
   authorize('venue_provider', 'service_provider', 'event_planner'),
   validate(rejectBookingSchema),
   BookingController.rejectBooking
+);
+
+/**
+ * @openapi
+ * /api/v1/bookings/service-provider/{bookingId}/reject:
+ *   patch:
+ *     tags: [Bookings]
+ *     summary: Reject a booking as service provider
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: bookingId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Booking rejected
+ */
+router.patch(
+  '/service-provider/:bookingId/reject',
+  authorize('service_provider'),
+  validate(rejectBookingSchema),
+  BookingController.rejectServiceProviderBooking
+);
+
+/**
+ * @openapi
+ * /api/v1/bookings/venue-provider/{bookingId}/reject:
+ *   patch:
+ *     tags: [Bookings]
+ *     summary: Reject a booking as venue provider
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: bookingId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Booking rejected
+ */
+router.patch(
+  '/venue-provider/:bookingId/reject',
+  authorize('venue_provider'),
+  validate(rejectBookingSchema),
+  BookingController.rejectVenueProviderBooking
+);
+
+/**
+ * @openapi
+ * /api/v1/bookings/event-planner/{bookingId}/reject:
+ *   patch:
+ *     tags: [Bookings]
+ *     summary: Reject a booking as event planner
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: bookingId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Booking rejected
+ */
+router.patch(
+  '/event-planner/:bookingId/reject',
+  authorize('event_planner'),
+  validate(rejectBookingSchema),
+  BookingController.rejectEventPlannerBooking
 );
 
 /**

@@ -17,6 +17,8 @@ type CreateBookingPayload = {
   specialInstructions?: string;
 };
 
+type BookingStatusFilter = 'pending' | 'approved' | 'rejected' | 'completed' | 'confirmed' | 'cancelled';
+
 const activeBookingStatuses = ['pending', 'approved', 'confirmed', 'completed'] as const;
 
 const ensureObjectId = (id: string, label: string): void => {
@@ -111,6 +113,18 @@ const ensureServiceAvailability = (service: IServiceProviderService, bookingDate
 };
 
 export class BookingService {
+  private static buildStatusFilter(status?: BookingStatusFilter) {
+    if (!status) {
+      return {};
+    }
+
+    if (status === 'approved') {
+      return { status: { $in: ['approved', 'confirmed'] as const } };
+    }
+
+    return { status };
+  }
+
   static async createForTarget(
     customerId: string,
     targetType: CreateBookingPayload['targetType'],
@@ -240,25 +254,27 @@ export class BookingService {
     });
   }
 
-  static async getMyBookings(customerId: string, pagination: PaginationOptions) {
+  static async getMyBookings(customerId: string, pagination: PaginationOptions, status?: BookingStatusFilter) {
     ensureObjectId(customerId, 'customerId');
 
     return paginateModel(
       BookingModel,
       {
-        customerId
+        customerId,
+        ...this.buildStatusFilter(status)
       },
       pagination
     );
   }
 
-  static async getProviderBookings(providerId: string, pagination: PaginationOptions) {
+  static async getProviderBookings(providerId: string, pagination: PaginationOptions, status?: BookingStatusFilter) {
     ensureObjectId(providerId, 'providerId');
 
     return paginateModel(
       BookingModel,
       {
-        providerId
+        providerId,
+        ...this.buildStatusFilter(status)
       },
       pagination
     );

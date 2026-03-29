@@ -4,6 +4,8 @@ import { parsePagination } from '../../common/utils/pagination';
 import { AppError } from '../../common/errors/AppError';
 import { BookingService } from './booking.service';
 
+type BookingStatusFilter = 'pending' | 'approved' | 'rejected' | 'completed' | 'confirmed' | 'cancelled';
+
 const getUser = (req: Request) => {
   if (!req.user) {
     throw new AppError(401, 'Unauthorized');
@@ -13,6 +15,11 @@ const getUser = (req: Request) => {
 };
 
 export class BookingController {
+  private static getStatusFilter(req: Request): BookingStatusFilter | undefined {
+    const status = req.query.status;
+    return typeof status === 'string' ? (status as BookingStatusFilter) : undefined;
+  }
+
   static createBooking = catchAsync(async (req: Request, res: Response) => {
     const user = getUser(req);
     const booking = await BookingService.create(user.userId, req.body);
@@ -65,7 +72,11 @@ export class BookingController {
   static getMyBookings = catchAsync(async (req: Request, res: Response) => {
     const user = getUser(req);
     const pagination = parsePagination(req.query as Record<string, unknown>);
-    const bookings = await BookingService.getMyBookings(user.userId, pagination);
+    const bookings = await BookingService.getMyBookings(
+      user.userId,
+      pagination,
+      BookingController.getStatusFilter(req)
+    );
 
     return res.status(200).json({
       success: true,
@@ -77,7 +88,11 @@ export class BookingController {
   static getProviderBookings = catchAsync(async (req: Request, res: Response) => {
     const user = getUser(req);
     const pagination = parsePagination(req.query as Record<string, unknown>);
-    const bookings = await BookingService.getProviderBookings(user.userId, pagination);
+    const bookings = await BookingService.getProviderBookings(
+      user.userId,
+      pagination,
+      BookingController.getStatusFilter(req)
+    );
 
     return res.status(200).json({
       success: true,
@@ -85,6 +100,12 @@ export class BookingController {
       data: bookings.data
     });
   });
+
+  static getServiceProviderBookings = BookingController.getProviderBookings;
+
+  static getVenueProviderBookings = BookingController.getProviderBookings;
+
+  static getEventPlannerBookings = BookingController.getProviderBookings;
 
   static getBookingById = catchAsync(async (req: Request, res: Response) => {
     const user = getUser(req);
@@ -107,6 +128,12 @@ export class BookingController {
     });
   });
 
+  static approveServiceProviderBooking = BookingController.approveBooking;
+
+  static approveVenueProviderBooking = BookingController.approveBooking;
+
+  static approveEventPlannerBooking = BookingController.approveBooking;
+
   static rejectBooking = catchAsync(async (req: Request, res: Response) => {
     const user = getUser(req);
     const booking = await BookingService.reject(req.params.bookingId, user.userId, req.body.reason);
@@ -117,6 +144,12 @@ export class BookingController {
       data: booking
     });
   });
+
+  static rejectServiceProviderBooking = BookingController.rejectBooking;
+
+  static rejectVenueProviderBooking = BookingController.rejectBooking;
+
+  static rejectEventPlannerBooking = BookingController.rejectBooking;
 
   static cancelBooking = catchAsync(async (req: Request, res: Response) => {
     const user = getUser(req);
