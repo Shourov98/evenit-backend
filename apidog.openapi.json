@@ -1982,6 +1982,8 @@
           "timeSlots": {
             "type": "array",
             "minItems": 1,
+            "maxItems": 16,
+            "description": "Allowed booking times are from 08:00 to 23:00 in one-hour slots.",
             "items": {
               "type": "string",
               "example": "14:00"
@@ -4717,6 +4719,32 @@
         }
       }
     },
+    "/api/v1/public/services/{serviceId}": {
+      "get": {
+        "tags": [
+          "Public"
+        ],
+        "summary": "Get one published service without authentication",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "serviceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Published service details"
+          },
+          "404": {
+            "description": "Service not found"
+          }
+        }
+      }
+    },
     "/api/v1/public/venues": {
       "get": {
         "tags": [
@@ -4767,6 +4795,32 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/v1/public/venues/{venueId}": {
+      "get": {
+        "tags": [
+          "Public"
+        ],
+        "summary": "Get one published venue without authentication",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venueId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Published venue details"
+          },
+          "404": {
+            "description": "Venue not found"
           }
         }
       }
@@ -4822,6 +4876,32 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/v1/public/event-planners/{eventPlannerId}": {
+      "get": {
+        "tags": [
+          "Public"
+        ],
+        "summary": "Get one event planner without authentication",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventPlannerId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event planner details"
+          },
+          "404": {
+            "description": "Event planner not found"
           }
         }
       }

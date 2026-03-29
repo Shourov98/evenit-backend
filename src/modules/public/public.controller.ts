@@ -38,4 +38,31 @@ export class PublicController {
       data: eventPlanners.data
     });
   });
+
+  static getPublishedServiceById = catchAsync(async (req: Request, res: Response) => {
+    const service = await ServiceProviderService.getPublicById(req.params.serviceId);
+
+    return res.status(200).json({
+      success: true,
+      data: service
+    });
+  });
+
+  static getPublishedVenueById = catchAsync(async (req: Request, res: Response) => {
+    const venue = await VenueProviderService.getPublicById(req.params.venueId);
+
+    return res.status(200).json({
+      success: true,
+      data: venue
+    });
+  });
+
+  static getPublishedEventPlannerById = catchAsync(async (req: Request, res: Response) => {
+    const eventPlanner = await EventPlannerService.getPublicById(req.params.eventPlannerId);
+
+    return res.status(200).json({
+      success: true,
+      data: eventPlanner
+    });
+  });
 }

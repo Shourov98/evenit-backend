@@ -1,5 +1,7 @@
 import { Router } from 'express';
+import { validate } from '../../common/middlewares/validate.middleware';
 import { PublicController } from './public.controller';
+import { eventPlannerIdParamSchema, serviceIdParamSchema, venueIdParamSchema } from './public.schema';
 
 const router = Router();
 
@@ -54,6 +56,26 @@ router.get('/services', PublicController.getPublishedServices);
 
 /**
  * @openapi
+ * /api/v1/public/services/{serviceId}:
+ *   get:
+ *     tags: [Public]
+ *     summary: Get one published service without authentication
+ *     parameters:
+ *       - in: path
+ *         name: serviceId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Published service details
+ *       404:
+ *         description: Service not found
+ */
+router.get('/services/:serviceId', validate(serviceIdParamSchema), PublicController.getPublishedServiceById);
+
+/**
+ * @openapi
  * /api/v1/public/venues:
  *   get:
  *     tags: [Public]
@@ -85,6 +107,26 @@ router.get('/services', PublicController.getPublishedServices);
  *               $ref: '#/components/schemas/PublicVenueListResponse'
  */
 router.get('/venues', PublicController.getPublishedVenues);
+
+/**
+ * @openapi
+ * /api/v1/public/venues/{venueId}:
+ *   get:
+ *     tags: [Public]
+ *     summary: Get one published venue without authentication
+ *     parameters:
+ *       - in: path
+ *         name: venueId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Published venue details
+ *       404:
+ *         description: Venue not found
+ */
+router.get('/venues/:venueId', validate(venueIdParamSchema), PublicController.getPublishedVenueById);
 
 /**
  * @openapi
@@ -120,5 +162,29 @@ router.get('/venues', PublicController.getPublishedVenues);
  *               $ref: '#/components/schemas/PublicEventPlannerListResponse'
  */
 router.get('/event-planners', PublicController.getPublishedEventPlanners);
+
+/**
+ * @openapi
+ * /api/v1/public/event-planners/{eventPlannerId}:
+ *   get:
+ *     tags: [Public]
+ *     summary: Get one event planner without authentication
+ *     parameters:
+ *       - in: path
+ *         name: eventPlannerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Event planner details
+ *       404:
+ *         description: Event planner not found
+ */
+router.get(
+  '/event-planners/:eventPlannerId',
+  validate(eventPlannerIdParamSchema),
+  PublicController.getPublishedEventPlannerById
+);
 
 export const publicRouter = router;
