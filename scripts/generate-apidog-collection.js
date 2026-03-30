@@ -1122,31 +1122,44 @@ const publicApis = folder('Public', [
   request('Root Status', 'GET', '/'),
   request('Health Check', 'GET', '/health'),
   request('Get Published Services', 'GET', '/api/v1/public/services', {
+    description:
+      'Public GET endpoint. No request body. Use query params for pagination and sorting. Returns published services only.',
     query: paginationQuery,
     event: idCaptureEvent('serviceId')
   }),
   request('Get Published Service By ID', 'GET', '/api/v1/public/services/{serviceId}', {
+    description: 'Public GET endpoint. No request body. Returns one published service by id.',
     event: idCaptureEvent('serviceId')
   }),
   request('Get Published Venues', 'GET', '/api/v1/public/venues', {
+    description:
+      'Public GET endpoint. No request body. Use query params for pagination and sorting. Returns published venues only.',
     query: paginationQuery,
     event: idCaptureEvent('venueId')
   }),
   request('Get Published Venue By ID', 'GET', '/api/v1/public/venues/{venueId}', {
+    description: 'Public GET endpoint. No request body. Returns one published venue by id.',
     event: idCaptureEvent('venueId')
   }),
   request('Get Public Event Planners', 'GET', '/api/v1/public/event-planners', {
+    description:
+      'Public GET endpoint. No request body. Use query params for pagination and sorting. Returns verified event planners only.',
     query: paginationQuery,
     event: idCaptureEvent('eventPlannerId')
   }),
   request('Get Public Event Planner By ID', 'GET', '/api/v1/public/event-planners/{eventPlannerId}', {
+    description: 'Public GET endpoint. No request body. Returns one verified event planner by id.',
     event: idCaptureEvent('eventPlannerId')
   }),
   request('Get Event Planners', 'GET', '/api/v1/event-planners', {
+    description:
+      'Public GET endpoint. No request body. Use query params for pagination and sorting. Returns verified event planners only.',
     query: paginationQuery,
     event: idCaptureEvent('eventPlannerId')
   }),
   request('Get Published Services Under Provider Namespace', 'GET', '/api/v1/service-provider/services', {
+    description:
+      'Public GET endpoint. No request body. Use query params for pagination and sorting. Returns published services only.',
     query: paginationQuery,
     event: idCaptureEvent('serviceId')
   }),
@@ -1155,14 +1168,18 @@ const publicApis = folder('Public', [
     'GET',
     '/api/v1/service-provider/services/{serviceId}',
     {
+      description: 'Public GET endpoint. No request body. Returns one published service by id.',
       event: idCaptureEvent('serviceId')
     }
   ),
   request('Get Published Venues Under Provider Namespace', 'GET', '/api/v1/venue-provider/venues', {
+    description:
+      'Public GET endpoint. No request body. Use query params for pagination and sorting. Returns published venues only.',
     query: paginationQuery,
     event: idCaptureEvent('venueId')
   }),
   request('Get Published Venue By ID Under Provider Namespace', 'GET', '/api/v1/venue-provider/venues/{venueId}', {
+    description: 'Public GET endpoint. No request body. Returns one published venue by id.',
     event: idCaptureEvent('venueId')
   })
 ]);

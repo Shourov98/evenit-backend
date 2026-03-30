@@ -12,12 +12,45 @@ const router = Router();
  *     description: Public landing-page content endpoints
  * components:
  *   schemas:
+ *     PublicErrorResponse:
+ *       type: object
+ *       properties:
+ *         success:
+ *           type: boolean
+ *           example: false
+ *         message:
+ *           type: string
+ *           example: Service not found
  *     PublicServiceListResponse:
  *       $ref: '#/components/schemas/ServiceListResponse'
+ *     PublicServiceResponse:
+ *       type: object
+ *       properties:
+ *         success:
+ *           type: boolean
+ *           example: true
+ *         data:
+ *           $ref: '#/components/schemas/ServiceEntity'
  *     PublicVenueListResponse:
  *       $ref: '#/components/schemas/VenueListResponse'
+ *     PublicVenueResponse:
+ *       type: object
+ *       properties:
+ *         success:
+ *           type: boolean
+ *           example: true
+ *         data:
+ *           $ref: '#/components/schemas/VenueEntity'
  *     PublicEventPlannerListResponse:
  *       $ref: '#/components/schemas/EventPlannerListResponse'
+ *     PublicEventPlannerResponse:
+ *       type: object
+ *       properties:
+ *         success:
+ *           type: boolean
+ *           example: true
+ *         data:
+ *           $ref: '#/components/schemas/EventPlannerEntity'
  */
 
 /**
@@ -26,6 +59,7 @@ const router = Router();
  *   get:
  *     tags: [Public]
  *     summary: Get published services without authentication
+ *     description: "Public read-only endpoint. No request body is accepted. Returns only services with `publishStatus: published`."
  *     parameters:
  *       - in: query
  *         name: page
@@ -51,7 +85,13 @@ const router = Router();
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/PublicServiceListResponse'
- */
+ *       400:
+ *         description: Invalid pagination or sorting query
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PublicErrorResponse'
+*/
 router.get('/services', PublicController.getPublishedServices);
 
 /**
@@ -60,6 +100,7 @@ router.get('/services', PublicController.getPublishedServices);
  *   get:
  *     tags: [Public]
  *     summary: Get one published service without authentication
+ *     description: "Public read-only endpoint. No request body is accepted. Returns one published service by id."
  *     parameters:
  *       - in: path
  *         name: serviceId
@@ -69,8 +110,22 @@ router.get('/services', PublicController.getPublishedServices);
  *     responses:
  *       200:
  *         description: Published service details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PublicServiceResponse'
+ *       400:
+ *         description: Invalid service id
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PublicErrorResponse'
  *       404:
  *         description: Service not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PublicErrorResponse'
  */
 router.get('/services/:serviceId', validate(serviceIdParamSchema), PublicController.getPublishedServiceById);
 
@@ -80,6 +135,7 @@ router.get('/services/:serviceId', validate(serviceIdParamSchema), PublicControl
  *   get:
  *     tags: [Public]
  *     summary: Get published venues without authentication
+ *     description: "Public read-only endpoint. No request body is accepted. Returns only venues with `publishStatus: published`."
  *     parameters:
  *       - in: query
  *         name: page
@@ -105,7 +161,13 @@ router.get('/services/:serviceId', validate(serviceIdParamSchema), PublicControl
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/PublicVenueListResponse'
- */
+ *       400:
+ *         description: Invalid pagination or sorting query
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PublicErrorResponse'
+*/
 router.get('/venues', PublicController.getPublishedVenues);
 
 /**
@@ -114,6 +176,7 @@ router.get('/venues', PublicController.getPublishedVenues);
  *   get:
  *     tags: [Public]
  *     summary: Get one published venue without authentication
+ *     description: "Public read-only endpoint. No request body is accepted. Returns one published venue by id."
  *     parameters:
  *       - in: path
  *         name: venueId
@@ -123,8 +186,22 @@ router.get('/venues', PublicController.getPublishedVenues);
  *     responses:
  *       200:
  *         description: Published venue details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PublicVenueResponse'
+ *       400:
+ *         description: Invalid venue id
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PublicErrorResponse'
  *       404:
  *         description: Venue not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PublicErrorResponse'
  */
 router.get('/venues/:venueId', validate(venueIdParamSchema), PublicController.getPublishedVenueById);
 
@@ -134,7 +211,7 @@ router.get('/venues/:venueId', validate(venueIdParamSchema), PublicController.ge
  *   get:
  *     tags: [Public]
  *     summary: Get public event planners without authentication
- *     description: Returns verified event planners who completed event planner onboarding.
+ *     description: "Public read-only endpoint. No request body is accepted. Returns verified event planners who completed event planner onboarding."
  *     parameters:
  *       - in: query
  *         name: page
@@ -160,7 +237,13 @@ router.get('/venues/:venueId', validate(venueIdParamSchema), PublicController.ge
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/PublicEventPlannerListResponse'
- */
+ *       400:
+ *         description: Invalid pagination or sorting query
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PublicErrorResponse'
+*/
 router.get('/event-planners', PublicController.getPublishedEventPlanners);
 
 /**
@@ -169,6 +252,7 @@ router.get('/event-planners', PublicController.getPublishedEventPlanners);
  *   get:
  *     tags: [Public]
  *     summary: Get one event planner without authentication
+ *     description: "Public read-only endpoint. No request body is accepted. Returns one event planner by id."
  *     parameters:
  *       - in: path
  *         name: eventPlannerId
@@ -178,8 +262,22 @@ router.get('/event-planners', PublicController.getPublishedEventPlanners);
  *     responses:
  *       200:
  *         description: Event planner details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PublicEventPlannerResponse'
+ *       400:
+ *         description: Invalid event planner id
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PublicErrorResponse'
  *       404:
  *         description: Event planner not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PublicErrorResponse'
  */
 router.get(
   '/event-planners/:eventPlannerId',

@@ -127,6 +127,7 @@
           "name": "Get Published Services",
           "request": {
             "method": "GET",
+            "description": "Public GET endpoint. No request body. Use query params for pagination and sorting. Returns published services only.",
             "url": {
               "raw": "{{baseUrl}}/api/v1/public/services?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
               "host": [
@@ -178,6 +179,7 @@
           "name": "Get Published Service By ID",
           "request": {
             "method": "GET",
+            "description": "Public GET endpoint. No request body. Returns one published service by id.",
             "url": {
               "raw": "{{baseUrl}}/api/v1/public/services/{{serviceId}}",
               "host": [
@@ -212,6 +214,7 @@
           "name": "Get Published Venues",
           "request": {
             "method": "GET",
+            "description": "Public GET endpoint. No request body. Use query params for pagination and sorting. Returns published venues only.",
             "url": {
               "raw": "{{baseUrl}}/api/v1/public/venues?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
               "host": [
@@ -263,6 +266,7 @@
           "name": "Get Published Venue By ID",
           "request": {
             "method": "GET",
+            "description": "Public GET endpoint. No request body. Returns one published venue by id.",
             "url": {
               "raw": "{{baseUrl}}/api/v1/public/venues/{{venueId}}",
               "host": [
@@ -297,6 +301,7 @@
           "name": "Get Public Event Planners",
           "request": {
             "method": "GET",
+            "description": "Public GET endpoint. No request body. Use query params for pagination and sorting. Returns verified event planners only.",
             "url": {
               "raw": "{{baseUrl}}/api/v1/public/event-planners?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
               "host": [
@@ -348,6 +353,7 @@
           "name": "Get Public Event Planner By ID",
           "request": {
             "method": "GET",
+            "description": "Public GET endpoint. No request body. Returns one verified event planner by id.",
             "url": {
               "raw": "{{baseUrl}}/api/v1/public/event-planners/{{eventPlannerId}}",
               "host": [
@@ -382,6 +388,7 @@
           "name": "Get Event Planners",
           "request": {
             "method": "GET",
+            "description": "Public GET endpoint. No request body. Use query params for pagination and sorting. Returns verified event planners only.",
             "url": {
               "raw": "{{baseUrl}}/api/v1/event-planners?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
               "host": [
@@ -432,6 +439,7 @@
           "name": "Get Published Services Under Provider Namespace",
           "request": {
             "method": "GET",
+            "description": "Public GET endpoint. No request body. Use query params for pagination and sorting. Returns published services only.",
             "url": {
               "raw": "{{baseUrl}}/api/v1/service-provider/services?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
               "host": [
@@ -483,6 +491,7 @@
           "name": "Get Published Service By ID Under Provider Namespace",
           "request": {
             "method": "GET",
+            "description": "Public GET endpoint. No request body. Returns one published service by id.",
             "url": {
               "raw": "{{baseUrl}}/api/v1/service-provider/services/{{serviceId}}",
               "host": [
@@ -517,6 +526,7 @@
           "name": "Get Published Venues Under Provider Namespace",
           "request": {
             "method": "GET",
+            "description": "Public GET endpoint. No request body. Use query params for pagination and sorting. Returns published venues only.",
             "url": {
               "raw": "{{baseUrl}}/api/v1/venue-provider/venues?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
               "host": [
@@ -568,6 +578,7 @@
           "name": "Get Published Venue By ID Under Provider Namespace",
           "request": {
             "method": "GET",
+            "description": "Public GET endpoint. No request body. Returns one published venue by id.",
             "url": {
               "raw": "{{baseUrl}}/api/v1/venue-provider/venues/{{venueId}}",
               "host": [

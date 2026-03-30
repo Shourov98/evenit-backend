@@ -1108,14 +1108,63 @@
           }
         }
       },
+      "PublicErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Service not found"
+          }
+        }
+      },
       "PublicServiceListResponse": {
         "$ref": "#/components/schemas/ServiceListResponse"
+      },
+      "PublicServiceResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/ServiceEntity"
+          }
+        }
       },
       "PublicVenueListResponse": {
         "$ref": "#/components/schemas/VenueListResponse"
       },
+      "PublicVenueResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/VenueEntity"
+          }
+        }
+      },
       "PublicEventPlannerListResponse": {
         "$ref": "#/components/schemas/EventPlannerListResponse"
+      },
+      "PublicEventPlannerResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/EventPlannerEntity"
+          }
+        }
       },
       "AvailabilityOverride": {
         "type": "object",
@@ -4596,6 +4645,7 @@
           "Public"
         ],
         "summary": "Get published services without authentication",
+        "description": "Public read-only endpoint. No request body is accepted. Returns only services with `publishStatus: published`.",
         "parameters": [
           {
             "in": "query",
@@ -4640,6 +4690,16 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Invalid pagination or sorting query",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -4650,6 +4710,7 @@
           "Public"
         ],
         "summary": "Get one published service without authentication",
+        "description": "Public read-only endpoint. No request body is accepted. Returns one published service by id.",
         "parameters": [
           {
             "in": "path",
@@ -4662,10 +4723,34 @@
         ],
         "responses": {
           "200": {
-            "description": "Published service details"
+            "description": "Published service details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicServiceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid service id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicErrorResponse"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Service not found"
+            "description": "Service not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -4676,6 +4761,7 @@
           "Public"
         ],
         "summary": "Get published venues without authentication",
+        "description": "Public read-only endpoint. No request body is accepted. Returns only venues with `publishStatus: published`.",
         "parameters": [
           {
             "in": "query",
@@ -4720,6 +4806,16 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Invalid pagination or sorting query",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -4730,6 +4826,7 @@
           "Public"
         ],
         "summary": "Get one published venue without authentication",
+        "description": "Public read-only endpoint. No request body is accepted. Returns one published venue by id.",
         "parameters": [
           {
             "in": "path",
@@ -4742,10 +4839,34 @@
         ],
         "responses": {
           "200": {
-            "description": "Published venue details"
+            "description": "Published venue details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicVenueResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid venue id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicErrorResponse"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Venue not found"
+            "description": "Venue not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -4756,7 +4877,7 @@
           "Public"
         ],
         "summary": "Get public event planners without authentication",
-        "description": "Returns verified event planners who completed event planner onboarding.",
+        "description": "Public read-only endpoint. No request body is accepted. Returns verified event planners who completed event planner onboarding.",
         "parameters": [
           {
             "in": "query",
@@ -4801,6 +4922,16 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Invalid pagination or sorting query",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -4811,6 +4942,7 @@
           "Public"
         ],
         "summary": "Get one event planner without authentication",
+        "description": "Public read-only endpoint. No request body is accepted. Returns one event planner by id.",
         "parameters": [
           {
             "in": "path",
@@ -4823,10 +4955,34 @@
         ],
         "responses": {
           "200": {
-            "description": "Event planner details"
+            "description": "Event planner details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicEventPlannerResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid event planner id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicErrorResponse"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Event planner not found"
+            "description": "Event planner not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicErrorResponse"
+                }
+              }
+            }
           }
         }
       }
