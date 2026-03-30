@@ -198,6 +198,57 @@ export class AdminManagementController {
     });
   });
 
+  static getEventPlanners = catchAsync(async (req: Request, res: Response) => {
+    const pagination = parsePagination(req.query as Record<string, unknown>);
+    const eventPlanners = await AdminManagementService.getEventPlanners(pagination);
+
+    return res.status(200).json({
+      success: true,
+      meta: eventPlanners.meta,
+      data: eventPlanners.data
+    });
+  });
+
+  static getBlockedEventPlanners = catchAsync(async (req: Request, res: Response) => {
+    const pagination = parsePagination(req.query as Record<string, unknown>);
+    const eventPlanners = await AdminManagementService.getBlockedEventPlanners(pagination);
+
+    return res.status(200).json({
+      success: true,
+      meta: eventPlanners.meta,
+      data: eventPlanners.data
+    });
+  });
+
+  static getEventPlannerById = catchAsync(async (req: Request, res: Response) => {
+    const eventPlanner = await AdminManagementService.getEventPlannerById(req.params.eventPlannerId);
+
+    return res.status(200).json({
+      success: true,
+      data: eventPlanner
+    });
+  });
+
+  static blockEventPlanner = catchAsync(async (req: Request, res: Response) => {
+    const eventPlanner = await AdminManagementService.blockEventPlanner(req.params.eventPlannerId);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Event planner blocked successfully',
+      data: eventPlanner
+    });
+  });
+
+  static unblockEventPlanner = catchAsync(async (req: Request, res: Response) => {
+    const eventPlanner = await AdminManagementService.unblockEventPlanner(req.params.eventPlannerId);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Event planner unblocked successfully',
+      data: eventPlanner
+    });
+  });
+
   static getAllVenues = catchAsync(async (req: Request, res: Response) => {
     const pagination = parsePagination(req.query as Record<string, unknown>);
     const venues = await AdminManagementService.getAllVenues(pagination);

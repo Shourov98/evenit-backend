@@ -937,6 +937,28 @@ const adminUsers = folder('Users', [
   request('Unblock Venue Provider', 'PATCH', '/api/v1/admin/venue-providers/{venueProviderId}/unblock', {
     tokenVar: 'adminToken',
     event: idCaptureEvent('venueProviderId')
+  }),
+  request('Get All Event Planners', 'GET', '/api/v1/admin/event-planners', {
+    tokenVar: 'adminToken',
+    query: paginationQuery,
+    event: idCaptureEvent('eventPlannerId')
+  }),
+  request('Get Blocked Event Planners', 'GET', '/api/v1/admin/event-planners/blocked', {
+    tokenVar: 'adminToken',
+    query: paginationQuery,
+    event: idCaptureEvent('eventPlannerId')
+  }),
+  request('Get Event Planner By ID', 'GET', '/api/v1/admin/event-planners/{eventPlannerId}', {
+    tokenVar: 'adminToken',
+    event: idCaptureEvent('eventPlannerId')
+  }),
+  request('Block Event Planner', 'PATCH', '/api/v1/admin/event-planners/{eventPlannerId}/block', {
+    tokenVar: 'adminToken',
+    event: idCaptureEvent('eventPlannerId')
+  }),
+  request('Unblock Event Planner', 'PATCH', '/api/v1/admin/event-planners/{eventPlannerId}/unblock', {
+    tokenVar: 'adminToken',
+    event: idCaptureEvent('eventPlannerId')
   })
 ]);
 
@@ -1099,6 +1121,28 @@ const superAdminUsers = folder('Users', [
   request('Unblock Venue Provider', 'PATCH', '/api/v1/admin/venue-providers/{venueProviderId}/unblock', {
     tokenVar: 'superAdminToken',
     event: idCaptureEvent('venueProviderId')
+  }),
+  request('Get All Event Planners', 'GET', '/api/v1/admin/event-planners', {
+    tokenVar: 'superAdminToken',
+    query: paginationQuery,
+    event: idCaptureEvent('eventPlannerId')
+  }),
+  request('Get Blocked Event Planners', 'GET', '/api/v1/admin/event-planners/blocked', {
+    tokenVar: 'superAdminToken',
+    query: paginationQuery,
+    event: idCaptureEvent('eventPlannerId')
+  }),
+  request('Get Event Planner By ID', 'GET', '/api/v1/admin/event-planners/{eventPlannerId}', {
+    tokenVar: 'superAdminToken',
+    event: idCaptureEvent('eventPlannerId')
+  }),
+  request('Block Event Planner', 'PATCH', '/api/v1/admin/event-planners/{eventPlannerId}/block', {
+    tokenVar: 'superAdminToken',
+    event: idCaptureEvent('eventPlannerId')
+  }),
+  request('Unblock Event Planner', 'PATCH', '/api/v1/admin/event-planners/{eventPlannerId}/unblock', {
+    tokenVar: 'superAdminToken',
+    event: idCaptureEvent('eventPlannerId')
   })
 ]);
 

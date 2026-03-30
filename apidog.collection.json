@@ -4581,6 +4581,243 @@
                   }
                 }
               ]
+            },
+            {
+              "name": "Get All Event Planners",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/event-planners?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "event-planners"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "createdAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('eventPlannerId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get Blocked Event Planners",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/event-planners/blocked?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "event-planners",
+                    "blocked"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "createdAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('eventPlannerId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get Event Planner By ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/event-planners/{{eventPlannerId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "event-planners",
+                    "{{eventPlannerId}}"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('eventPlannerId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Block Event Planner",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/event-planners/{{eventPlannerId}}/block",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "event-planners",
+                    "{{eventPlannerId}}",
+                    "block"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('eventPlannerId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Unblock Event Planner",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/event-planners/{{eventPlannerId}}/unblock",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "event-planners",
+                    "{{eventPlannerId}}",
+                    "unblock"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('eventPlannerId', String(id));"
+                    ]
+                  }
+                }
+              ]
             }
           ]
         },
@@ -6009,6 +6246,243 @@
                       "const firstItem = Array.isArray(data) ? data[0] : null;",
                       "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
                       "if (id) pm.collectionVariables.set('venueProviderId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get All Event Planners",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{superAdminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/event-planners?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "event-planners"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "createdAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('eventPlannerId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get Blocked Event Planners",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{superAdminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/event-planners/blocked?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "event-planners",
+                    "blocked"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "createdAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('eventPlannerId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get Event Planner By ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{superAdminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/event-planners/{{eventPlannerId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "event-planners",
+                    "{{eventPlannerId}}"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('eventPlannerId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Block Event Planner",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{superAdminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/event-planners/{{eventPlannerId}}/block",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "event-planners",
+                    "{{eventPlannerId}}",
+                    "block"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('eventPlannerId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Unblock Event Planner",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{superAdminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/event-planners/{{eventPlannerId}}/unblock",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "event-planners",
+                    "{{eventPlannerId}}",
+                    "unblock"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('eventPlannerId', String(id));"
                     ]
                   }
                 }

@@ -8,6 +8,7 @@ import {
   approvalRequestsQuerySchema,
   customerIdParamSchema,
   createAdminSchema,
+  eventPlannerUserIdParamSchema,
   serviceIdParamSchema,
   serviceProviderUserIdParamSchema,
   venueIdParamSchema,
@@ -440,6 +441,116 @@ router.patch(
   '/venue-providers/:venueProviderId/unblock',
   validate(venueProviderUserIdParamSchema),
   AdminManagementController.unblockVenueProvider
+);
+
+/**
+ * @openapi
+ * /api/v1/admin/event-planners:
+ *   get:
+ *     tags: [Admin]
+ *     summary: Get all event planners
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Paginated event planner list
+ */
+router.get('/event-planners', validate(approvalRequestsQuerySchema), AdminManagementController.getEventPlanners);
+
+/**
+ * @openapi
+ * /api/v1/admin/event-planners/blocked:
+ *   get:
+ *     tags: [Admin]
+ *     summary: Get blocked event planners
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Paginated blocked event planner list
+ */
+router.get(
+  '/event-planners/blocked',
+  validate(approvalRequestsQuerySchema),
+  AdminManagementController.getBlockedEventPlanners
+);
+
+/**
+ * @openapi
+ * /api/v1/admin/event-planners/{eventPlannerId}:
+ *   get:
+ *     tags: [Admin]
+ *     summary: Get one event planner by id
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: eventPlannerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Event planner details
+ *       404:
+ *         description: Event planner not found
+ */
+router.get(
+  '/event-planners/:eventPlannerId',
+  validate(eventPlannerUserIdParamSchema),
+  AdminManagementController.getEventPlannerById
+);
+
+/**
+ * @openapi
+ * /api/v1/admin/event-planners/{eventPlannerId}/block:
+ *   patch:
+ *     tags: [Admin]
+ *     summary: Block an event planner
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: eventPlannerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Event planner blocked successfully
+ *       404:
+ *         description: Event planner not found
+ */
+router.patch(
+  '/event-planners/:eventPlannerId/block',
+  validate(eventPlannerUserIdParamSchema),
+  AdminManagementController.blockEventPlanner
+);
+
+/**
+ * @openapi
+ * /api/v1/admin/event-planners/{eventPlannerId}/unblock:
+ *   patch:
+ *     tags: [Admin]
+ *     summary: Unblock an event planner
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: eventPlannerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Event planner unblocked successfully
+ *       404:
+ *         description: Event planner not found
+ */
+router.patch(
+  '/event-planners/:eventPlannerId/unblock',
+  validate(eventPlannerUserIdParamSchema),
+  AdminManagementController.unblockEventPlanner
 );
 
 /**

@@ -46,3 +46,5 @@ export const serviceProviderUserIdParamSchema = buildObjectIdParamSchema(
 );
 
 export const venueProviderUserIdParamSchema = buildObjectIdParamSchema('venueProviderId', 'venueProviderId');
+
+export const eventPlannerUserIdParamSchema = buildObjectIdParamSchema('eventPlannerId', 'eventPlannerId');

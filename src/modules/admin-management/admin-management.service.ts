@@ -55,7 +55,7 @@ const attachOwner = async <
 
 export class AdminManagementService {
   private static async getUsersByRole(
-    role: Extract<UserRole, 'customer' | 'service_provider' | 'venue_provider'>,
+    role: Extract<UserRole, 'customer' | 'service_provider' | 'venue_provider' | 'event_planner'>,
     pagination: PaginationOptions,
     extraFilter: Record<string, unknown> = {}
   ) {
@@ -71,7 +71,7 @@ export class AdminManagementService {
 
   private static async getUserByRole(
     userId: string,
-    role: Extract<UserRole, 'customer' | 'service_provider' | 'venue_provider'>,
+    role: Extract<UserRole, 'customer' | 'service_provider' | 'venue_provider' | 'event_planner'>,
     label: string
   ) {
     const user = await UserModel.findOne({ _id: userId, role }).select(ADMIN_MANAGED_USER_SELECT);
@@ -85,7 +85,7 @@ export class AdminManagementService {
 
   private static async setUserBlockedState(
     userId: string,
-    role: Extract<UserRole, 'customer' | 'service_provider' | 'venue_provider'>,
+    role: Extract<UserRole, 'customer' | 'service_provider' | 'venue_provider' | 'event_planner'>,
     label: string,
     isBlocked: boolean
   ) {
@@ -193,6 +193,26 @@ export class AdminManagementService {
 
   static async unblockVenueProvider(venueProviderId: string) {
     return this.setUserBlockedState(venueProviderId, 'venue_provider', 'Venue provider', false);
+  }
+
+  static async getEventPlanners(pagination: PaginationOptions) {
+    return this.getUsersByRole('event_planner', pagination);
+  }
+
+  static async getBlockedEventPlanners(pagination: PaginationOptions) {
+    return this.getUsersByRole('event_planner', pagination, { isBlocked: true });
+  }
+
+  static async getEventPlannerById(eventPlannerId: string) {
+    return this.getUserByRole(eventPlannerId, 'event_planner', 'Event planner');
+  }
+
+  static async blockEventPlanner(eventPlannerId: string) {
+    return this.setUserBlockedState(eventPlannerId, 'event_planner', 'Event planner', true);
+  }
+
+  static async unblockEventPlanner(eventPlannerId: string) {
+    return this.setUserBlockedState(eventPlannerId, 'event_planner', 'Event planner', false);
   }
 
   static async getAllVenues(pagination: PaginationOptions) {
