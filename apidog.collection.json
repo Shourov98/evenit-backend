@@ -53,6 +53,30 @@
     {
       "key": "adminUserId",
       "value": ""
+    },
+    {
+      "key": "customerUserId",
+      "value": ""
+    },
+    {
+      "key": "serviceProviderUserId",
+      "value": ""
+    },
+    {
+      "key": "venueProviderUserId",
+      "value": ""
+    },
+    {
+      "key": "eventPlannerUserId",
+      "value": ""
+    },
+    {
+      "key": "adminUserSelfId",
+      "value": ""
+    },
+    {
+      "key": "superAdminUserSelfId",
+      "value": ""
     }
   ],
   "item": [
@@ -121,7 +145,22 @@
                 }
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json?.data;",
+                  "const firstItem = Array.isArray(data) ? data[0] : null;",
+                  "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                  "if (id) pm.collectionVariables.set('serviceId', String(id));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Get Published Service By ID",
@@ -140,7 +179,22 @@
                 "{{serviceId}}"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json?.data;",
+                  "const firstItem = Array.isArray(data) ? data[0] : null;",
+                  "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                  "if (id) pm.collectionVariables.set('serviceId', String(id));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Get Published Venues",
@@ -176,7 +230,22 @@
                 }
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json?.data;",
+                  "const firstItem = Array.isArray(data) ? data[0] : null;",
+                  "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                  "if (id) pm.collectionVariables.set('venueId', String(id));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Get Published Venue By ID",
@@ -195,7 +264,22 @@
                 "{{venueId}}"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json?.data;",
+                  "const firstItem = Array.isArray(data) ? data[0] : null;",
+                  "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                  "if (id) pm.collectionVariables.set('venueId', String(id));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Get Public Event Planners",
@@ -231,7 +315,22 @@
                 }
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json?.data;",
+                  "const firstItem = Array.isArray(data) ? data[0] : null;",
+                  "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                  "if (id) pm.collectionVariables.set('eventPlannerId', String(id));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Get Public Event Planner By ID",
@@ -250,7 +349,22 @@
                 "{{eventPlannerId}}"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json?.data;",
+                  "const firstItem = Array.isArray(data) ? data[0] : null;",
+                  "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                  "if (id) pm.collectionVariables.set('eventPlannerId', String(id));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Get Event Planners",
@@ -285,7 +399,22 @@
                 }
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json?.data;",
+                  "const firstItem = Array.isArray(data) ? data[0] : null;",
+                  "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                  "if (id) pm.collectionVariables.set('eventPlannerId', String(id));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Get Published Services Under Provider Namespace",
@@ -321,7 +450,22 @@
                 }
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json?.data;",
+                  "const firstItem = Array.isArray(data) ? data[0] : null;",
+                  "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                  "if (id) pm.collectionVariables.set('serviceId', String(id));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Get Published Service By ID Under Provider Namespace",
@@ -340,7 +484,22 @@
                 "{{serviceId}}"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json?.data;",
+                  "const firstItem = Array.isArray(data) ? data[0] : null;",
+                  "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                  "if (id) pm.collectionVariables.set('serviceId', String(id));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Get Published Venues Under Provider Namespace",
@@ -376,7 +535,22 @@
                 }
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json?.data;",
+                  "const firstItem = Array.isArray(data) ? data[0] : null;",
+                  "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                  "if (id) pm.collectionVariables.set('venueId', String(id));"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Get Published Venue By ID Under Provider Namespace",
@@ -395,7 +569,22 @@
                 "{{venueId}}"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const data = json?.data;",
+                  "const firstItem = Array.isArray(data) ? data[0] : null;",
+                  "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                  "if (id) pm.collectionVariables.set('venueId', String(id));"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -535,7 +724,20 @@
                     "login"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const token = json?.data?.token;",
+                      "if (token) pm.collectionVariables.set('customerToken', token);"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Forgot Password",
@@ -625,7 +827,22 @@
                     "me"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('customerUserId', String(id));"
+                    ]
+                  }
+                }
+              ]
             }
           ]
         },
@@ -666,7 +883,22 @@
                     "bookings"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('bookingId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Create Service Booking",
@@ -704,7 +936,22 @@
                     "{{serviceId}}"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('bookingId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Create Venue Booking",
@@ -742,7 +989,22 @@
                     "{{venueId}}"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('bookingId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Create Event Planner Booking",
@@ -780,7 +1042,22 @@
                     "{{eventPlannerId}}"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('bookingId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Get My Bookings",
@@ -826,7 +1103,22 @@
                     }
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('bookingId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Get Booking By ID",
@@ -1096,7 +1388,20 @@
                     "login"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const token = json?.data?.token;",
+                      "if (token) pm.collectionVariables.set('serviceProviderToken', token);"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Forgot Password",
@@ -1224,7 +1529,22 @@
                     "me"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('serviceProviderUserId', String(id));"
+                    ]
+                  }
+                }
+              ]
             }
           ]
         },
@@ -1265,7 +1585,22 @@
                     }
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('serviceId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Get Published Service By ID (Public)",
@@ -1284,7 +1619,22 @@
                     "{{serviceId}}"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('serviceId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Create Service",
@@ -1321,7 +1671,22 @@
                     "services"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('serviceId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Update Service",
@@ -1480,7 +1845,22 @@
                     }
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('bookingId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Get Service Provider Booking Requests",
@@ -1526,7 +1906,22 @@
                     }
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('bookingId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Get Booking By ID",
@@ -1836,7 +2231,20 @@
                     "login"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const token = json?.data?.token;",
+                      "if (token) pm.collectionVariables.set('venueProviderToken', token);"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Forgot Password",
@@ -1964,7 +2372,22 @@
                     "me"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('venueProviderUserId', String(id));"
+                    ]
+                  }
+                }
+              ]
             }
           ]
         },
@@ -2005,7 +2428,22 @@
                     }
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('venueId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Get Published Venue By ID (Public)",
@@ -2024,7 +2462,22 @@
                     "{{venueId}}"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('venueId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Create Venue",
@@ -2061,7 +2514,22 @@
                     "venues"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('venueId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Update Venue",
@@ -2255,7 +2723,22 @@
                     }
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('bookingId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Get Venue Provider Booking Requests",
@@ -2301,7 +2784,22 @@
                     }
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('bookingId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Get Booking By ID",
@@ -2611,7 +3109,20 @@
                     "login"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const token = json?.data?.token;",
+                      "if (token) pm.collectionVariables.set('eventPlannerToken', token);"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Forgot Password",
@@ -2739,7 +3250,22 @@
                     "me"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('eventPlannerUserId', String(id));"
+                    ]
+                  }
+                }
+              ]
             }
           ]
         },
@@ -2779,7 +3305,22 @@
                     }
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('eventPlannerId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Get Public Event Planners",
@@ -2815,7 +3356,22 @@
                     }
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('eventPlannerId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Get Public Event Planner By ID",
@@ -2834,7 +3390,22 @@
                     "{{eventPlannerId}}"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('eventPlannerId', String(id));"
+                    ]
+                  }
+                }
+              ]
             }
           ]
         },
@@ -2930,7 +3501,22 @@
                     }
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('bookingId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Get Event Planner Booking Requests",
@@ -2976,7 +3562,22 @@
                     }
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('bookingId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Get Booking By ID",
@@ -3188,7 +3789,20 @@
                     "login"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const token = json?.data?.token;",
+                      "if (token) pm.collectionVariables.set('adminToken', token);"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Get Current User",
@@ -3212,7 +3826,22 @@
                     "me"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('adminUserSelfId', String(id));"
+                    ]
+                  }
+                }
+              ]
             }
           ]
         },
@@ -3259,7 +3888,22 @@
                     }
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('venueId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Get Venue By ID",
@@ -3284,7 +3928,22 @@
                     "{{venueId}}"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('venueId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Get Pending Venues",
@@ -3327,7 +3986,22 @@
                     }
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('venueId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Approve Venue",
@@ -3421,7 +4095,22 @@
                     }
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('serviceId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Get Service By ID",
@@ -3446,7 +4135,22 @@
                     "{{serviceId}}"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('serviceId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Get Pending Services",
@@ -3489,7 +4193,22 @@
                     }
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('serviceId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Approve Service",
@@ -3677,7 +4396,20 @@
                     "login"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const token = json?.data?.token;",
+                      "if (token) pm.collectionVariables.set('superAdminToken', token);"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Get Current User",
@@ -3701,7 +4433,22 @@
                     "me"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('superAdminUserSelfId', String(id));"
+                    ]
+                  }
+                }
+              ]
             }
           ]
         },
@@ -3743,7 +4490,22 @@
                     "admin-users"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('adminUserId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Block Admin User",
@@ -3842,7 +4604,22 @@
                     }
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('venueId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Get Venue By ID",
@@ -3867,7 +4644,22 @@
                     "{{venueId}}"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('venueId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Get Pending Venues",
@@ -3910,7 +4702,22 @@
                     }
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('venueId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Approve Venue",
@@ -4004,7 +4811,22 @@
                     }
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('serviceId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Get Service By ID",
@@ -4029,7 +4851,22 @@
                     "{{serviceId}}"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('serviceId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Get Pending Services",
@@ -4072,7 +4909,22 @@
                     }
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('serviceId', String(id));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Approve Service",

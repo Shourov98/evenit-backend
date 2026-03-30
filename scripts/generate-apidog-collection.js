@@ -15,7 +15,13 @@ const variables = [
   { key: 'venueId', value: '' },
   { key: 'eventPlannerId', value: '' },
   { key: 'bookingId', value: '' },
-  { key: 'adminUserId', value: '' }
+  { key: 'adminUserId', value: '' },
+  { key: 'customerUserId', value: '' },
+  { key: 'serviceProviderUserId', value: '' },
+  { key: 'venueProviderUserId', value: '' },
+  { key: 'eventPlannerUserId', value: '' },
+  { key: 'adminUserSelfId', value: '' },
+  { key: 'superAdminUserSelfId', value: '' }
 ];
 
 const toCollectionPath = (endpoint) =>
@@ -83,6 +89,32 @@ const formDataBody = (fields) => ({
   }))
 });
 
+const testEvent = (lines) => [
+  {
+    listen: 'test',
+    script: {
+      type: 'text/javascript',
+      exec: lines
+    }
+  }
+];
+
+const tokenCaptureEvent = (variableName) =>
+  testEvent([
+    'const json = pm.response.json();',
+    'const token = json?.data?.token;',
+    `if (token) pm.collectionVariables.set('${variableName}', token);`
+  ]);
+
+const idCaptureEvent = (variableName) =>
+  testEvent([
+    'const json = pm.response.json();',
+    'const data = json?.data;',
+    'const firstItem = Array.isArray(data) ? data[0] : null;',
+    'const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;',
+    `if (id) pm.collectionVariables.set('${variableName}', String(id));`
+  ]);
+
 const request = (name, method, endpoint, options = {}) => ({
   name,
   request: {
@@ -91,7 +123,8 @@ const request = (name, method, endpoint, options = {}) => ({
     ...(buildHeaders(options).length ? { header: buildHeaders(options) } : {}),
     ...(options.body ? { body: options.body } : {}),
     url: buildUrl(endpoint, options.query || [])
-  }
+  },
+  ...(options.event ? { event: options.event } : {})
 });
 
 const folder = (name, items) => ({ name, item: items });
@@ -133,7 +166,8 @@ const customerAuth = folder('Auth', [
     body: jsonBody({
       email: 'customer@example.com',
       password: 'StrongPass123'
-    })
+    }),
+    event: tokenCaptureEvent('customerToken')
   }),
   request('Forgot Password', 'POST', '/api/v1/auth/forgot-password', {
     contentType: 'application/json',
@@ -150,7 +184,8 @@ const customerAuth = folder('Auth', [
     })
   }),
   request('Get Current User', 'GET', '/api/v1/auth/me', {
-    tokenVar: 'customerToken'
+    tokenVar: 'customerToken',
+    event: idCaptureEvent('customerUserId')
   })
 ]);
 
@@ -166,7 +201,8 @@ const customerBookings = folder('Bookings', [
       durationHours: 2,
       location: 'Banani, Dhaka',
       specialInstructions: 'Please confirm decoration options.'
-    })
+    }),
+    event: idCaptureEvent('bookingId')
   }),
   request('Create Service Booking', 'POST', '/api/v1/bookings/services/{serviceId}', {
     tokenVar: 'customerToken',
@@ -177,7 +213,8 @@ const customerBookings = folder('Bookings', [
       durationHours: 2,
       location: 'Banani, Dhaka',
       specialInstructions: 'Need premium package.'
-    })
+    }),
+    event: idCaptureEvent('bookingId')
   }),
   request('Create Venue Booking', 'POST', '/api/v1/bookings/venues/{venueId}', {
     tokenVar: 'customerToken',
@@ -187,7 +224,8 @@ const customerBookings = folder('Bookings', [
       timeSlots: ['14:00', '15:00', '16:00'],
       durationHours: 3,
       specialInstructions: 'Need projector and stage.'
-    })
+    }),
+    event: idCaptureEvent('bookingId')
   }),
   request('Create Event Planner Booking', 'POST', '/api/v1/bookings/event-planners/{eventPlannerId}', {
     tokenVar: 'customerToken',
@@ -198,11 +236,13 @@ const customerBookings = folder('Bookings', [
       durationHours: 2,
       location: 'Gulshan, Dhaka',
       specialInstructions: 'Wedding planning consultation.'
-    })
+    }),
+    event: idCaptureEvent('bookingId')
   }),
   request('Get My Bookings', 'GET', '/api/v1/bookings/my', {
     tokenVar: 'customerToken',
-    query: bookingListQuery
+    query: bookingListQuery,
+    event: idCaptureEvent('bookingId')
   }),
   request('Get Booking By ID', 'GET', '/api/v1/bookings/{bookingId}', {
     tokenVar: 'customerToken'
@@ -255,7 +295,8 @@ const serviceProviderAuth = folder('Auth', [
     body: jsonBody({
       email: 'service.provider@example.com',
       password: 'StrongPass123'
-    })
+    }),
+    event: tokenCaptureEvent('serviceProviderToken')
   }),
   request('Forgot Password', 'POST', '/api/v1/auth/forgot-password', {
     contentType: 'application/json',
@@ -296,15 +337,19 @@ const serviceProviderAuth = folder('Auth', [
     })
   }),
   request('Get Current User', 'GET', '/api/v1/auth/me', {
-    tokenVar: 'serviceProviderToken'
+    tokenVar: 'serviceProviderToken',
+    event: idCaptureEvent('serviceProviderUserId')
   })
 ]);
 
 const serviceProviderServices = folder('Services', [
   request('Get Published Services (Public)', 'GET', '/api/v1/service-provider/services', {
-    query: paginationQuery
+    query: paginationQuery,
+    event: idCaptureEvent('serviceId')
   }),
-  request('Get Published Service By ID (Public)', 'GET', '/api/v1/service-provider/services/{serviceId}'),
+  request('Get Published Service By ID (Public)', 'GET', '/api/v1/service-provider/services/{serviceId}', {
+    event: idCaptureEvent('serviceId')
+  }),
   request('Create Service', 'POST', '/api/v1/service-provider/services', {
     tokenVar: 'serviceProviderToken',
     contentType: 'application/json',
@@ -349,7 +394,8 @@ const serviceProviderServices = folder('Services', [
           ]
         }
       ]
-    })
+    }),
+    event: idCaptureEvent('serviceId')
   }),
   request('Update Service', 'PATCH', '/api/v1/service-provider/services/{serviceId}', {
     tokenVar: 'serviceProviderToken',
@@ -390,11 +436,13 @@ const serviceProviderUploads = folder('Uploads', [
 const serviceProviderBookings = folder('Bookings', [
   request('Get Provider Bookings', 'GET', '/api/v1/bookings/provider', {
     tokenVar: 'serviceProviderToken',
-    query: bookingListQuery
+    query: bookingListQuery,
+    event: idCaptureEvent('bookingId')
   }),
   request('Get Service Provider Booking Requests', 'GET', '/api/v1/bookings/service-provider', {
     tokenVar: 'serviceProviderToken',
-    query: bookingListQuery
+    query: bookingListQuery,
+    event: idCaptureEvent('bookingId')
   }),
   request('Get Booking By ID', 'GET', '/api/v1/bookings/{bookingId}', {
     tokenVar: 'serviceProviderToken'
@@ -454,7 +502,8 @@ const venueProviderAuth = folder('Auth', [
     body: jsonBody({
       email: 'venue.provider@example.com',
       password: 'StrongPass123'
-    })
+    }),
+    event: tokenCaptureEvent('venueProviderToken')
   }),
   request('Forgot Password', 'POST', '/api/v1/auth/forgot-password', {
     contentType: 'application/json',
@@ -487,15 +536,19 @@ const venueProviderAuth = folder('Auth', [
     })
   }),
   request('Get Current User', 'GET', '/api/v1/auth/me', {
-    tokenVar: 'venueProviderToken'
+    tokenVar: 'venueProviderToken',
+    event: idCaptureEvent('venueProviderUserId')
   })
 ]);
 
 const venueProviderVenues = folder('Venues', [
   request('Get Published Venues (Public)', 'GET', '/api/v1/venue-provider/venues', {
-    query: paginationQuery
+    query: paginationQuery,
+    event: idCaptureEvent('venueId')
   }),
-  request('Get Published Venue By ID (Public)', 'GET', '/api/v1/venue-provider/venues/{venueId}'),
+  request('Get Published Venue By ID (Public)', 'GET', '/api/v1/venue-provider/venues/{venueId}', {
+    event: idCaptureEvent('venueId')
+  }),
   request('Create Venue', 'POST', '/api/v1/venue-provider/venues', {
     tokenVar: 'venueProviderToken',
     contentType: 'application/json',
@@ -540,7 +593,8 @@ const venueProviderVenues = folder('Venues', [
           ]
         }
       ]
-    })
+    }),
+    event: idCaptureEvent('venueId')
   }),
   request('Update Venue', 'PATCH', '/api/v1/venue-provider/venues/{venueId}', {
     tokenVar: 'venueProviderToken',
@@ -579,11 +633,13 @@ const venueProviderUploads = folder('Uploads', [
 const venueProviderBookings = folder('Bookings', [
   request('Get Provider Bookings', 'GET', '/api/v1/bookings/provider', {
     tokenVar: 'venueProviderToken',
-    query: bookingListQuery
+    query: bookingListQuery,
+    event: idCaptureEvent('bookingId')
   }),
   request('Get Venue Provider Booking Requests', 'GET', '/api/v1/bookings/venue-provider', {
     tokenVar: 'venueProviderToken',
-    query: bookingListQuery
+    query: bookingListQuery,
+    event: idCaptureEvent('bookingId')
   }),
   request('Get Booking By ID', 'GET', '/api/v1/bookings/{bookingId}', {
     tokenVar: 'venueProviderToken'
@@ -643,7 +699,8 @@ const eventPlannerAuth = folder('Auth', [
     body: jsonBody({
       email: 'event.planner@example.com',
       password: 'StrongPass123'
-    })
+    }),
+    event: tokenCaptureEvent('eventPlannerToken')
   }),
   request('Forgot Password', 'POST', '/api/v1/auth/forgot-password', {
     contentType: 'application/json',
@@ -683,18 +740,23 @@ const eventPlannerAuth = folder('Auth', [
     })
   }),
   request('Get Current User', 'GET', '/api/v1/auth/me', {
-    tokenVar: 'eventPlannerToken'
+    tokenVar: 'eventPlannerToken',
+    event: idCaptureEvent('eventPlannerUserId')
   })
 ]);
 
 const eventPlannerPublic = folder('Public APIs', [
   request('Get Event Planners (Public)', 'GET', '/api/v1/event-planners', {
-    query: paginationQuery
+    query: paginationQuery,
+    event: idCaptureEvent('eventPlannerId')
   }),
   request('Get Public Event Planners', 'GET', '/api/v1/public/event-planners', {
-    query: paginationQuery
+    query: paginationQuery,
+    event: idCaptureEvent('eventPlannerId')
   }),
-  request('Get Public Event Planner By ID', 'GET', '/api/v1/public/event-planners/{eventPlannerId}')
+  request('Get Public Event Planner By ID', 'GET', '/api/v1/public/event-planners/{eventPlannerId}', {
+    event: idCaptureEvent('eventPlannerId')
+  })
 ]);
 
 const eventPlannerUploads = folder('Uploads', [
@@ -710,11 +772,13 @@ const eventPlannerUploads = folder('Uploads', [
 const eventPlannerBookings = folder('Bookings', [
   request('Get Provider Bookings', 'GET', '/api/v1/bookings/provider', {
     tokenVar: 'eventPlannerToken',
-    query: bookingListQuery
+    query: bookingListQuery,
+    event: idCaptureEvent('bookingId')
   }),
   request('Get Event Planner Booking Requests', 'GET', '/api/v1/bookings/event-planner', {
     tokenVar: 'eventPlannerToken',
-    query: bookingListQuery
+    query: bookingListQuery,
+    event: idCaptureEvent('bookingId')
   }),
   request('Get Booking By ID', 'GET', '/api/v1/bookings/{bookingId}', {
     tokenVar: 'eventPlannerToken'
@@ -752,24 +816,29 @@ const adminAuth = folder('Auth', [
     body: jsonBody({
       email: 'admin@example.com',
       password: 'StrongAdminPass123'
-    })
+    }),
+    event: tokenCaptureEvent('adminToken')
   }),
   request('Get Current User', 'GET', '/api/v1/auth/me', {
-    tokenVar: 'adminToken'
+    tokenVar: 'adminToken',
+    event: idCaptureEvent('adminUserSelfId')
   })
 ]);
 
 const adminModeration = folder('Moderation', [
   request('Get All Venues', 'GET', '/api/v1/admin/venues', {
     tokenVar: 'adminToken',
-    query: paginationQuery
+    query: paginationQuery,
+    event: idCaptureEvent('venueId')
   }),
   request('Get Venue By ID', 'GET', '/api/v1/admin/venues/{venueId}', {
-    tokenVar: 'adminToken'
+    tokenVar: 'adminToken',
+    event: idCaptureEvent('venueId')
   }),
   request('Get Pending Venues', 'GET', '/api/v1/admin/venues/pending', {
     tokenVar: 'adminToken',
-    query: paginationQuery
+    query: paginationQuery,
+    event: idCaptureEvent('venueId')
   }),
   request('Approve Venue', 'PATCH', '/api/v1/admin/venues/{venueId}/approve', {
     tokenVar: 'adminToken'
@@ -779,14 +848,17 @@ const adminModeration = folder('Moderation', [
   }),
   request('Get All Services', 'GET', '/api/v1/admin/services', {
     tokenVar: 'adminToken',
-    query: paginationQuery
+    query: paginationQuery,
+    event: idCaptureEvent('serviceId')
   }),
   request('Get Service By ID', 'GET', '/api/v1/admin/services/{serviceId}', {
-    tokenVar: 'adminToken'
+    tokenVar: 'adminToken',
+    event: idCaptureEvent('serviceId')
   }),
   request('Get Pending Services', 'GET', '/api/v1/admin/services/pending', {
     tokenVar: 'adminToken',
-    query: paginationQuery
+    query: paginationQuery,
+    event: idCaptureEvent('serviceId')
   }),
   request('Approve Service', 'PATCH', '/api/v1/admin/services/{serviceId}/approve', {
     tokenVar: 'adminToken'
@@ -818,10 +890,12 @@ const superAdminAuth = folder('Auth', [
     body: jsonBody({
       email: 'superadmin@example.com',
       password: 'StrongSuperAdminPass123'
-    })
+    }),
+    event: tokenCaptureEvent('superAdminToken')
   }),
   request('Get Current User', 'GET', '/api/v1/auth/me', {
-    tokenVar: 'superAdminToken'
+    tokenVar: 'superAdminToken',
+    event: idCaptureEvent('superAdminUserSelfId')
   })
 ]);
 
@@ -833,7 +907,8 @@ const superAdminAdminUsers = folder('Admin Users', [
       fullName: 'Admin Example',
       email: 'new.admin@example.com',
       password: 'StrongAdminPass123'
-    })
+    }),
+    event: idCaptureEvent('adminUserId')
   }),
   request('Block Admin User', 'PATCH', '/api/v1/admin/admin-users/{adminUserId}/block', {
     tokenVar: 'superAdminToken'
@@ -846,14 +921,17 @@ const superAdminAdminUsers = folder('Admin Users', [
 const superAdminModeration = folder('Moderation', [
   request('Get All Venues', 'GET', '/api/v1/admin/venues', {
     tokenVar: 'superAdminToken',
-    query: paginationQuery
+    query: paginationQuery,
+    event: idCaptureEvent('venueId')
   }),
   request('Get Venue By ID', 'GET', '/api/v1/admin/venues/{venueId}', {
-    tokenVar: 'superAdminToken'
+    tokenVar: 'superAdminToken',
+    event: idCaptureEvent('venueId')
   }),
   request('Get Pending Venues', 'GET', '/api/v1/admin/venues/pending', {
     tokenVar: 'superAdminToken',
-    query: paginationQuery
+    query: paginationQuery,
+    event: idCaptureEvent('venueId')
   }),
   request('Approve Venue', 'PATCH', '/api/v1/admin/venues/{venueId}/approve', {
     tokenVar: 'superAdminToken'
@@ -863,14 +941,17 @@ const superAdminModeration = folder('Moderation', [
   }),
   request('Get All Services', 'GET', '/api/v1/admin/services', {
     tokenVar: 'superAdminToken',
-    query: paginationQuery
+    query: paginationQuery,
+    event: idCaptureEvent('serviceId')
   }),
   request('Get Service By ID', 'GET', '/api/v1/admin/services/{serviceId}', {
-    tokenVar: 'superAdminToken'
+    tokenVar: 'superAdminToken',
+    event: idCaptureEvent('serviceId')
   }),
   request('Get Pending Services', 'GET', '/api/v1/admin/services/pending', {
     tokenVar: 'superAdminToken',
-    query: paginationQuery
+    query: paginationQuery,
+    event: idCaptureEvent('serviceId')
   }),
   request('Approve Service', 'PATCH', '/api/v1/admin/services/{serviceId}/approve', {
     tokenVar: 'superAdminToken'
@@ -900,32 +981,49 @@ const publicApis = folder('Public', [
   request('Root Status', 'GET', '/'),
   request('Health Check', 'GET', '/health'),
   request('Get Published Services', 'GET', '/api/v1/public/services', {
-    query: paginationQuery
+    query: paginationQuery,
+    event: idCaptureEvent('serviceId')
   }),
-  request('Get Published Service By ID', 'GET', '/api/v1/public/services/{serviceId}'),
+  request('Get Published Service By ID', 'GET', '/api/v1/public/services/{serviceId}', {
+    event: idCaptureEvent('serviceId')
+  }),
   request('Get Published Venues', 'GET', '/api/v1/public/venues', {
-    query: paginationQuery
+    query: paginationQuery,
+    event: idCaptureEvent('venueId')
   }),
-  request('Get Published Venue By ID', 'GET', '/api/v1/public/venues/{venueId}'),
+  request('Get Published Venue By ID', 'GET', '/api/v1/public/venues/{venueId}', {
+    event: idCaptureEvent('venueId')
+  }),
   request('Get Public Event Planners', 'GET', '/api/v1/public/event-planners', {
-    query: paginationQuery
+    query: paginationQuery,
+    event: idCaptureEvent('eventPlannerId')
   }),
-  request('Get Public Event Planner By ID', 'GET', '/api/v1/public/event-planners/{eventPlannerId}'),
+  request('Get Public Event Planner By ID', 'GET', '/api/v1/public/event-planners/{eventPlannerId}', {
+    event: idCaptureEvent('eventPlannerId')
+  }),
   request('Get Event Planners', 'GET', '/api/v1/event-planners', {
-    query: paginationQuery
+    query: paginationQuery,
+    event: idCaptureEvent('eventPlannerId')
   }),
   request('Get Published Services Under Provider Namespace', 'GET', '/api/v1/service-provider/services', {
-    query: paginationQuery
+    query: paginationQuery,
+    event: idCaptureEvent('serviceId')
   }),
   request(
     'Get Published Service By ID Under Provider Namespace',
     'GET',
-    '/api/v1/service-provider/services/{serviceId}'
+    '/api/v1/service-provider/services/{serviceId}',
+    {
+      event: idCaptureEvent('serviceId')
+    }
   ),
   request('Get Published Venues Under Provider Namespace', 'GET', '/api/v1/venue-provider/venues', {
-    query: paginationQuery
+    query: paginationQuery,
+    event: idCaptureEvent('venueId')
   }),
-  request('Get Published Venue By ID Under Provider Namespace', 'GET', '/api/v1/venue-provider/venues/{venueId}')
+  request('Get Published Venue By ID Under Provider Namespace', 'GET', '/api/v1/venue-provider/venues/{venueId}', {
+    event: idCaptureEvent('venueId')
+  })
 ]);
 
 const collection = {
