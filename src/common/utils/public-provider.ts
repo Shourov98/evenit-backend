@@ -1,6 +1,10 @@
 import { IUser } from '../../modules/auth/auth.model';
 
 type ProviderUser = Pick<IUser, '_id' | 'fullName' | 'role' | 'onboarding'> | null | undefined;
+type AdminOwnerUser =
+  | Pick<IUser, '_id' | 'fullName' | 'email' | 'role' | 'isEmailVerified' | 'isBlocked' | 'onboarding'>
+  | null
+  | undefined;
 
 export const buildPublicProviderInfo = (user: ProviderUser) => {
   if (!user) {
@@ -44,5 +48,21 @@ export const buildPublicProviderInfo = (user: ProviderUser) => {
     _id: user._id,
     fullName: user.fullName,
     role: user.role
+  };
+};
+
+export const buildAdminOwnerInfo = (user: AdminOwnerUser) => {
+  if (!user) {
+    return null;
+  }
+
+  return {
+    _id: user._id,
+    fullName: user.fullName,
+    email: user.email,
+    role: user.role,
+    isEmailVerified: user.isEmailVerified,
+    isBlocked: user.isBlocked,
+    provider: buildPublicProviderInfo(user)
   };
 };

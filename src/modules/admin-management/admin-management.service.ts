@@ -1,5 +1,6 @@
 import { PaginationOptions, paginateModel } from '../../common/utils/pagination';
 import { AppError } from '../../common/errors/AppError';
+import { buildAdminOwnerInfo } from '../../common/utils/public-provider';
 import { createDefaultUserSubscription, UserModel } from '../auth/auth.model';
 import { ServiceProviderServiceModel } from '../service-provider/service-provider.model';
 import { VenueProviderVenueModel } from '../venue-provider/venue-provider.model';
@@ -8,6 +9,34 @@ interface ApproverInfo {
   name: string;
   email: string;
 }
+
+const ADMIN_OWNER_SELECT =
+  'fullName email role isEmailVerified isBlocked onboarding.serviceProvider onboarding.venueProvider';
+
+const attachOwners = async <
+  TDoc extends {
+    ownerId: unknown;
+    toObject(): Record<string, unknown>;
+  }
+>(
+  model: typeof VenueProviderVenueModel | typeof ServiceProviderServiceModel,
+  items: TDoc[]
+) => {
+  const populatedItems = await model.populate(items, {
+    path: 'ownerId',
+    model: UserModel,
+    select: ADMIN_OWNER_SELECT
+  });
+
+  return populatedItems.map((item) => {
+    const itemObject = item.toObject();
+
+    return {
+      ...itemObject,
+      owner: buildAdminOwnerInfo(item.ownerId as never)
+    };
+  });
+};
 
 export class AdminManagementService {
   static async createAdmin(payload: { fullName: string; email: string; password: string }) {
@@ -51,27 +80,37 @@ export class AdminManagementService {
   }
 
   static async getAllVenues(pagination: PaginationOptions) {
-    return paginateModel(
+    const venues = await paginateModel(
       VenueProviderVenueModel,
       {
         isDeleted: false
       },
       pagination
     );
+
+    return {
+      ...venues,
+      data: await attachOwners(VenueProviderVenueModel, venues.data)
+    };
   }
 
   static async getAllServices(pagination: PaginationOptions) {
-    return paginateModel(
+    const services = await paginateModel(
       ServiceProviderServiceModel,
       {
         isDeleted: false
       },
       pagination
     );
+
+    return {
+      ...services,
+      data: await attachOwners(ServiceProviderServiceModel, services.data)
+    };
   }
 
   static async getPendingVenues(pagination: PaginationOptions) {
-    return paginateModel(
+    const venues = await paginateModel(
       VenueProviderVenueModel,
       {
         isDeleted: false,
@@ -79,10 +118,15 @@ export class AdminManagementService {
       },
       pagination
     );
+
+    return {
+      ...venues,
+      data: await attachOwners(VenueProviderVenueModel, venues.data)
+    };
   }
 
   static async getPendingServices(pagination: PaginationOptions) {
-    return paginateModel(
+    const services = await paginateModel(
       ServiceProviderServiceModel,
       {
         isDeleted: false,
@@ -90,6 +134,11 @@ export class AdminManagementService {
       },
       pagination
     );
+
+    return {
+      ...services,
+      data: await attachOwners(ServiceProviderServiceModel, services.data)
+    };
   }
 
   static async approveVenue(venueId: string, approver: ApproverInfo) {
