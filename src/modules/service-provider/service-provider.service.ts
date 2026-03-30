@@ -1,6 +1,8 @@
 import { isValidObjectId } from 'mongoose';
 import { AppError } from '../../common/errors/AppError';
 import { PaginationOptions, paginateModel } from '../../common/utils/pagination';
+import { buildPublicProviderInfo } from '../../common/utils/public-provider';
+import { UserModel } from '../auth/auth.model';
 import { ServiceProviderServiceModel } from './service-provider.model';
 
 type CreateServicePayload = {
@@ -98,7 +100,7 @@ export class ServiceProviderService {
   }
 
   static async getPublic(pagination: PaginationOptions) {
-    return paginateModel(
+    const services = await paginateModel(
       ServiceProviderServiceModel,
       {
         isDeleted: false,
@@ -106,6 +108,24 @@ export class ServiceProviderService {
       },
       pagination
     );
+
+    const hydratedServices = await ServiceProviderServiceModel.populate(services.data, {
+      path: 'ownerId',
+      model: UserModel,
+      select: 'fullName role onboarding.serviceProvider'
+    });
+
+    return {
+      ...services,
+      data: hydratedServices.map((service) => {
+        const serviceObject = service.toObject();
+
+        return {
+          ...serviceObject,
+          provider: buildPublicProviderInfo(service.ownerId as never)
+        };
+      })
+    };
   }
 
   static async getPublicById(serviceId: string) {
@@ -115,13 +135,22 @@ export class ServiceProviderService {
       _id: serviceId,
       isDeleted: false,
       publishStatus: 'published'
+    }).populate({
+      path: 'ownerId',
+      model: UserModel,
+      select: 'fullName role onboarding.serviceProvider'
     });
 
     if (!service) {
       throw new AppError(404, 'Service not found');
     }
 
-    return service;
+    const serviceObject = service.toObject();
+
+    return {
+      ...serviceObject,
+      provider: buildPublicProviderInfo(service.ownerId as never)
+    };
   }
 
   static async getById(ownerId: string, serviceId: string) {

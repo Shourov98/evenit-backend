@@ -1,6 +1,8 @@
 import { isValidObjectId } from 'mongoose';
 import { AppError } from '../../common/errors/AppError';
 import { PaginationOptions, paginateModel } from '../../common/utils/pagination';
+import { buildPublicProviderInfo } from '../../common/utils/public-provider';
+import { UserModel } from '../auth/auth.model';
 import { VenueProviderVenueModel } from './venue-provider.model';
 
 type CreateVenuePayload = {
@@ -97,7 +99,7 @@ export class VenueProviderService {
   }
 
   static async getPublic(pagination: PaginationOptions) {
-    return paginateModel(
+    const venues = await paginateModel(
       VenueProviderVenueModel,
       {
         isDeleted: false,
@@ -105,6 +107,24 @@ export class VenueProviderService {
       },
       pagination
     );
+
+    const hydratedVenues = await VenueProviderVenueModel.populate(venues.data, {
+      path: 'ownerId',
+      model: UserModel,
+      select: 'fullName role onboarding.venueProvider'
+    });
+
+    return {
+      ...venues,
+      data: hydratedVenues.map((venue) => {
+        const venueObject = venue.toObject();
+
+        return {
+          ...venueObject,
+          provider: buildPublicProviderInfo(venue.ownerId as never)
+        };
+      })
+    };
   }
 
   static async getPublicById(venueId: string) {
@@ -114,13 +134,22 @@ export class VenueProviderService {
       _id: venueId,
       isDeleted: false,
       publishStatus: 'published'
+    }).populate({
+      path: 'ownerId',
+      model: UserModel,
+      select: 'fullName role onboarding.venueProvider'
     });
 
     if (!venue) {
       throw new AppError(404, 'Venue not found');
     }
 
-    return venue;
+    const venueObject = venue.toObject();
+
+    return {
+      ...venueObject,
+      provider: buildPublicProviderInfo(venue.ownerId as never)
+    };
   }
 
   static async getById(ownerId: string, venueId: string) {
