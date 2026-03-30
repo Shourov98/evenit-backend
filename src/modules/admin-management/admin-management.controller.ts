@@ -45,6 +45,159 @@ export class AdminManagementController {
     });
   });
 
+  static getCustomers = catchAsync(async (req: Request, res: Response) => {
+    const pagination = parsePagination(req.query as Record<string, unknown>);
+    const customers = await AdminManagementService.getCustomers(pagination);
+
+    return res.status(200).json({
+      success: true,
+      meta: customers.meta,
+      data: customers.data
+    });
+  });
+
+  static getBlockedCustomers = catchAsync(async (req: Request, res: Response) => {
+    const pagination = parsePagination(req.query as Record<string, unknown>);
+    const customers = await AdminManagementService.getBlockedCustomers(pagination);
+
+    return res.status(200).json({
+      success: true,
+      meta: customers.meta,
+      data: customers.data
+    });
+  });
+
+  static getCustomerById = catchAsync(async (req: Request, res: Response) => {
+    const customer = await AdminManagementService.getCustomerById(req.params.customerId);
+
+    return res.status(200).json({
+      success: true,
+      data: customer
+    });
+  });
+
+  static blockCustomer = catchAsync(async (req: Request, res: Response) => {
+    const customer = await AdminManagementService.blockCustomer(req.params.customerId);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Customer blocked successfully',
+      data: customer
+    });
+  });
+
+  static unblockCustomer = catchAsync(async (req: Request, res: Response) => {
+    const customer = await AdminManagementService.unblockCustomer(req.params.customerId);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Customer unblocked successfully',
+      data: customer
+    });
+  });
+
+  static getServiceProviders = catchAsync(async (req: Request, res: Response) => {
+    const pagination = parsePagination(req.query as Record<string, unknown>);
+    const serviceProviders = await AdminManagementService.getServiceProviders(pagination);
+
+    return res.status(200).json({
+      success: true,
+      meta: serviceProviders.meta,
+      data: serviceProviders.data
+    });
+  });
+
+  static getBlockedServiceProviders = catchAsync(async (req: Request, res: Response) => {
+    const pagination = parsePagination(req.query as Record<string, unknown>);
+    const serviceProviders = await AdminManagementService.getBlockedServiceProviders(pagination);
+
+    return res.status(200).json({
+      success: true,
+      meta: serviceProviders.meta,
+      data: serviceProviders.data
+    });
+  });
+
+  static getServiceProviderById = catchAsync(async (req: Request, res: Response) => {
+    const serviceProvider = await AdminManagementService.getServiceProviderById(req.params.serviceProviderId);
+
+    return res.status(200).json({
+      success: true,
+      data: serviceProvider
+    });
+  });
+
+  static blockServiceProvider = catchAsync(async (req: Request, res: Response) => {
+    const serviceProvider = await AdminManagementService.blockServiceProvider(req.params.serviceProviderId);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Service provider blocked successfully',
+      data: serviceProvider
+    });
+  });
+
+  static unblockServiceProvider = catchAsync(async (req: Request, res: Response) => {
+    const serviceProvider = await AdminManagementService.unblockServiceProvider(req.params.serviceProviderId);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Service provider unblocked successfully',
+      data: serviceProvider
+    });
+  });
+
+  static getVenueProviders = catchAsync(async (req: Request, res: Response) => {
+    const pagination = parsePagination(req.query as Record<string, unknown>);
+    const venueProviders = await AdminManagementService.getVenueProviders(pagination);
+
+    return res.status(200).json({
+      success: true,
+      meta: venueProviders.meta,
+      data: venueProviders.data
+    });
+  });
+
+  static getBlockedVenueProviders = catchAsync(async (req: Request, res: Response) => {
+    const pagination = parsePagination(req.query as Record<string, unknown>);
+    const venueProviders = await AdminManagementService.getBlockedVenueProviders(pagination);
+
+    return res.status(200).json({
+      success: true,
+      meta: venueProviders.meta,
+      data: venueProviders.data
+    });
+  });
+
+  static getVenueProviderById = catchAsync(async (req: Request, res: Response) => {
+    const venueProvider = await AdminManagementService.getVenueProviderById(req.params.venueProviderId);
+
+    return res.status(200).json({
+      success: true,
+      data: venueProvider
+    });
+  });
+
+  static blockVenueProvider = catchAsync(async (req: Request, res: Response) => {
+    const venueProvider = await AdminManagementService.blockVenueProvider(req.params.venueProviderId);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Venue provider blocked successfully',
+      data: venueProvider
+    });
+  });
+
+  static unblockVenueProvider = catchAsync(async (req: Request, res: Response) => {
+    const venueProvider = await AdminManagementService.unblockVenueProvider(req.params.venueProviderId);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Venue provider unblocked successfully',
+      data: venueProvider
+    });
+  });
+
   static getAllVenues = catchAsync(async (req: Request, res: Response) => {
     const pagination = parsePagination(req.query as Record<string, unknown>);
     const venues = await AdminManagementService.getAllVenues(pagination);

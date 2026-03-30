@@ -55,6 +55,18 @@
       "value": ""
     },
     {
+      "key": "customerId",
+      "value": ""
+    },
+    {
+      "key": "serviceProviderId",
+      "value": ""
+    },
+    {
+      "key": "venueProviderId",
+      "value": ""
+    },
+    {
       "key": "customerUserId",
       "value": ""
     },
@@ -3846,6 +3858,722 @@
           ]
         },
         {
+          "name": "Users",
+          "item": [
+            {
+              "name": "Get All Customers",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/customers?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "customers"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "createdAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('customerId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get Blocked Customers",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/customers/blocked?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "customers",
+                    "blocked"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "createdAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('customerId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get Customer By ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/customers/{{customerId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "customers",
+                    "{{customerId}}"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('customerId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Block Customer",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/customers/{{customerId}}/block",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "customers",
+                    "{{customerId}}",
+                    "block"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('customerId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Unblock Customer",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/customers/{{customerId}}/unblock",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "customers",
+                    "{{customerId}}",
+                    "unblock"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('customerId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get All Service Providers",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/service-providers?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "service-providers"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "createdAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('serviceProviderId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get Blocked Service Providers",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/service-providers/blocked?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "service-providers",
+                    "blocked"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "createdAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('serviceProviderId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get Service Provider By ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/service-providers/{{serviceProviderId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "service-providers",
+                    "{{serviceProviderId}}"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('serviceProviderId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Block Service Provider",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/service-providers/{{serviceProviderId}}/block",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "service-providers",
+                    "{{serviceProviderId}}",
+                    "block"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('serviceProviderId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Unblock Service Provider",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/service-providers/{{serviceProviderId}}/unblock",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "service-providers",
+                    "{{serviceProviderId}}",
+                    "unblock"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('serviceProviderId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get All Venue Providers",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/venue-providers?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "venue-providers"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "createdAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('venueProviderId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get Blocked Venue Providers",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/venue-providers/blocked?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "venue-providers",
+                    "blocked"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "createdAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('venueProviderId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get Venue Provider By ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/venue-providers/{{venueProviderId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "venue-providers",
+                    "{{venueProviderId}}"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('venueProviderId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Block Venue Provider",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/venue-providers/{{venueProviderId}}/block",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "venue-providers",
+                    "{{venueProviderId}}",
+                    "block"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('venueProviderId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Unblock Venue Provider",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/venue-providers/{{venueProviderId}}/unblock",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "venue-providers",
+                    "{{venueProviderId}}",
+                    "unblock"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('venueProviderId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
           "name": "Moderation",
           "item": [
             {
@@ -4558,6 +5286,722 @@
                   ]
                 }
               }
+            }
+          ]
+        },
+        {
+          "name": "Users",
+          "item": [
+            {
+              "name": "Get All Customers",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{superAdminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/customers?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "customers"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "createdAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('customerId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get Blocked Customers",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{superAdminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/customers/blocked?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "customers",
+                    "blocked"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "createdAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('customerId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get Customer By ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{superAdminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/customers/{{customerId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "customers",
+                    "{{customerId}}"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('customerId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Block Customer",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{superAdminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/customers/{{customerId}}/block",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "customers",
+                    "{{customerId}}",
+                    "block"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('customerId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Unblock Customer",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{superAdminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/customers/{{customerId}}/unblock",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "customers",
+                    "{{customerId}}",
+                    "unblock"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('customerId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get All Service Providers",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{superAdminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/service-providers?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "service-providers"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "createdAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('serviceProviderId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get Blocked Service Providers",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{superAdminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/service-providers/blocked?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "service-providers",
+                    "blocked"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "createdAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('serviceProviderId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get Service Provider By ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{superAdminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/service-providers/{{serviceProviderId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "service-providers",
+                    "{{serviceProviderId}}"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('serviceProviderId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Block Service Provider",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{superAdminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/service-providers/{{serviceProviderId}}/block",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "service-providers",
+                    "{{serviceProviderId}}",
+                    "block"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('serviceProviderId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Unblock Service Provider",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{superAdminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/service-providers/{{serviceProviderId}}/unblock",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "service-providers",
+                    "{{serviceProviderId}}",
+                    "unblock"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('serviceProviderId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get All Venue Providers",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{superAdminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/venue-providers?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "venue-providers"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "createdAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('venueProviderId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get Blocked Venue Providers",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{superAdminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/venue-providers/blocked?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "venue-providers",
+                    "blocked"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "createdAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('venueProviderId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get Venue Provider By ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{superAdminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/venue-providers/{{venueProviderId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "venue-providers",
+                    "{{venueProviderId}}"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('venueProviderId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Block Venue Provider",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{superAdminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/venue-providers/{{venueProviderId}}/block",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "venue-providers",
+                    "{{venueProviderId}}",
+                    "block"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('venueProviderId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Unblock Venue Provider",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{superAdminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/venue-providers/{{venueProviderId}}/unblock",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "venue-providers",
+                    "{{venueProviderId}}",
+                    "unblock"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('venueProviderId', String(id));"
+                    ]
+                  }
+                }
+              ]
             }
           ]
         },

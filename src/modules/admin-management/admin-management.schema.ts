@@ -2,6 +2,15 @@ import { z } from 'zod';
 
 const objectIdRegex = /^[a-fA-F0-9]{24}$/;
 
+const buildObjectIdParamSchema = (fieldName: string, label: string) =>
+  z.object({
+    body: z.object({}).optional().default({}),
+    params: z.object({
+      [fieldName]: z.string().regex(objectIdRegex, `Invalid ${label}`)
+    }),
+    query: z.object({}).optional().default({})
+  });
+
 export const approvalRequestsQuerySchema = z.object({
   body: z.object({}).optional().default({}),
   params: z.object({}).optional().default({}),
@@ -13,21 +22,9 @@ export const approvalRequestsQuerySchema = z.object({
   })
 });
 
-export const venueIdParamSchema = z.object({
-  body: z.object({}).optional().default({}),
-  params: z.object({
-    venueId: z.string().regex(objectIdRegex, 'Invalid venueId')
-  }),
-  query: z.object({}).optional().default({})
-});
+export const venueIdParamSchema = buildObjectIdParamSchema('venueId', 'venueId');
 
-export const serviceIdParamSchema = z.object({
-  body: z.object({}).optional().default({}),
-  params: z.object({
-    serviceId: z.string().regex(objectIdRegex, 'Invalid serviceId')
-  }),
-  query: z.object({}).optional().default({})
-});
+export const serviceIdParamSchema = buildObjectIdParamSchema('serviceId', 'serviceId');
 
 export const createAdminSchema = z.object({
   body: z.object({
@@ -39,10 +36,13 @@ export const createAdminSchema = z.object({
   query: z.object({}).optional().default({})
 });
 
-export const adminUserIdParamSchema = z.object({
-  body: z.object({}).optional().default({}),
-  params: z.object({
-    adminUserId: z.string().regex(objectIdRegex, 'Invalid adminUserId')
-  }),
-  query: z.object({}).optional().default({})
-});
+export const adminUserIdParamSchema = buildObjectIdParamSchema('adminUserId', 'adminUserId');
+
+export const customerIdParamSchema = buildObjectIdParamSchema('customerId', 'customerId');
+
+export const serviceProviderUserIdParamSchema = buildObjectIdParamSchema(
+  'serviceProviderId',
+  'serviceProviderId'
+);
+
+export const venueProviderUserIdParamSchema = buildObjectIdParamSchema('venueProviderId', 'venueProviderId');

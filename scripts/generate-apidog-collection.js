@@ -16,6 +16,9 @@ const variables = [
   { key: 'eventPlannerId', value: '' },
   { key: 'bookingId', value: '' },
   { key: 'adminUserId', value: '' },
+  { key: 'customerId', value: '' },
+  { key: 'serviceProviderId', value: '' },
+  { key: 'venueProviderId', value: '' },
   { key: 'customerUserId', value: '' },
   { key: 'serviceProviderUserId', value: '' },
   { key: 'venueProviderUserId', value: '' },
@@ -868,6 +871,75 @@ const adminModeration = folder('Moderation', [
   })
 ]);
 
+const adminUsers = folder('Users', [
+  request('Get All Customers', 'GET', '/api/v1/admin/customers', {
+    tokenVar: 'adminToken',
+    query: paginationQuery,
+    event: idCaptureEvent('customerId')
+  }),
+  request('Get Blocked Customers', 'GET', '/api/v1/admin/customers/blocked', {
+    tokenVar: 'adminToken',
+    query: paginationQuery,
+    event: idCaptureEvent('customerId')
+  }),
+  request('Get Customer By ID', 'GET', '/api/v1/admin/customers/{customerId}', {
+    tokenVar: 'adminToken',
+    event: idCaptureEvent('customerId')
+  }),
+  request('Block Customer', 'PATCH', '/api/v1/admin/customers/{customerId}/block', {
+    tokenVar: 'adminToken',
+    event: idCaptureEvent('customerId')
+  }),
+  request('Unblock Customer', 'PATCH', '/api/v1/admin/customers/{customerId}/unblock', {
+    tokenVar: 'adminToken',
+    event: idCaptureEvent('customerId')
+  }),
+  request('Get All Service Providers', 'GET', '/api/v1/admin/service-providers', {
+    tokenVar: 'adminToken',
+    query: paginationQuery,
+    event: idCaptureEvent('serviceProviderId')
+  }),
+  request('Get Blocked Service Providers', 'GET', '/api/v1/admin/service-providers/blocked', {
+    tokenVar: 'adminToken',
+    query: paginationQuery,
+    event: idCaptureEvent('serviceProviderId')
+  }),
+  request('Get Service Provider By ID', 'GET', '/api/v1/admin/service-providers/{serviceProviderId}', {
+    tokenVar: 'adminToken',
+    event: idCaptureEvent('serviceProviderId')
+  }),
+  request('Block Service Provider', 'PATCH', '/api/v1/admin/service-providers/{serviceProviderId}/block', {
+    tokenVar: 'adminToken',
+    event: idCaptureEvent('serviceProviderId')
+  }),
+  request('Unblock Service Provider', 'PATCH', '/api/v1/admin/service-providers/{serviceProviderId}/unblock', {
+    tokenVar: 'adminToken',
+    event: idCaptureEvent('serviceProviderId')
+  }),
+  request('Get All Venue Providers', 'GET', '/api/v1/admin/venue-providers', {
+    tokenVar: 'adminToken',
+    query: paginationQuery,
+    event: idCaptureEvent('venueProviderId')
+  }),
+  request('Get Blocked Venue Providers', 'GET', '/api/v1/admin/venue-providers/blocked', {
+    tokenVar: 'adminToken',
+    query: paginationQuery,
+    event: idCaptureEvent('venueProviderId')
+  }),
+  request('Get Venue Provider By ID', 'GET', '/api/v1/admin/venue-providers/{venueProviderId}', {
+    tokenVar: 'adminToken',
+    event: idCaptureEvent('venueProviderId')
+  }),
+  request('Block Venue Provider', 'PATCH', '/api/v1/admin/venue-providers/{venueProviderId}/block', {
+    tokenVar: 'adminToken',
+    event: idCaptureEvent('venueProviderId')
+  }),
+  request('Unblock Venue Provider', 'PATCH', '/api/v1/admin/venue-providers/{venueProviderId}/unblock', {
+    tokenVar: 'adminToken',
+    event: idCaptureEvent('venueProviderId')
+  })
+]);
+
 const adminBookings = folder('Bookings', [
   request('Get Booking By ID', 'GET', '/api/v1/bookings/{bookingId}', {
     tokenVar: 'adminToken'
@@ -958,6 +1030,75 @@ const superAdminModeration = folder('Moderation', [
   }),
   request('Reject Service', 'PATCH', '/api/v1/admin/services/{serviceId}/reject', {
     tokenVar: 'superAdminToken'
+  })
+]);
+
+const superAdminUsers = folder('Users', [
+  request('Get All Customers', 'GET', '/api/v1/admin/customers', {
+    tokenVar: 'superAdminToken',
+    query: paginationQuery,
+    event: idCaptureEvent('customerId')
+  }),
+  request('Get Blocked Customers', 'GET', '/api/v1/admin/customers/blocked', {
+    tokenVar: 'superAdminToken',
+    query: paginationQuery,
+    event: idCaptureEvent('customerId')
+  }),
+  request('Get Customer By ID', 'GET', '/api/v1/admin/customers/{customerId}', {
+    tokenVar: 'superAdminToken',
+    event: idCaptureEvent('customerId')
+  }),
+  request('Block Customer', 'PATCH', '/api/v1/admin/customers/{customerId}/block', {
+    tokenVar: 'superAdminToken',
+    event: idCaptureEvent('customerId')
+  }),
+  request('Unblock Customer', 'PATCH', '/api/v1/admin/customers/{customerId}/unblock', {
+    tokenVar: 'superAdminToken',
+    event: idCaptureEvent('customerId')
+  }),
+  request('Get All Service Providers', 'GET', '/api/v1/admin/service-providers', {
+    tokenVar: 'superAdminToken',
+    query: paginationQuery,
+    event: idCaptureEvent('serviceProviderId')
+  }),
+  request('Get Blocked Service Providers', 'GET', '/api/v1/admin/service-providers/blocked', {
+    tokenVar: 'superAdminToken',
+    query: paginationQuery,
+    event: idCaptureEvent('serviceProviderId')
+  }),
+  request('Get Service Provider By ID', 'GET', '/api/v1/admin/service-providers/{serviceProviderId}', {
+    tokenVar: 'superAdminToken',
+    event: idCaptureEvent('serviceProviderId')
+  }),
+  request('Block Service Provider', 'PATCH', '/api/v1/admin/service-providers/{serviceProviderId}/block', {
+    tokenVar: 'superAdminToken',
+    event: idCaptureEvent('serviceProviderId')
+  }),
+  request('Unblock Service Provider', 'PATCH', '/api/v1/admin/service-providers/{serviceProviderId}/unblock', {
+    tokenVar: 'superAdminToken',
+    event: idCaptureEvent('serviceProviderId')
+  }),
+  request('Get All Venue Providers', 'GET', '/api/v1/admin/venue-providers', {
+    tokenVar: 'superAdminToken',
+    query: paginationQuery,
+    event: idCaptureEvent('venueProviderId')
+  }),
+  request('Get Blocked Venue Providers', 'GET', '/api/v1/admin/venue-providers/blocked', {
+    tokenVar: 'superAdminToken',
+    query: paginationQuery,
+    event: idCaptureEvent('venueProviderId')
+  }),
+  request('Get Venue Provider By ID', 'GET', '/api/v1/admin/venue-providers/{venueProviderId}', {
+    tokenVar: 'superAdminToken',
+    event: idCaptureEvent('venueProviderId')
+  }),
+  request('Block Venue Provider', 'PATCH', '/api/v1/admin/venue-providers/{venueProviderId}/block', {
+    tokenVar: 'superAdminToken',
+    event: idCaptureEvent('venueProviderId')
+  }),
+  request('Unblock Venue Provider', 'PATCH', '/api/v1/admin/venue-providers/{venueProviderId}/unblock', {
+    tokenVar: 'superAdminToken',
+    event: idCaptureEvent('venueProviderId')
   })
 ]);
 
@@ -1059,8 +1200,14 @@ const collection = {
       eventPlannerBookings,
       eventPlannerSubscriptions
     ]),
-    folder('Admin', [adminAuth, adminModeration, adminBookings]),
-    folder('Super Admin', [superAdminAuth, superAdminAdminUsers, superAdminModeration, superAdminBookings])
+    folder('Admin', [adminAuth, adminUsers, adminModeration, adminBookings]),
+    folder('Super Admin', [
+      superAdminAuth,
+      superAdminAdminUsers,
+      superAdminUsers,
+      superAdminModeration,
+      superAdminBookings
+    ])
   ]
 };
 

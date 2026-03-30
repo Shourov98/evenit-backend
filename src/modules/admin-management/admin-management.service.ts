@@ -1,7 +1,7 @@
 import { PaginationOptions, paginateModel } from '../../common/utils/pagination';
 import { AppError } from '../../common/errors/AppError';
 import { buildAdminOwnerInfo } from '../../common/utils/public-provider';
-import { createDefaultUserSubscription, UserModel } from '../auth/auth.model';
+import { createDefaultUserSubscription, UserModel, UserRole } from '../auth/auth.model';
 import { ServiceProviderServiceModel } from '../service-provider/service-provider.model';
 import { VenueProviderVenueModel } from '../venue-provider/venue-provider.model';
 
@@ -12,6 +12,8 @@ interface ApproverInfo {
 
 const ADMIN_OWNER_SELECT =
   'fullName email role isEmailVerified isBlocked onboarding.serviceProvider onboarding.venueProvider';
+const ADMIN_MANAGED_USER_SELECT =
+  'fullName email role serviceCategories isEmailVerified isBlocked subscription onboarding createdAt updatedAt';
 
 const attachOwners = async <
   TDoc extends {
@@ -52,6 +54,47 @@ const attachOwner = async <
 };
 
 export class AdminManagementService {
+  private static async getUsersByRole(
+    role: Extract<UserRole, 'customer' | 'service_provider' | 'venue_provider'>,
+    pagination: PaginationOptions,
+    extraFilter: Record<string, unknown> = {}
+  ) {
+    return paginateModel(
+      UserModel,
+      {
+        role,
+        ...extraFilter
+      },
+      pagination
+    );
+  }
+
+  private static async getUserByRole(
+    userId: string,
+    role: Extract<UserRole, 'customer' | 'service_provider' | 'venue_provider'>,
+    label: string
+  ) {
+    const user = await UserModel.findOne({ _id: userId, role }).select(ADMIN_MANAGED_USER_SELECT);
+
+    if (!user) {
+      throw new AppError(404, `${label} not found`);
+    }
+
+    return user;
+  }
+
+  private static async setUserBlockedState(
+    userId: string,
+    role: Extract<UserRole, 'customer' | 'service_provider' | 'venue_provider'>,
+    label: string,
+    isBlocked: boolean
+  ) {
+    const user = await this.getUserByRole(userId, role, label);
+    user.isBlocked = isBlocked;
+    await user.save();
+    return user;
+  }
+
   static async createAdmin(payload: { fullName: string; email: string; password: string }) {
     const existing = await UserModel.findOne({ email: payload.email.toLowerCase() });
     if (existing) {
@@ -90,6 +133,66 @@ export class AdminManagementService {
     admin.isBlocked = false;
     await admin.save();
     return admin;
+  }
+
+  static async getCustomers(pagination: PaginationOptions) {
+    return this.getUsersByRole('customer', pagination);
+  }
+
+  static async getBlockedCustomers(pagination: PaginationOptions) {
+    return this.getUsersByRole('customer', pagination, { isBlocked: true });
+  }
+
+  static async getCustomerById(customerId: string) {
+    return this.getUserByRole(customerId, 'customer', 'Customer');
+  }
+
+  static async blockCustomer(customerId: string) {
+    return this.setUserBlockedState(customerId, 'customer', 'Customer', true);
+  }
+
+  static async unblockCustomer(customerId: string) {
+    return this.setUserBlockedState(customerId, 'customer', 'Customer', false);
+  }
+
+  static async getServiceProviders(pagination: PaginationOptions) {
+    return this.getUsersByRole('service_provider', pagination);
+  }
+
+  static async getBlockedServiceProviders(pagination: PaginationOptions) {
+    return this.getUsersByRole('service_provider', pagination, { isBlocked: true });
+  }
+
+  static async getServiceProviderById(serviceProviderId: string) {
+    return this.getUserByRole(serviceProviderId, 'service_provider', 'Service provider');
+  }
+
+  static async blockServiceProvider(serviceProviderId: string) {
+    return this.setUserBlockedState(serviceProviderId, 'service_provider', 'Service provider', true);
+  }
+
+  static async unblockServiceProvider(serviceProviderId: string) {
+    return this.setUserBlockedState(serviceProviderId, 'service_provider', 'Service provider', false);
+  }
+
+  static async getVenueProviders(pagination: PaginationOptions) {
+    return this.getUsersByRole('venue_provider', pagination);
+  }
+
+  static async getBlockedVenueProviders(pagination: PaginationOptions) {
+    return this.getUsersByRole('venue_provider', pagination, { isBlocked: true });
+  }
+
+  static async getVenueProviderById(venueProviderId: string) {
+    return this.getUserByRole(venueProviderId, 'venue_provider', 'Venue provider');
+  }
+
+  static async blockVenueProvider(venueProviderId: string) {
+    return this.setUserBlockedState(venueProviderId, 'venue_provider', 'Venue provider', true);
+  }
+
+  static async unblockVenueProvider(venueProviderId: string) {
+    return this.setUserBlockedState(venueProviderId, 'venue_provider', 'Venue provider', false);
   }
 
   static async getAllVenues(pagination: PaginationOptions) {
