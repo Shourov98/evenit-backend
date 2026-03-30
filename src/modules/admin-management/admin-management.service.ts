@@ -38,6 +38,19 @@ const attachOwners = async <
   });
 };
 
+const attachOwner = async <
+  TDoc extends {
+    ownerId: unknown;
+    toObject(): Record<string, unknown>;
+  }
+>(
+  model: typeof VenueProviderVenueModel | typeof ServiceProviderServiceModel,
+  item: TDoc
+) => {
+  const [populatedItem] = await attachOwners(model, [item]);
+  return populatedItem;
+};
+
 export class AdminManagementService {
   static async createAdmin(payload: { fullName: string; email: string; password: string }) {
     const existing = await UserModel.findOne({ email: payload.email.toLowerCase() });
@@ -139,6 +152,24 @@ export class AdminManagementService {
       ...services,
       data: await attachOwners(ServiceProviderServiceModel, services.data)
     };
+  }
+
+  static async getVenueById(venueId: string) {
+    const venue = await VenueProviderVenueModel.findOne({ _id: venueId, isDeleted: false });
+    if (!venue) {
+      throw new AppError(404, 'Venue not found');
+    }
+
+    return attachOwner(VenueProviderVenueModel, venue);
+  }
+
+  static async getServiceById(serviceId: string) {
+    const service = await ServiceProviderServiceModel.findOne({ _id: serviceId, isDeleted: false });
+    if (!service) {
+      throw new AppError(404, 'Service not found');
+    }
+
+    return attachOwner(ServiceProviderServiceModel, service);
   }
 
   static async approveVenue(venueId: string, approver: ApproverInfo) {

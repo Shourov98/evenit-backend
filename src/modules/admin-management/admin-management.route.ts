@@ -164,6 +164,36 @@ router.get('/venues', validate(approvalRequestsQuerySchema), AdminManagementCont
 
 /**
  * @openapi
+ * /api/v1/admin/venues/{venueId}:
+ *   get:
+ *     tags: [Admin]
+ *     summary: Get one venue for admin moderation
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: venueId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Single venue including owner information
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/VenueResponse'
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Venue not found
+ */
+router.get('/venues/:venueId', validate(venueIdParamSchema), AdminManagementController.getVenueById);
+
+/**
+ * @openapi
  * /api/v1/admin/services:
  *   get:
  *     tags: [Admin]
@@ -202,6 +232,36 @@ router.get('/venues', validate(approvalRequestsQuerySchema), AdminManagementCont
  *         description: Forbidden
  */
 router.get('/services', validate(approvalRequestsQuerySchema), AdminManagementController.getAllServices);
+
+/**
+ * @openapi
+ * /api/v1/admin/services/{serviceId}:
+ *   get:
+ *     tags: [Admin]
+ *     summary: Get one service for admin moderation
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: serviceId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Single service including owner information
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ServiceResponse'
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Service not found
+ */
+router.get('/services/:serviceId', validate(serviceIdParamSchema), AdminManagementController.getServiceById);
 
 /**
  * @openapi

@@ -89,6 +89,24 @@ export class AdminManagementController {
     });
   });
 
+  static getVenueById = catchAsync(async (req: Request, res: Response) => {
+    const venue = await AdminManagementService.getVenueById(req.params.venueId);
+
+    return res.status(200).json({
+      success: true,
+      data: venue
+    });
+  });
+
+  static getServiceById = catchAsync(async (req: Request, res: Response) => {
+    const service = await AdminManagementService.getServiceById(req.params.serviceId);
+
+    return res.status(200).json({
+      success: true,
+      data: service
+    });
+  });
+
   static approveVenue = catchAsync(async (req: Request, res: Response) => {
     const approver = getApprover(req);
     if (!approver) {
