@@ -31,6 +31,71 @@ const router = Router();
  *           example: true
  *         data:
  *           $ref: '#/components/schemas/ServiceEntity'
+ *       example:
+ *         success: true
+ *         data:
+ *           _id: 65f1a9d0f1b2c3d4e5f60718
+ *           ownerId: 65f1a9d0f1b2c3d4e5f60011
+ *           information:
+ *             serviceName: Premium Catering
+ *             category: Catering
+ *             description: Corporate and wedding catering service.
+ *             serviceArea:
+ *               - Dhaka
+ *               - Gazipur
+ *             tags:
+ *               - wedding
+ *               - corporate
+ *           pricing:
+ *             amount: 50000
+ *             pricingType: package
+ *             currency: BDT
+ *             discount:
+ *               type: percentage
+ *               value: 10
+ *           settings:
+ *             amenities:
+ *               deliveryIncluded: true
+ *               setupIncluded: true
+ *               staffIncluded: false
+ *             capacity: 300
+ *           media:
+ *             galleryImages:
+ *               - https://cdn.example.com/service/image-1.jpg
+ *               - https://cdn.example.com/service/image-2.jpg
+ *             videoUrl: https://youtube.com/watch?v=abc123
+ *           availabilityOverrides:
+ *             - date: 2026-04-12
+ *               slots:
+ *                 - hour: 10
+ *                   status: booked
+ *                 - hour: 11
+ *                   status: booked
+ *           publishStatus: published
+ *           approvedBy:
+ *             name: Admin Example
+ *             email: admin@example.com
+ *           approvedAt: 2026-03-30T22:41:09.978Z
+ *           reviews:
+ *             - reviewerName: Jane Doe
+ *               reviewerAvatarUrl: https://cdn.example.com/avatars/jane.jpg
+ *               rating: 5
+ *               comment: Excellent service and presentation.
+ *               createdAt: 2026-03-29T18:30:00.000Z
+ *           isDeleted: false
+ *           createdAt: 2026-03-20T10:00:00.000Z
+ *           updatedAt: 2026-03-30T22:41:09.978Z
+ *           provider:
+ *             _id: 65f1a9d0f1b2c3d4e5f60011
+ *             fullName: Service Provider Example
+ *             role: service_provider
+ *             serviceProvider:
+ *               serviceName: Premium Catering
+ *               serviceCategory: Catering
+ *               serviceDescription: Corporate and wedding catering services
+ *               coverageArea:
+ *                 - Dhaka
+ *                 - Gazipur
  *     PublicVenueListResponse:
  *       $ref: '#/components/schemas/VenueListResponse'
  *     PublicVenueResponse:
@@ -41,6 +106,66 @@ const router = Router();
  *           example: true
  *         data:
  *           $ref: '#/components/schemas/VenueEntity'
+ *       example:
+ *         success: true
+ *         data:
+ *           _id: 65f1a9d0f1b2c3d4e5f60719
+ *           ownerId: 65f1a9d0f1b2c3d4e5f60021
+ *           information:
+ *             venueName: Royal Hall
+ *             venueType: Banquet
+ *             description: Large indoor venue for weddings and corporate events.
+ *             addressLine: Road 12, Dhanmondi
+ *             city: Dhaka
+ *             area: Dhanmondi
+ *           pricing:
+ *             basePrice: 120000
+ *             currency: BDT
+ *             discount:
+ *               type: percentage
+ *               value: 15
+ *             amenities:
+ *               parking: true
+ *               airConditioned: true
+ *               stage: true
+ *           capacity:
+ *             maximumGuests: 500
+ *           media:
+ *             galleryImages:
+ *               - https://cdn.example.com/venue/image-1.jpg
+ *               - https://cdn.example.com/venue/image-2.jpg
+ *             videoUrl: https://youtube.com/watch?v=venue123
+ *           availabilityOverrides:
+ *             - date: 2026-04-18
+ *               slots:
+ *                 - hour: 14
+ *                   status: booked
+ *                 - hour: 15
+ *                   status: booked
+ *           publishStatus: published
+ *           approvedBy:
+ *             name: Admin Example
+ *             email: admin@example.com
+ *           approvedAt: 2026-03-30T22:41:09.978Z
+ *           reviews:
+ *             - reviewerName: John Doe
+ *               reviewerAvatarUrl: https://cdn.example.com/avatars/john.jpg
+ *               rating: 4
+ *               comment: Spacious venue with good amenities.
+ *               createdAt: 2026-03-28T12:00:00.000Z
+ *           isDeleted: false
+ *           createdAt: 2026-03-22T09:00:00.000Z
+ *           updatedAt: 2026-03-30T22:41:09.978Z
+ *           provider:
+ *             _id: 65f1a9d0f1b2c3d4e5f60021
+ *             fullName: Venue Provider Example
+ *             role: venue_provider
+ *             venueProvider:
+ *               businessName: Royal Hall
+ *               businessType: company
+ *               legalBusinessName: Royal Hall Ltd
+ *               businessMail: business@royalhall.com
+ *               businessPhoneNo: +8801712345678
  *     PublicEventPlannerListResponse:
  *       $ref: '#/components/schemas/EventPlannerListResponse'
  *     PublicEventPlannerResponse:
@@ -51,6 +176,42 @@ const router = Router();
  *           example: true
  *         data:
  *           $ref: '#/components/schemas/EventPlannerEntity'
+ *       example:
+ *         success: true
+ *         data:
+ *           _id: 65f1a9d0f1b2c3d4e5f60077
+ *           fullName: Premium Wedding & Event Planner
+ *           email: planner@example.com
+ *           role: event_planner
+ *           serviceCategories:
+ *             - wedding
+ *             - corporate
+ *           isEmailVerified: true
+ *           onboarding:
+ *             verification:
+ *               businessType: company
+ *               companyName: Events Ltd
+ *               nationalIdOrTradeLicenseUrl: https://cdn.example.com/trade-license.pdf
+ *             stripeAccountId: acct_event_planner_123
+ *             eventProvider:
+ *               _id: 65f1a9d0f1b2c3d4e5f60077
+ *               fullName: Premium Wedding & Event Planner
+ *               email: planner@example.com
+ *               profileInfo:
+ *                 name: Premium Wedding & Event Planner
+ *                 description: Wedding and corporate event planning
+ *                 coverageArea:
+ *                   - Dhaka
+ *                   - Chattogram
+ *                 address: Banani, Dhaka
+ *                 verification:
+ *                   businessType: company
+ *                   companyName: Events Ltd
+ *                   nationalIdOrTradeLicenseFiles:
+ *                     - https://cdn.example.com/trade-license.pdf
+ *             submittedAt: 2026-03-20T10:00:00.000Z
+ *           createdAt: 2026-03-19T08:00:00.000Z
+ *           updatedAt: 2026-03-30T22:41:09.978Z
  */
 
 /**
@@ -85,6 +246,54 @@ const router = Router();
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/PublicServiceListResponse'
+ *             example:
+ *               success: true
+ *               meta:
+ *                 page: 1
+ *                 limit: 10
+ *                 total: 1
+ *                 totalPages: 1
+ *                 hasNextPage: false
+ *                 hasPrevPage: false
+ *               data:
+ *                 - _id: 65f1a9d0f1b2c3d4e5f60718
+ *                   ownerId: 65f1a9d0f1b2c3d4e5f60011
+ *                   information:
+ *                     serviceName: Premium Catering
+ *                     category: Catering
+ *                     description: Corporate and wedding catering service.
+ *                     serviceArea:
+ *                       - Dhaka
+ *                       - Gazipur
+ *                     tags:
+ *                       - wedding
+ *                       - corporate
+ *                   pricing:
+ *                     amount: 50000
+ *                     pricingType: package
+ *                     currency: BDT
+ *                   settings:
+ *                     amenities:
+ *                       deliveryIncluded: true
+ *                       setupIncluded: true
+ *                     capacity: 300
+ *                   media:
+ *                     galleryImages:
+ *                       - https://cdn.example.com/service/image-1.jpg
+ *                   availabilityOverrides: []
+ *                   publishStatus: published
+ *                   approvedBy:
+ *                     name: Admin Example
+ *                     email: admin@example.com
+ *                   approvedAt: 2026-03-30T22:41:09.978Z
+ *                   reviews: []
+ *                   isDeleted: false
+ *                   createdAt: 2026-03-20T10:00:00.000Z
+ *                   updatedAt: 2026-03-30T22:41:09.978Z
+ *                   provider:
+ *                     _id: 65f1a9d0f1b2c3d4e5f60011
+ *                     fullName: Service Provider Example
+ *                     role: service_provider
  *       400:
  *         description: Invalid pagination or sorting query
  *         content:
@@ -161,6 +370,50 @@ router.get('/services/:serviceId', validate(serviceIdParamSchema), PublicControl
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/PublicVenueListResponse'
+ *             example:
+ *               success: true
+ *               meta:
+ *                 page: 1
+ *                 limit: 10
+ *                 total: 1
+ *                 totalPages: 1
+ *                 hasNextPage: false
+ *                 hasPrevPage: false
+ *               data:
+ *                 - _id: 65f1a9d0f1b2c3d4e5f60719
+ *                   ownerId: 65f1a9d0f1b2c3d4e5f60021
+ *                   information:
+ *                     venueName: Royal Hall
+ *                     venueType: Banquet
+ *                     description: Large indoor venue for weddings and corporate events.
+ *                     addressLine: Road 12, Dhanmondi
+ *                     city: Dhaka
+ *                     area: Dhanmondi
+ *                   pricing:
+ *                     basePrice: 120000
+ *                     currency: BDT
+ *                     amenities:
+ *                       parking: true
+ *                       airConditioned: true
+ *                   capacity:
+ *                     maximumGuests: 500
+ *                   media:
+ *                     galleryImages:
+ *                       - https://cdn.example.com/venue/image-1.jpg
+ *                   availabilityOverrides: []
+ *                   publishStatus: published
+ *                   approvedBy:
+ *                     name: Admin Example
+ *                     email: admin@example.com
+ *                   approvedAt: 2026-03-30T22:41:09.978Z
+ *                   reviews: []
+ *                   isDeleted: false
+ *                   createdAt: 2026-03-22T09:00:00.000Z
+ *                   updatedAt: 2026-03-30T22:41:09.978Z
+ *                   provider:
+ *                     _id: 65f1a9d0f1b2c3d4e5f60021
+ *                     fullName: Venue Provider Example
+ *                     role: venue_provider
  *       400:
  *         description: Invalid pagination or sorting query
  *         content:
@@ -237,6 +490,33 @@ router.get('/venues/:venueId', validate(venueIdParamSchema), PublicController.ge
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/PublicEventPlannerListResponse'
+ *             example:
+ *               success: true
+ *               meta:
+ *                 page: 1
+ *                 limit: 10
+ *                 total: 1
+ *                 totalPages: 1
+ *                 hasNextPage: false
+ *                 hasPrevPage: false
+ *               data:
+ *                 - _id: 65f1a9d0f1b2c3d4e5f60077
+ *                   fullName: Premium Wedding & Event Planner
+ *                   email: planner@example.com
+ *                   role: event_planner
+ *                   serviceCategories:
+ *                     - wedding
+ *                     - corporate
+ *                   isEmailVerified: true
+ *                   onboarding:
+ *                     eventProvider:
+ *                       profileInfo:
+ *                         name: Premium Wedding & Event Planner
+ *                         coverageArea:
+ *                           - Dhaka
+ *                           - Chattogram
+ *                   createdAt: 2026-03-19T08:00:00.000Z
+ *                   updatedAt: 2026-03-30T22:41:09.978Z
  *       400:
  *         description: Invalid pagination or sorting query
  *         content:
