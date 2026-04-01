@@ -41,4 +41,27 @@ describe('user subscription defaults', () => {
     expect(subscription.payment.status).toBe('paid');
     expect(subscription.payment.paidAt).toEqual(new Date('2026-03-27T00:00:00.000Z'));
   });
+
+  it('replaces legacy payment config with the role defaults while preserving payment state', () => {
+    const subscription = hydrateUserSubscription('customer', {
+      plan: 'venue_provider_plan',
+      status: 'subscribed',
+      activatedAt: new Date('2026-03-27T00:00:00.000Z'),
+      payment: {
+        amount: 999,
+        currency: 'BDT',
+        billingCycle: 'yearly',
+        status: 'paid',
+        paidAt: new Date('2026-03-28T00:00:00.000Z')
+      }
+    });
+
+    expect(subscription.plan).toBe('customer_plan');
+    expect(subscription.status).toBe('subscribed');
+    expect(subscription.payment.amount).toBe(500);
+    expect(subscription.payment.currency).toBe('GBP');
+    expect(subscription.payment.billingCycle).toBe('monthly');
+    expect(subscription.payment.status).toBe('paid');
+    expect(subscription.payment.paidAt).toEqual(new Date('2026-03-28T00:00:00.000Z'));
+  });
 });

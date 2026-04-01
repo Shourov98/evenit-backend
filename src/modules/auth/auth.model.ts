@@ -158,12 +158,14 @@ export const hydrateUserSubscription = (
   const defaults = createDefaultUserSubscription(role);
   const payment = {
     ...defaults.payment,
-    ...(subscription?.payment ?? {})
+    status: subscription?.payment?.status ?? defaults.payment.status,
+    paidAt: subscription?.payment?.paidAt
   };
 
   return {
     ...defaults,
-    ...(subscription ?? {}),
+    status: subscription?.status ?? defaults.status,
+    activatedAt: subscription?.activatedAt,
     payment
   };
 };
