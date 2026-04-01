@@ -48,4 +48,23 @@ export class UploadController {
       data: uploaded
     });
   });
+
+  static uploadProfileImage = catchAsync(async (req: Request, res: Response) => {
+    if (!req.user?.userId || !req.user?.role) {
+      throw new AppError(401, 'Unauthorized');
+    }
+
+    const file = req.file;
+    if (!file) {
+      throw new AppError(400, 'Profile image must be sent using the image field');
+    }
+
+    const uploaded = await UploadService.uploadProfileImage(req.user.userId, req.user.role, file);
+
+    return res.status(201).json({
+      success: true,
+      message: 'Profile image uploaded successfully',
+      data: uploaded
+    });
+  });
 }

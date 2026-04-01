@@ -36,6 +36,7 @@ export const authenticateToken = async (token: string): Promise<AuthenticatedUse
       role: user.role,
       serviceCategories: user.serviceCategories,
       isBlocked: user.isBlocked,
+      profileImage: user.profileImage ?? null,
       subscription: user.subscription,
       onboarding: user.onboarding ?? null
     };
@@ -47,4 +48,3 @@ export const authenticateToken = async (token: string): Promise<AuthenticatedUse
     throw new AppError(401, 'Unauthorized: invalid token');
   }
 };
-

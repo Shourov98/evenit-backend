@@ -116,6 +116,11 @@ export interface IUserSubscription {
   payment: IUserSubscriptionPayment;
 }
 
+export interface IUserProfileImage {
+  url: string;
+  publicId: string;
+}
+
 export interface IUserSubscriptionInput
   extends Partial<Omit<IUserSubscription, 'payment'>> {
   payment?: Partial<IUserSubscriptionPayment>;
@@ -179,6 +184,7 @@ export interface IUser extends Document {
   isEmailVerified: boolean;
   isBlocked: boolean;
   subscription: IUserSubscription;
+  profileImage?: IUserProfileImage;
   onboarding?: IProviderOnboarding;
   comparePassword(candidate: string): Promise<boolean>;
 }
@@ -487,6 +493,22 @@ const userSubscriptionSchema = new Schema<IUserSubscription>(
   { _id: false }
 );
 
+const userProfileImageSchema = new Schema<IUserProfileImage>(
+  {
+    url: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    publicId: {
+      type: String,
+      required: true,
+      trim: true
+    }
+  },
+  { _id: false }
+);
+
 const userSchema = new Schema<IUser>(
   {
     fullName: {
@@ -534,6 +556,9 @@ const userSchema = new Schema<IUser>(
       default: function defaultSubscription(this: IUser) {
         return createDefaultUserSubscription(this.role ?? 'customer');
       }
+    },
+    profileImage: {
+      type: userProfileImageSchema
     },
     onboarding: {
       type: providerOnboardingSchema

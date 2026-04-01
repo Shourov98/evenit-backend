@@ -11,9 +11,9 @@ interface ApproverInfo {
 }
 
 const ADMIN_OWNER_SELECT =
-  'fullName email role isEmailVerified isBlocked onboarding.serviceProvider onboarding.venueProvider';
+  'fullName email role isEmailVerified isBlocked profileImage onboarding.serviceProvider onboarding.venueProvider';
 const ADMIN_MANAGED_USER_SELECT =
-  'fullName email role serviceCategories isEmailVerified isBlocked subscription onboarding createdAt updatedAt';
+  'fullName email role serviceCategories isEmailVerified isBlocked profileImage subscription onboarding createdAt updatedAt';
 
 const attachOwners = async <
   TDoc extends {

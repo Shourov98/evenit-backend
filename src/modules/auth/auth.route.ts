@@ -49,6 +49,15 @@ const router = Router();
  *         isEmailVerified:
  *           type: boolean
  *           example: false
+ *         profileImage:
+ *           nullable: true
+ *           type: object
+ *           properties:
+ *             url:
+ *               type: string
+ *               format: uri
+ *             publicId:
+ *               type: string
  *         subscription:
  *           type: object
  *           properties:

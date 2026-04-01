@@ -34,6 +34,7 @@ export class AuthController {
           role: user.role,
           serviceCategories: user.serviceCategories,
           isEmailVerified: user.isEmailVerified,
+          profileImage: user.profileImage ?? null,
           subscription: user.subscription,
           onboarding: user.onboarding ?? null
         }
@@ -77,6 +78,7 @@ export class AuthController {
           role: user.role,
           serviceCategories: user.serviceCategories,
           isEmailVerified: user.isEmailVerified,
+          profileImage: user.profileImage ?? null,
           subscription: user.subscription,
           onboarding: user.onboarding ?? null
         }
@@ -107,6 +109,7 @@ export class AuthController {
           role: user.role,
           serviceCategories: user.serviceCategories,
           isEmailVerified: user.isEmailVerified,
+          profileImage: user.profileImage ?? null,
           subscription: user.subscription,
           onboarding: user.onboarding ?? null
         }
@@ -137,6 +140,7 @@ export class AuthController {
           role: user.role,
           serviceCategories: user.serviceCategories,
           isEmailVerified: user.isEmailVerified,
+          profileImage: user.profileImage ?? null,
           subscription: user.subscription,
           onboarding: user.onboarding ?? null
         }
@@ -196,6 +200,7 @@ export class AuthController {
           role: user.role,
           serviceCategories: user.serviceCategories,
           isEmailVerified: user.isEmailVerified,
+          profileImage: user.profileImage ?? null,
           onboarding: user.onboarding ?? null
         }
       }
@@ -218,6 +223,7 @@ export class AuthController {
           role: user.role,
           serviceCategories: user.serviceCategories,
           isEmailVerified: user.isEmailVerified,
+          profileImage: user.profileImage ?? null,
           onboarding: user.onboarding ?? null
         }
       }
