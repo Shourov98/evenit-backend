@@ -12,4 +12,13 @@ export class UsersController {
     const result = await UsersService.getAll();
     return res.status(200).json({ success: true, data: result });
   });
+
+  static getProfile = catchAsync(async (req: Request, res: Response) => {
+    const result = await UsersService.getProfile(req.params.userId);
+    return res.status(200).json({
+      success: true,
+      message: 'User profile retrieved successfully',
+      data: result
+    });
+  });
 }
