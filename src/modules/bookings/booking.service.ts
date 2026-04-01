@@ -19,7 +19,7 @@ type CreateBookingPayload = {
 
 type BookingStatusFilter = 'pending' | 'approved' | 'rejected' | 'completed' | 'confirmed' | 'cancelled';
 
-const activeBookingStatuses = ['pending', 'approved', 'confirmed', 'completed'] as const;
+const activeBookingStatuses = ['pending', 'approved', 'confirmed'] as const;
 
 const ensureObjectId = (id: string, label: string): void => {
   if (!isValidObjectId(id)) {
@@ -82,6 +82,17 @@ const applyDiscount = (
 
 const parseTimeSlotHour = (timeSlot: string): number => Number.parseInt(timeSlot.split(':')[0] || '', 10);
 
+const getCurrentUtcDate = (): string => new Date().toISOString().slice(0, 10);
+
+export const isPastBookingDate = (bookingDate: string): boolean => bookingDate < getCurrentUtcDate();
+
+export const buildReservedSlots = (
+  targetType: CreateBookingPayload['targetType'],
+  targetId: string,
+  bookingDate: string,
+  timeSlots: string[]
+): string[] => timeSlots.map((timeSlot) => `${targetType}:${targetId}:${bookingDate}:${timeSlot}`);
+
 const ensureVenueAvailability = (venue: IVenue, bookingDate: string, timeSlots: string[]): void => {
   const override = venue.availabilityOverrides.find((item) => item.date === bookingDate);
   if (!override) {
@@ -142,6 +153,10 @@ export class BookingService {
     ensureObjectId(customerId, 'customerId');
     ensureObjectId(payload.targetId, 'targetId');
 
+    if (isPastBookingDate(payload.bookingDate)) {
+      throw new AppError(400, 'bookingDate cannot be in the past');
+    }
+
     const customer = await UserModel.findById(customerId);
     if (!customer || customer.role !== 'customer') {
       throw new AppError(403, 'Only customers can create bookings');
@@ -164,7 +179,7 @@ export class BookingService {
 
     let providerId: Types.ObjectId;
     let subtotal = 0;
-    let currency = 'BDT';
+    let currency = customer.subscription.payment.currency;
 
     if (payload.targetType === 'venue') {
       const venue = await VenueProviderVenueModel.findOne({
@@ -210,7 +225,7 @@ export class BookingService {
 
       providerId = eventPlanner._id as Types.ObjectId;
       subtotal = 0;
-      currency = 'BDT';
+      currency = customer.subscription.payment.currency;
     }
 
     const conflictingBookings = await BookingModel.find({
@@ -229,29 +244,39 @@ export class BookingService {
     const taxAmount = 0;
     const totalAmount = Number((subtotal + taxAmount).toFixed(2));
 
-    return BookingModel.create({
-      customerId,
-      providerId,
-      targetType: payload.targetType,
-      targetId: payload.targetId,
-      bookingDate: payload.bookingDate,
-      timeSlots,
-      durationHours,
-      location: payload.location,
-      specialInstructions: payload.specialInstructions,
-      pricing: {
-        unitAmount: Number((subtotal / durationHours).toFixed(2)),
-        subtotal,
-        taxAmount,
-        platformFeeAmount,
-        totalAmount,
-        currency: currency.toUpperCase()
-      },
-      status: 'pending',
-      payment: {
-        status: 'covered_by_subscription'
+    try {
+      return await BookingModel.create({
+        customerId,
+        providerId,
+        targetType: payload.targetType,
+        targetId: payload.targetId,
+        reservedSlots: buildReservedSlots(payload.targetType, payload.targetId, payload.bookingDate, timeSlots),
+        bookingDate: payload.bookingDate,
+        timeSlots,
+        durationHours,
+        location: payload.location,
+        specialInstructions: payload.specialInstructions,
+        pricing: {
+          unitAmount: Number((subtotal / durationHours).toFixed(2)),
+          subtotal,
+          taxAmount,
+          platformFeeAmount,
+          totalAmount,
+          currency: currency.toUpperCase()
+        },
+        status: 'pending',
+        payment: {
+          status: 'covered_by_subscription'
+        }
+      });
+    } catch (error) {
+      const duplicateKeyError = error as { code?: number };
+      if (duplicateKeyError?.code === 11000) {
+        throw new AppError(409, 'One or more selected time slots are already booked');
       }
-    });
+
+      throw error;
+    }
   }
 
   static async getMyBookings(customerId: string, pagination: PaginationOptions, status?: BookingStatusFilter) {

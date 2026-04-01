@@ -14,6 +14,7 @@ export interface IBooking extends Document {
   providerId: Types.ObjectId;
   targetType: BookingTargetType;
   targetId: Types.ObjectId;
+  reservedSlots: string[];
   bookingDate: string;
   timeSlots: string[];
   durationHours: number;
@@ -62,6 +63,11 @@ const bookingSchema = new Schema<IBooking>(
       type: Schema.Types.ObjectId,
       required: true,
       index: true
+    },
+    reservedSlots: {
+      type: [String],
+      required: true,
+      default: []
     },
     bookingDate: {
       type: String,
@@ -139,6 +145,15 @@ const bookingSchema = new Schema<IBooking>(
 bookingSchema.index({ customerId: 1, createdAt: -1 });
 bookingSchema.index({ providerId: 1, createdAt: -1 });
 bookingSchema.index({ targetType: 1, targetId: 1, bookingDate: 1 });
+bookingSchema.index(
+  { reservedSlots: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      status: { $in: ['pending', 'approved', 'confirmed'] }
+    }
+  }
+);
 
 export const BookingModel: Model<IBooking> =
   (models.Booking as Model<IBooking>) || model<IBooking>('Booking', bookingSchema);
