@@ -141,6 +141,24 @@ const paginationQuery = [
 
 const bookingListQuery = [...paginationQuery, { key: 'status', value: 'pending' }];
 
+const buildOrderChatFolder = (tokenVar, actorLabel) =>
+  folder('Order Chat', [
+    request(`Get ${actorLabel} Order Chat Messages`, 'GET', '/api/v1/order-chats/{bookingId}/messages', {
+      tokenVar,
+      query: [
+        { key: 'page', value: '1' },
+        { key: 'limit', value: '50' }
+      ]
+    }),
+    request(`Send ${actorLabel} Order Chat Message`, 'POST', '/api/v1/order-chats/{bookingId}/messages', {
+      tokenVar,
+      contentType: 'application/json',
+      body: jsonBody({
+        content: 'Hello, I want to confirm the booking details.'
+      })
+    })
+  ]);
+
 const customerAuth = folder('Auth', [
   request('Register Customer', 'POST', '/api/v1/auth/register', {
     contentType: 'application/json',
@@ -269,6 +287,8 @@ const customerSubscriptions = folder('Subscriptions', [
     })
   })
 ]);
+
+const customerOrderChat = buildOrderChatFolder('customerToken', 'Customer');
 
 const serviceProviderAuth = folder('Auth', [
   request('Register Service Provider', 'POST', '/api/v1/auth/register', {
@@ -477,6 +497,8 @@ const serviceProviderSubscriptions = folder('Subscriptions', [
   })
 ]);
 
+const serviceProviderOrderChat = buildOrderChatFolder('serviceProviderToken', 'Service Provider');
+
 const venueProviderAuth = folder('Auth', [
   request('Register Venue Provider', 'POST', '/api/v1/auth/register', {
     contentType: 'application/json',
@@ -674,6 +696,8 @@ const venueProviderSubscriptions = folder('Subscriptions', [
   })
 ]);
 
+const venueProviderOrderChat = buildOrderChatFolder('venueProviderToken', 'Venue Provider');
+
 const eventPlannerAuth = folder('Auth', [
   request('Register Event Planner', 'POST', '/api/v1/auth/register', {
     contentType: 'application/json',
@@ -812,6 +836,8 @@ const eventPlannerSubscriptions = folder('Subscriptions', [
     })
   })
 ]);
+
+const eventPlannerOrderChat = buildOrderChatFolder('eventPlannerToken', 'Event Planner');
 
 const adminAuth = folder('Auth', [
   request('Login Admin Or Super Admin', 'POST', '/api/v1/auth/admin/login', {
@@ -1239,12 +1265,13 @@ const collection = {
   variable: variables,
   item: [
     publicApis,
-    folder('Customer', [customerAuth, customerBookings, customerSubscriptions]),
+    folder('Customer', [customerAuth, customerBookings, customerOrderChat, customerSubscriptions]),
     folder('Service Provider', [
       serviceProviderAuth,
       serviceProviderServices,
       serviceProviderUploads,
       serviceProviderBookings,
+      serviceProviderOrderChat,
       serviceProviderSubscriptions
     ]),
     folder('Venue Provider', [
@@ -1252,6 +1279,7 @@ const collection = {
       venueProviderVenues,
       venueProviderUploads,
       venueProviderBookings,
+      venueProviderOrderChat,
       venueProviderSubscriptions
     ]),
     folder('Event Planner', [
@@ -1259,6 +1287,7 @@ const collection = {
       eventPlannerPublic,
       eventPlannerUploads,
       eventPlannerBookings,
+      eventPlannerOrderChat,
       eventPlannerSubscriptions
     ]),
     folder('Admin', [adminAuth, adminUsers, adminModeration, adminBookings]),

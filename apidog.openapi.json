@@ -4988,6 +4988,105 @@
         }
       }
     },
+    "/api/v1/order-chats/{bookingId}/messages": {
+      "get": {
+        "tags": [
+          "Order Chat"
+        ],
+        "summary": "Get chat history for a booking",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "bookingId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chat history returned"
+          },
+          "403": {
+            "description": "User is not part of this booking"
+          },
+          "404": {
+            "description": "Booking not found"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Order Chat"
+        ],
+        "summary": "Send a message for a booking",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "bookingId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "content"
+                ],
+                "properties": {
+                  "content": {
+                    "type": "string",
+                    "example": "Can we confirm the setup timing?"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Message sent"
+          },
+          "403": {
+            "description": "User is not part of this booking"
+          },
+          "404": {
+            "description": "Booking not found"
+          }
+        }
+      }
+    },
     "/api/v1/public/services": {
       "get": {
         "tags": [
@@ -6254,6 +6353,10 @@
     {
       "name": "EventPlanner",
       "description": "Public listing of verified event providers"
+    },
+    {
+      "name": "Order Chat",
+      "description": "Realtime chat between booking customer and provider"
     },
     {
       "name": "Public",

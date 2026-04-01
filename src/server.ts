@@ -4,8 +4,10 @@ import { app } from './app/app';
 import { env } from './config/env';
 import { connectDatabase } from './config/database';
 import { seedAdminUser } from './modules/auth/admin-seed';
+import { initializeSocketServer } from './socket';
 
 const server = http.createServer(app);
+initializeSocketServer(server);
 
 const start = async (): Promise<void> => {
   await connectDatabase(env.MONGO_URI);
