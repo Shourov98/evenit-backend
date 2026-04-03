@@ -551,7 +551,6 @@ const venueProviderAuth = folder('Auth', [
       _id: '65f1a9d0f1b2c3d4e5f60003',
       fullName: 'Venue Provider Example',
       email: 'venue.provider@example.com',
-      stripeAccountId: 'acct_venue_provider_123',
       businessName: 'Royal Hall',
       businessType: 'company',
       legalBusinessName: 'Royal Hall Ltd',
@@ -750,7 +749,6 @@ const eventPlannerAuth = folder('Auth', [
       _id: '65f1a9d0f1b2c3d4e5f60002',
       fullName: 'Event Planner Example',
       email: 'event.planner@example.com',
-      stripeAccountId: 'acct_event_planner_123',
       profileInfo: {
         name: 'Event Planner Example',
         description: 'Wedding and corporate event planning',

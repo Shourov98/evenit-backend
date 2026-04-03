@@ -343,7 +343,6 @@
           "_id",
           "fullName",
           "email",
-          "stripeAccountId",
           "profileInfo"
         ],
         "properties": {
@@ -408,7 +407,6 @@
           "_id",
           "fullName",
           "email",
-          "stripeAccountId",
           "businessName",
           "businessType",
           "legalBusinessName",
@@ -534,7 +532,6 @@
           "_id",
           "fullName",
           "email",
-          "stripeAccountId",
           "profileInfo"
         ],
         "properties": {
@@ -566,7 +563,6 @@
           "_id",
           "fullName",
           "email",
-          "stripeAccountId",
           "businessName",
           "businessType",
           "businessMail",

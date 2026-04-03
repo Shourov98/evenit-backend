@@ -215,7 +215,7 @@ const router = Router();
  *           $ref: '#/components/schemas/ServiceProviderVerificationInput'
  *     EventPlannerOnboardingInput:
  *       type: object
- *       required: [_id, fullName, email, stripeAccountId, profileInfo]
+ *       required: [_id, fullName, email, profileInfo]
  *       properties:
  *         _id:
  *           type: string
@@ -252,7 +252,7 @@ const router = Router();
  *               $ref: '#/components/schemas/ServiceProviderVerificationInput'
  *     VenueProviderOnboardingInput:
  *       type: object
- *       required: [_id, fullName, email, stripeAccountId, businessName, businessType, legalBusinessName, registrationNo, businessMail, businessPhoneNo]
+ *       required: [_id, fullName, email, businessName, businessType, legalBusinessName, registrationNo, businessMail, businessPhoneNo]
  *       properties:
  *         _id:
  *           type: string
@@ -330,7 +330,7 @@ const router = Router();
  *           example: []
  *     EventPlannerOnboardingRequest:
  *       type: object
- *       required: [_id, fullName, email, stripeAccountId, profileInfo]
+ *       required: [_id, fullName, email, profileInfo]
  *       properties:
  *         _id:
  *           type: string
@@ -349,7 +349,7 @@ const router = Router();
  *           $ref: '#/components/schemas/EventPlannerOnboardingInput'
  *     VenueProviderOnboardingRequest:
  *       type: object
- *       required: [_id, fullName, email, stripeAccountId, businessName, businessType, businessMail, businessPhoneNo]
+ *       required: [_id, fullName, email, businessName, businessType, businessMail, businessPhoneNo]
  *       properties:
  *         _id:
  *           type: string

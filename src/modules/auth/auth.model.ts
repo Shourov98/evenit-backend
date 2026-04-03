@@ -50,7 +50,7 @@ export interface IVenueProviderOnboarding {
   _id: string;
   fullName: string;
   email: string;
-  stripeAccountId: string;
+  stripeAccountId?: string;
   businessName: string;
   businessType: BusinessType;
   legalBusinessName?: string;
@@ -303,7 +303,6 @@ const venueProviderOnboardingSchema = new Schema<IVenueProviderOnboarding>(
     },
     stripeAccountId: {
       type: String,
-      required: true,
       trim: true
     },
     businessName: {

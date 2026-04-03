@@ -127,7 +127,8 @@ const eventProviderDetailsSchema = z.object({
     .string()
     .min(1)
     .max(128)
-    .regex(/^acct_[A-Za-z0-9]+$/, 'stripeAccountId must be a valid Stripe account id'),
+    .regex(/^acct_[A-Za-z0-9]+$/, 'stripeAccountId must be a valid Stripe account id')
+    .optional(),
   profileInfo: z.object({
     name: z.string().min(2).max(120),
     description: z.string().max(2000).optional(),
@@ -159,7 +160,8 @@ const venueProviderDetailsSchema = z.object({
     .string()
     .min(1)
     .max(128)
-    .regex(/^acct_[A-Za-z0-9]+$/, 'stripeAccountId must be a valid Stripe account id'),
+    .regex(/^acct_[A-Za-z0-9]+$/, 'stripeAccountId must be a valid Stripe account id')
+    .optional(),
   businessName: z.string().min(2).max(120),
   businessType: z.enum(['individual', 'company']),
   legalBusinessName: z.string().min(2).max(120).optional(),

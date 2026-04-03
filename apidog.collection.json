@@ -2507,7 +2507,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"_id\": \"65f1a9d0f1b2c3d4e5f60003\",\n  \"fullName\": \"Venue Provider Example\",\n  \"email\": \"venue.provider@example.com\",\n  \"stripeAccountId\": \"acct_venue_provider_123\",\n  \"businessName\": \"Royal Hall\",\n  \"businessType\": \"company\",\n  \"legalBusinessName\": \"Royal Hall Ltd\",\n  \"registrationNo\": \"TR-123456\",\n  \"businessMail\": \"business@royalhall.com\",\n  \"businessPhoneNo\": \"+8801712345678\"\n}",
+                  "raw": "{\n  \"_id\": \"65f1a9d0f1b2c3d4e5f60003\",\n  \"fullName\": \"Venue Provider Example\",\n  \"email\": \"venue.provider@example.com\",\n  \"businessName\": \"Royal Hall\",\n  \"businessType\": \"company\",\n  \"legalBusinessName\": \"Royal Hall Ltd\",\n  \"registrationNo\": \"TR-123456\",\n  \"businessMail\": \"business@royalhall.com\",\n  \"businessPhoneNo\": \"+8801712345678\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -3463,7 +3463,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"_id\": \"65f1a9d0f1b2c3d4e5f60002\",\n  \"fullName\": \"Event Planner Example\",\n  \"email\": \"event.planner@example.com\",\n  \"stripeAccountId\": \"acct_event_planner_123\",\n  \"profileInfo\": {\n    \"name\": \"Event Planner Example\",\n    \"description\": \"Wedding and corporate event planning\",\n    \"coverageArea\": [\n      \"Dhaka\",\n      \"Chattogram\"\n    ],\n    \"address\": \"Banani, Dhaka\",\n    \"verification\": {\n      \"businessType\": \"company\",\n      \"companyName\": \"Events Ltd\",\n      \"nationalIdOrTradeLicenseFiles\": [\n        \"https://cdn.example.com/trade-license.pdf\"\n      ]\n    }\n  }\n}",
+                  "raw": "{\n  \"_id\": \"65f1a9d0f1b2c3d4e5f60002\",\n  \"fullName\": \"Event Planner Example\",\n  \"email\": \"event.planner@example.com\",\n  \"profileInfo\": {\n    \"name\": \"Event Planner Example\",\n    \"description\": \"Wedding and corporate event planning\",\n    \"coverageArea\": [\n      \"Dhaka\",\n      \"Chattogram\"\n    ],\n    \"address\": \"Banani, Dhaka\",\n    \"verification\": {\n      \"businessType\": \"company\",\n      \"companyName\": \"Events Ltd\",\n      \"nationalIdOrTradeLicenseFiles\": [\n        \"https://cdn.example.com/trade-license.pdf\"\n      ]\n    }\n  }\n}",
                   "options": {
                     "raw": {
                       "language": "json"
