@@ -1,7 +1,11 @@
 import { Router } from 'express';
 import { validate } from '../../common/middlewares/validate.middleware';
 import { PublicController } from './public.controller';
-import { eventPlannerIdParamSchema, serviceIdParamSchema, venueIdParamSchema } from './public.schema';
+import {
+  eventPlannerIdParamSchema,
+  serviceIdParamSchema,
+  venueIdParamSchema
+} from './public.schema';
 
 const router = Router();
 
@@ -192,7 +196,6 @@ const router = Router();
  *               businessType: company
  *               companyName: Events Ltd
  *               nationalIdOrTradeLicenseUrl: https://cdn.example.com/trade-license.pdf
- *             stripeAccountId: acct_event_planner_123
  *             eventProvider:
  *               _id: 65f1a9d0f1b2c3d4e5f60077
  *               fullName: Premium Wedding & Event Planner
@@ -300,7 +303,7 @@ const router = Router();
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/PublicErrorResponse'
-*/
+ */
 router.get('/services', PublicController.getPublishedServices);
 
 /**
@@ -336,7 +339,11 @@ router.get('/services', PublicController.getPublishedServices);
  *             schema:
  *               $ref: '#/components/schemas/PublicErrorResponse'
  */
-router.get('/services/:serviceId', validate(serviceIdParamSchema), PublicController.getPublishedServiceById);
+router.get(
+  '/services/:serviceId',
+  validate(serviceIdParamSchema),
+  PublicController.getPublishedServiceById
+);
 
 /**
  * @openapi
@@ -420,7 +427,7 @@ router.get('/services/:serviceId', validate(serviceIdParamSchema), PublicControl
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/PublicErrorResponse'
-*/
+ */
 router.get('/venues', PublicController.getPublishedVenues);
 
 /**
@@ -456,7 +463,11 @@ router.get('/venues', PublicController.getPublishedVenues);
  *             schema:
  *               $ref: '#/components/schemas/PublicErrorResponse'
  */
-router.get('/venues/:venueId', validate(venueIdParamSchema), PublicController.getPublishedVenueById);
+router.get(
+  '/venues/:venueId',
+  validate(venueIdParamSchema),
+  PublicController.getPublishedVenueById
+);
 
 /**
  * @openapi
@@ -523,7 +534,7 @@ router.get('/venues/:venueId', validate(venueIdParamSchema), PublicController.ge
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/PublicErrorResponse'
-*/
+ */
 router.get('/event-planners', PublicController.getPublishedEventPlanners);
 
 /**

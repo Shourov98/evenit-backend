@@ -10,18 +10,22 @@ const fullNameRule = z
     message: 'fullName must include at least first name and last name'
   });
 
-const signupRoles = ['customer', 'service_provider', 'event_planner', 'venue_provider'] as const;
+const signupRoles = [
+  'customer',
+  'service_provider',
+  'event_planner',
+  'venue_provider'
+] as const;
 
 export const registerSchema = z
   .object({
-    body: z
-      .object({
-        fullName: fullNameRule,
-        email: z.string().email(),
-        password: z.string().min(8).max(64),
-        role: z.enum(signupRoles),
-        serviceCategories: z.array(z.string().min(1)).max(20).optional().default([])
-      }),
+    body: z.object({
+      fullName: fullNameRule,
+      email: z.string().email(),
+      password: z.string().min(8).max(64),
+      role: z.enum(signupRoles),
+      serviceCategories: z.array(z.string().min(1)).max(20).optional().default([])
+    }),
     params: z.object({}).optional().default({}),
     query: z.object({}).optional().default({})
   })
@@ -89,11 +93,6 @@ const verificationSchema = z
 
 const onboardingBaseShape = {
   verification: verificationSchema,
-  stripeAccountId: z
-    .string()
-    .min(1)
-    .max(128)
-    .regex(/^acct_[A-Za-z0-9]+$/, 'stripeAccountId must be a valid Stripe account id'),
   businessAddress: z.string().min(3).max(240).optional()
 };
 
@@ -123,12 +122,6 @@ const eventProviderDetailsSchema = z.object({
   _id: z.string().regex(objectIdRegex, 'Invalid _id'),
   fullName: z.string().min(2).max(120),
   email: z.string().email(),
-  stripeAccountId: z
-    .string()
-    .min(1)
-    .max(128)
-    .regex(/^acct_[A-Za-z0-9]+$/, 'stripeAccountId must be a valid Stripe account id')
-    .optional(),
   profileInfo: z.object({
     name: z.string().min(2).max(120),
     description: z.string().max(2000).optional(),
@@ -156,12 +149,6 @@ const venueProviderDetailsSchema = z.object({
   _id: z.string().regex(objectIdRegex, 'Invalid _id'),
   fullName: z.string().min(2).max(120),
   email: z.string().email(),
-  stripeAccountId: z
-    .string()
-    .min(1)
-    .max(128)
-    .regex(/^acct_[A-Za-z0-9]+$/, 'stripeAccountId must be a valid Stripe account id')
-    .optional(),
   businessName: z.string().min(2).max(120),
   businessType: z.enum(['individual', 'company']),
   legalBusinessName: z.string().min(2).max(120).optional(),
@@ -176,12 +163,6 @@ export const submitServiceProviderOnboardingSchema = z.object({
       _id: z.string().regex(objectIdRegex, 'Invalid _id'),
       name: z.string().min(2).max(120),
       email: z.string().email(),
-      stripeAccountId: z
-        .string()
-        .min(1)
-        .max(128)
-        .regex(/^acct_[A-Za-z0-9]+$/, 'stripeAccountId must be a valid Stripe account id')
-        .optional(),
       profileInfo: serviceProviderProfileInfoSchema,
       services: z.array(z.string()).optional().default([])
     })

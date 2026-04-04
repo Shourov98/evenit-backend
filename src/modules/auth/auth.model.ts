@@ -50,7 +50,6 @@ export interface IVenueProviderOnboarding {
   _id: string;
   fullName: string;
   email: string;
-  stripeAccountId?: string;
   businessName: string;
   businessType: BusinessType;
   legalBusinessName?: string;
@@ -74,7 +73,6 @@ export interface IEventProviderOnboarding {
 
 export interface IProviderOnboarding {
   verification: IVerificationInfo;
-  stripeAccountId?: string;
   businessAddress?: string;
   serviceProvider?: IServiceProviderOnboarding;
   eventProvider?: IEventProviderOnboarding;
@@ -121,8 +119,9 @@ export interface IUserProfileImage {
   publicId: string;
 }
 
-export interface IUserSubscriptionInput
-  extends Partial<Omit<IUserSubscription, 'payment'>> {
+export interface IUserSubscriptionInput extends Partial<
+  Omit<IUserSubscription, 'payment'>
+> {
   payment?: Partial<IUserSubscriptionPayment>;
 }
 
@@ -301,10 +300,6 @@ const venueProviderOnboardingSchema = new Schema<IVenueProviderOnboarding>(
       trim: true,
       lowercase: true
     },
-    stripeAccountId: {
-      type: String,
-      trim: true
-    },
     businessName: {
       type: String,
       required: true,
@@ -418,10 +413,6 @@ const providerOnboardingSchema = new Schema<IProviderOnboarding>(
     verification: {
       type: verificationSchema,
       required: true
-    },
-    stripeAccountId: {
-      type: String,
-      trim: true
     },
     businessAddress: {
       type: String,
@@ -578,7 +569,9 @@ userSchema.pre('save', async function preSave(next) {
   return next();
 });
 
-userSchema.methods.comparePassword = async function comparePassword(candidate: string): Promise<boolean> {
+userSchema.methods.comparePassword = async function comparePassword(
+  candidate: string
+): Promise<boolean> {
   return bcrypt.compare(candidate, this.password);
 };
 

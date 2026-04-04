@@ -227,9 +227,6 @@ const router = Router();
  *           type: string
  *           format: email
  *           example: planner@example.com
- *         stripeAccountId:
- *           type: string
- *           example: acct_1Example123456789
  *         profileInfo:
  *           type: object
  *           required: [name, coverageArea, address, verification]
@@ -264,9 +261,6 @@ const router = Router();
  *           type: string
  *           format: email
  *           example: venue@example.com
- *         stripeAccountId:
- *           type: string
- *           example: acct_1Example123456789
  *         businessName:
  *           type: string
  *           example: Royal Hall
@@ -318,9 +312,6 @@ const router = Router();
  *           type: string
  *           format: email
  *           example: marvin@example.com
- *         stripeAccountId:
- *           type: string
- *           example: acct_1Example123456789
  *         profileInfo:
  *           $ref: '#/components/schemas/ServiceProviderProfileInfoInput'
  *         services:
@@ -342,9 +333,6 @@ const router = Router();
  *           type: string
  *           format: email
  *           example: planner@example.com
- *         stripeAccountId:
- *           type: string
- *           example: acct_1Example123456789
  *         profileInfo:
  *           $ref: '#/components/schemas/EventPlannerOnboardingInput'
  *     VenueProviderOnboardingRequest:
@@ -361,9 +349,6 @@ const router = Router();
  *           type: string
  *           format: email
  *           example: venue@example.com
- *         stripeAccountId:
- *           type: string
- *           example: acct_1Example123456789
  *         businessName:
  *           type: string
  *           example: Royal Hall
@@ -518,7 +503,12 @@ router.post('/register', authLimiter, validate(registerSchema), AuthController.r
  *       400:
  *         description: Invalid OTP or validation error
  */
-router.post('/verify-email', authLimiter, validate(verifyEmailOtpSchema), AuthController.verifyEmailOtp);
+router.post(
+  '/verify-email',
+  authLimiter,
+  validate(verifyEmailOtpSchema),
+  AuthController.verifyEmailOtp
+);
 
 /**
  * @openapi
@@ -601,7 +591,12 @@ router.post('/login', authLimiter, validate(loginSchema), AuthController.login);
  *       403:
  *         description: Email not verified or user is not an admin
  */
-router.post('/admin/login', authLimiter, validate(loginSchema), AuthController.adminLogin);
+router.post(
+  '/admin/login',
+  authLimiter,
+  validate(loginSchema),
+  AuthController.adminLogin
+);
 
 /**
  * @openapi
@@ -652,7 +647,12 @@ router.post(
  *       400:
  *         description: Validation error or invalid OTP
  */
-router.post('/reset-password', authLimiter, validate(resetPasswordSchema), AuthController.resetPassword);
+router.post(
+  '/reset-password',
+  authLimiter,
+  validate(resetPasswordSchema),
+  AuthController.resetPassword
+);
 
 /**
  * @openapi

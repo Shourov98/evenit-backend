@@ -23,14 +23,16 @@ interface RegisterPayload {
   fullName: string;
   email: string;
   password: string;
-  role: Extract<UserRole, 'customer' | 'service_provider' | 'event_planner' | 'venue_provider'>;
+  role: Extract<
+    UserRole,
+    'customer' | 'service_provider' | 'event_planner' | 'venue_provider'
+  >;
   serviceCategories: string[];
 }
 
 interface SubmitOnboardingCommonPayload {
   userId: string;
   verification: IVerificationInfo;
-  stripeAccountId?: string;
   businessAddress?: string;
 }
 
@@ -39,7 +41,6 @@ interface SubmitServiceProviderOnboardingPayload {
   _id: string;
   name: string;
   email: string;
-  stripeAccountId?: string;
   profileInfo: IServiceProviderOnboarding['profileInfo'];
   services: string[];
 }
@@ -63,8 +64,13 @@ const sendOtpForPurpose = async (
   }).sort({ createdAt: -1 });
 
   if (existing && existing.resendAvailableAt.getTime() > now.getTime()) {
-    const waitSeconds = Math.ceil((existing.resendAvailableAt.getTime() - now.getTime()) / 1000);
-    throw new AppError(429, `Please wait ${waitSeconds} seconds before requesting another OTP`);
+    const waitSeconds = Math.ceil(
+      (existing.resendAvailableAt.getTime() - now.getTime()) / 1000
+    );
+    throw new AppError(
+      429,
+      `Please wait ${waitSeconds} seconds before requesting another OTP`
+    );
   }
 
   const otp = generateOtpCode();
@@ -99,7 +105,9 @@ const verifyOtp = async (payload: {
   otp: string;
   purpose: OtpPurpose;
 }): Promise<IUser> => {
-  const user = await UserModel.findOne({ email: payload.email.toLowerCase() }).select('+password');
+  const user = await UserModel.findOne({ email: payload.email.toLowerCase() }).select(
+    '+password'
+  );
 
   if (!user) {
     throw new AppError(404, 'User not found');
@@ -139,7 +147,9 @@ const ensureUserSubscription = async (user: IUser): Promise<IUser> => {
 
 export class AuthService {
   private static async authenticateUser(payload: { email: string; password: string }) {
-    const user = await UserModel.findOne({ email: payload.email.toLowerCase() }).select('+password');
+    const user = await UserModel.findOne({ email: payload.email.toLowerCase() }).select(
+      '+password'
+    );
 
     if (!user) {
       throw new AppError(401, 'Invalid credentials');
@@ -191,7 +201,8 @@ export class AuthService {
       email: payload.email,
       password: payload.password,
       role: payload.role,
-      serviceCategories: payload.role === 'service_provider' ? payload.serviceCategories : []
+      serviceCategories:
+        payload.role === 'service_provider' ? payload.serviceCategories : []
     });
 
     const deliveryMode = await sendOtpForPurpose(
@@ -204,8 +215,13 @@ export class AuthService {
     return { user, deliveryMode };
   }
 
-  static async submitServiceProviderOnboarding(payload: SubmitServiceProviderOnboardingPayload) {
-    const user = await AuthService.getUserForOnboarding(payload.userId, 'service_provider');
+  static async submitServiceProviderOnboarding(
+    payload: SubmitServiceProviderOnboardingPayload
+  ) {
+    const user = await AuthService.getUserForOnboarding(
+      payload.userId,
+      'service_provider'
+    );
     if (payload._id !== String(user._id)) {
       throw new AppError(400, '_id must match the authenticated service provider');
     }
@@ -225,7 +241,6 @@ export class AuthService {
         nationalIdOrTradeLicenseUrl:
           payload.profileInfo.verification.nationalIdOrTradeLicenseFiles[0]
       },
-      stripeAccountId: payload.stripeAccountId,
       serviceProvider: {
         _id: payload._id,
         name: payload.name,
@@ -243,7 +258,9 @@ export class AuthService {
     return user;
   }
 
-  static async submitEventProviderOnboarding(payload: SubmitEventProviderOnboardingPayload) {
+  static async submitEventProviderOnboarding(
+    payload: SubmitEventProviderOnboardingPayload
+  ) {
     const user = await AuthService.getUserForOnboarding(payload.userId, 'event_planner');
     if (payload._id !== String(user._id)) {
       throw new AppError(400, '_id must match the authenticated event planner');
@@ -264,7 +281,6 @@ export class AuthService {
         nationalIdOrTradeLicenseUrl:
           payload.profileInfo.verification.nationalIdOrTradeLicenseFiles[0]
       },
-      stripeAccountId: payload.stripeAccountId,
       serviceProvider: undefined,
       eventProvider: {
         _id: payload._id,
@@ -281,7 +297,9 @@ export class AuthService {
     return user;
   }
 
-  static async submitVenueProviderOnboarding(payload: SubmitVenueProviderOnboardingPayload) {
+  static async submitVenueProviderOnboarding(
+    payload: SubmitVenueProviderOnboardingPayload
+  ) {
     const user = await AuthService.getUserForOnboarding(payload.userId, 'venue_provider');
     if (payload._id !== String(user._id)) {
       throw new AppError(400, '_id must match the authenticated venue provider');
@@ -301,14 +319,12 @@ export class AuthService {
         companyName: payload.legalBusinessName,
         nationalIdOrTradeLicenseUrl: payload.registrationNo ?? ''
       },
-      stripeAccountId: payload.stripeAccountId,
       serviceProvider: undefined,
       eventProvider: undefined,
       venueProvider: {
         _id: payload._id,
         fullName: payload.fullName,
         email: payload.email.toLowerCase(),
-        stripeAccountId: payload.stripeAccountId,
         businessName: payload.businessName,
         businessType: payload.businessType,
         legalBusinessName: payload.legalBusinessName,
@@ -368,7 +384,10 @@ export class AuthService {
   static async adminLogin(payload: { email: string; password: string }) {
     const result = await this.authenticateUser(payload);
     if (result.user.role !== 'admin' && result.user.role !== 'super_admin') {
-      throw new AppError(403, 'Only admin or super_admin can use the admin login endpoint');
+      throw new AppError(
+        403,
+        'Only admin or super_admin can use the admin login endpoint'
+      );
     }
 
     return result;
@@ -391,7 +410,11 @@ export class AuthService {
     return { deliveryMode };
   }
 
-  static async resetPassword(payload: { email: string; otp: string; newPassword: string }) {
+  static async resetPassword(payload: {
+    email: string;
+    otp: string;
+    newPassword: string;
+  }) {
     const user = await verifyOtp({
       email: payload.email,
       otp: payload.otp,
