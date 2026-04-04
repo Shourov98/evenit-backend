@@ -122,6 +122,7 @@ const eventProviderDetailsSchema = z.object({
   _id: z.string().regex(objectIdRegex, 'Invalid _id'),
   fullName: z.string().min(2).max(120),
   email: z.string().email(),
+  nidOrTradeLicenseNumber: z.string().min(2).max(50),
   profileInfo: z.object({
     name: z.string().min(2).max(120),
     description: z.string().max(2000).optional(),
@@ -149,6 +150,7 @@ const venueProviderDetailsSchema = z.object({
   _id: z.string().regex(objectIdRegex, 'Invalid _id'),
   fullName: z.string().min(2).max(120),
   email: z.string().email(),
+  nidOrTradeLicenseNumber: z.string().min(2).max(50),
   businessName: z.string().min(2).max(120),
   businessType: z.enum(['individual', 'company']),
   legalBusinessName: z.string().min(2).max(120).optional(),
@@ -163,6 +165,7 @@ export const submitServiceProviderOnboardingSchema = z.object({
       _id: z.string().regex(objectIdRegex, 'Invalid _id'),
       name: z.string().min(2).max(120),
       email: z.string().email(),
+      nidOrTradeLicenseNumber: z.string().min(2).max(50),
       profileInfo: serviceProviderProfileInfoSchema,
       services: z.array(z.string()).optional().default([])
     })

@@ -300,7 +300,7 @@ const router = Router();
  *               example: https://www.youtube.com/watch?v=dQw4w9WgXcQ
  *     ServiceProviderOnboardingRequest:
  *       type: object
- *       required: [_id, name, email, profileInfo]
+ *       required: [_id, name, email, nidOrTradeLicenseNumber, profileInfo]
  *       properties:
  *         _id:
  *           type: string
@@ -312,6 +312,9 @@ const router = Router();
  *           type: string
  *           format: email
  *           example: marvin@example.com
+ *         nidOrTradeLicenseNumber:
+ *           type: string
+ *           example: 1234567890123
  *         profileInfo:
  *           $ref: '#/components/schemas/ServiceProviderProfileInfoInput'
  *         services:
@@ -321,7 +324,7 @@ const router = Router();
  *           example: []
  *     EventPlannerOnboardingRequest:
  *       type: object
- *       required: [_id, fullName, email, profileInfo]
+ *       required: [_id, fullName, email, nidOrTradeLicenseNumber, profileInfo]
  *       properties:
  *         _id:
  *           type: string
@@ -333,11 +336,14 @@ const router = Router();
  *           type: string
  *           format: email
  *           example: planner@example.com
+ *         nidOrTradeLicenseNumber:
+ *           type: string
+ *           example: 1234567890123
  *         profileInfo:
  *           $ref: '#/components/schemas/EventPlannerOnboardingInput'
  *     VenueProviderOnboardingRequest:
  *       type: object
- *       required: [_id, fullName, email, businessName, businessType, businessMail, businessPhoneNo]
+ *       required: [_id, fullName, email, nidOrTradeLicenseNumber, businessName, businessType, businessMail, businessPhoneNo]
  *       properties:
  *         _id:
  *           type: string
@@ -349,6 +355,9 @@ const router = Router();
  *           type: string
  *           format: email
  *           example: venue@example.com
+ *         nidOrTradeLicenseNumber:
+ *           type: string
+ *           example: 1234567890123
  *         businessName:
  *           type: string
  *           example: Royal Hall
@@ -398,7 +407,6 @@ const router = Router();
  *               type: object
  *               nullable: true
  *               example:
- *                 stripeAccountId: acct_1Example123456789
  *                 submittedAt: 2026-03-24T10:30:00.000Z
  *             user:
  *               $ref: '#/components/schemas/AuthUser'

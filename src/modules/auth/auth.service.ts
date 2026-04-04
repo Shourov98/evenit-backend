@@ -41,6 +41,7 @@ interface SubmitServiceProviderOnboardingPayload {
   _id: string;
   name: string;
   email: string;
+  nidOrTradeLicenseNumber: string;
   profileInfo: IServiceProviderOnboarding['profileInfo'];
   services: string[];
 }
@@ -245,6 +246,7 @@ export class AuthService {
         _id: payload._id,
         name: payload.name,
         email: payload.email.toLowerCase(),
+        nidOrTradeLicenseNumber: payload.nidOrTradeLicenseNumber,
         profileInfo: payload.profileInfo,
         services: payload.services
       },
@@ -286,6 +288,7 @@ export class AuthService {
         _id: payload._id,
         fullName: payload.fullName,
         email: payload.email.toLowerCase(),
+        nidOrTradeLicenseNumber: payload.nidOrTradeLicenseNumber,
         profileInfo: payload.profileInfo
       },
       venueProvider: undefined,
@@ -325,6 +328,7 @@ export class AuthService {
         _id: payload._id,
         fullName: payload.fullName,
         email: payload.email.toLowerCase(),
+        nidOrTradeLicenseNumber: payload.nidOrTradeLicenseNumber,
         businessName: payload.businessName,
         businessType: payload.businessType,
         legalBusinessName: payload.legalBusinessName,

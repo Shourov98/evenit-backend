@@ -42,6 +42,7 @@ export interface IServiceProviderOnboarding {
   _id: string;
   name: string;
   email: string;
+  nidOrTradeLicenseNumber: string;
   profileInfo: IServiceProviderProfileInfo;
   services: string[];
 }
@@ -50,6 +51,7 @@ export interface IVenueProviderOnboarding {
   _id: string;
   fullName: string;
   email: string;
+  nidOrTradeLicenseNumber: string;
   businessName: string;
   businessType: BusinessType;
   legalBusinessName?: string;
@@ -62,6 +64,7 @@ export interface IEventProviderOnboarding {
   _id: string;
   fullName: string;
   email: string;
+  nidOrTradeLicenseNumber: string;
   profileInfo: {
     name: string;
     description?: string;
@@ -229,6 +232,13 @@ const serviceProviderOnboardingSchema = new Schema<IServiceProviderOnboarding>(
       trim: true,
       lowercase: true
     },
+    nidOrTradeLicenseNumber: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 2,
+      maxlength: 50
+    },
     profileInfo: {
       serviceName: {
         type: String,
@@ -300,6 +310,13 @@ const venueProviderOnboardingSchema = new Schema<IVenueProviderOnboarding>(
       trim: true,
       lowercase: true
     },
+    nidOrTradeLicenseNumber: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 2,
+      maxlength: 50
+    },
     businessName: {
       type: String,
       required: true,
@@ -359,6 +376,13 @@ const eventProviderOnboardingSchema = new Schema<IEventProviderOnboarding>(
       required: true,
       trim: true,
       lowercase: true
+    },
+    nidOrTradeLicenseNumber: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 2,
+      maxlength: 50
     },
     profileInfo: {
       name: {
