@@ -101,7 +101,9 @@
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/",
-              "host": ["{{baseUrl}}"],
+              "host": [
+                "{{baseUrl}}"
+              ],
               "path": []
             }
           }
@@ -112,8 +114,12 @@
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/health",
-              "host": ["{{baseUrl}}"],
-              "path": ["health"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
             }
           }
         },
@@ -124,8 +130,15 @@
             "description": "Public GET endpoint. No request body. Use query params for pagination and sorting. Returns published services only.",
             "url": {
               "raw": "{{baseUrl}}/api/v1/public/services?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "public", "services"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "public",
+                "services"
+              ],
               "query": [
                 {
                   "key": "page",
@@ -169,8 +182,16 @@
             "description": "Public GET endpoint. No request body. Returns one published service by id.",
             "url": {
               "raw": "{{baseUrl}}/api/v1/public/services/{{serviceId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "public", "services", "{{serviceId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "public",
+                "services",
+                "{{serviceId}}"
+              ]
             }
           },
           "event": [
@@ -196,8 +217,15 @@
             "description": "Public GET endpoint. No request body. Use query params for pagination and sorting. Returns published venues only.",
             "url": {
               "raw": "{{baseUrl}}/api/v1/public/venues?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "public", "venues"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "public",
+                "venues"
+              ],
               "query": [
                 {
                   "key": "page",
@@ -241,8 +269,16 @@
             "description": "Public GET endpoint. No request body. Returns one published venue by id.",
             "url": {
               "raw": "{{baseUrl}}/api/v1/public/venues/{{venueId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "public", "venues", "{{venueId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "public",
+                "venues",
+                "{{venueId}}"
+              ]
             }
           },
           "event": [
@@ -268,8 +304,15 @@
             "description": "Public GET endpoint. No request body. Use query params for pagination and sorting. Returns verified event planners only.",
             "url": {
               "raw": "{{baseUrl}}/api/v1/public/event-planners?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "public", "event-planners"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "public",
+                "event-planners"
+              ],
               "query": [
                 {
                   "key": "page",
@@ -313,8 +356,16 @@
             "description": "Public GET endpoint. No request body. Returns one verified event planner by id.",
             "url": {
               "raw": "{{baseUrl}}/api/v1/public/event-planners/{{eventPlannerId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "public", "event-planners", "{{eventPlannerId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "public",
+                "event-planners",
+                "{{eventPlannerId}}"
+              ]
             }
           },
           "event": [
@@ -340,8 +391,14 @@
             "description": "Public GET endpoint. No request body. Use query params for pagination and sorting. Returns verified event planners only.",
             "url": {
               "raw": "{{baseUrl}}/api/v1/event-planners?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "event-planners"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "event-planners"
+              ],
               "query": [
                 {
                   "key": "page",
@@ -385,8 +442,15 @@
             "description": "Public GET endpoint. No request body. Use query params for pagination and sorting. Returns published services only.",
             "url": {
               "raw": "{{baseUrl}}/api/v1/service-provider/services?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "service-provider", "services"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "service-provider",
+                "services"
+              ],
               "query": [
                 {
                   "key": "page",
@@ -430,8 +494,16 @@
             "description": "Public GET endpoint. No request body. Returns one published service by id.",
             "url": {
               "raw": "{{baseUrl}}/api/v1/service-provider/services/{{serviceId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "service-provider", "services", "{{serviceId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "service-provider",
+                "services",
+                "{{serviceId}}"
+              ]
             }
           },
           "event": [
@@ -457,8 +529,15 @@
             "description": "Public GET endpoint. No request body. Use query params for pagination and sorting. Returns published venues only.",
             "url": {
               "raw": "{{baseUrl}}/api/v1/venue-provider/venues?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "venue-provider", "venues"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "venue-provider",
+                "venues"
+              ],
               "query": [
                 {
                   "key": "page",
@@ -502,8 +581,16 @@
             "description": "Public GET endpoint. No request body. Returns one published venue by id.",
             "url": {
               "raw": "{{baseUrl}}/api/v1/venue-provider/venues/{{venueId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "venue-provider", "venues", "{{venueId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "venue-provider",
+                "venues",
+                "{{venueId}}"
+              ]
             }
           },
           "event": [
@@ -551,8 +638,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/register",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "register"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "register"
+                  ]
                 }
               }
             },
@@ -577,8 +671,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/verify-email",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "verify-email"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "verify-email"
+                  ]
                 }
               }
             },
@@ -603,8 +704,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/resend-verification-otp",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "resend-verification-otp"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "resend-verification-otp"
+                  ]
                 }
               }
             },
@@ -629,8 +737,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/login",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "login"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "login"
+                  ]
                 }
               },
               "event": [
@@ -668,8 +783,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/forgot-password",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "forgot-password"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "forgot-password"
+                  ]
                 }
               }
             },
@@ -694,8 +816,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/reset-password",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "reset-password"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "reset-password"
+                  ]
                 }
               }
             },
@@ -711,8 +840,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/me",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "me"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "me"
+                  ]
                 }
               },
               "event": [
@@ -761,8 +897,14 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "bookings"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "bookings"
+                  ]
                 }
               },
               "event": [
@@ -806,8 +948,16 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/services/{{serviceId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "bookings", "services", "{{serviceId}}"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "bookings",
+                    "services",
+                    "{{serviceId}}"
+                  ]
                 }
               },
               "event": [
@@ -851,8 +1001,16 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/venues/{{venueId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "bookings", "venues", "{{venueId}}"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "bookings",
+                    "venues",
+                    "{{venueId}}"
+                  ]
                 }
               },
               "event": [
@@ -896,7 +1054,9 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/event-planners/{{eventPlannerId}}",
-                  "host": ["{{baseUrl}}"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
                   "path": [
                     "api",
                     "v1",
@@ -934,8 +1094,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/my?page=1&limit=10&sortBy=createdAt&sortOrder=desc&status=pending",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "bookings", "my"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "bookings",
+                    "my"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -988,8 +1155,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/{{bookingId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "bookings", "{{bookingId}}"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "bookings",
+                    "{{bookingId}}"
+                  ]
                 }
               }
             },
@@ -1005,8 +1179,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/{{bookingId}}/cancel",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "bookings", "{{bookingId}}", "cancel"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "bookings",
+                    "{{bookingId}}",
+                    "cancel"
+                  ]
                 }
               }
             }
@@ -1027,8 +1209,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/order-chats/{{bookingId}}/messages?page=1&limit=50",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "order-chats", "{{bookingId}}", "messages"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "order-chats",
+                    "{{bookingId}}",
+                    "messages"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -1067,8 +1257,16 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/order-chats/{{bookingId}}/messages",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "order-chats", "{{bookingId}}", "messages"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "order-chats",
+                    "{{bookingId}}",
+                    "messages"
+                  ]
                 }
               }
             }
@@ -1102,8 +1300,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/subscriptions/payment-intent",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "subscriptions", "payment-intent"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "subscriptions",
+                    "payment-intent"
+                  ]
                 }
               }
             },
@@ -1132,8 +1337,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/subscriptions/verify-payment",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "subscriptions", "verify-payment"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "subscriptions",
+                    "verify-payment"
+                  ]
                 }
               }
             }
@@ -1168,8 +1380,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/register",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "register"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "register"
+                  ]
                 }
               }
             },
@@ -1194,8 +1413,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/verify-email",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "verify-email"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "verify-email"
+                  ]
                 }
               }
             },
@@ -1220,8 +1446,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/resend-verification-otp",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "resend-verification-otp"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "resend-verification-otp"
+                  ]
                 }
               }
             },
@@ -1246,8 +1479,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/login",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "login"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "login"
+                  ]
                 }
               },
               "event": [
@@ -1285,8 +1525,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/forgot-password",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "forgot-password"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "forgot-password"
+                  ]
                 }
               }
             },
@@ -1311,8 +1558,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/reset-password",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "reset-password"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "reset-password"
+                  ]
                 }
               }
             },
@@ -1341,8 +1595,16 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/onboarding/service-provider",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "onboarding", "service-provider"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "onboarding",
+                    "service-provider"
+                  ]
                 }
               }
             },
@@ -1358,8 +1620,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/me",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "me"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "me"
+                  ]
                 }
               },
               "event": [
@@ -1389,8 +1658,15 @@
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/service-provider/services?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "service-provider", "services"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "service-provider",
+                    "services"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -1433,8 +1709,16 @@
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/service-provider/services/{{serviceId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "service-provider", "services", "{{serviceId}}"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "service-provider",
+                    "services",
+                    "{{serviceId}}"
+                  ]
                 }
               },
               "event": [
@@ -1478,8 +1762,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/service-provider/services",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "service-provider", "services"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "service-provider",
+                    "services"
+                  ]
                 }
               },
               "event": [
@@ -1523,8 +1814,16 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/service-provider/services/{{serviceId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "service-provider", "services", "{{serviceId}}"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "service-provider",
+                    "services",
+                    "{{serviceId}}"
+                  ]
                 }
               }
             },
@@ -1540,8 +1839,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/service-provider/services/{{serviceId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "service-provider", "services", "{{serviceId}}"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "service-provider",
+                    "services",
+                    "{{serviceId}}"
+                  ]
                 }
               }
             }
@@ -1578,8 +1885,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/uploads/images",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "uploads", "images"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "uploads",
+                    "images"
+                  ]
                 }
               }
             }
@@ -1600,8 +1914,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/provider?page=1&limit=10&sortBy=createdAt&sortOrder=desc&status=pending",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "bookings", "provider"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "bookings",
+                    "provider"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -1654,8 +1975,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/service-provider?page=1&limit=10&sortBy=createdAt&sortOrder=desc&status=pending",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "bookings", "service-provider"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "bookings",
+                    "service-provider"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -1708,8 +2036,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/{{bookingId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "bookings", "{{bookingId}}"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "bookings",
+                    "{{bookingId}}"
+                  ]
                 }
               }
             },
@@ -1725,7 +2060,9 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/service-provider/{{bookingId}}/approve",
-                  "host": ["{{baseUrl}}"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
                   "path": [
                     "api",
                     "v1",
@@ -1762,7 +2099,9 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/service-provider/{{bookingId}}/reject",
-                  "host": ["{{baseUrl}}"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
                   "path": [
                     "api",
                     "v1",
@@ -1791,8 +2130,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/order-chats/{{bookingId}}/messages?page=1&limit=50",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "order-chats", "{{bookingId}}", "messages"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "order-chats",
+                    "{{bookingId}}",
+                    "messages"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -1831,8 +2178,16 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/order-chats/{{bookingId}}/messages",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "order-chats", "{{bookingId}}", "messages"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "order-chats",
+                    "{{bookingId}}",
+                    "messages"
+                  ]
                 }
               }
             }
@@ -1866,8 +2221,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/subscriptions/payment-intent",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "subscriptions", "payment-intent"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "subscriptions",
+                    "payment-intent"
+                  ]
                 }
               }
             },
@@ -1896,8 +2258,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/subscriptions/verify-payment",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "subscriptions", "verify-payment"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "subscriptions",
+                    "verify-payment"
+                  ]
                 }
               }
             }
@@ -1932,8 +2301,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/register",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "register"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "register"
+                  ]
                 }
               }
             },
@@ -1958,8 +2334,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/verify-email",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "verify-email"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "verify-email"
+                  ]
                 }
               }
             },
@@ -1984,8 +2367,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/resend-verification-otp",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "resend-verification-otp"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "resend-verification-otp"
+                  ]
                 }
               }
             },
@@ -2010,8 +2400,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/login",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "login"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "login"
+                  ]
                 }
               },
               "event": [
@@ -2049,8 +2446,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/forgot-password",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "forgot-password"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "forgot-password"
+                  ]
                 }
               }
             },
@@ -2075,8 +2479,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/reset-password",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "reset-password"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "reset-password"
+                  ]
                 }
               }
             },
@@ -2105,8 +2516,16 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/onboarding/venue-provider",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "onboarding", "venue-provider"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "onboarding",
+                    "venue-provider"
+                  ]
                 }
               }
             },
@@ -2122,8 +2541,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/me",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "me"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "me"
+                  ]
                 }
               },
               "event": [
@@ -2153,8 +2579,15 @@
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/venue-provider/venues?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "venue-provider", "venues"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "venue-provider",
+                    "venues"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -2197,8 +2630,16 @@
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/venue-provider/venues/{{venueId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "venue-provider", "venues", "{{venueId}}"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "venue-provider",
+                    "venues",
+                    "{{venueId}}"
+                  ]
                 }
               },
               "event": [
@@ -2242,8 +2683,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/venue-provider/venues",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "venue-provider", "venues"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "venue-provider",
+                    "venues"
+                  ]
                 }
               },
               "event": [
@@ -2287,8 +2735,16 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/venue-provider/venues/{{venueId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "venue-provider", "venues", "{{venueId}}"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "venue-provider",
+                    "venues",
+                    "{{venueId}}"
+                  ]
                 }
               }
             },
@@ -2304,8 +2760,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/venue-provider/venues/{{venueId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "venue-provider", "venues", "{{venueId}}"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "venue-provider",
+                    "venues",
+                    "{{venueId}}"
+                  ]
                 }
               }
             }
@@ -2342,8 +2806,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/uploads/images",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "uploads", "images"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "uploads",
+                    "images"
+                  ]
                 }
               }
             },
@@ -2370,8 +2841,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/uploads/venue-images",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "uploads", "venue-images"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "uploads",
+                    "venue-images"
+                  ]
                 }
               }
             }
@@ -2392,8 +2870,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/provider?page=1&limit=10&sortBy=createdAt&sortOrder=desc&status=pending",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "bookings", "provider"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "bookings",
+                    "provider"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -2446,8 +2931,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/venue-provider?page=1&limit=10&sortBy=createdAt&sortOrder=desc&status=pending",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "bookings", "venue-provider"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "bookings",
+                    "venue-provider"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -2500,8 +2992,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/{{bookingId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "bookings", "{{bookingId}}"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "bookings",
+                    "{{bookingId}}"
+                  ]
                 }
               }
             },
@@ -2517,7 +3016,9 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/venue-provider/{{bookingId}}/approve",
-                  "host": ["{{baseUrl}}"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
                   "path": [
                     "api",
                     "v1",
@@ -2554,7 +3055,9 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/venue-provider/{{bookingId}}/reject",
-                  "host": ["{{baseUrl}}"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
                   "path": [
                     "api",
                     "v1",
@@ -2583,8 +3086,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/order-chats/{{bookingId}}/messages?page=1&limit=50",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "order-chats", "{{bookingId}}", "messages"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "order-chats",
+                    "{{bookingId}}",
+                    "messages"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -2623,8 +3134,16 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/order-chats/{{bookingId}}/messages",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "order-chats", "{{bookingId}}", "messages"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "order-chats",
+                    "{{bookingId}}",
+                    "messages"
+                  ]
                 }
               }
             }
@@ -2658,8 +3177,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/subscriptions/payment-intent",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "subscriptions", "payment-intent"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "subscriptions",
+                    "payment-intent"
+                  ]
                 }
               }
             },
@@ -2688,8 +3214,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/subscriptions/verify-payment",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "subscriptions", "verify-payment"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "subscriptions",
+                    "verify-payment"
+                  ]
                 }
               }
             }
@@ -2724,8 +3257,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/register",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "register"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "register"
+                  ]
                 }
               }
             },
@@ -2750,8 +3290,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/verify-email",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "verify-email"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "verify-email"
+                  ]
                 }
               }
             },
@@ -2776,8 +3323,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/resend-verification-otp",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "resend-verification-otp"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "resend-verification-otp"
+                  ]
                 }
               }
             },
@@ -2802,8 +3356,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/login",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "login"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "login"
+                  ]
                 }
               },
               "event": [
@@ -2841,8 +3402,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/forgot-password",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "forgot-password"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "forgot-password"
+                  ]
                 }
               }
             },
@@ -2867,8 +3435,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/reset-password",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "reset-password"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "reset-password"
+                  ]
                 }
               }
             },
@@ -2897,8 +3472,16 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/onboarding/event-planner",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "onboarding", "event-planner"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "onboarding",
+                    "event-planner"
+                  ]
                 }
               }
             },
@@ -2914,8 +3497,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/me",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "me"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "me"
+                  ]
                 }
               },
               "event": [
@@ -2945,8 +3535,14 @@
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/event-planners?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "event-planners"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "event-planners"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -2989,8 +3585,15 @@
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/public/event-planners?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "public", "event-planners"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "public",
+                    "event-planners"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -3033,8 +3636,16 @@
                 "method": "GET",
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/public/event-planners/{{eventPlannerId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "public", "event-planners", "{{eventPlannerId}}"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "public",
+                    "event-planners",
+                    "{{eventPlannerId}}"
+                  ]
                 }
               },
               "event": [
@@ -3086,8 +3697,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/uploads/images",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "uploads", "images"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "uploads",
+                    "images"
+                  ]
                 }
               }
             }
@@ -3108,8 +3726,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/provider?page=1&limit=10&sortBy=createdAt&sortOrder=desc&status=pending",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "bookings", "provider"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "bookings",
+                    "provider"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -3162,8 +3787,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/event-planner?page=1&limit=10&sortBy=createdAt&sortOrder=desc&status=pending",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "bookings", "event-planner"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "bookings",
+                    "event-planner"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -3216,8 +3848,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/{{bookingId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "bookings", "{{bookingId}}"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "bookings",
+                    "{{bookingId}}"
+                  ]
                 }
               }
             },
@@ -3233,7 +3872,9 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/event-planner/{{bookingId}}/approve",
-                  "host": ["{{baseUrl}}"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
                   "path": [
                     "api",
                     "v1",
@@ -3270,7 +3911,9 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/event-planner/{{bookingId}}/reject",
-                  "host": ["{{baseUrl}}"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
                   "path": [
                     "api",
                     "v1",
@@ -3299,8 +3942,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/order-chats/{{bookingId}}/messages?page=1&limit=50",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "order-chats", "{{bookingId}}", "messages"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "order-chats",
+                    "{{bookingId}}",
+                    "messages"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -3339,8 +3990,16 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/order-chats/{{bookingId}}/messages",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "order-chats", "{{bookingId}}", "messages"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "order-chats",
+                    "{{bookingId}}",
+                    "messages"
+                  ]
                 }
               }
             }
@@ -3374,8 +4033,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/subscriptions/payment-intent",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "subscriptions", "payment-intent"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "subscriptions",
+                    "payment-intent"
+                  ]
                 }
               }
             },
@@ -3404,8 +4070,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/subscriptions/verify-payment",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "subscriptions", "verify-payment"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "subscriptions",
+                    "verify-payment"
+                  ]
                 }
               }
             }
@@ -3440,8 +4113,16 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/admin/login",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "admin", "login"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "admin",
+                    "login"
+                  ]
                 }
               },
               "event": [
@@ -3470,8 +4151,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/me",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "me"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "me"
+                  ]
                 }
               },
               "event": [
@@ -3507,8 +4195,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/customers?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "customers"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "customers"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -3557,8 +4252,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/customers/blocked?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "customers", "blocked"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "customers",
+                    "blocked"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -3607,8 +4310,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/customers/{{customerId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "customers", "{{customerId}}"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "customers",
+                    "{{customerId}}"
+                  ]
                 }
               },
               "event": [
@@ -3639,8 +4350,17 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/customers/{{customerId}}/block",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "customers", "{{customerId}}", "block"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "customers",
+                    "{{customerId}}",
+                    "block"
+                  ]
                 }
               },
               "event": [
@@ -3671,8 +4391,17 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/customers/{{customerId}}/unblock",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "customers", "{{customerId}}", "unblock"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "customers",
+                    "{{customerId}}",
+                    "unblock"
+                  ]
                 }
               },
               "event": [
@@ -3703,8 +4432,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/service-providers?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "service-providers"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "service-providers"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -3753,8 +4489,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/service-providers/blocked?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "service-providers", "blocked"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "service-providers",
+                    "blocked"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -3803,7 +4547,9 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/service-providers/{{serviceProviderId}}",
-                  "host": ["{{baseUrl}}"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
                   "path": [
                     "api",
                     "v1",
@@ -3841,7 +4587,9 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/service-providers/{{serviceProviderId}}/block",
-                  "host": ["{{baseUrl}}"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
                   "path": [
                     "api",
                     "v1",
@@ -3880,7 +4628,9 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/service-providers/{{serviceProviderId}}/unblock",
-                  "host": ["{{baseUrl}}"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
                   "path": [
                     "api",
                     "v1",
@@ -3919,8 +4669,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/venue-providers?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "venue-providers"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "venue-providers"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -3969,8 +4726,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/venue-providers/blocked?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "venue-providers", "blocked"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "venue-providers",
+                    "blocked"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -4019,8 +4784,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/venue-providers/{{venueProviderId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "venue-providers", "{{venueProviderId}}"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "venue-providers",
+                    "{{venueProviderId}}"
+                  ]
                 }
               },
               "event": [
@@ -4051,7 +4824,9 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/venue-providers/{{venueProviderId}}/block",
-                  "host": ["{{baseUrl}}"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
                   "path": [
                     "api",
                     "v1",
@@ -4090,7 +4865,9 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/venue-providers/{{venueProviderId}}/unblock",
-                  "host": ["{{baseUrl}}"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
                   "path": [
                     "api",
                     "v1",
@@ -4129,8 +4906,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/event-planners?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "event-planners"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "event-planners"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -4179,8 +4963,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/event-planners/blocked?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "event-planners", "blocked"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "event-planners",
+                    "blocked"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -4229,8 +5021,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/event-planners/{{eventPlannerId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "event-planners", "{{eventPlannerId}}"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "event-planners",
+                    "{{eventPlannerId}}"
+                  ]
                 }
               },
               "event": [
@@ -4261,7 +5061,9 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/event-planners/{{eventPlannerId}}/block",
-                  "host": ["{{baseUrl}}"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
                   "path": [
                     "api",
                     "v1",
@@ -4300,7 +5102,9 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/event-planners/{{eventPlannerId}}/unblock",
-                  "host": ["{{baseUrl}}"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
                   "path": [
                     "api",
                     "v1",
@@ -4344,8 +5148,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/venues?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "venues"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "venues"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -4394,8 +5205,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/venues/{{venueId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "venues", "{{venueId}}"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "venues",
+                    "{{venueId}}"
+                  ]
                 }
               },
               "event": [
@@ -4426,8 +5245,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/venues/pending?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "venues", "pending"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "venues",
+                    "pending"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -4476,8 +5303,17 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/venues/{{venueId}}/approve",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "venues", "{{venueId}}", "approve"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "venues",
+                    "{{venueId}}",
+                    "approve"
+                  ]
                 }
               }
             },
@@ -4493,8 +5329,17 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/venues/{{venueId}}/reject",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "venues", "{{venueId}}", "reject"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "venues",
+                    "{{venueId}}",
+                    "reject"
+                  ]
                 }
               }
             },
@@ -4510,8 +5355,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/services?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "services"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -4560,8 +5412,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/services/{{serviceId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "services", "{{serviceId}}"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "{{serviceId}}"
+                  ]
                 }
               },
               "event": [
@@ -4592,8 +5452,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/services/pending?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "services", "pending"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "pending"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -4642,8 +5510,17 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/services/{{serviceId}}/approve",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "services", "{{serviceId}}", "approve"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "{{serviceId}}",
+                    "approve"
+                  ]
                 }
               }
             },
@@ -4659,8 +5536,17 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/services/{{serviceId}}/reject",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "services", "{{serviceId}}", "reject"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "{{serviceId}}",
+                    "reject"
+                  ]
                 }
               }
             }
@@ -4681,8 +5567,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/{{bookingId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "bookings", "{{bookingId}}"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "bookings",
+                    "{{bookingId}}"
+                  ]
                 }
               }
             },
@@ -4698,8 +5591,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/{{bookingId}}/approve",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "bookings", "{{bookingId}}", "approve"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "bookings",
+                    "{{bookingId}}",
+                    "approve"
+                  ]
                 }
               }
             },
@@ -4728,8 +5629,16 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/{{bookingId}}/reject",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "bookings", "{{bookingId}}", "reject"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "bookings",
+                    "{{bookingId}}",
+                    "reject"
+                  ]
                 }
               }
             }
@@ -4764,8 +5673,16 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/admin/login",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "admin", "login"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "admin",
+                    "login"
+                  ]
                 }
               },
               "event": [
@@ -4794,8 +5711,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/auth/me",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "auth", "me"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "me"
+                  ]
                 }
               },
               "event": [
@@ -4844,8 +5768,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/admin-users",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "admin-users"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "admin-users"
+                  ]
                 }
               },
               "event": [
@@ -4876,7 +5807,9 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/admin-users/{{adminUserId}}/block",
-                  "host": ["{{baseUrl}}"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
                   "path": [
                     "api",
                     "v1",
@@ -4900,7 +5833,9 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/admin-users/{{adminUserId}}/unblock",
-                  "host": ["{{baseUrl}}"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
                   "path": [
                     "api",
                     "v1",
@@ -4929,8 +5864,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/customers?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "customers"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "customers"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -4979,8 +5921,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/customers/blocked?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "customers", "blocked"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "customers",
+                    "blocked"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -5029,8 +5979,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/customers/{{customerId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "customers", "{{customerId}}"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "customers",
+                    "{{customerId}}"
+                  ]
                 }
               },
               "event": [
@@ -5061,8 +6019,17 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/customers/{{customerId}}/block",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "customers", "{{customerId}}", "block"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "customers",
+                    "{{customerId}}",
+                    "block"
+                  ]
                 }
               },
               "event": [
@@ -5093,8 +6060,17 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/customers/{{customerId}}/unblock",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "customers", "{{customerId}}", "unblock"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "customers",
+                    "{{customerId}}",
+                    "unblock"
+                  ]
                 }
               },
               "event": [
@@ -5125,8 +6101,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/service-providers?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "service-providers"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "service-providers"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -5175,8 +6158,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/service-providers/blocked?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "service-providers", "blocked"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "service-providers",
+                    "blocked"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -5225,7 +6216,9 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/service-providers/{{serviceProviderId}}",
-                  "host": ["{{baseUrl}}"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
                   "path": [
                     "api",
                     "v1",
@@ -5263,7 +6256,9 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/service-providers/{{serviceProviderId}}/block",
-                  "host": ["{{baseUrl}}"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
                   "path": [
                     "api",
                     "v1",
@@ -5302,7 +6297,9 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/service-providers/{{serviceProviderId}}/unblock",
-                  "host": ["{{baseUrl}}"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
                   "path": [
                     "api",
                     "v1",
@@ -5341,8 +6338,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/venue-providers?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "venue-providers"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "venue-providers"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -5391,8 +6395,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/venue-providers/blocked?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "venue-providers", "blocked"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "venue-providers",
+                    "blocked"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -5441,8 +6453,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/venue-providers/{{venueProviderId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "venue-providers", "{{venueProviderId}}"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "venue-providers",
+                    "{{venueProviderId}}"
+                  ]
                 }
               },
               "event": [
@@ -5473,7 +6493,9 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/venue-providers/{{venueProviderId}}/block",
-                  "host": ["{{baseUrl}}"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
                   "path": [
                     "api",
                     "v1",
@@ -5512,7 +6534,9 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/venue-providers/{{venueProviderId}}/unblock",
-                  "host": ["{{baseUrl}}"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
                   "path": [
                     "api",
                     "v1",
@@ -5551,8 +6575,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/event-planners?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "event-planners"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "event-planners"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -5601,8 +6632,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/event-planners/blocked?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "event-planners", "blocked"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "event-planners",
+                    "blocked"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -5651,8 +6690,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/event-planners/{{eventPlannerId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "event-planners", "{{eventPlannerId}}"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "event-planners",
+                    "{{eventPlannerId}}"
+                  ]
                 }
               },
               "event": [
@@ -5683,7 +6730,9 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/event-planners/{{eventPlannerId}}/block",
-                  "host": ["{{baseUrl}}"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
                   "path": [
                     "api",
                     "v1",
@@ -5722,7 +6771,9 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/event-planners/{{eventPlannerId}}/unblock",
-                  "host": ["{{baseUrl}}"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
                   "path": [
                     "api",
                     "v1",
@@ -5766,8 +6817,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/venues?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "venues"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "venues"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -5816,8 +6874,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/venues/{{venueId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "venues", "{{venueId}}"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "venues",
+                    "{{venueId}}"
+                  ]
                 }
               },
               "event": [
@@ -5848,8 +6914,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/venues/pending?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "venues", "pending"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "venues",
+                    "pending"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -5898,8 +6972,17 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/venues/{{venueId}}/approve",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "venues", "{{venueId}}", "approve"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "venues",
+                    "{{venueId}}",
+                    "approve"
+                  ]
                 }
               }
             },
@@ -5915,8 +6998,17 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/venues/{{venueId}}/reject",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "venues", "{{venueId}}", "reject"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "venues",
+                    "{{venueId}}",
+                    "reject"
+                  ]
                 }
               }
             },
@@ -5932,8 +7024,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/services?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "services"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -5982,8 +7081,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/services/{{serviceId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "services", "{{serviceId}}"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "{{serviceId}}"
+                  ]
                 }
               },
               "event": [
@@ -6014,8 +7121,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/services/pending?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "services", "pending"],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "pending"
+                  ],
                   "query": [
                     {
                       "key": "page",
@@ -6064,8 +7179,17 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/services/{{serviceId}}/approve",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "services", "{{serviceId}}", "approve"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "{{serviceId}}",
+                    "approve"
+                  ]
                 }
               }
             },
@@ -6081,8 +7205,17 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/services/{{serviceId}}/reject",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "admin", "services", "{{serviceId}}", "reject"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "services",
+                    "{{serviceId}}",
+                    "reject"
+                  ]
                 }
               }
             }
@@ -6103,8 +7236,15 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/{{bookingId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "bookings", "{{bookingId}}"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "bookings",
+                    "{{bookingId}}"
+                  ]
                 }
               }
             },
@@ -6120,8 +7260,16 @@
                 ],
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/{{bookingId}}/approve",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "bookings", "{{bookingId}}", "approve"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "bookings",
+                    "{{bookingId}}",
+                    "approve"
+                  ]
                 }
               }
             },
@@ -6150,8 +7298,16 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/{{bookingId}}/reject",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "v1", "bookings", "{{bookingId}}", "reject"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "bookings",
+                    "{{bookingId}}",
+                    "reject"
+                  ]
                 }
               }
             }

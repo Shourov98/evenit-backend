@@ -65,6 +65,19 @@
             "type": "boolean",
             "example": false
           },
+          "profileImage": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "publicId": {
+                "type": "string"
+              }
+            }
+          },
           "subscription": {
             "type": "object",
             "properties": {
@@ -82,7 +95,10 @@
               },
               "status": {
                 "type": "string",
-                "enum": ["subscribed", "not_subscribed"],
+                "enum": [
+                  "subscribed",
+                  "not_subscribed"
+                ],
                 "example": "not_subscribed"
               },
               "activatedAt": {
@@ -103,12 +119,18 @@
                   },
                   "billingCycle": {
                     "type": "string",
-                    "enum": ["monthly", "yearly"],
+                    "enum": [
+                      "monthly",
+                      "yearly"
+                    ],
                     "example": "monthly"
                   },
                   "status": {
                     "type": "string",
-                    "enum": ["paid", "unpaid"],
+                    "enum": [
+                      "paid",
+                      "unpaid"
+                    ],
                     "example": "unpaid"
                   },
                   "paidAt": {
@@ -127,7 +149,12 @@
       },
       "AuthRegisterRequest": {
         "type": "object",
-        "required": ["fullName", "email", "password", "role"],
+        "required": [
+          "fullName",
+          "email",
+          "password",
+          "role"
+        ],
         "properties": {
           "fullName": {
             "type": "string",
@@ -145,14 +172,22 @@
           },
           "role": {
             "type": "string",
-            "enum": ["customer", "service_provider", "event_planner", "venue_provider"],
+            "enum": [
+              "customer",
+              "service_provider",
+              "event_planner",
+              "venue_provider"
+            ],
             "example": "customer"
           }
         }
       },
       "AuthLoginRequest": {
         "type": "object",
-        "required": ["email", "password"],
+        "required": [
+          "email",
+          "password"
+        ],
         "properties": {
           "email": {
             "type": "string",
@@ -168,7 +203,10 @@
       },
       "VerifyOtpRequest": {
         "type": "object",
-        "required": ["email", "otp"],
+        "required": [
+          "email",
+          "otp"
+        ],
         "properties": {
           "email": {
             "type": "string",
@@ -183,7 +221,9 @@
       },
       "EmailOnlyRequest": {
         "type": "object",
-        "required": ["email"],
+        "required": [
+          "email"
+        ],
         "properties": {
           "email": {
             "type": "string",
@@ -194,7 +234,11 @@
       },
       "ResetPasswordRequest": {
         "type": "object",
-        "required": ["email", "otp", "newPassword"],
+        "required": [
+          "email",
+          "otp",
+          "newPassword"
+        ],
         "properties": {
           "email": {
             "type": "string",
@@ -214,11 +258,17 @@
       },
       "VerificationInfoInput": {
         "type": "object",
-        "required": ["businessType", "nationalIdOrTradeLicenseUrl"],
+        "required": [
+          "businessType",
+          "nationalIdOrTradeLicenseUrl"
+        ],
         "properties": {
           "businessType": {
             "type": "string",
-            "enum": ["individual", "company"],
+            "enum": [
+              "individual",
+              "company"
+            ],
             "example": "company"
           },
           "companyName": {
@@ -234,11 +284,17 @@
       },
       "ServiceProviderVerificationInput": {
         "type": "object",
-        "required": ["businessType", "nationalIdOrTradeLicenseFiles"],
+        "required": [
+          "businessType",
+          "nationalIdOrTradeLicenseFiles"
+        ],
         "properties": {
           "businessType": {
             "type": "string",
-            "enum": ["individual", "company"],
+            "enum": [
+              "individual",
+              "company"
+            ],
             "example": "individual"
           },
           "companyName": {
@@ -260,7 +316,12 @@
       },
       "ServiceProviderProfileInfoInput": {
         "type": "object",
-        "required": ["serviceName", "serviceCategory", "coverageArea", "verification"],
+        "required": [
+          "serviceName",
+          "serviceCategory",
+          "coverageArea",
+          "verification"
+        ],
         "properties": {
           "serviceName": {
             "type": "string",
@@ -279,57 +340,49 @@
             "items": {
               "type": "string"
             },
-            "example": ["Dhaka", "Gazipur"]
+            "example": [
+              "Dhaka",
+              "Gazipur"
+            ]
           },
           "verification": {
             "$ref": "#/components/schemas/ServiceProviderVerificationInput"
           }
         }
       },
-      "EventPlannerOnboardingInput": {
+      "EventPlannerProfileInfoInput": {
         "type": "object",
-        "required": ["_id", "fullName", "email", "profileInfo"],
+        "required": [
+          "name",
+          "coverageArea",
+          "address",
+          "verification"
+        ],
         "properties": {
-          "_id": {
-            "type": "string",
-            "example": "65f1a9d0f1b2c3d4e5f60002"
-          },
-          "fullName": {
+          "name": {
             "type": "string",
             "example": "Star Events"
           },
-          "email": {
+          "description": {
             "type": "string",
-            "format": "email",
-            "example": "planner@example.com"
+            "example": "Wedding and corporate event planning"
           },
-          "profileInfo": {
-            "type": "object",
-            "required": ["name", "coverageArea", "address", "verification"],
-            "properties": {
-              "name": {
-                "type": "string",
-                "example": "Star Events"
-              },
-              "description": {
-                "type": "string",
-                "example": "Wedding and corporate event planning"
-              },
-              "coverageArea": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "example": ["Dhaka", "Chattogram"]
-              },
-              "address": {
-                "type": "string",
-                "example": "Banani, Dhaka"
-              },
-              "verification": {
-                "$ref": "#/components/schemas/ServiceProviderVerificationInput"
-              }
-            }
+          "coverageArea": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "Dhaka",
+              "Chattogram"
+            ]
+          },
+          "address": {
+            "type": "string",
+            "example": "Banani, Dhaka"
+          },
+          "verification": {
+            "$ref": "#/components/schemas/ServiceProviderVerificationInput"
           }
         }
       },
@@ -339,10 +392,9 @@
           "_id",
           "fullName",
           "email",
+          "nidOrTradeLicenseNumber",
           "businessName",
           "businessType",
-          "legalBusinessName",
-          "registrationNo",
           "businessMail",
           "businessPhoneNo"
         ],
@@ -366,7 +418,10 @@
           },
           "businessType": {
             "type": "string",
-            "enum": ["individual", "company"],
+            "enum": [
+              "individual",
+              "company"
+            ],
             "example": "company"
           },
           "legalBusinessName": {
@@ -385,35 +440,18 @@
           "businessPhoneNo": {
             "type": "string",
             "example": 8801700000000
-          },
-          "media": {
-            "type": "object",
-            "required": ["galleryImages"],
-            "properties": {
-              "galleryImages": {
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "format": "uri"
-                },
-                "example": [
-                  "https://cdn.example.com/venues/royal-hall-1.jpg",
-                  "https://cdn.example.com/venues/royal-hall-2.jpg",
-                  "https://cdn.example.com/venues/royal-hall-3.jpg"
-                ]
-              },
-              "videoUrl": {
-                "type": "string",
-                "format": "uri",
-                "example": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-              }
-            }
           }
         }
       },
       "ServiceProviderOnboardingRequest": {
         "type": "object",
-        "required": ["_id", "name", "email", "nidOrTradeLicenseNumber", "profileInfo"],
+        "required": [
+          "_id",
+          "name",
+          "email",
+          "nidOrTradeLicenseNumber",
+          "profileInfo"
+        ],
         "properties": {
           "_id": {
             "type": "string",
@@ -430,7 +468,7 @@
           },
           "nidOrTradeLicenseNumber": {
             "type": "string",
-            "example": "1234567890123"
+            "example": 1234567890123
           },
           "profileInfo": {
             "$ref": "#/components/schemas/ServiceProviderProfileInfoInput"
@@ -469,10 +507,10 @@
           },
           "nidOrTradeLicenseNumber": {
             "type": "string",
-            "example": "1234567890123"
+            "example": 1234567890123
           },
           "profileInfo": {
-            "$ref": "#/components/schemas/EventPlannerOnboardingInput"
+            "$ref": "#/components/schemas/EventPlannerProfileInfoInput"
           }
         }
       },
@@ -504,7 +542,7 @@
           },
           "nidOrTradeLicenseNumber": {
             "type": "string",
-            "example": "1234567890123"
+            "example": 1234567890123
           },
           "businessName": {
             "type": "string",
@@ -512,7 +550,10 @@
           },
           "businessType": {
             "type": "string",
-            "enum": ["individual", "company"],
+            "enum": [
+              "individual",
+              "company"
+            ],
             "example": "company"
           },
           "legalBusinessName": {
@@ -659,11 +700,20 @@
       },
       "BookingCreateRequest": {
         "type": "object",
-        "required": ["targetType", "targetId", "bookingDate", "timeSlots"],
+        "required": [
+          "targetType",
+          "targetId",
+          "bookingDate",
+          "timeSlots"
+        ],
         "properties": {
           "targetType": {
             "type": "string",
-            "enum": ["venue", "service", "event"],
+            "enum": [
+              "venue",
+              "service",
+              "event"
+            ],
             "example": "venue"
           },
           "targetId": {
@@ -682,7 +732,11 @@
               "type": "string",
               "example": "14:00"
             },
-            "example": ["14:00", "15:00", "16:00"]
+            "example": [
+              "14:00",
+              "15:00",
+              "16:00"
+            ]
           },
           "durationHours": {
             "type": "integer",
@@ -726,7 +780,11 @@
           },
           "targetType": {
             "type": "string",
-            "enum": ["venue", "service", "event"],
+            "enum": [
+              "venue",
+              "service",
+              "event"
+            ],
             "example": "venue"
           },
           "targetId": {
@@ -743,7 +801,11 @@
             "items": {
               "type": "string"
             },
-            "example": ["14:00", "15:00", "16:00"]
+            "example": [
+              "14:00",
+              "15:00",
+              "16:00"
+            ]
           },
           "durationHours": {
             "type": "integer",
@@ -803,7 +865,9 @@
             "properties": {
               "status": {
                 "type": "string",
-                "enum": ["covered_by_subscription"],
+                "enum": [
+                  "covered_by_subscription"
+                ],
                 "example": "covered_by_subscription"
               },
               "coveredAt": {
@@ -1033,8 +1097,14 @@
               "serviceName": "Premium Catering",
               "category": "Catering",
               "description": "Corporate and wedding catering service.",
-              "serviceArea": ["Dhaka", "Gazipur"],
-              "tags": ["wedding", "corporate"]
+              "serviceArea": [
+                "Dhaka",
+                "Gazipur"
+              ],
+              "tags": [
+                "wedding",
+                "corporate"
+              ]
             },
             "pricing": {
               "amount": 50000,
@@ -1101,7 +1171,10 @@
                 "serviceName": "Premium Catering",
                 "serviceCategory": "Catering",
                 "serviceDescription": "Corporate and wedding catering services",
-                "coverageArea": ["Dhaka", "Gazipur"]
+                "coverageArea": [
+                  "Dhaka",
+                  "Gazipur"
+                ]
               }
             }
           }
@@ -1226,7 +1299,10 @@
             "fullName": "Premium Wedding & Event Planner",
             "email": "planner@example.com",
             "role": "event_planner",
-            "serviceCategories": ["wedding", "corporate"],
+            "serviceCategories": [
+              "wedding",
+              "corporate"
+            ],
             "isEmailVerified": true,
             "onboarding": {
               "verification": {
@@ -1241,7 +1317,10 @@
                 "profileInfo": {
                   "name": "Premium Wedding & Event Planner",
                   "description": "Wedding and corporate event planning",
-                  "coverageArea": ["Dhaka", "Chattogram"],
+                  "coverageArea": [
+                    "Dhaka",
+                    "Chattogram"
+                  ],
                   "address": "Banani, Dhaka",
                   "verification": {
                     "businessType": "company",
@@ -1261,7 +1340,10 @@
       },
       "AvailabilityOverride": {
         "type": "object",
-        "required": ["date", "slots"],
+        "required": [
+          "date",
+          "slots"
+        ],
         "properties": {
           "date": {
             "type": "string",
@@ -1272,7 +1354,10 @@
             "type": "array",
             "items": {
               "type": "object",
-              "required": ["hour", "status"],
+              "required": [
+                "hour",
+                "status"
+              ],
               "properties": {
                 "hour": {
                   "type": "integer",
@@ -1282,7 +1367,11 @@
                 },
                 "status": {
                   "type": "string",
-                  "enum": ["available", "pending", "booked"],
+                  "enum": [
+                    "available",
+                    "pending",
+                    "booked"
+                  ],
                   "example": "available"
                 }
               }
@@ -1306,14 +1395,25 @@
       },
       "ServiceCreateRequest": {
         "type": "object",
-        "required": ["information", "pricing", "settings", "media"],
+        "required": [
+          "information",
+          "pricing",
+          "settings",
+          "media"
+        ],
         "example": {
           "information": {
             "serviceName": "Premium Catering",
             "category": "Catering",
             "description": "Corporate and wedding catering service.",
-            "serviceArea": ["Dhaka", "Gazipur"],
-            "tags": ["wedding", "corporate"]
+            "serviceArea": [
+              "Dhaka",
+              "Gazipur"
+            ],
+            "tags": [
+              "wedding",
+              "corporate"
+            ]
           },
           "pricing": {
             "amount": 50000,
@@ -1370,7 +1470,11 @@
         "properties": {
           "information": {
             "type": "object",
-            "required": ["serviceName", "category", "serviceArea"],
+            "required": [
+              "serviceName",
+              "category",
+              "serviceArea"
+            ],
             "properties": {
               "serviceName": {
                 "type": "string",
@@ -1389,20 +1493,28 @@
                 "items": {
                   "type": "string"
                 },
-                "example": ["Dhaka", "Gazipur"]
+                "example": [
+                  "Dhaka",
+                  "Gazipur"
+                ]
               },
               "tags": {
                 "type": "array",
                 "items": {
                   "type": "string"
                 },
-                "example": ["wedding", "premium"]
+                "example": [
+                  "wedding",
+                  "premium"
+                ]
               }
             }
           },
           "pricing": {
             "type": "object",
-            "required": ["amount"],
+            "required": [
+              "amount"
+            ],
             "properties": {
               "amount": {
                 "type": "number",
@@ -1410,7 +1522,12 @@
               },
               "pricingType": {
                 "type": "string",
-                "enum": ["fixed", "hourly", "daily", "package"],
+                "enum": [
+                  "fixed",
+                  "hourly",
+                  "daily",
+                  "package"
+                ],
                 "example": "fixed"
               },
               "currency": {
@@ -1422,7 +1539,10 @@
                 "properties": {
                   "type": {
                     "type": "string",
-                    "enum": ["percentage", "fixed"]
+                    "enum": [
+                      "percentage",
+                      "fixed"
+                    ]
                   },
                   "value": {
                     "type": "number"
@@ -1533,7 +1653,11 @@
           },
           "publishStatus": {
             "type": "string",
-            "enum": ["pending", "published", "rejected"]
+            "enum": [
+              "pending",
+              "published",
+              "rejected"
+            ]
           },
           "approvedBy": {
             "nullable": true,
@@ -1616,6 +1740,66 @@
           }
         }
       },
+      "SiteContent": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "67f0ef57ab12cd34ef56ab78"
+          },
+          "section": {
+            "type": "string",
+            "enum": [
+              "mission",
+              "vision",
+              "about-us",
+              "privacy-policy",
+              "terms-and-conditions"
+            ],
+            "example": "mission"
+          },
+          "content": {
+            "type": "string",
+            "example": "<p>Our mission is to simplify event planning.</p>"
+          },
+          "updatedBy": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "userId": {
+                "type": "string"
+              },
+              "fullName": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              }
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SiteContentInput": {
+        "type": "object",
+        "required": [
+          "content"
+        ],
+        "properties": {
+          "content": {
+            "type": "string",
+            "example": "<h1>About Us</h1><p>EvenIt helps users book event services faster.</p>"
+          }
+        }
+      },
       "SubscriptionPaymentIntentResponse": {
         "type": "object",
         "properties": {
@@ -1654,7 +1838,9 @@
       },
       "SubscriptionVerifyRequest": {
         "type": "object",
-        "required": ["paymentIntentId"],
+        "required": [
+          "paymentIntentId"
+        ],
         "properties": {
           "paymentIntentId": {
             "type": "string",
@@ -1754,9 +1940,132 @@
           }
         }
       },
+      "ProfileImageUploadResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Profile image uploaded successfully"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "role": {
+                "type": "string",
+                "enum": [
+                  "customer",
+                  "service_provider",
+                  "event_planner",
+                  "venue_provider",
+                  "admin",
+                  "super_admin"
+                ]
+              },
+              "profileImage": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "publicId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "UserProfileResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "User profile retrieved successfully"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string"
+              },
+              "fullName": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "customer",
+                  "service_provider",
+                  "event_planner",
+                  "venue_provider",
+                  "admin",
+                  "super_admin"
+                ]
+              },
+              "serviceCategories": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "isEmailVerified": {
+                "type": "boolean"
+              },
+              "isBlocked": {
+                "type": "boolean"
+              },
+              "profileImage": {
+                "nullable": true,
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "publicId": {
+                    "type": "string"
+                  }
+                }
+              },
+              "subscription": {
+                "type": "object"
+              },
+              "onboarding": {
+                "nullable": true,
+                "type": "object"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      },
       "VenueAvailabilityOverride": {
         "type": "object",
-        "required": ["date", "slots"],
+        "required": [
+          "date",
+          "slots"
+        ],
         "properties": {
           "date": {
             "type": "string",
@@ -1767,7 +2076,10 @@
             "type": "array",
             "items": {
               "type": "object",
-              "required": ["hour", "status"],
+              "required": [
+                "hour",
+                "status"
+              ],
               "properties": {
                 "hour": {
                   "type": "integer",
@@ -1777,7 +2089,11 @@
                 },
                 "status": {
                   "type": "string",
-                  "enum": ["available", "pending", "booked"],
+                  "enum": [
+                    "available",
+                    "pending",
+                    "booked"
+                  ],
                   "example": "available"
                 }
               }
@@ -1801,7 +2117,12 @@
       },
       "VenueCreateRequest": {
         "type": "object",
-        "required": ["information", "pricing", "capacity", "media"],
+        "required": [
+          "information",
+          "pricing",
+          "capacity",
+          "media"
+        ],
         "example": {
           "information": {
             "venueName": "Grand Hall",
@@ -1857,7 +2178,12 @@
         "properties": {
           "information": {
             "type": "object",
-            "required": ["venueName", "venueType", "addressLine", "city"],
+            "required": [
+              "venueName",
+              "venueType",
+              "addressLine",
+              "city"
+            ],
             "properties": {
               "venueName": {
                 "type": "string",
@@ -1887,7 +2213,9 @@
           },
           "pricing": {
             "type": "object",
-            "required": ["basePrice"],
+            "required": [
+              "basePrice"
+            ],
             "properties": {
               "basePrice": {
                 "type": "number",
@@ -1902,7 +2230,10 @@
                 "properties": {
                   "type": {
                     "type": "string",
-                    "enum": ["percentage", "fixed"]
+                    "enum": [
+                      "percentage",
+                      "fixed"
+                    ]
                   },
                   "value": {
                     "type": "number"
@@ -1924,7 +2255,9 @@
           },
           "capacity": {
             "type": "object",
-            "required": ["maximumGuests"],
+            "required": [
+              "maximumGuests"
+            ],
             "properties": {
               "maximumGuests": {
                 "type": "integer",
@@ -2014,7 +2347,11 @@
           },
           "publishStatus": {
             "type": "string",
-            "enum": ["pending", "published", "rejected"]
+            "enum": [
+              "pending",
+              "published",
+              "rejected"
+            ]
           },
           "approvedBy": {
             "nullable": true,
@@ -2102,7 +2439,9 @@
   "paths": {
     "/api/v1/admin/admin-users": {
       "post": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Create an admin user",
         "description": "Only super_admin can create admin users.",
         "security": [
@@ -2116,7 +2455,11 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["fullName", "email", "password"],
+                "required": [
+                  "fullName",
+                  "email",
+                  "password"
+                ],
                 "properties": {
                   "fullName": {
                     "type": "string"
@@ -2146,7 +2489,9 @@
     },
     "/api/v1/admin/admin-users/{adminUserId}/block": {
       "patch": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Block an admin user",
         "description": "Only super_admin can block admin users.",
         "security": [
@@ -2179,7 +2524,9 @@
     },
     "/api/v1/admin/admin-users/{adminUserId}/unblock": {
       "patch": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Unblock an admin user",
         "description": "Only super_admin can unblock admin users.",
         "security": [
@@ -2212,7 +2559,9 @@
     },
     "/api/v1/admin/customers": {
       "get": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Get all customers",
         "security": [
           {
@@ -2228,7 +2577,9 @@
     },
     "/api/v1/admin/customers/blocked": {
       "get": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Get blocked customers",
         "security": [
           {
@@ -2244,7 +2595,9 @@
     },
     "/api/v1/admin/customers/{customerId}": {
       "get": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Get one customer by id",
         "security": [
           {
@@ -2273,7 +2626,9 @@
     },
     "/api/v1/admin/customers/{customerId}/block": {
       "patch": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Block a customer",
         "security": [
           {
@@ -2302,7 +2657,9 @@
     },
     "/api/v1/admin/customers/{customerId}/unblock": {
       "patch": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Unblock a customer",
         "security": [
           {
@@ -2331,7 +2688,9 @@
     },
     "/api/v1/admin/service-providers": {
       "get": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Get all service providers",
         "security": [
           {
@@ -2347,7 +2706,9 @@
     },
     "/api/v1/admin/service-providers/blocked": {
       "get": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Get blocked service providers",
         "security": [
           {
@@ -2363,7 +2724,9 @@
     },
     "/api/v1/admin/service-providers/{serviceProviderId}": {
       "get": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Get one service provider by id",
         "security": [
           {
@@ -2392,7 +2755,9 @@
     },
     "/api/v1/admin/service-providers/{serviceProviderId}/block": {
       "patch": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Block a service provider",
         "security": [
           {
@@ -2421,7 +2786,9 @@
     },
     "/api/v1/admin/service-providers/{serviceProviderId}/unblock": {
       "patch": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Unblock a service provider",
         "security": [
           {
@@ -2450,7 +2817,9 @@
     },
     "/api/v1/admin/venue-providers": {
       "get": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Get all venue providers",
         "security": [
           {
@@ -2466,7 +2835,9 @@
     },
     "/api/v1/admin/venue-providers/blocked": {
       "get": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Get blocked venue providers",
         "security": [
           {
@@ -2482,7 +2853,9 @@
     },
     "/api/v1/admin/venue-providers/{venueProviderId}": {
       "get": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Get one venue provider by id",
         "security": [
           {
@@ -2511,7 +2884,9 @@
     },
     "/api/v1/admin/venue-providers/{venueProviderId}/block": {
       "patch": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Block a venue provider",
         "security": [
           {
@@ -2540,7 +2915,9 @@
     },
     "/api/v1/admin/venue-providers/{venueProviderId}/unblock": {
       "patch": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Unblock a venue provider",
         "security": [
           {
@@ -2569,7 +2946,9 @@
     },
     "/api/v1/admin/event-planners": {
       "get": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Get all event planners",
         "security": [
           {
@@ -2585,7 +2964,9 @@
     },
     "/api/v1/admin/event-planners/blocked": {
       "get": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Get blocked event planners",
         "security": [
           {
@@ -2601,7 +2982,9 @@
     },
     "/api/v1/admin/event-planners/{eventPlannerId}": {
       "get": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Get one event planner by id",
         "security": [
           {
@@ -2630,7 +3013,9 @@
     },
     "/api/v1/admin/event-planners/{eventPlannerId}/block": {
       "patch": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Block an event planner",
         "security": [
           {
@@ -2659,7 +3044,9 @@
     },
     "/api/v1/admin/event-planners/{eventPlannerId}/unblock": {
       "patch": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Unblock an event planner",
         "security": [
           {
@@ -2688,7 +3075,9 @@
     },
     "/api/v1/admin/venues": {
       "get": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Get all venues for admin moderation",
         "security": [
           {
@@ -2723,7 +3112,10 @@
             "name": "sortOrder",
             "schema": {
               "type": "string",
-              "enum": ["asc", "desc"]
+              "enum": [
+                "asc",
+                "desc"
+              ]
             }
           }
         ],
@@ -2749,7 +3141,9 @@
     },
     "/api/v1/admin/venues/{venueId}": {
       "get": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Get one venue for admin moderation",
         "security": [
           {
@@ -2791,7 +3185,9 @@
     },
     "/api/v1/admin/services": {
       "get": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Get all services for admin moderation",
         "security": [
           {
@@ -2826,7 +3222,10 @@
             "name": "sortOrder",
             "schema": {
               "type": "string",
-              "enum": ["asc", "desc"]
+              "enum": [
+                "asc",
+                "desc"
+              ]
             }
           }
         ],
@@ -2852,7 +3251,9 @@
     },
     "/api/v1/admin/services/{serviceId}": {
       "get": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Get one service for admin moderation",
         "security": [
           {
@@ -2894,7 +3295,9 @@
     },
     "/api/v1/admin/venues/pending": {
       "get": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Get pending venue approval requests",
         "security": [
           {
@@ -2929,7 +3332,10 @@
             "name": "sortOrder",
             "schema": {
               "type": "string",
-              "enum": ["asc", "desc"]
+              "enum": [
+                "asc",
+                "desc"
+              ]
             }
           }
         ],
@@ -2955,7 +3361,9 @@
     },
     "/api/v1/admin/services/pending": {
       "get": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Get pending service approval requests",
         "security": [
           {
@@ -2990,7 +3398,10 @@
             "name": "sortOrder",
             "schema": {
               "type": "string",
-              "enum": ["asc", "desc"]
+              "enum": [
+                "asc",
+                "desc"
+              ]
             }
           }
         ],
@@ -3016,7 +3427,9 @@
     },
     "/api/v1/admin/venues/{venueId}/approve": {
       "patch": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Approve venue and publish it",
         "security": [
           {
@@ -3059,7 +3472,9 @@
     },
     "/api/v1/admin/venues/{venueId}/reject": {
       "patch": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Reject venue",
         "security": [
           {
@@ -3101,7 +3516,9 @@
     },
     "/api/v1/admin/services/{serviceId}/approve": {
       "patch": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Approve service and publish it",
         "security": [
           {
@@ -3143,7 +3560,9 @@
     },
     "/api/v1/admin/services/{serviceId}/reject": {
       "patch": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "summary": "Reject service",
         "security": [
           {
@@ -3185,7 +3604,9 @@
     },
     "/api/v1/auth/register": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Register user and send verification OTP",
         "requestBody": {
           "required": true,
@@ -3219,7 +3640,9 @@
     },
     "/api/v1/auth/verify-email": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Verify email with OTP",
         "requestBody": {
           "required": true,
@@ -3250,7 +3673,9 @@
     },
     "/api/v1/auth/resend-verification-otp": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Resend email verification OTP",
         "requestBody": {
           "required": true,
@@ -3278,7 +3703,9 @@
     },
     "/api/v1/auth/login": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Login user (email must be verified)",
         "requestBody": {
           "required": true,
@@ -3315,7 +3742,9 @@
     },
     "/api/v1/auth/admin/login": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Login admin or super-admin",
         "requestBody": {
           "required": true,
@@ -3352,7 +3781,9 @@
     },
     "/api/v1/auth/forgot-password": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Send password reset OTP",
         "requestBody": {
           "required": true,
@@ -3380,7 +3811,9 @@
     },
     "/api/v1/auth/reset-password": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Reset password with OTP",
         "requestBody": {
           "required": true,
@@ -3411,7 +3844,9 @@
     },
     "/api/v1/auth/onboarding/service-provider": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Submit service provider onboarding details",
         "security": [
           {
@@ -3450,7 +3885,9 @@
     },
     "/api/v1/auth/onboarding/event-planner": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Submit event planner onboarding details",
         "security": [
           {
@@ -3489,7 +3926,9 @@
     },
     "/api/v1/auth/onboarding/venue-provider": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Submit venue provider onboarding details",
         "security": [
           {
@@ -3528,7 +3967,9 @@
     },
     "/api/v1/auth/me": {
       "get": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Get current user",
         "security": [
           {
@@ -3554,7 +3995,9 @@
     },
     "/api/v1/bookings": {
       "post": {
-        "tags": ["Bookings"],
+        "tags": [
+          "Bookings"
+        ],
         "summary": "Create a booking",
         "description": "Creates a customer booking for a venue, service, or event planner.",
         "security": [
@@ -3610,7 +4053,9 @@
     },
     "/api/v1/bookings/services/{serviceId}": {
       "post": {
-        "tags": ["Bookings"],
+        "tags": [
+          "Bookings"
+        ],
         "summary": "Create a booking request for a service",
         "description": "Creates a customer booking request for a published service.",
         "security": [
@@ -3634,7 +4079,10 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["bookingDate", "timeSlots"],
+                "required": [
+                  "bookingDate",
+                  "timeSlots"
+                ],
                 "properties": {
                   "bookingDate": {
                     "type": "string",
@@ -3688,7 +4136,9 @@
     },
     "/api/v1/bookings/venues/{venueId}": {
       "post": {
-        "tags": ["Bookings"],
+        "tags": [
+          "Bookings"
+        ],
         "summary": "Create a booking request for a venue",
         "description": "Creates a customer booking request for a published venue.",
         "security": [
@@ -3712,7 +4162,10 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["bookingDate", "timeSlots"],
+                "required": [
+                  "bookingDate",
+                  "timeSlots"
+                ],
                 "properties": {
                   "bookingDate": {
                     "type": "string",
@@ -3766,7 +4219,9 @@
     },
     "/api/v1/bookings/event-planners/{eventPlannerId}": {
       "post": {
-        "tags": ["Bookings"],
+        "tags": [
+          "Bookings"
+        ],
         "summary": "Create a booking request for an event planner",
         "description": "Creates a customer booking request for a verified event planner.",
         "security": [
@@ -3790,7 +4245,10 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["bookingDate", "timeSlots"],
+                "required": [
+                  "bookingDate",
+                  "timeSlots"
+                ],
                 "properties": {
                   "bookingDate": {
                     "type": "string",
@@ -3844,7 +4302,9 @@
     },
     "/api/v1/bookings/my": {
       "get": {
-        "tags": ["Bookings"],
+        "tags": [
+          "Bookings"
+        ],
         "summary": "Get customer bookings",
         "description": "Returns paginated bookings created by the authenticated customer.",
         "security": [
@@ -3882,7 +4342,10 @@
             "name": "sortOrder",
             "schema": {
               "type": "string",
-              "enum": ["asc", "desc"],
+              "enum": [
+                "asc",
+                "desc"
+              ],
               "default": "desc"
             }
           },
@@ -3919,7 +4382,9 @@
     },
     "/api/v1/bookings/provider": {
       "get": {
-        "tags": ["Bookings"],
+        "tags": [
+          "Bookings"
+        ],
         "summary": "Get provider bookings",
         "description": "Returns paginated bookings assigned to the authenticated provider.",
         "security": [
@@ -3957,7 +4422,10 @@
             "name": "sortOrder",
             "schema": {
               "type": "string",
-              "enum": ["asc", "desc"],
+              "enum": [
+                "asc",
+                "desc"
+              ],
               "default": "desc"
             }
           },
@@ -3994,7 +4462,9 @@
     },
     "/api/v1/bookings/service-provider": {
       "get": {
-        "tags": ["Bookings"],
+        "tags": [
+          "Bookings"
+        ],
         "summary": "Get service provider booking requests",
         "description": "Returns paginated bookings assigned to the authenticated service provider.",
         "security": [
@@ -4032,7 +4502,10 @@
             "name": "sortOrder",
             "schema": {
               "type": "string",
-              "enum": ["asc", "desc"],
+              "enum": [
+                "asc",
+                "desc"
+              ],
               "default": "desc"
             }
           },
@@ -4069,7 +4542,9 @@
     },
     "/api/v1/bookings/venue-provider": {
       "get": {
-        "tags": ["Bookings"],
+        "tags": [
+          "Bookings"
+        ],
         "summary": "Get venue provider booking requests",
         "description": "Returns paginated bookings assigned to the authenticated venue provider.",
         "security": [
@@ -4107,7 +4582,10 @@
             "name": "sortOrder",
             "schema": {
               "type": "string",
-              "enum": ["asc", "desc"],
+              "enum": [
+                "asc",
+                "desc"
+              ],
               "default": "desc"
             }
           },
@@ -4144,7 +4622,9 @@
     },
     "/api/v1/bookings/event-planner": {
       "get": {
-        "tags": ["Bookings"],
+        "tags": [
+          "Bookings"
+        ],
         "summary": "Get event planner booking requests",
         "description": "Returns paginated bookings assigned to the authenticated event planner.",
         "security": [
@@ -4182,7 +4662,10 @@
             "name": "sortOrder",
             "schema": {
               "type": "string",
-              "enum": ["asc", "desc"],
+              "enum": [
+                "asc",
+                "desc"
+              ],
               "default": "desc"
             }
           },
@@ -4219,7 +4702,9 @@
     },
     "/api/v1/bookings/{bookingId}": {
       "get": {
-        "tags": ["Bookings"],
+        "tags": [
+          "Bookings"
+        ],
         "summary": "Get one booking by id",
         "description": "Returns a single booking if the current user is the customer, provider, or an admin.",
         "security": [
@@ -4269,7 +4754,9 @@
     },
     "/api/v1/bookings/{bookingId}/approve": {
       "patch": {
-        "tags": ["Bookings"],
+        "tags": [
+          "Bookings"
+        ],
         "summary": "Approve a booking",
         "description": "Provider approves a pending booking. Approved bookings are confirmed immediately because bookings are covered by subscription.",
         "security": [
@@ -4312,7 +4799,9 @@
     },
     "/api/v1/bookings/service-provider/{bookingId}/approve": {
       "patch": {
-        "tags": ["Bookings"],
+        "tags": [
+          "Bookings"
+        ],
         "summary": "Approve a booking as service provider",
         "security": [
           {
@@ -4338,7 +4827,9 @@
     },
     "/api/v1/bookings/venue-provider/{bookingId}/approve": {
       "patch": {
-        "tags": ["Bookings"],
+        "tags": [
+          "Bookings"
+        ],
         "summary": "Approve a booking as venue provider",
         "security": [
           {
@@ -4364,7 +4855,9 @@
     },
     "/api/v1/bookings/event-planner/{bookingId}/approve": {
       "patch": {
-        "tags": ["Bookings"],
+        "tags": [
+          "Bookings"
+        ],
         "summary": "Approve a booking as event planner",
         "security": [
           {
@@ -4390,7 +4883,9 @@
     },
     "/api/v1/bookings/{bookingId}/reject": {
       "patch": {
-        "tags": ["Bookings"],
+        "tags": [
+          "Bookings"
+        ],
         "summary": "Reject a booking",
         "description": "Provider rejects a pending booking and may optionally provide a reason.",
         "security": [
@@ -4443,7 +4938,9 @@
     },
     "/api/v1/bookings/service-provider/{bookingId}/reject": {
       "patch": {
-        "tags": ["Bookings"],
+        "tags": [
+          "Bookings"
+        ],
         "summary": "Reject a booking as service provider",
         "security": [
           {
@@ -4469,7 +4966,9 @@
     },
     "/api/v1/bookings/venue-provider/{bookingId}/reject": {
       "patch": {
-        "tags": ["Bookings"],
+        "tags": [
+          "Bookings"
+        ],
         "summary": "Reject a booking as venue provider",
         "security": [
           {
@@ -4495,7 +4994,9 @@
     },
     "/api/v1/bookings/event-planner/{bookingId}/reject": {
       "patch": {
-        "tags": ["Bookings"],
+        "tags": [
+          "Bookings"
+        ],
         "summary": "Reject a booking as event planner",
         "security": [
           {
@@ -4521,7 +5022,9 @@
     },
     "/api/v1/bookings/{bookingId}/cancel": {
       "patch": {
-        "tags": ["Bookings"],
+        "tags": [
+          "Bookings"
+        ],
         "summary": "Cancel a booking",
         "description": "Customer cancels a booking before completion.",
         "security": [
@@ -4564,7 +5067,9 @@
     },
     "/api/v1/event-planners": {
       "get": {
-        "tags": ["EventPlanner"],
+        "tags": [
+          "EventPlanner"
+        ],
         "summary": "Get all event planners (public)",
         "description": "Returns verified users whose role is `event_planner`.",
         "parameters": [
@@ -4594,7 +5099,10 @@
             "name": "sortOrder",
             "schema": {
               "type": "string",
-              "enum": ["asc", "desc"]
+              "enum": [
+                "asc",
+                "desc"
+              ]
             }
           }
         ],
@@ -4614,7 +5122,9 @@
     },
     "/api/v1/order-chats/{bookingId}/messages": {
       "get": {
-        "tags": ["Order Chat"],
+        "tags": [
+          "Order Chat"
+        ],
         "summary": "Get chat history for a booking",
         "security": [
           {
@@ -4658,7 +5168,9 @@
         }
       },
       "post": {
-        "tags": ["Order Chat"],
+        "tags": [
+          "Order Chat"
+        ],
         "summary": "Send a message for a booking",
         "security": [
           {
@@ -4681,7 +5193,9 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["content"],
+                "required": [
+                  "content"
+                ],
                 "properties": {
                   "content": {
                     "type": "string",
@@ -4707,7 +5221,9 @@
     },
     "/api/v1/public/services": {
       "get": {
-        "tags": ["Public"],
+        "tags": [
+          "Public"
+        ],
         "summary": "Get published services without authentication",
         "description": "Public read-only endpoint. No request body is accepted. Returns only services with `publishStatus: published`.",
         "parameters": [
@@ -4737,7 +5253,10 @@
             "name": "sortOrder",
             "schema": {
               "type": "string",
-              "enum": ["asc", "desc"]
+              "enum": [
+                "asc",
+                "desc"
+              ]
             }
           }
         ],
@@ -4767,8 +5286,14 @@
                         "serviceName": "Premium Catering",
                         "category": "Catering",
                         "description": "Corporate and wedding catering service.",
-                        "serviceArea": ["Dhaka", "Gazipur"],
-                        "tags": ["wedding", "corporate"]
+                        "serviceArea": [
+                          "Dhaka",
+                          "Gazipur"
+                        ],
+                        "tags": [
+                          "wedding",
+                          "corporate"
+                        ]
                       },
                       "pricing": {
                         "amount": 50000,
@@ -4783,7 +5308,9 @@
                         "capacity": 300
                       },
                       "media": {
-                        "galleryImages": ["https://cdn.example.com/service/image-1.jpg"]
+                        "galleryImages": [
+                          "https://cdn.example.com/service/image-1.jpg"
+                        ]
                       },
                       "availabilityOverrides": [],
                       "publishStatus": "published",
@@ -4822,7 +5349,9 @@
     },
     "/api/v1/public/services/{serviceId}": {
       "get": {
-        "tags": ["Public"],
+        "tags": [
+          "Public"
+        ],
         "summary": "Get one published service without authentication",
         "description": "Public read-only endpoint. No request body is accepted. Returns one published service by id.",
         "parameters": [
@@ -4871,7 +5400,9 @@
     },
     "/api/v1/public/venues": {
       "get": {
-        "tags": ["Public"],
+        "tags": [
+          "Public"
+        ],
         "summary": "Get published venues without authentication",
         "description": "Public read-only endpoint. No request body is accepted. Returns only venues with `publishStatus: published`.",
         "parameters": [
@@ -4901,7 +5432,10 @@
             "name": "sortOrder",
             "schema": {
               "type": "string",
-              "enum": ["asc", "desc"]
+              "enum": [
+                "asc",
+                "desc"
+              ]
             }
           }
         ],
@@ -4947,7 +5481,9 @@
                         "maximumGuests": 500
                       },
                       "media": {
-                        "galleryImages": ["https://cdn.example.com/venue/image-1.jpg"]
+                        "galleryImages": [
+                          "https://cdn.example.com/venue/image-1.jpg"
+                        ]
                       },
                       "availabilityOverrides": [],
                       "publishStatus": "published",
@@ -4986,7 +5522,9 @@
     },
     "/api/v1/public/venues/{venueId}": {
       "get": {
-        "tags": ["Public"],
+        "tags": [
+          "Public"
+        ],
         "summary": "Get one published venue without authentication",
         "description": "Public read-only endpoint. No request body is accepted. Returns one published venue by id.",
         "parameters": [
@@ -5035,7 +5573,9 @@
     },
     "/api/v1/public/event-planners": {
       "get": {
-        "tags": ["Public"],
+        "tags": [
+          "Public"
+        ],
         "summary": "Get public event planners without authentication",
         "description": "Public read-only endpoint. No request body is accepted. Returns verified event planners who completed event planner onboarding.",
         "parameters": [
@@ -5065,7 +5605,10 @@
             "name": "sortOrder",
             "schema": {
               "type": "string",
-              "enum": ["asc", "desc"]
+              "enum": [
+                "asc",
+                "desc"
+              ]
             }
           }
         ],
@@ -5093,13 +5636,19 @@
                       "fullName": "Premium Wedding & Event Planner",
                       "email": "planner@example.com",
                       "role": "event_planner",
-                      "serviceCategories": ["wedding", "corporate"],
+                      "serviceCategories": [
+                        "wedding",
+                        "corporate"
+                      ],
                       "isEmailVerified": true,
                       "onboarding": {
                         "eventProvider": {
                           "profileInfo": {
                             "name": "Premium Wedding & Event Planner",
-                            "coverageArea": ["Dhaka", "Chattogram"]
+                            "coverageArea": [
+                              "Dhaka",
+                              "Chattogram"
+                            ]
                           }
                         }
                       },
@@ -5126,7 +5675,9 @@
     },
     "/api/v1/public/event-planners/{eventPlannerId}": {
       "get": {
-        "tags": ["Public"],
+        "tags": [
+          "Public"
+        ],
         "summary": "Get one event planner without authentication",
         "description": "Public read-only endpoint. No request body is accepted. Returns one event planner by id.",
         "parameters": [
@@ -5175,7 +5726,9 @@
     },
     "/api/v1/service-provider/services": {
       "get": {
-        "tags": ["ServiceProvider"],
+        "tags": [
+          "ServiceProvider"
+        ],
         "summary": "Get published services (public)",
         "parameters": [
           {
@@ -5204,7 +5757,10 @@
             "name": "sortOrder",
             "schema": {
               "type": "string",
-              "enum": ["asc", "desc"]
+              "enum": [
+                "asc",
+                "desc"
+              ]
             }
           }
         ],
@@ -5222,7 +5778,9 @@
         }
       },
       "post": {
-        "tags": ["ServiceProvider"],
+        "tags": [
+          "ServiceProvider"
+        ],
         "summary": "Create a service",
         "security": [
           {
@@ -5235,7 +5793,9 @@
             "multipart/form-data": {
               "schema": {
                 "type": "object",
-                "required": ["payload"],
+                "required": [
+                  "payload"
+                ],
                 "properties": {
                   "payload": {
                     "type": "string",
@@ -5291,7 +5851,9 @@
     },
     "/api/v1/service-provider/services/{serviceId}": {
       "get": {
-        "tags": ["ServiceProvider"],
+        "tags": [
+          "ServiceProvider"
+        ],
         "summary": "Get one published service by id (public)",
         "parameters": [
           {
@@ -5329,7 +5891,9 @@
         }
       },
       "patch": {
-        "tags": ["ServiceProvider"],
+        "tags": [
+          "ServiceProvider"
+        ],
         "summary": "Update service by id",
         "security": [
           {
@@ -5379,7 +5943,9 @@
         }
       },
       "delete": {
-        "tags": ["ServiceProvider"],
+        "tags": [
+          "ServiceProvider"
+        ],
         "summary": "Delete service by id",
         "security": [
           {
@@ -5426,9 +5992,106 @@
         }
       }
     },
+    "/api/v1/site-content": {
+      "get": {
+        "tags": [
+          "Site Content"
+        ],
+        "summary": "Get all site content sections",
+        "responses": {
+          "200": {
+            "description": "All available site content"
+          }
+        }
+      }
+    },
+    "/api/v1/site-content/{section}": {
+      "get": {
+        "tags": [
+          "Site Content"
+        ],
+        "summary": "Get one site content section",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "section",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "mission",
+                "vision",
+                "about-us",
+                "privacy-policy",
+                "terms-and-conditions"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Requested site content"
+          },
+          "404": {
+            "description": "Content not found"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Site Content"
+        ],
+        "summary": "Create or update one site content section",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "section",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "mission",
+                "vision",
+                "about-us",
+                "privacy-policy",
+                "terms-and-conditions"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SiteContentInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Content saved successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
     "/api/v1/subscriptions/payment-intent": {
       "post": {
-        "tags": ["Subscriptions"],
+        "tags": [
+          "Subscriptions"
+        ],
         "summary": "Initiate subscription payment",
         "security": [
           {
@@ -5451,7 +6114,9 @@
     },
     "/api/v1/subscriptions/verify-payment": {
       "post": {
-        "tags": ["Subscriptions"],
+        "tags": [
+          "Subscriptions"
+        ],
         "summary": "Verify subscription payment and activate subscription",
         "security": [
           {
@@ -5484,7 +6149,9 @@
     },
     "/api/v1/uploads/images": {
       "post": {
-        "tags": ["Uploads"],
+        "tags": [
+          "Uploads"
+        ],
         "summary": "Upload images to Cloudinary and return hosted links",
         "security": [
           {
@@ -5549,9 +6216,62 @@
         }
       }
     },
+    "/api/v1/uploads/profile-image": {
+      "post": {
+        "tags": [
+          "Uploads"
+        ],
+        "summary": "Upload the authenticated user's profile image",
+        "description": "Stores the image in a role-specific Cloudinary folder and replaces any previous profile image for that user.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "image"
+                ],
+                "properties": {
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Uploaded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileImageUploadResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Profile image must be sent using the image field"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/api/v1/uploads/venue-images": {
       "post": {
-        "tags": ["Uploads"],
+        "tags": [
+          "Uploads"
+        ],
         "summary": "Upload venue gallery images to Cloudinary",
         "security": [
           {
@@ -5564,7 +6284,9 @@
             "multipart/form-data": {
               "schema": {
                 "type": "object",
-                "required": ["images"],
+                "required": [
+                  "images"
+                ],
                 "properties": {
                   "images": {
                     "type": "array",
@@ -5598,9 +6320,56 @@
         }
       }
     },
+    "/api/v1/users/{userId}/profile": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get full profile information for any user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "65f1a9d0f1b2c3d4e5f60001"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User profile retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfileResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid userId"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
     "/api/v1/venue-provider/venues": {
       "get": {
-        "tags": ["VenueProvider"],
+        "tags": [
+          "VenueProvider"
+        ],
         "summary": "Get published venues (public)",
         "parameters": [
           {
@@ -5629,7 +6398,10 @@
             "name": "sortOrder",
             "schema": {
               "type": "string",
-              "enum": ["asc", "desc"]
+              "enum": [
+                "asc",
+                "desc"
+              ]
             }
           }
         ],
@@ -5647,7 +6419,9 @@
         }
       },
       "post": {
-        "tags": ["VenueProvider"],
+        "tags": [
+          "VenueProvider"
+        ],
         "summary": "Create a venue",
         "security": [
           {
@@ -5660,7 +6434,9 @@
             "multipart/form-data": {
               "schema": {
                 "type": "object",
-                "required": ["payload"],
+                "required": [
+                  "payload"
+                ],
                 "properties": {
                   "payload": {
                     "type": "string",
@@ -5716,7 +6492,9 @@
     },
     "/api/v1/venue-provider/venues/{venueId}": {
       "get": {
-        "tags": ["VenueProvider"],
+        "tags": [
+          "VenueProvider"
+        ],
         "summary": "Get one published venue by id (public)",
         "parameters": [
           {
@@ -5754,7 +6532,9 @@
         }
       },
       "patch": {
-        "tags": ["VenueProvider"],
+        "tags": [
+          "VenueProvider"
+        ],
         "summary": "Update venue by id",
         "security": [
           {
@@ -5804,7 +6584,9 @@
         }
       },
       "delete": {
-        "tags": ["VenueProvider"],
+        "tags": [
+          "VenueProvider"
+        ],
         "summary": "Delete venue by id",
         "security": [
           {
@@ -5853,7 +6635,9 @@
     },
     "/": {
       "get": {
-        "tags": ["System"],
+        "tags": [
+          "System"
+        ],
         "summary": "Root status",
         "responses": {
           "200": {
@@ -5864,7 +6648,9 @@
     },
     "/health": {
       "get": {
-        "tags": ["System"],
+        "tags": [
+          "System"
+        ],
         "summary": "Health check",
         "responses": {
           "200": {
@@ -5904,12 +6690,20 @@
       "description": "Public listing and provider management for services"
     },
     {
+      "name": "Site Content",
+      "description": "Public and admin-managed static content endpoints"
+    },
+    {
       "name": "Subscriptions",
       "description": "Subscription payment initiation and verification"
     },
     {
       "name": "Uploads",
       "description": "Authenticated file upload endpoints"
+    },
+    {
+      "name": "Users",
+      "description": "User profile endpoints"
     },
     {
       "name": "VenueProvider",

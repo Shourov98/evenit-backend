@@ -213,43 +213,29 @@ const router = Router();
  *           example: ["Dhaka", "Gazipur"]
  *         verification:
  *           $ref: '#/components/schemas/ServiceProviderVerificationInput'
- *     EventPlannerOnboardingInput:
+ *     EventPlannerProfileInfoInput:
  *       type: object
- *       required: [_id, fullName, email, profileInfo]
+ *       required: [name, coverageArea, address, verification]
  *       properties:
- *         _id:
- *           type: string
- *           example: 65f1a9d0f1b2c3d4e5f60002
- *         fullName:
+ *         name:
  *           type: string
  *           example: Star Events
- *         email:
+ *         description:
  *           type: string
- *           format: email
- *           example: planner@example.com
- *         profileInfo:
- *           type: object
- *           required: [name, coverageArea, address, verification]
- *           properties:
- *             name:
- *               type: string
- *               example: Star Events
- *             description:
- *               type: string
- *               example: Wedding and corporate event planning
- *             coverageArea:
- *               type: array
- *               items:
- *                 type: string
- *               example: ["Dhaka", "Chattogram"]
- *             address:
- *               type: string
- *               example: Banani, Dhaka
- *             verification:
- *               $ref: '#/components/schemas/ServiceProviderVerificationInput'
+ *           example: Wedding and corporate event planning
+ *         coverageArea:
+ *           type: array
+ *           items:
+ *             type: string
+ *           example: ["Dhaka", "Chattogram"]
+ *         address:
+ *           type: string
+ *           example: Banani, Dhaka
+ *         verification:
+ *           $ref: '#/components/schemas/ServiceProviderVerificationInput'
  *     VenueProviderOnboardingInput:
  *       type: object
- *       required: [_id, fullName, email, businessName, businessType, legalBusinessName, registrationNo, businessMail, businessPhoneNo]
+ *       required: [_id, fullName, email, nidOrTradeLicenseNumber, businessName, businessType, businessMail, businessPhoneNo]
  *       properties:
  *         _id:
  *           type: string
@@ -281,23 +267,6 @@ const router = Router();
  *         businessPhoneNo:
  *           type: string
  *           example: +8801700000000
- *         media:
- *           type: object
- *           required: [galleryImages]
- *           properties:
- *             galleryImages:
- *               type: array
- *               items:
- *                 type: string
- *                 format: uri
- *               example:
- *                 - https://cdn.example.com/venues/royal-hall-1.jpg
- *                 - https://cdn.example.com/venues/royal-hall-2.jpg
- *                 - https://cdn.example.com/venues/royal-hall-3.jpg
- *             videoUrl:
- *               type: string
- *               format: uri
- *               example: https://www.youtube.com/watch?v=dQw4w9WgXcQ
  *     ServiceProviderOnboardingRequest:
  *       type: object
  *       required: [_id, name, email, nidOrTradeLicenseNumber, profileInfo]
@@ -340,7 +309,7 @@ const router = Router();
  *           type: string
  *           example: 1234567890123
  *         profileInfo:
- *           $ref: '#/components/schemas/EventPlannerOnboardingInput'
+ *           $ref: '#/components/schemas/EventPlannerProfileInfoInput'
  *     VenueProviderOnboardingRequest:
  *       type: object
  *       required: [_id, fullName, email, nidOrTradeLicenseNumber, businessName, businessType, businessMail, businessPhoneNo]

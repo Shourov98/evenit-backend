@@ -342,7 +342,7 @@ const serviceProviderAuth = folder('Auth', [
       _id: '65f1a9d0f1b2c3d4e5f60001',
       name: 'Service Provider Example',
       email: 'service.provider@example.com',
-      stripeAccountId: 'acct_service_provider_123',
+      nidOrTradeLicenseNumber: '1234567890123',
       profileInfo: {
         serviceName: 'Premium Catering',
         serviceCategory: 'Catering',
@@ -551,6 +551,7 @@ const venueProviderAuth = folder('Auth', [
       _id: '65f1a9d0f1b2c3d4e5f60003',
       fullName: 'Venue Provider Example',
       email: 'venue.provider@example.com',
+      nidOrTradeLicenseNumber: '1234567890123',
       businessName: 'Royal Hall',
       businessType: 'company',
       legalBusinessName: 'Royal Hall Ltd',
@@ -749,6 +750,7 @@ const eventPlannerAuth = folder('Auth', [
       _id: '65f1a9d0f1b2c3d4e5f60002',
       fullName: 'Event Planner Example',
       email: 'event.planner@example.com',
+      nidOrTradeLicenseNumber: '1234567890123',
       profileInfo: {
         name: 'Event Planner Example',
         description: 'Wedding and corporate event planning',

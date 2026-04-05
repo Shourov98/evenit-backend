@@ -6,6 +6,7 @@ import { eventPlannerRouter } from '../modules/event-planner/event-planner.route
 import { orderChatRouter } from '../modules/order-chat/order-chat.route';
 import { publicRouter } from '../modules/public/public.route';
 import { serviceProviderRouter } from '../modules/service-provider/service-provider.route';
+import { siteContentRouter } from '../modules/site-content/site-content.route';
 import { subscriptionRouter } from '../modules/subscriptions/subscription.route';
 import { uploadRouter } from '../modules/uploads/upload.route';
 import { usersRouter } from '../modules/users/users.route';
@@ -53,6 +54,7 @@ router.use('/api/v1/event-planners', eventPlannerRouter);
 router.use('/api/v1/order-chats', orderChatRouter);
 router.use('/api/v1/public', publicRouter);
 router.use('/api/v1/service-provider', serviceProviderRouter);
+router.use('/api/v1/site-content', siteContentRouter);
 router.use('/api/v1/subscriptions', subscriptionRouter);
 router.use('/api/v1/uploads', uploadRouter);
 router.use('/api/v1/users', usersRouter);

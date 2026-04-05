@@ -210,18 +210,19 @@ Endpoint:
 Role-specific required fields:
 
 - Service provider onboarding: `_id`, `name`, `email`, `profileInfo`, `services`
+- Service provider onboarding also requires `nidOrTradeLicenseNumber`
 - `profileInfo`: `serviceName`, `serviceCategory` (single value), optional `serviceDescription`, `coverageArea[]`, `verification`
 - Service provider `profileInfo.verification`: `businessType`, optional `companyName`, `nationalIdOrTradeLicenseFiles[]` (uploaded image/doc/pdf URLs)
-- `stripeAccountId` is optional for service provider onboarding and can be submitted later before payouts are needed
-- Event planner onboarding: `_id`, `fullName`, `email`, `profileInfo`
+- `stripeAccountId` is not accepted in service provider onboarding payload.
+- Event planner onboarding: `_id`, `fullName`, `email`, `nidOrTradeLicenseNumber`, `profileInfo`
 - Event planner `profileInfo`: `name`, optional `description`, `coverageArea[]`, `address`, `verification`
 - Event planner `profileInfo.verification`: `businessType`, optional `companyName`, `nationalIdOrTradeLicenseFiles[]`
-- Venue provider onboarding: `_id`, `fullName`, `email`, `businessName`, `businessType`, `legalBusinessName`, `registrationNo`, `businessMail`, `businessPhoneNo`
+- Venue provider onboarding: `_id`, `fullName`, `email`, `nidOrTradeLicenseNumber`, `businessName`, `businessType`, `legalBusinessName`, `registrationNo`, `businessMail`, `businessPhoneNo`
 
 Note:
 
 - Payment info / bank card fields are not accepted in onboarding payload.
-- `stripeAccountId` is optional for event and venue provider onboarding and can be added later if payouts are introduced.
+- `stripeAccountId` is not accepted in service provider, event planner, or venue provider onboarding payloads.
 
 ## Service Provider Service API
 
