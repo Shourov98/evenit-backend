@@ -31,6 +31,7 @@ export interface IServiceProviderVerificationInfo {
 }
 
 export interface IServiceProviderProfileInfo {
+  nidOrTradeLicenseNumber: string;
   serviceName: string;
   serviceCategory: string;
   serviceDescription?: string;
@@ -42,15 +43,11 @@ export interface IServiceProviderOnboarding {
   _id: string;
   name: string;
   email: string;
-  nidOrTradeLicenseNumber: string;
   profileInfo: IServiceProviderProfileInfo;
   services: string[];
 }
 
-export interface IVenueProviderOnboarding {
-  _id: string;
-  fullName: string;
-  email: string;
+export interface IVenueProviderProfileInfo {
   nidOrTradeLicenseNumber: string;
   businessName: string;
   businessType: BusinessType;
@@ -60,12 +57,19 @@ export interface IVenueProviderOnboarding {
   businessPhoneNo: string;
 }
 
+export interface IVenueProviderOnboarding {
+  _id: string;
+  fullName: string;
+  email: string;
+  profileInfo: IVenueProviderProfileInfo;
+}
+
 export interface IEventProviderOnboarding {
   _id: string;
   fullName: string;
   email: string;
-  nidOrTradeLicenseNumber: string;
   profileInfo: {
+    nidOrTradeLicenseNumber: string;
     name: string;
     description?: string;
     coverageArea: string[];
@@ -232,14 +236,14 @@ const serviceProviderOnboardingSchema = new Schema<IServiceProviderOnboarding>(
       trim: true,
       lowercase: true
     },
-    nidOrTradeLicenseNumber: {
-      type: String,
-      required: true,
-      trim: true,
-      minlength: 2,
-      maxlength: 50
-    },
     profileInfo: {
+      nidOrTradeLicenseNumber: {
+        type: String,
+        required: true,
+        trim: true,
+        minlength: 2,
+        maxlength: 50
+      },
       serviceName: {
         type: String,
         required: true,
@@ -310,49 +314,51 @@ const venueProviderOnboardingSchema = new Schema<IVenueProviderOnboarding>(
       trim: true,
       lowercase: true
     },
-    nidOrTradeLicenseNumber: {
-      type: String,
-      required: true,
-      trim: true,
-      minlength: 2,
-      maxlength: 50
-    },
-    businessName: {
-      type: String,
-      required: true,
-      trim: true,
-      minlength: 2,
-      maxlength: 120
-    },
-    businessType: {
-      type: String,
-      required: true,
-      enum: BUSINESS_TYPES
-    },
-    legalBusinessName: {
-      type: String,
-      trim: true,
-      minlength: 2,
-      maxlength: 120
-    },
-    registrationNo: {
-      type: String,
-      trim: true,
-      minlength: 2,
-      maxlength: 120
-    },
-    businessMail: {
-      type: String,
-      required: true,
-      trim: true,
-      lowercase: true
-    },
-    businessPhoneNo: {
-      type: String,
-      required: true,
-      trim: true,
-      minlength: 5,
-      maxlength: 30
+    profileInfo: {
+      nidOrTradeLicenseNumber: {
+        type: String,
+        required: true,
+        trim: true,
+        minlength: 2,
+        maxlength: 50
+      },
+      businessName: {
+        type: String,
+        required: true,
+        trim: true,
+        minlength: 2,
+        maxlength: 120
+      },
+      businessType: {
+        type: String,
+        required: true,
+        enum: BUSINESS_TYPES
+      },
+      legalBusinessName: {
+        type: String,
+        trim: true,
+        minlength: 2,
+        maxlength: 120
+      },
+      registrationNo: {
+        type: String,
+        trim: true,
+        minlength: 2,
+        maxlength: 120
+      },
+      businessMail: {
+        type: String,
+        required: true,
+        trim: true,
+        lowercase: true
+      },
+      businessPhoneNo: {
+        type: String,
+        required: true,
+        trim: true,
+        minlength: 5,
+        maxlength: 30
+      }
     }
   },
   { _id: false }
@@ -377,14 +383,14 @@ const eventProviderOnboardingSchema = new Schema<IEventProviderOnboarding>(
       trim: true,
       lowercase: true
     },
-    nidOrTradeLicenseNumber: {
-      type: String,
-      required: true,
-      trim: true,
-      minlength: 2,
-      maxlength: 50
-    },
     profileInfo: {
+      nidOrTradeLicenseNumber: {
+        type: String,
+        required: true,
+        trim: true,
+        minlength: 2,
+        maxlength: 50
+      },
       name: {
         type: String,
         required: true,

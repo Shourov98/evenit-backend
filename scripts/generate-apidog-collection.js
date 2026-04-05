@@ -342,8 +342,8 @@ const serviceProviderAuth = folder('Auth', [
       _id: '65f1a9d0f1b2c3d4e5f60001',
       name: 'Service Provider Example',
       email: 'service.provider@example.com',
-      nidOrTradeLicenseNumber: '1234567890123',
       profileInfo: {
+        nidOrTradeLicenseNumber: '1234567890123',
         serviceName: 'Premium Catering',
         serviceCategory: 'Catering',
         serviceDescription: 'Corporate and wedding catering services',
@@ -551,13 +551,15 @@ const venueProviderAuth = folder('Auth', [
       _id: '65f1a9d0f1b2c3d4e5f60003',
       fullName: 'Venue Provider Example',
       email: 'venue.provider@example.com',
-      nidOrTradeLicenseNumber: '1234567890123',
-      businessName: 'Royal Hall',
-      businessType: 'company',
-      legalBusinessName: 'Royal Hall Ltd',
-      registrationNo: 'TR-123456',
-      businessMail: 'business@royalhall.com',
-      businessPhoneNo: '+8801712345678'
+      profileInfo: {
+        nidOrTradeLicenseNumber: '1234567890123',
+        businessName: 'Royal Hall',
+        businessType: 'company',
+        legalBusinessName: 'Royal Hall Ltd',
+        registrationNo: 'TR-123456',
+        businessMail: 'business@royalhall.com',
+        businessPhoneNo: '+8801712345678'
+      }
     })
   }),
   request('Get Current User', 'GET', '/api/v1/auth/me', {
@@ -750,8 +752,8 @@ const eventPlannerAuth = folder('Auth', [
       _id: '65f1a9d0f1b2c3d4e5f60002',
       fullName: 'Event Planner Example',
       email: 'event.planner@example.com',
-      nidOrTradeLicenseNumber: '1234567890123',
       profileInfo: {
+        nidOrTradeLicenseNumber: '1234567890123',
         name: 'Event Planner Example',
         description: 'Wedding and corporate event planning',
         coverageArea: ['Dhaka', 'Chattogram'],

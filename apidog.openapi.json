@@ -317,12 +317,17 @@
       "ServiceProviderProfileInfoInput": {
         "type": "object",
         "required": [
+          "nidOrTradeLicenseNumber",
           "serviceName",
           "serviceCategory",
           "coverageArea",
           "verification"
         ],
         "properties": {
+          "nidOrTradeLicenseNumber": {
+            "type": "string",
+            "example": 1234567890123
+          },
           "serviceName": {
             "type": "string",
             "example": "Premium Catering"
@@ -353,12 +358,17 @@
       "EventPlannerProfileInfoInput": {
         "type": "object",
         "required": [
+          "nidOrTradeLicenseNumber",
           "name",
           "coverageArea",
           "address",
           "verification"
         ],
         "properties": {
+          "nidOrTradeLicenseNumber": {
+            "type": "string",
+            "example": 1234567890123
+          },
           "name": {
             "type": "string",
             "example": "Star Events"
@@ -386,12 +396,9 @@
           }
         }
       },
-      "VenueProviderOnboardingInput": {
+      "VenueProviderProfileInfoInput": {
         "type": "object",
         "required": [
-          "_id",
-          "fullName",
-          "email",
           "nidOrTradeLicenseNumber",
           "businessName",
           "businessType",
@@ -399,18 +406,9 @@
           "businessPhoneNo"
         ],
         "properties": {
-          "_id": {
+          "nidOrTradeLicenseNumber": {
             "type": "string",
-            "example": "65f1a9d0f1b2c3d4e5f60003"
-          },
-          "fullName": {
-            "type": "string",
-            "example": "Royal Hall Owner"
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "example": "venue@example.com"
+            "example": 1234567890123
           },
           "businessName": {
             "type": "string",
@@ -449,7 +447,6 @@
           "_id",
           "name",
           "email",
-          "nidOrTradeLicenseNumber",
           "profileInfo"
         ],
         "properties": {
@@ -465,10 +462,6 @@
             "type": "string",
             "format": "email",
             "example": "marvin@example.com"
-          },
-          "nidOrTradeLicenseNumber": {
-            "type": "string",
-            "example": 1234567890123
           },
           "profileInfo": {
             "$ref": "#/components/schemas/ServiceProviderProfileInfoInput"
@@ -488,7 +481,6 @@
           "_id",
           "fullName",
           "email",
-          "nidOrTradeLicenseNumber",
           "profileInfo"
         ],
         "properties": {
@@ -505,10 +497,6 @@
             "format": "email",
             "example": "planner@example.com"
           },
-          "nidOrTradeLicenseNumber": {
-            "type": "string",
-            "example": 1234567890123
-          },
           "profileInfo": {
             "$ref": "#/components/schemas/EventPlannerProfileInfoInput"
           }
@@ -520,11 +508,7 @@
           "_id",
           "fullName",
           "email",
-          "nidOrTradeLicenseNumber",
-          "businessName",
-          "businessType",
-          "businessMail",
-          "businessPhoneNo"
+          "profileInfo"
         ],
         "properties": {
           "_id": {
@@ -540,38 +524,8 @@
             "format": "email",
             "example": "venue@example.com"
           },
-          "nidOrTradeLicenseNumber": {
-            "type": "string",
-            "example": 1234567890123
-          },
-          "businessName": {
-            "type": "string",
-            "example": "Royal Hall"
-          },
-          "businessType": {
-            "type": "string",
-            "enum": [
-              "individual",
-              "company"
-            ],
-            "example": "company"
-          },
-          "legalBusinessName": {
-            "type": "string",
-            "example": "Royal Hall Ltd"
-          },
-          "registrationNo": {
-            "type": "string",
-            "example": "TRD-123456"
-          },
-          "businessMail": {
-            "type": "string",
-            "format": "email",
-            "example": "info@royalhall.com"
-          },
-          "businessPhoneNo": {
-            "type": "string",
-            "example": 8801700000000
+          "profileInfo": {
+            "$ref": "#/components/schemas/VenueProviderProfileInfoInput"
           }
         }
       },

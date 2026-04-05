@@ -195,8 +195,11 @@ const router = Router();
  *           example: ["https://example.com/nid-front.jpg", "https://example.com/trade-license.pdf"]
  *     ServiceProviderProfileInfoInput:
  *       type: object
- *       required: [serviceName, serviceCategory, coverageArea, verification]
+ *       required: [nidOrTradeLicenseNumber, serviceName, serviceCategory, coverageArea, verification]
  *       properties:
+ *         nidOrTradeLicenseNumber:
+ *           type: string
+ *           example: 1234567890123
  *         serviceName:
  *           type: string
  *           example: Premium Catering
@@ -215,8 +218,11 @@ const router = Router();
  *           $ref: '#/components/schemas/ServiceProviderVerificationInput'
  *     EventPlannerProfileInfoInput:
  *       type: object
- *       required: [name, coverageArea, address, verification]
+ *       required: [nidOrTradeLicenseNumber, name, coverageArea, address, verification]
  *       properties:
+ *         nidOrTradeLicenseNumber:
+ *           type: string
+ *           example: 1234567890123
  *         name:
  *           type: string
  *           example: Star Events
@@ -233,20 +239,13 @@ const router = Router();
  *           example: Banani, Dhaka
  *         verification:
  *           $ref: '#/components/schemas/ServiceProviderVerificationInput'
- *     VenueProviderOnboardingInput:
+ *     VenueProviderProfileInfoInput:
  *       type: object
- *       required: [_id, fullName, email, nidOrTradeLicenseNumber, businessName, businessType, businessMail, businessPhoneNo]
+ *       required: [nidOrTradeLicenseNumber, businessName, businessType, businessMail, businessPhoneNo]
  *       properties:
- *         _id:
+ *         nidOrTradeLicenseNumber:
  *           type: string
- *           example: 65f1a9d0f1b2c3d4e5f60003
- *         fullName:
- *           type: string
- *           example: Royal Hall Owner
- *         email:
- *           type: string
- *           format: email
- *           example: venue@example.com
+ *           example: 1234567890123
  *         businessName:
  *           type: string
  *           example: Royal Hall
@@ -269,7 +268,7 @@ const router = Router();
  *           example: +8801700000000
  *     ServiceProviderOnboardingRequest:
  *       type: object
- *       required: [_id, name, email, nidOrTradeLicenseNumber, profileInfo]
+ *       required: [_id, name, email, profileInfo]
  *       properties:
  *         _id:
  *           type: string
@@ -281,9 +280,6 @@ const router = Router();
  *           type: string
  *           format: email
  *           example: marvin@example.com
- *         nidOrTradeLicenseNumber:
- *           type: string
- *           example: 1234567890123
  *         profileInfo:
  *           $ref: '#/components/schemas/ServiceProviderProfileInfoInput'
  *         services:
@@ -293,7 +289,7 @@ const router = Router();
  *           example: []
  *     EventPlannerOnboardingRequest:
  *       type: object
- *       required: [_id, fullName, email, nidOrTradeLicenseNumber, profileInfo]
+ *       required: [_id, fullName, email, profileInfo]
  *       properties:
  *         _id:
  *           type: string
@@ -305,14 +301,11 @@ const router = Router();
  *           type: string
  *           format: email
  *           example: planner@example.com
- *         nidOrTradeLicenseNumber:
- *           type: string
- *           example: 1234567890123
  *         profileInfo:
  *           $ref: '#/components/schemas/EventPlannerProfileInfoInput'
  *     VenueProviderOnboardingRequest:
  *       type: object
- *       required: [_id, fullName, email, nidOrTradeLicenseNumber, businessName, businessType, businessMail, businessPhoneNo]
+ *       required: [_id, fullName, email, profileInfo]
  *       properties:
  *         _id:
  *           type: string
@@ -324,29 +317,8 @@ const router = Router();
  *           type: string
  *           format: email
  *           example: venue@example.com
- *         nidOrTradeLicenseNumber:
- *           type: string
- *           example: 1234567890123
- *         businessName:
- *           type: string
- *           example: Royal Hall
- *         businessType:
- *           type: string
- *           enum: [individual, company]
- *           example: company
- *         legalBusinessName:
- *           type: string
- *           example: Royal Hall Ltd
- *         registrationNo:
- *           type: string
- *           example: TRD-123456
- *         businessMail:
- *           type: string
- *           format: email
- *           example: info@royalhall.com
- *         businessPhoneNo:
- *           type: string
- *           example: +8801700000000
+ *         profileInfo:
+ *           $ref: '#/components/schemas/VenueProviderProfileInfoInput'
  *     AuthUserResponse:
  *       type: object
  *       properties:

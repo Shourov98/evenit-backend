@@ -210,14 +210,14 @@ Endpoint:
 Role-specific required fields:
 
 - Service provider onboarding: `_id`, `name`, `email`, `profileInfo`, `services`
-- Service provider onboarding also requires `nidOrTradeLicenseNumber`
-- `profileInfo`: `serviceName`, `serviceCategory` (single value), optional `serviceDescription`, `coverageArea[]`, `verification`
+- `profileInfo`: `nidOrTradeLicenseNumber`, `serviceName`, `serviceCategory` (single value), optional `serviceDescription`, `coverageArea[]`, `verification`
 - Service provider `profileInfo.verification`: `businessType`, optional `companyName`, `nationalIdOrTradeLicenseFiles[]` (uploaded image/doc/pdf URLs)
 - `stripeAccountId` is not accepted in service provider onboarding payload.
-- Event planner onboarding: `_id`, `fullName`, `email`, `nidOrTradeLicenseNumber`, `profileInfo`
-- Event planner `profileInfo`: `name`, optional `description`, `coverageArea[]`, `address`, `verification`
+- Event planner onboarding: `_id`, `fullName`, `email`, `profileInfo`
+- Event planner `profileInfo`: `nidOrTradeLicenseNumber`, `name`, optional `description`, `coverageArea[]`, `address`, `verification`
 - Event planner `profileInfo.verification`: `businessType`, optional `companyName`, `nationalIdOrTradeLicenseFiles[]`
-- Venue provider onboarding: `_id`, `fullName`, `email`, `nidOrTradeLicenseNumber`, `businessName`, `businessType`, `legalBusinessName`, `registrationNo`, `businessMail`, `businessPhoneNo`
+- Venue provider onboarding: `_id`, `fullName`, `email`, `profileInfo`
+- Venue provider `profileInfo`: `nidOrTradeLicenseNumber`, `businessName`, `businessType`, optional `legalBusinessName`, optional `registrationNo`, `businessMail`, `businessPhoneNo`
 
 Note:
 

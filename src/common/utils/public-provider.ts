@@ -28,18 +28,18 @@ export const buildPublicProviderInfo = (user: ProviderUser) => {
   }
 
   if (user.role === 'venue_provider' && user.onboarding?.venueProvider) {
-    const venueProvider = user.onboarding.venueProvider;
+    const profileInfo = user.onboarding.venueProvider.profileInfo;
 
     return {
       _id: user._id,
       fullName: user.fullName,
       role: user.role,
       venueProvider: {
-        businessName: venueProvider.businessName,
-        businessType: venueProvider.businessType,
-        legalBusinessName: venueProvider.legalBusinessName,
-        businessMail: venueProvider.businessMail,
-        businessPhoneNo: venueProvider.businessPhoneNo
+        businessName: profileInfo.businessName,
+        businessType: profileInfo.businessType,
+        legalBusinessName: profileInfo.legalBusinessName,
+        businessMail: profileInfo.businessMail,
+        businessPhoneNo: profileInfo.businessPhoneNo
       }
     };
   }
