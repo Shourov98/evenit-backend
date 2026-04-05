@@ -211,16 +211,19 @@ Role-specific required fields:
 
 - Service provider onboarding: `_id`, `name`, `email`, `profileInfo`, `services`
 - `profileInfo`: `nidOrTradeLicenseNumber`, `serviceName`, `serviceCategory` (single value), optional `serviceDescription`, `coverageArea[]`, `verification`
-- Service provider `profileInfo.verification`: `businessType`, optional `companyName`, `nationalIdOrTradeLicenseFiles[]` (uploaded image/doc/pdf URLs)
+- Service provider `profileInfo.verification`: `businessType`, optional `companyName`, `nationalIdOrTradeLicenseFiles[]`
 - `stripeAccountId` is not accepted in service provider onboarding payload.
 - Event planner onboarding: `_id`, `fullName`, `email`, `profileInfo`
 - Event planner `profileInfo`: `nidOrTradeLicenseNumber`, `name`, optional `description`, `coverageArea[]`, `address`, `verification`
 - Event planner `profileInfo.verification`: `businessType`, optional `companyName`, `nationalIdOrTradeLicenseFiles[]`
 - Venue provider onboarding: `_id`, `fullName`, `email`, `profileInfo`
-- Venue provider `profileInfo`: `nidOrTradeLicenseNumber`, `businessName`, `businessType`, optional `legalBusinessName`, optional `registrationNo`, `businessMail`, `businessPhoneNo`
+- Venue provider `profileInfo`: `nidOrTradeLicenseNumber`, optional `nationalIdOrTradeLicenseFiles[]`, `businessName`, `businessType`, optional `legalBusinessName`, optional `registrationNo`, `businessMail`, `businessPhoneNo`
 
 Note:
 
+- Send onboarding requests as `multipart/form-data`.
+- Put the structured JSON body inside a `payload` text field.
+- Attach selected image/PDF files using the `nationalIdOrTradeLicenseFiles` file field. The backend uploads them and stores the hosted URLs in the onboarding payload.
 - Payment info / bank card fields are not accepted in onboarding payload.
 - `stripeAccountId` is not accepted in service provider, event planner, or venue provider onboarding payloads.
 

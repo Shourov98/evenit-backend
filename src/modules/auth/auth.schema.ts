@@ -153,6 +153,7 @@ const venueProviderDetailsSchema = z.object({
   email: z.string().email(),
   profileInfo: z.object({
     nidOrTradeLicenseNumber: z.string().min(2).max(50),
+    nationalIdOrTradeLicenseFiles: z.array(z.string().url()).min(1).max(10).optional(),
     businessName: z.string().min(2).max(120),
     businessType: z.enum(['individual', 'company']),
     legalBusinessName: z.string().min(2).max(120).optional(),

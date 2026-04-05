@@ -49,6 +49,7 @@ export interface IServiceProviderOnboarding {
 
 export interface IVenueProviderProfileInfo {
   nidOrTradeLicenseNumber: string;
+  nationalIdOrTradeLicenseFiles?: string[];
   businessName: string;
   businessType: BusinessType;
   legalBusinessName?: string;
@@ -321,6 +322,10 @@ const venueProviderOnboardingSchema = new Schema<IVenueProviderOnboarding>(
         trim: true,
         minlength: 2,
         maxlength: 50
+      },
+      nationalIdOrTradeLicenseFiles: {
+        type: [String],
+        default: []
       },
       businessName: {
         type: String,

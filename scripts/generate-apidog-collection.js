@@ -337,27 +337,33 @@ const serviceProviderAuth = folder('Auth', [
   }),
   request('Submit Service Provider Onboarding', 'POST', '/api/v1/auth/onboarding/service-provider', {
     tokenVar: 'serviceProviderToken',
-    contentType: 'application/json',
-    body: jsonBody({
-      _id: '65f1a9d0f1b2c3d4e5f60001',
-      name: 'Service Provider Example',
-      email: 'service.provider@example.com',
-      profileInfo: {
-        nidOrTradeLicenseNumber: '1234567890123',
-        serviceName: 'Premium Catering',
-        serviceCategory: 'Catering',
-        serviceDescription: 'Corporate and wedding catering services',
-        coverageArea: ['Dhaka', 'Gazipur'],
-        verification: {
-          businessType: 'individual',
-          nationalIdOrTradeLicenseFiles: [
-            'https://cdn.example.com/nid-front.jpg',
-            'https://cdn.example.com/trade-license.pdf'
-          ]
-        }
+    body: formDataBody([
+      {
+        key: 'payload',
+        value: JSON.stringify({
+          _id: '65f1a9d0f1b2c3d4e5f60001',
+          name: 'Service Provider Example',
+          email: 'service.provider@example.com',
+          profileInfo: {
+            nidOrTradeLicenseNumber: '1234567890123',
+            serviceName: 'Premium Catering',
+            serviceCategory: 'Catering',
+            serviceDescription: 'Corporate and wedding catering services',
+            coverageArea: ['Dhaka', 'Gazipur'],
+            verification: {
+              businessType: 'individual'
+            }
+          },
+          services: []
+        }, null, 2)
       },
-      services: []
-    })
+      {
+        key: 'nationalIdOrTradeLicenseFiles',
+        type: 'file',
+        src: [],
+        description: 'Attach one or more image/PDF files from the frontend file picker.'
+      }
+    ])
   }),
   request('Get Current User', 'GET', '/api/v1/auth/me', {
     tokenVar: 'serviceProviderToken',
@@ -546,21 +552,31 @@ const venueProviderAuth = folder('Auth', [
   }),
   request('Submit Venue Provider Onboarding', 'POST', '/api/v1/auth/onboarding/venue-provider', {
     tokenVar: 'venueProviderToken',
-    contentType: 'application/json',
-    body: jsonBody({
-      _id: '65f1a9d0f1b2c3d4e5f60003',
-      fullName: 'Venue Provider Example',
-      email: 'venue.provider@example.com',
-      profileInfo: {
-        nidOrTradeLicenseNumber: '1234567890123',
-        businessName: 'Royal Hall',
-        businessType: 'company',
-        legalBusinessName: 'Royal Hall Ltd',
-        registrationNo: 'TR-123456',
-        businessMail: 'business@royalhall.com',
-        businessPhoneNo: '+8801712345678'
+    body: formDataBody([
+      {
+        key: 'payload',
+        value: JSON.stringify({
+          _id: '65f1a9d0f1b2c3d4e5f60003',
+          fullName: 'Venue Provider Example',
+          email: 'venue.provider@example.com',
+          profileInfo: {
+            nidOrTradeLicenseNumber: '1234567890123',
+            businessName: 'Royal Hall',
+            businessType: 'company',
+            legalBusinessName: 'Royal Hall Ltd',
+            registrationNo: 'TR-123456',
+            businessMail: 'business@royalhall.com',
+            businessPhoneNo: '+8801712345678'
+          }
+        }, null, 2)
+      },
+      {
+        key: 'nationalIdOrTradeLicenseFiles',
+        type: 'file',
+        src: [],
+        description: 'Optional image/PDF document files for trade license or NID.'
       }
-    })
+    ])
   }),
   request('Get Current User', 'GET', '/api/v1/auth/me', {
     tokenVar: 'venueProviderToken',
@@ -747,26 +763,33 @@ const eventPlannerAuth = folder('Auth', [
   }),
   request('Submit Event Planner Onboarding', 'POST', '/api/v1/auth/onboarding/event-planner', {
     tokenVar: 'eventPlannerToken',
-    contentType: 'application/json',
-    body: jsonBody({
-      _id: '65f1a9d0f1b2c3d4e5f60002',
-      fullName: 'Event Planner Example',
-      email: 'event.planner@example.com',
-      profileInfo: {
-        nidOrTradeLicenseNumber: '1234567890123',
-        name: 'Event Planner Example',
-        description: 'Wedding and corporate event planning',
-        coverageArea: ['Dhaka', 'Chattogram'],
-        address: 'Banani, Dhaka',
-        verification: {
-          businessType: 'company',
-          companyName: 'Events Ltd',
-          nationalIdOrTradeLicenseFiles: [
-            'https://cdn.example.com/trade-license.pdf'
-          ]
-        }
+    body: formDataBody([
+      {
+        key: 'payload',
+        value: JSON.stringify({
+          _id: '65f1a9d0f1b2c3d4e5f60002',
+          fullName: 'Event Planner Example',
+          email: 'event.planner@example.com',
+          profileInfo: {
+            nidOrTradeLicenseNumber: '1234567890123',
+            name: 'Event Planner Example',
+            description: 'Wedding and corporate event planning',
+            coverageArea: ['Dhaka', 'Chattogram'],
+            address: 'Banani, Dhaka',
+            verification: {
+              businessType: 'company',
+              companyName: 'Events Ltd'
+            }
+          }
+        }, null, 2)
+      },
+      {
+        key: 'nationalIdOrTradeLicenseFiles',
+        type: 'file',
+        src: [],
+        description: 'Attach one or more image/PDF files from the frontend file picker.'
       }
-    })
+    ])
   }),
   request('Get Current User', 'GET', '/api/v1/auth/me', {
     tokenVar: 'eventPlannerToken',

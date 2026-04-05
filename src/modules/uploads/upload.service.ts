@@ -23,12 +23,16 @@ const roleProfileFolderMap: Record<UserRole, string> = {
   super_admin: 'super-admins/profile-images'
 };
 
-const uploadBuffer = (buffer: Buffer, folder: string): Promise<UploadApiResponse> =>
+const uploadBuffer = (
+  buffer: Buffer,
+  folder: string,
+  resourceType: 'image' | 'auto' = 'image'
+): Promise<UploadApiResponse> =>
   new Promise((resolve, reject) => {
     const stream = getCloudinary().uploader.upload_stream(
       {
         folder,
-        resource_type: 'image'
+        resource_type: resourceType
       },
       (error, result) => {
         if (error || !result) {
@@ -44,7 +48,11 @@ const uploadBuffer = (buffer: Buffer, folder: string): Promise<UploadApiResponse
   });
 
 export class UploadService {
-  static async uploadImages(files: Express.Multer.File[], folderSegment = 'uploads'): Promise<UploadedImage[]> {
+  private static async uploadFiles(
+    files: Express.Multer.File[],
+    folderSegment = 'uploads',
+    resourceType: 'image' | 'auto' = 'image'
+  ): Promise<UploadedImage[]> {
     if (!hasCloudinaryConfig()) {
       throw new AppError(500, 'Cloudinary is not configured');
     }
@@ -62,7 +70,7 @@ export class UploadService {
 
     const uploads = await Promise.all(
       files.map(async (file) => {
-        const result = await uploadBuffer(file.buffer, folder);
+        const result = await uploadBuffer(file.buffer, folder, resourceType);
 
         return {
           url: result.secure_url,
@@ -77,6 +85,14 @@ export class UploadService {
     );
 
     return uploads;
+  }
+
+  static async uploadImages(files: Express.Multer.File[], folderSegment = 'uploads'): Promise<UploadedImage[]> {
+    return this.uploadFiles(files, folderSegment, 'image');
+  }
+
+  static async uploadOnboardingDocuments(files: Express.Multer.File[], folderSegment: string): Promise<UploadedImage[]> {
+    return this.uploadFiles(files, folderSegment, 'auto');
   }
 
   static async uploadVenueImages(files: Express.Multer.File[]): Promise<UploadedImage[]> {

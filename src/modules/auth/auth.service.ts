@@ -317,7 +317,8 @@ export class AuthService {
       verification: {
         businessType: payload.profileInfo.businessType,
         companyName: payload.profileInfo.legalBusinessName,
-        nationalIdOrTradeLicenseUrl: payload.profileInfo.registrationNo ?? ''
+        nationalIdOrTradeLicenseUrl:
+          payload.profileInfo.nationalIdOrTradeLicenseFiles?.[0] ?? payload.profileInfo.registrationNo ?? ''
       },
       serviceProvider: undefined,
       eventProvider: undefined,

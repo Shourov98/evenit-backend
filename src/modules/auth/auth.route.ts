@@ -1,7 +1,10 @@
 import { Router } from 'express';
 import { protect } from '../../common/middlewares/auth.middleware';
+import { parseMultipartJsonBody } from '../../common/middlewares/multipart-json.middleware';
 import { authLimiter } from '../../common/middlewares/security.middleware';
+import { onboardingDocumentUpload } from '../../common/middlewares/upload.middleware';
 import { validate } from '../../common/middlewares/validate.middleware';
+import { uploadOnboardingFiles } from './auth-onboarding-upload.middleware';
 import { AuthController } from './auth.controller';
 import {
   forgotPasswordRequestSchema,
@@ -216,6 +219,27 @@ const router = Router();
  *           example: ["Dhaka", "Gazipur"]
  *         verification:
  *           $ref: '#/components/schemas/ServiceProviderVerificationInput'
+ *     OnboardingMultipartRequest:
+ *       type: object
+ *       required: [payload]
+ *       properties:
+ *         payload:
+ *           type: string
+ *           description: JSON string matching the onboarding request schema for the selected role.
+ *           example: '{"_id":"65f1a9d0f1b2c3d4e5f60001","name":"Service Provider Example","email":"service.provider@example.com","profileInfo":{"nidOrTradeLicenseNumber":"1234567890123","serviceName":"Premium Catering","serviceCategory":"Catering","coverageArea":["Dhaka"],"verification":{"businessType":"individual"}},"services":[]}'
+ *         nationalIdOrTradeLicenseFiles:
+ *           type: array
+ *           items:
+ *             type: string
+ *             format: binary
+ *         file:
+ *           type: string
+ *           format: binary
+ *         files:
+ *           type: array
+ *           items:
+ *             type: string
+ *             format: binary
  *     EventPlannerProfileInfoInput:
  *       type: object
  *       required: [nidOrTradeLicenseNumber, name, coverageArea, address, verification]
@@ -246,6 +270,12 @@ const router = Router();
  *         nidOrTradeLicenseNumber:
  *           type: string
  *           example: 1234567890123
+ *         nationalIdOrTradeLicenseFiles:
+ *           type: array
+ *           items:
+ *             type: string
+ *             format: uri
+ *           example: ["https://cdn.example.com/trade-license.pdf"]
  *         businessName:
  *           type: string
  *           example: Royal Hall
@@ -614,9 +644,9 @@ router.post(
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
- *             $ref: '#/components/schemas/ServiceProviderOnboardingRequest'
+ *             $ref: '#/components/schemas/OnboardingMultipartRequest'
  *     responses:
  *       200:
  *         description: Onboarding submitted successfully
@@ -632,6 +662,13 @@ router.post(
 router.post(
   '/onboarding/service-provider',
   protect,
+  onboardingDocumentUpload.fields([
+    { name: 'nationalIdOrTradeLicenseFiles', maxCount: 10 },
+    { name: 'files', maxCount: 10 },
+    { name: 'file', maxCount: 10 }
+  ]),
+  parseMultipartJsonBody('payload'),
+  uploadOnboardingFiles('service-providers'),
   validate(submitServiceProviderOnboardingSchema),
   AuthController.submitServiceProviderOnboarding
 );
@@ -647,9 +684,9 @@ router.post(
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
- *             $ref: '#/components/schemas/EventPlannerOnboardingRequest'
+ *             $ref: '#/components/schemas/OnboardingMultipartRequest'
  *     responses:
  *       200:
  *         description: Onboarding submitted successfully
@@ -665,6 +702,13 @@ router.post(
 router.post(
   '/onboarding/event-planner',
   protect,
+  onboardingDocumentUpload.fields([
+    { name: 'nationalIdOrTradeLicenseFiles', maxCount: 10 },
+    { name: 'files', maxCount: 10 },
+    { name: 'file', maxCount: 10 }
+  ]),
+  parseMultipartJsonBody('payload'),
+  uploadOnboardingFiles('event-planners'),
   validate(submitEventProviderOnboardingSchema),
   AuthController.submitEventProviderOnboarding
 );
@@ -680,9 +724,9 @@ router.post(
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
- *             $ref: '#/components/schemas/VenueProviderOnboardingRequest'
+ *             $ref: '#/components/schemas/OnboardingMultipartRequest'
  *     responses:
  *       200:
  *         description: Onboarding submitted successfully
@@ -698,6 +742,13 @@ router.post(
 router.post(
   '/onboarding/venue-provider',
   protect,
+  onboardingDocumentUpload.fields([
+    { name: 'nationalIdOrTradeLicenseFiles', maxCount: 10 },
+    { name: 'files', maxCount: 10 },
+    { name: 'file', maxCount: 10 }
+  ]),
+  parseMultipartJsonBody('payload'),
+  uploadOnboardingFiles('venue-providers'),
   validate(submitVenueProviderOnboardingSchema),
   AuthController.submitVenueProviderOnboarding
 );
