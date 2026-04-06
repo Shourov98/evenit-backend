@@ -449,6 +449,12 @@ const serviceProviderServices = folder('Services', [
         type: 'file',
         src: [],
         description: 'Attach one or more service images from the frontend file picker.'
+      },
+      {
+        key: 'image',
+        type: 'file',
+        src: [],
+        description: 'Optional single-image field supported for client compatibility.'
       }
     ]),
     event: idCaptureEvent('serviceId')
@@ -689,6 +695,12 @@ const venueProviderVenues = folder('Venues', [
         type: 'file',
         src: [],
         description: 'Attach one or more venue images from the frontend file picker.'
+      },
+      {
+        key: 'image',
+        type: 'file',
+        src: [],
+        description: 'Optional single-image field supported for client compatibility.'
       }
     ]),
     event: idCaptureEvent('venueId')
