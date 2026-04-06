@@ -4798,6 +4798,7 @@
           "Bookings"
         ],
         "summary": "Approve a booking as service provider",
+        "description": "Service provider approves a pending booking assigned to them.",
         "security": [
           {
             "bearerAuth": []
@@ -4815,7 +4816,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Booking approved"
+            "description": "Booking approved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -4826,6 +4834,7 @@
           "Bookings"
         ],
         "summary": "Approve a booking as venue provider",
+        "description": "Venue provider approves a pending booking assigned to them.",
         "security": [
           {
             "bearerAuth": []
@@ -4843,7 +4852,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Booking approved"
+            "description": "Booking approved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -4854,6 +4870,7 @@
           "Bookings"
         ],
         "summary": "Approve a booking as event planner",
+        "description": "Event planner approves a pending booking assigned to them.",
         "security": [
           {
             "bearerAuth": []
@@ -4871,7 +4888,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Booking approved"
+            "description": "Booking approved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -4937,6 +4961,7 @@
           "Bookings"
         ],
         "summary": "Reject a booking as service provider",
+        "description": "Service provider rejects a pending booking assigned to them and may optionally provide a reason.",
         "security": [
           {
             "bearerAuth": []
@@ -4952,9 +4977,26 @@
             }
           }
         ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookingRejectRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "Booking rejected"
+            "description": "Booking rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -4965,6 +5007,7 @@
           "Bookings"
         ],
         "summary": "Reject a booking as venue provider",
+        "description": "Venue provider rejects a pending booking assigned to them and may optionally provide a reason.",
         "security": [
           {
             "bearerAuth": []
@@ -4980,9 +5023,26 @@
             }
           }
         ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookingRejectRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "Booking rejected"
+            "description": "Booking rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -4993,6 +5053,7 @@
           "Bookings"
         ],
         "summary": "Reject a booking as event planner",
+        "description": "Event planner rejects a pending booking assigned to them and may optionally provide a reason.",
         "security": [
           {
             "bearerAuth": []
@@ -5008,9 +5069,26 @@
             }
           }
         ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookingRejectRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "Booking rejected"
+            "description": "Booking rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -5974,6 +6052,7 @@
             "bearerAuth": []
           }
         ],
+        "description": "Submit multipart form-data. Put the partial service JSON in the `payload` field and attach optional image files in `images` or `image`. The backend uploads those files and appends the resulting URLs to `media.galleryImages`.",
         "parameters": [
           {
             "in": "path",
@@ -5987,9 +6066,40 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/ServiceUpdateRequest"
+                "type": "object",
+                "required": [
+                  "payload"
+                ],
+                "properties": {
+                  "payload": {
+                    "type": "string",
+                    "description": "JSON string matching ServiceUpdateRequest. Files sent in `images` or `image` are uploaded by the backend automatically.",
+                    "example": "{\"pricing\":{\"amount\":45000,\"discount\":{\"type\":\"fixed\",\"value\":5000}},\"media\":{\"galleryImages\":[],\"videoUrl\":\"https://youtube.com/watch?v=updated-service\"},\"availabilityOverrides\":[{\"date\":\"2026-04-13\",\"slots\":[{\"hour\":12,\"status\":\"booked\"}]}]}"
+                  },
+                  "images": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    },
+                    "description": "Optional service gallery images. Up to 10 files."
+                  },
+                  "image": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Optional single-image field supported for client compatibility."
+                  }
+                }
+              },
+              "examples": {
+                "validServiceUpdate": {
+                  "summary": "Valid service update payload",
+                  "value": {
+                    "payload": "{\"pricing\":{\"amount\":45000,\"discount\":{\"type\":\"fixed\",\"value\":5000}},\"media\":{\"galleryImages\":[],\"videoUrl\":\"https://youtube.com/watch?v=updated-service\"},\"availabilityOverrides\":[{\"date\":\"2026-04-13\",\"slots\":[{\"hour\":12,\"status\":\"booked\"}]}]}"
+                  }
+                }
               }
             }
           }
@@ -6694,6 +6804,7 @@
             "bearerAuth": []
           }
         ],
+        "description": "Submit multipart form-data. Put the partial venue JSON in the `payload` field and attach optional image files in `images` or `image`. The backend uploads those files and appends the resulting URLs to `media.galleryImages`.",
         "parameters": [
           {
             "in": "path",
@@ -6707,9 +6818,40 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/VenueUpdateRequest"
+                "type": "object",
+                "required": [
+                  "payload"
+                ],
+                "properties": {
+                  "payload": {
+                    "type": "string",
+                    "description": "JSON string matching VenueUpdateRequest. Files sent in `images` or `image` are uploaded by the backend automatically.",
+                    "example": "{\"capacity\":{\"maximumGuests\":550},\"media\":{\"galleryImages\":[],\"videoUrl\":\"https://youtube.com/watch?v=updated-venue\"},\"availabilityOverrides\":[{\"date\":\"2026-04-19\",\"slots\":[{\"hour\":18,\"status\":\"booked\"}]}]}"
+                  },
+                  "images": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    },
+                    "description": "Optional venue gallery images. Up to 10 files."
+                  },
+                  "image": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Optional single-image field supported for client compatibility."
+                  }
+                }
+              },
+              "examples": {
+                "validVenueUpdate": {
+                  "summary": "Valid venue update payload",
+                  "value": {
+                    "payload": "{\"capacity\":{\"maximumGuests\":550},\"media\":{\"galleryImages\":[],\"videoUrl\":\"https://youtube.com/watch?v=updated-venue\"},\"availabilityOverrides\":[{\"date\":\"2026-04-19\",\"slots\":[{\"hour\":18,\"status\":\"booked\"}]}]}"
+                  }
+                }
               }
             }
           }

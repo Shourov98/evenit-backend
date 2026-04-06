@@ -82,7 +82,20 @@ export class ServiceProviderController {
       return res.status(401).json({ success: false, message: 'Unauthorized' });
     }
 
-    const service = await ServiceProviderService.update(userId, req.params.serviceId, req.body);
+    const files = getFiles(req);
+    const uploadedImages = files.length ? await UploadService.uploadImages(files, 'services') : [];
+    const uploadedImageUrls = uploadedImages.map((item) => item.url);
+    const payload = uploadedImageUrls.length
+      ? {
+          ...req.body,
+          media: {
+            ...(req.body.media || {}),
+            galleryImages: [...(req.body.media?.galleryImages || []), ...uploadedImageUrls]
+          }
+        }
+      : req.body;
+
+    const service = await ServiceProviderService.update(userId, req.params.serviceId, payload);
 
     return res.status(200).json({
       success: true,

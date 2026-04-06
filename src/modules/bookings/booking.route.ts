@@ -769,6 +769,7 @@ router.patch(
  *   patch:
  *     tags: [Bookings]
  *     summary: Approve a booking as service provider
+ *     description: Service provider approves a pending booking assigned to them.
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -780,6 +781,10 @@ router.patch(
  *     responses:
  *       200:
  *         description: Booking approved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/BookingResponse'
  */
 router.patch(
   '/service-provider/:bookingId/approve',
@@ -794,6 +799,7 @@ router.patch(
  *   patch:
  *     tags: [Bookings]
  *     summary: Approve a booking as venue provider
+ *     description: Venue provider approves a pending booking assigned to them.
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -805,6 +811,10 @@ router.patch(
  *     responses:
  *       200:
  *         description: Booking approved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/BookingResponse'
  */
 router.patch(
   '/venue-provider/:bookingId/approve',
@@ -819,6 +829,7 @@ router.patch(
  *   patch:
  *     tags: [Bookings]
  *     summary: Approve a booking as event planner
+ *     description: Event planner approves a pending booking assigned to them.
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -830,6 +841,10 @@ router.patch(
  *     responses:
  *       200:
  *         description: Booking approved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/BookingResponse'
  */
 router.patch(
   '/event-planner/:bookingId/approve',
@@ -886,6 +901,7 @@ router.patch(
  *   patch:
  *     tags: [Bookings]
  *     summary: Reject a booking as service provider
+ *     description: Service provider rejects a pending booking assigned to them and may optionally provide a reason.
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -894,9 +910,19 @@ router.patch(
  *         required: true
  *         schema:
  *           type: string
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/BookingRejectRequest'
  *     responses:
  *       200:
  *         description: Booking rejected
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/BookingResponse'
  */
 router.patch(
   '/service-provider/:bookingId/reject',
@@ -911,6 +937,7 @@ router.patch(
  *   patch:
  *     tags: [Bookings]
  *     summary: Reject a booking as venue provider
+ *     description: Venue provider rejects a pending booking assigned to them and may optionally provide a reason.
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -919,9 +946,19 @@ router.patch(
  *         required: true
  *         schema:
  *           type: string
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/BookingRejectRequest'
  *     responses:
  *       200:
  *         description: Booking rejected
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/BookingResponse'
  */
 router.patch(
   '/venue-provider/:bookingId/reject',
@@ -936,6 +973,7 @@ router.patch(
  *   patch:
  *     tags: [Bookings]
  *     summary: Reject a booking as event planner
+ *     description: Event planner rejects a pending booking assigned to them and may optionally provide a reason.
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -944,9 +982,19 @@ router.patch(
  *         required: true
  *         schema:
  *           type: string
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/BookingRejectRequest'
  *     responses:
  *       200:
  *         description: Booking rejected
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/BookingResponse'
  */
 router.patch(
   '/event-planner/:bookingId/reject',

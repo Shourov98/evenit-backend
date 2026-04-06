@@ -82,7 +82,20 @@ export class VenueProviderController {
       return res.status(401).json({ success: false, message: 'Unauthorized' });
     }
 
-    const venue = await VenueProviderService.update(userId, req.params.venueId, req.body);
+    const files = getFiles(req);
+    const uploadedImages = files.length ? await UploadService.uploadImages(files, 'venues') : [];
+    const uploadedImageUrls = uploadedImages.map((item) => item.url);
+    const payload = uploadedImageUrls.length
+      ? {
+          ...req.body,
+          media: {
+            ...(req.body.media || {}),
+            galleryImages: [...(req.body.media?.galleryImages || []), ...uploadedImageUrls]
+          }
+        }
+      : req.body;
+
+    const venue = await VenueProviderService.update(userId, req.params.venueId, payload);
 
     return res.status(200).json({
       success: true,

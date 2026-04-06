@@ -454,6 +454,7 @@ router.post(
  *     summary: Update service by id
  *     security:
  *       - bearerAuth: []
+ *     description: Submit multipart form-data. Put the partial service JSON in the `payload` field and attach optional image files in `images` or `image`. The backend uploads those files and appends the resulting URLs to `media.galleryImages`.
  *     parameters:
  *       - in: path
  *         name: serviceId
@@ -463,9 +464,30 @@ router.post(
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
- *             $ref: '#/components/schemas/ServiceUpdateRequest'
+ *             type: object
+ *             required: [payload]
+ *             properties:
+ *               payload:
+ *                 type: string
+ *                 description: JSON string matching ServiceUpdateRequest. Files sent in `images` or `image` are uploaded by the backend automatically.
+ *                 example: '{"pricing":{"amount":45000,"discount":{"type":"fixed","value":5000}},"media":{"galleryImages":[],"videoUrl":"https://youtube.com/watch?v=updated-service"},"availabilityOverrides":[{"date":"2026-04-13","slots":[{"hour":12,"status":"booked"}]}]}'
+ *               images:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *                 description: Optional service gallery images. Up to 10 files.
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *                 description: Optional single-image field supported for client compatibility.
+ *           examples:
+ *             validServiceUpdate:
+ *               summary: Valid service update payload
+ *               value:
+ *                 payload: '{"pricing":{"amount":45000,"discount":{"type":"fixed","value":5000}},"media":{"galleryImages":[],"videoUrl":"https://youtube.com/watch?v=updated-service"},"availabilityOverrides":[{"date":"2026-04-13","slots":[{"hour":12,"status":"booked"}]}]}'
  *     responses:
  *       200:
  *         description: Service updated successfully
@@ -480,7 +502,16 @@ router.post(
  *       404:
  *         description: Service not found
  */
-router.patch('/services/:serviceId', validate(updateServiceSchema), ServiceProviderController.updateService);
+router.patch(
+  '/services/:serviceId',
+  imageUpload.fields([
+    { name: 'images', maxCount: 10 },
+    { name: 'image', maxCount: 10 }
+  ]),
+  parseMultipartJsonBody('payload'),
+  validate(updateServiceSchema),
+  ServiceProviderController.updateService
+);
 
 /**
  * @openapi

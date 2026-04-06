@@ -443,6 +443,7 @@ router.post(
  *     summary: Update venue by id
  *     security:
  *       - bearerAuth: []
+ *     description: Submit multipart form-data. Put the partial venue JSON in the `payload` field and attach optional image files in `images` or `image`. The backend uploads those files and appends the resulting URLs to `media.galleryImages`.
  *     parameters:
  *       - in: path
  *         name: venueId
@@ -452,9 +453,30 @@ router.post(
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
- *             $ref: '#/components/schemas/VenueUpdateRequest'
+ *             type: object
+ *             required: [payload]
+ *             properties:
+ *               payload:
+ *                 type: string
+ *                 description: JSON string matching VenueUpdateRequest. Files sent in `images` or `image` are uploaded by the backend automatically.
+ *                 example: '{"capacity":{"maximumGuests":550},"media":{"galleryImages":[],"videoUrl":"https://youtube.com/watch?v=updated-venue"},"availabilityOverrides":[{"date":"2026-04-19","slots":[{"hour":18,"status":"booked"}]}]}'
+ *               images:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *                 description: Optional venue gallery images. Up to 10 files.
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *                 description: Optional single-image field supported for client compatibility.
+ *           examples:
+ *             validVenueUpdate:
+ *               summary: Valid venue update payload
+ *               value:
+ *                 payload: '{"capacity":{"maximumGuests":550},"media":{"galleryImages":[],"videoUrl":"https://youtube.com/watch?v=updated-venue"},"availabilityOverrides":[{"date":"2026-04-19","slots":[{"hour":18,"status":"booked"}]}]}'
  *     responses:
  *       200:
  *         description: Venue updated successfully
@@ -469,7 +491,16 @@ router.post(
  *       404:
  *         description: Venue not found
  */
-router.patch('/venues/:venueId', validate(updateVenueSchema), VenueProviderController.updateVenue);
+router.patch(
+  '/venues/:venueId',
+  imageUpload.fields([
+    { name: 'images', maxCount: 10 },
+    { name: 'image', maxCount: 10 }
+  ]),
+  parseMultipartJsonBody('payload'),
+  validate(updateVenueSchema),
+  VenueProviderController.updateVenue
+);
 
 /**
  * @openapi

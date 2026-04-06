@@ -461,22 +461,47 @@ const serviceProviderServices = folder('Services', [
   }),
   request('Update Service', 'PATCH', '/api/v1/service-provider/services/{serviceId}', {
     tokenVar: 'serviceProviderToken',
-    contentType: 'application/json',
-    body: jsonBody({
-      pricing: {
-        amount: 45000,
-        discount: {
-          type: 'fixed',
-          value: 5000
-        }
+    body: formDataBody([
+      {
+        key: 'payload',
+        value: JSON.stringify(
+          {
+            pricing: {
+              amount: 45000,
+              discount: {
+                type: 'fixed',
+                value: 5000
+              }
+            },
+            media: {
+              galleryImages: [],
+              videoUrl: 'https://youtube.com/watch?v=updated-service'
+            },
+            availabilityOverrides: [
+              {
+                date: '2026-04-13',
+                slots: [{ hour: 12, status: 'booked' }]
+              }
+            ]
+          },
+          null,
+          2
+        ),
+        description: 'JSON string payload. The backend uploads attached files and appends the returned URLs to media.galleryImages.'
       },
-      availabilityOverrides: [
-        {
-          date: '2026-04-13',
-          slots: [{ hour: 12, status: 'booked' }]
-        }
-      ]
-    })
+      {
+        key: 'images',
+        type: 'file',
+        src: [],
+        description: 'Attach one or more service images from the frontend file picker.'
+      },
+      {
+        key: 'image',
+        type: 'file',
+        src: [],
+        description: 'Optional single-image field supported for client compatibility.'
+      }
+    ])
   }),
   request('Delete Service', 'DELETE', '/api/v1/service-provider/services/{serviceId}', {
     tokenVar: 'serviceProviderToken'
@@ -707,18 +732,43 @@ const venueProviderVenues = folder('Venues', [
   }),
   request('Update Venue', 'PATCH', '/api/v1/venue-provider/venues/{venueId}', {
     tokenVar: 'venueProviderToken',
-    contentType: 'application/json',
-    body: jsonBody({
-      capacity: {
-        maximumGuests: 550
+    body: formDataBody([
+      {
+        key: 'payload',
+        value: JSON.stringify(
+          {
+            capacity: {
+              maximumGuests: 550
+            },
+            media: {
+              galleryImages: [],
+              videoUrl: 'https://youtube.com/watch?v=updated-venue'
+            },
+            availabilityOverrides: [
+              {
+                date: '2026-04-19',
+                slots: [{ hour: 18, status: 'booked' }]
+              }
+            ]
+          },
+          null,
+          2
+        ),
+        description: 'JSON string payload. The backend uploads attached files and appends the returned URLs to media.galleryImages.'
       },
-      availabilityOverrides: [
-        {
-          date: '2026-04-19',
-          slots: [{ hour: 18, status: 'booked' }]
-        }
-      ]
-    })
+      {
+        key: 'images',
+        type: 'file',
+        src: [],
+        description: 'Attach one or more venue images from the frontend file picker.'
+      },
+      {
+        key: 'image',
+        type: 'file',
+        src: [],
+        description: 'Optional single-image field supported for client compatibility.'
+      }
+    ])
   }),
   request('Delete Venue', 'DELETE', '/api/v1/venue-provider/venues/{venueId}', {
     tokenVar: 'venueProviderToken'
