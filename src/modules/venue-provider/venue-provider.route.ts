@@ -382,6 +382,7 @@ router.use(protect, authorize('venue_provider'));
  *     summary: Create a venue
  *     security:
  *       - bearerAuth: []
+ *     description: Submit multipart form-data. Put the venue JSON in the `payload` field and attach optional image files in `images` or `image`. The backend uploads those files and appends the resulting URLs to `media.galleryImages`.
  *     requestBody:
  *       required: true
  *       content:
@@ -392,21 +393,23 @@ router.use(protect, authorize('venue_provider'));
  *             properties:
  *               payload:
  *                 type: string
- *                 description: JSON string matching VenueCreateRequest without uploaded image URLs.
- *                 example: '{"information":{"venueName":"Grand Hall","venueType":"Banquet","description":"Premium event venue in central Dhaka.","addressLine":"123 Main Road","city":"Dhaka","area":"Farmgate"},"pricing":{"basePrice":5000,"currency":"BDT","discount":{"type":"percentage","value":10},"amenities":{"wifi":true,"parking":true,"ac":true}},"capacity":{"maximumGuests":300},"media":{"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityOverrides":[{"date":"2026-03-20","slots":[{"hour":8,"status":"available"},{"hour":9,"status":"booked"},{"hour":10,"status":"pending"}]}]}'
+ *                 description: JSON string matching VenueCreateRequest. Include `media.galleryImages` only for already-hosted image URLs. Files sent in `images` or `image` are uploaded by the backend automatically.
+ *                 example: '{"information":{"venueName":"Grand Hall","venueType":"Banquet","description":"Premium event venue in central Dhaka.","addressLine":"123 Main Road","city":"Dhaka","area":"Farmgate"},"pricing":{"basePrice":5000,"currency":"BDT","discount":{"type":"percentage","value":10},"amenities":{"wifi":true,"parking":true,"ac":true}},"capacity":{"maximumGuests":300},"media":{"galleryImages":[],"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityOverrides":[{"date":"2026-03-20","slots":[{"hour":8,"status":"available"},{"hour":9,"status":"booked"},{"hour":10,"status":"pending"}]}]}'
  *               images:
  *                 type: array
  *                 items:
  *                   type: string
  *                   format: binary
+ *                 description: Optional venue gallery images. Up to 10 files.
  *               image:
  *                 type: string
  *                 format: binary
+ *                 description: Optional single-image field supported for client compatibility.
  *           examples:
  *             validVenue:
  *               summary: Valid venue creation payload
  *               value:
- *                 payload: '{"information":{"venueName":"Grand Hall","venueType":"Banquet","description":"Premium event venue in central Dhaka.","addressLine":"123 Main Road","city":"Dhaka","area":"Farmgate"},"pricing":{"basePrice":5000,"currency":"BDT","discount":{"type":"percentage","value":10},"amenities":{"wifi":true,"parking":true,"ac":true}},"capacity":{"maximumGuests":300},"media":{"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityOverrides":[{"date":"2026-03-20","slots":[{"hour":8,"status":"available"},{"hour":9,"status":"booked"},{"hour":10,"status":"pending"}]}]}'
+ *                 payload: '{"information":{"venueName":"Grand Hall","venueType":"Banquet","description":"Premium event venue in central Dhaka.","addressLine":"123 Main Road","city":"Dhaka","area":"Farmgate"},"pricing":{"basePrice":5000,"currency":"BDT","discount":{"type":"percentage","value":10},"amenities":{"wifi":true,"parking":true,"ac":true}},"capacity":{"maximumGuests":300},"media":{"galleryImages":[],"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityOverrides":[{"date":"2026-03-20","slots":[{"hour":8,"status":"available"},{"hour":9,"status":"booked"},{"hour":10,"status":"pending"}]}]}'
  *     responses:
  *       201:
  *         description: Venue created successfully

@@ -249,7 +249,9 @@ Calendar behavior:
 
 ## Venue Image Upload API
 
-Upload venue gallery images first, then send the returned URLs in `media.galleryImages` when creating or updating a venue.
+Venue creation and service creation already support direct `multipart/form-data` uploads. The frontend can send image files to the create endpoints, and the backend uploads those files and stores the resulting URLs in `media.galleryImages`.
+
+Use the separate upload endpoint only when you need standalone venue image uploads before venue creation or update.
 
 Endpoint:
 

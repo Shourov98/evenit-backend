@@ -393,6 +393,7 @@ router.use(protect, authorize('service_provider'));
  *     summary: Create a service
  *     security:
  *       - bearerAuth: []
+ *     description: Submit multipart form-data. Put the service JSON in the `payload` field and attach optional image files in `images` or `image`. The backend uploads those files and appends the resulting URLs to `media.galleryImages`.
  *     requestBody:
  *       required: true
  *       content:
@@ -403,21 +404,23 @@ router.use(protect, authorize('service_provider'));
  *             properties:
  *               payload:
  *                 type: string
- *                 description: JSON string matching ServiceCreateRequest without uploaded image URLs.
- *                 example: '{"information":{"serviceName":"Premium Catering","category":"Catering","description":"Corporate and wedding catering service.","serviceArea":["Dhaka","Gazipur"],"tags":["wedding","corporate"]},"pricing":{"amount":50000,"pricingType":"package","currency":"BDT","discount":{"type":"percentage","value":10}},"settings":{"amenities":{"deliveryIncluded":true,"setupIncluded":true},"capacity":300},"media":{"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityOverrides":[{"date":"2026-03-20","slots":[{"hour":10,"status":"booked"},{"hour":11,"status":"booked"}]},{"date":"2026-03-21","slots":[{"hour":14,"status":"pending"},{"hour":15,"status":"pending"}]}]}'
+ *                 description: JSON string matching ServiceCreateRequest. Include `media.galleryImages` only for already-hosted image URLs. Files sent in `images` or `image` are uploaded by the backend automatically.
+ *                 example: '{"information":{"serviceName":"Premium Catering","category":"Catering","description":"Corporate and wedding catering service.","serviceArea":["Dhaka","Gazipur"],"tags":["wedding","corporate"]},"pricing":{"amount":50000,"pricingType":"package","currency":"BDT","discount":{"type":"percentage","value":10}},"settings":{"amenities":{"deliveryIncluded":true,"setupIncluded":true},"capacity":300},"media":{"galleryImages":[],"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityOverrides":[{"date":"2026-03-20","slots":[{"hour":10,"status":"booked"},{"hour":11,"status":"booked"}]},{"date":"2026-03-21","slots":[{"hour":14,"status":"pending"},{"hour":15,"status":"pending"}]}]}'
  *               images:
  *                 type: array
  *                 items:
  *                   type: string
  *                   format: binary
+ *                 description: Optional service gallery images. Up to 10 files.
  *               image:
  *                 type: string
  *                 format: binary
+ *                 description: Optional single-image field supported for client compatibility.
  *           examples:
  *             validService:
  *               summary: Valid service creation payload
-*               value:
-*                 payload: '{"information":{"serviceName":"Premium Catering","category":"Catering","description":"Corporate and wedding catering service.","serviceArea":["Dhaka","Gazipur"],"tags":["wedding","corporate"]},"pricing":{"amount":50000,"pricingType":"package","currency":"BDT","discount":{"type":"percentage","value":10}},"settings":{"amenities":{"deliveryIncluded":true,"setupIncluded":true},"capacity":300},"media":{"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityOverrides":[{"date":"2026-03-20","slots":[{"hour":10,"status":"booked"},{"hour":11,"status":"booked"}]},{"date":"2026-03-21","slots":[{"hour":14,"status":"pending"},{"hour":15,"status":"pending"}]}]}'
+ *               value:
+ *                 payload: '{"information":{"serviceName":"Premium Catering","category":"Catering","description":"Corporate and wedding catering service.","serviceArea":["Dhaka","Gazipur"],"tags":["wedding","corporate"]},"pricing":{"amount":50000,"pricingType":"package","currency":"BDT","discount":{"type":"percentage","value":10}},"settings":{"amenities":{"deliveryIncluded":true,"setupIncluded":true},"capacity":300},"media":{"galleryImages":[],"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityOverrides":[{"date":"2026-03-20","slots":[{"hour":10,"status":"booked"},{"hour":11,"status":"booked"}]},{"date":"2026-03-21","slots":[{"hour":14,"status":"pending"},{"hour":15,"status":"pending"}]}]}'
  *     responses:
  *       201:
  *         description: Service created successfully

@@ -1925,22 +1925,26 @@
                 "method": "POST",
                 "header": [
                   {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  },
-                  {
                     "key": "Authorization",
                     "value": "Bearer {{serviceProviderToken}}"
                   }
                 ],
                 "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"information\": {\n    \"serviceName\": \"Premium Catering\",\n    \"category\": \"Catering\",\n    \"description\": \"Corporate and wedding catering\",\n    \"serviceArea\": [\n      \"Dhaka\",\n      \"Gazipur\"\n    ],\n    \"tags\": [\n      \"wedding\",\n      \"corporate\"\n    ]\n  },\n  \"pricing\": {\n    \"amount\": 50000,\n    \"pricingType\": \"package\",\n    \"currency\": \"BDT\",\n    \"discount\": {\n      \"type\": \"percentage\",\n      \"value\": 10\n    }\n  },\n  \"settings\": {\n    \"amenities\": {\n      \"deliveryIncluded\": true,\n      \"setupIncluded\": true,\n      \"staffIncluded\": false\n    },\n    \"capacity\": 300\n  },\n  \"media\": {\n    \"galleryImages\": [\n      \"https://cdn.example.com/service/image-1.jpg\",\n      \"https://cdn.example.com/service/image-2.jpg\"\n    ],\n    \"videoUrl\": \"https://youtube.com/watch?v=abc123\"\n  },\n  \"availabilityOverrides\": [\n    {\n      \"date\": \"2026-04-12\",\n      \"slots\": [\n        {\n          \"hour\": 10,\n          \"status\": \"booked\"\n        },\n        {\n          \"hour\": 11,\n          \"status\": \"booked\"\n        }\n      ]\n    }\n  ]\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "payload",
+                      "type": "text",
+                      "value": "{\n  \"information\": {\n    \"serviceName\": \"Premium Catering\",\n    \"category\": \"Catering\",\n    \"description\": \"Corporate and wedding catering\",\n    \"serviceArea\": [\n      \"Dhaka\",\n      \"Gazipur\"\n    ],\n    \"tags\": [\n      \"wedding\",\n      \"corporate\"\n    ]\n  },\n  \"pricing\": {\n    \"amount\": 50000,\n    \"pricingType\": \"package\",\n    \"currency\": \"BDT\",\n    \"discount\": {\n      \"type\": \"percentage\",\n      \"value\": 10\n    }\n  },\n  \"settings\": {\n    \"amenities\": {\n      \"deliveryIncluded\": true,\n      \"setupIncluded\": true,\n      \"staffIncluded\": false\n    },\n    \"capacity\": 300\n  },\n  \"media\": {\n    \"galleryImages\": [],\n    \"videoUrl\": \"https://youtube.com/watch?v=abc123\"\n  },\n  \"availabilityOverrides\": [\n    {\n      \"date\": \"2026-04-12\",\n      \"slots\": [\n        {\n          \"hour\": 10,\n          \"status\": \"booked\"\n        },\n        {\n          \"hour\": 11,\n          \"status\": \"booked\"\n        }\n      ]\n    }\n  ]\n}",
+                      "description": "JSON string payload. The backend uploads attached files and appends the returned URLs to media.galleryImages."
+                    },
+                    {
+                      "key": "images",
+                      "type": "file",
+                      "src": [],
+                      "description": "Attach one or more service images from the frontend file picker."
                     }
-                  }
+                  ]
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/service-provider/services",
@@ -3028,22 +3032,26 @@
                 "method": "POST",
                 "header": [
                   {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  },
-                  {
                     "key": "Authorization",
                     "value": "Bearer {{venueProviderToken}}"
                   }
                 ],
                 "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"information\": {\n    \"venueName\": \"Royal Hall\",\n    \"venueType\": \"Banquet\",\n    \"description\": \"Large indoor venue\",\n    \"addressLine\": \"Road 12, Dhanmondi\",\n    \"city\": \"Dhaka\",\n    \"area\": \"Dhanmondi\"\n  },\n  \"pricing\": {\n    \"basePrice\": 120000,\n    \"currency\": \"BDT\",\n    \"discount\": {\n      \"type\": \"percentage\",\n      \"value\": 15\n    },\n    \"amenities\": {\n      \"parking\": true,\n      \"airConditioned\": true,\n      \"stage\": true\n    }\n  },\n  \"capacity\": {\n    \"maximumGuests\": 500\n  },\n  \"media\": {\n    \"galleryImages\": [\n      \"https://cdn.example.com/venue/image-1.jpg\",\n      \"https://cdn.example.com/venue/image-2.jpg\"\n    ],\n    \"videoUrl\": \"https://youtube.com/watch?v=venue123\"\n  },\n  \"availabilityOverrides\": [\n    {\n      \"date\": \"2026-04-18\",\n      \"slots\": [\n        {\n          \"hour\": 14,\n          \"status\": \"booked\"\n        },\n        {\n          \"hour\": 15,\n          \"status\": \"booked\"\n        }\n      ]\n    }\n  ]\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "payload",
+                      "type": "text",
+                      "value": "{\n  \"information\": {\n    \"venueName\": \"Royal Hall\",\n    \"venueType\": \"Banquet\",\n    \"description\": \"Large indoor venue\",\n    \"addressLine\": \"Road 12, Dhanmondi\",\n    \"city\": \"Dhaka\",\n    \"area\": \"Dhanmondi\"\n  },\n  \"pricing\": {\n    \"basePrice\": 120000,\n    \"currency\": \"BDT\",\n    \"discount\": {\n      \"type\": \"percentage\",\n      \"value\": 15\n    },\n    \"amenities\": {\n      \"parking\": true,\n      \"airConditioned\": true,\n      \"stage\": true\n    }\n  },\n  \"capacity\": {\n    \"maximumGuests\": 500\n  },\n  \"media\": {\n    \"galleryImages\": [],\n    \"videoUrl\": \"https://youtube.com/watch?v=venue123\"\n  },\n  \"availabilityOverrides\": [\n    {\n      \"date\": \"2026-04-18\",\n      \"slots\": [\n        {\n          \"hour\": 14,\n          \"status\": \"booked\"\n        },\n        {\n          \"hour\": 15,\n          \"status\": \"booked\"\n        }\n      ]\n    }\n  ]\n}",
+                      "description": "JSON string payload. The backend uploads attached files and appends the returned URLs to media.galleryImages."
+                    },
+                    {
+                      "key": "images",
+                      "type": "file",
+                      "src": [],
+                      "description": "Attach one or more venue images from the frontend file picker."
                     }
-                  }
+                  ]
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/venue-provider/venues",

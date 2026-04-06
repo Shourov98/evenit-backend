@@ -396,49 +396,61 @@ const serviceProviderServices = folder('Services', [
   }),
   request('Create Service', 'POST', '/api/v1/service-provider/services', {
     tokenVar: 'serviceProviderToken',
-    contentType: 'application/json',
-    body: jsonBody({
-      information: {
-        serviceName: 'Premium Catering',
-        category: 'Catering',
-        description: 'Corporate and wedding catering',
-        serviceArea: ['Dhaka', 'Gazipur'],
-        tags: ['wedding', 'corporate']
+    body: formDataBody([
+      {
+        key: 'payload',
+        value: JSON.stringify(
+          {
+            information: {
+              serviceName: 'Premium Catering',
+              category: 'Catering',
+              description: 'Corporate and wedding catering',
+              serviceArea: ['Dhaka', 'Gazipur'],
+              tags: ['wedding', 'corporate']
+            },
+            pricing: {
+              amount: 50000,
+              pricingType: 'package',
+              currency: 'BDT',
+              discount: {
+                type: 'percentage',
+                value: 10
+              }
+            },
+            settings: {
+              amenities: {
+                deliveryIncluded: true,
+                setupIncluded: true,
+                staffIncluded: false
+              },
+              capacity: 300
+            },
+            media: {
+              galleryImages: [],
+              videoUrl: 'https://youtube.com/watch?v=abc123'
+            },
+            availabilityOverrides: [
+              {
+                date: '2026-04-12',
+                slots: [
+                  { hour: 10, status: 'booked' },
+                  { hour: 11, status: 'booked' }
+                ]
+              }
+            ]
+          },
+          null,
+          2
+        ),
+        description: 'JSON string payload. The backend uploads attached files and appends the returned URLs to media.galleryImages.'
       },
-      pricing: {
-        amount: 50000,
-        pricingType: 'package',
-        currency: 'BDT',
-        discount: {
-          type: 'percentage',
-          value: 10
-        }
-      },
-      settings: {
-        amenities: {
-          deliveryIncluded: true,
-          setupIncluded: true,
-          staffIncluded: false
-        },
-        capacity: 300
-      },
-      media: {
-        galleryImages: [
-          'https://cdn.example.com/service/image-1.jpg',
-          'https://cdn.example.com/service/image-2.jpg'
-        ],
-        videoUrl: 'https://youtube.com/watch?v=abc123'
-      },
-      availabilityOverrides: [
-        {
-          date: '2026-04-12',
-          slots: [
-            { hour: 10, status: 'booked' },
-            { hour: 11, status: 'booked' }
-          ]
-        }
-      ]
-    }),
+      {
+        key: 'images',
+        type: 'file',
+        src: [],
+        description: 'Attach one or more service images from the frontend file picker.'
+      }
+    ]),
     event: idCaptureEvent('serviceId')
   }),
   request('Update Service', 'PATCH', '/api/v1/service-provider/services/{serviceId}', {
@@ -624,49 +636,61 @@ const venueProviderVenues = folder('Venues', [
   }),
   request('Create Venue', 'POST', '/api/v1/venue-provider/venues', {
     tokenVar: 'venueProviderToken',
-    contentType: 'application/json',
-    body: jsonBody({
-      information: {
-        venueName: 'Royal Hall',
-        venueType: 'Banquet',
-        description: 'Large indoor venue',
-        addressLine: 'Road 12, Dhanmondi',
-        city: 'Dhaka',
-        area: 'Dhanmondi'
+    body: formDataBody([
+      {
+        key: 'payload',
+        value: JSON.stringify(
+          {
+            information: {
+              venueName: 'Royal Hall',
+              venueType: 'Banquet',
+              description: 'Large indoor venue',
+              addressLine: 'Road 12, Dhanmondi',
+              city: 'Dhaka',
+              area: 'Dhanmondi'
+            },
+            pricing: {
+              basePrice: 120000,
+              currency: 'BDT',
+              discount: {
+                type: 'percentage',
+                value: 15
+              },
+              amenities: {
+                parking: true,
+                airConditioned: true,
+                stage: true
+              }
+            },
+            capacity: {
+              maximumGuests: 500
+            },
+            media: {
+              galleryImages: [],
+              videoUrl: 'https://youtube.com/watch?v=venue123'
+            },
+            availabilityOverrides: [
+              {
+                date: '2026-04-18',
+                slots: [
+                  { hour: 14, status: 'booked' },
+                  { hour: 15, status: 'booked' }
+                ]
+              }
+            ]
+          },
+          null,
+          2
+        ),
+        description: 'JSON string payload. The backend uploads attached files and appends the returned URLs to media.galleryImages.'
       },
-      pricing: {
-        basePrice: 120000,
-        currency: 'BDT',
-        discount: {
-          type: 'percentage',
-          value: 15
-        },
-        amenities: {
-          parking: true,
-          airConditioned: true,
-          stage: true
-        }
-      },
-      capacity: {
-        maximumGuests: 500
-      },
-      media: {
-        galleryImages: [
-          'https://cdn.example.com/venue/image-1.jpg',
-          'https://cdn.example.com/venue/image-2.jpg'
-        ],
-        videoUrl: 'https://youtube.com/watch?v=venue123'
-      },
-      availabilityOverrides: [
-        {
-          date: '2026-04-18',
-          slots: [
-            { hour: 14, status: 'booked' },
-            { hour: 15, status: 'booked' }
-          ]
-        }
-      ]
-    }),
+      {
+        key: 'images',
+        type: 'file',
+        src: [],
+        description: 'Attach one or more venue images from the frontend file picker.'
+      }
+    ]),
     event: idCaptureEvent('venueId')
   }),
   request('Update Venue', 'PATCH', '/api/v1/venue-provider/venues/{venueId}', {
