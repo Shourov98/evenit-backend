@@ -277,7 +277,10 @@ const customerSubscriptions = folder('Subscriptions', [
   request('Create Subscription Payment Intent', 'POST', '/api/v1/subscriptions/payment-intent', {
     tokenVar: 'customerToken',
     contentType: 'application/json',
-    body: jsonBody({})
+    body: jsonBody({
+      paymentMethodId: 'pm_card_visa',
+      confirm: true
+    })
   }),
   request('Verify Subscription Payment', 'POST', '/api/v1/subscriptions/verify-payment', {
     tokenVar: 'customerToken',
@@ -550,7 +553,10 @@ const serviceProviderSubscriptions = folder('Subscriptions', [
   request('Create Subscription Payment Intent', 'POST', '/api/v1/subscriptions/payment-intent', {
     tokenVar: 'serviceProviderToken',
     contentType: 'application/json',
-    body: jsonBody({})
+    body: jsonBody({
+      paymentMethodId: 'pm_card_visa',
+      confirm: true
+    })
   }),
   request('Verify Subscription Payment', 'POST', '/api/v1/subscriptions/verify-payment', {
     tokenVar: 'serviceProviderToken',
@@ -819,7 +825,10 @@ const venueProviderSubscriptions = folder('Subscriptions', [
   request('Create Subscription Payment Intent', 'POST', '/api/v1/subscriptions/payment-intent', {
     tokenVar: 'venueProviderToken',
     contentType: 'application/json',
-    body: jsonBody({})
+    body: jsonBody({
+      paymentMethodId: 'pm_card_visa',
+      confirm: true
+    })
   }),
   request('Verify Subscription Payment', 'POST', '/api/v1/subscriptions/verify-payment', {
     tokenVar: 'venueProviderToken',
@@ -967,7 +976,10 @@ const eventPlannerSubscriptions = folder('Subscriptions', [
   request('Create Subscription Payment Intent', 'POST', '/api/v1/subscriptions/payment-intent', {
     tokenVar: 'eventPlannerToken',
     contentType: 'application/json',
-    body: jsonBody({})
+    body: jsonBody({
+      paymentMethodId: 'pm_card_visa',
+      confirm: true
+    })
   }),
   request('Verify Subscription Payment', 'POST', '/api/v1/subscriptions/verify-payment', {
     tokenVar: 'eventPlannerToken',

@@ -1291,7 +1291,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}",
+                  "raw": "{\n  \"paymentMethodId\": \"pm_card_visa\",\n  \"confirm\": true\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -2414,7 +2414,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}",
+                  "raw": "{\n  \"paymentMethodId\": \"pm_card_visa\",\n  \"confirm\": true\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -3572,7 +3572,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}",
+                  "raw": "{\n  \"paymentMethodId\": \"pm_card_visa\",\n  \"confirm\": true\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -4431,7 +4431,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}",
+                  "raw": "{\n  \"paymentMethodId\": \"pm_card_visa\",\n  \"confirm\": true\n}",
                   "options": {
                     "raw": {
                       "language": "json"

@@ -15,11 +15,17 @@ const toStripeAmount = (amount: number): number => {
     throw new AppError(400, 'Invalid subscription amount');
   }
 
-  return Math.round(amount * 100);
+  return Math.round(amount);
 };
 
 export class SubscriptionService {
-  static async createPaymentIntent(userId: string) {
+  static async createPaymentIntent(
+    userId: string,
+    options?: {
+      paymentMethodId?: string;
+      confirm?: boolean;
+    }
+  ) {
     if (!hasStripeConfig()) {
       throw new AppError(500, 'Stripe is not configured');
     }
@@ -47,12 +53,28 @@ export class SubscriptionService {
     }
 
     const stripe = getStripe();
+    const shouldConfirm = Boolean(options?.confirm);
+    if (shouldConfirm && !options?.paymentMethodId) {
+      throw new AppError(400, 'paymentMethodId is required when confirm is true');
+    }
+
     const paymentIntent = await stripe.paymentIntents.create({
       amount,
       currency: user.subscription.payment.currency.toLowerCase(),
-      automatic_payment_methods: {
-        enabled: true
-      },
+      ...(options?.paymentMethodId ? { payment_method: options.paymentMethodId } : {}),
+      ...(shouldConfirm
+        ? {
+            confirm: true,
+            automatic_payment_methods: {
+              enabled: true,
+              allow_redirects: 'never' as const
+            }
+          }
+        : {
+            automatic_payment_methods: {
+              enabled: true
+            }
+          }),
       metadata: {
         userId: String(user._id),
         role: user.role,
@@ -64,6 +86,7 @@ export class SubscriptionService {
     return {
       clientSecret: paymentIntent.client_secret,
       paymentIntentId: paymentIntent.id,
+      paymentStatus: paymentIntent.status,
       amount: user.subscription.payment.amount,
       currency: user.subscription.payment.currency,
       plan: user.subscription.plan,

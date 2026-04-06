@@ -13,7 +13,10 @@ const getUserId = (req: Request): string => {
 
 export class SubscriptionController {
   static createPaymentIntent = catchAsync(async (req: Request, res: Response) => {
-    const paymentIntent = await SubscriptionService.createPaymentIntent(getUserId(req));
+    const paymentIntent = await SubscriptionService.createPaymentIntent(getUserId(req), {
+      paymentMethodId: req.body.paymentMethodId,
+      confirm: req.body.confirm
+    });
 
     return res.status(200).json({
       success: true,

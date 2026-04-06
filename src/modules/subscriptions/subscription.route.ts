@@ -18,6 +18,17 @@ router.use(protect);
  *     description: Subscription payment initiation and verification
  * components:
  *   schemas:
+ *     SubscriptionPaymentIntentRequest:
+ *       type: object
+ *       properties:
+ *         paymentMethodId:
+ *           type: string
+ *           description: Optional Stripe PaymentMethod id. In test mode you can use `pm_card_visa` to create and confirm the payment directly from Postman.
+ *           example: pm_card_visa
+ *         confirm:
+ *           type: boolean
+ *           description: When true, the backend creates and confirms the PaymentIntent immediately. Intended for testing flows such as Postman.
+ *           example: true
  *     SubscriptionPaymentIntentResponse:
  *       type: object
  *       properties:
@@ -34,6 +45,9 @@ router.use(protect);
  *               type: string
  *             paymentIntentId:
  *               type: string
+ *             paymentStatus:
+ *               type: string
+ *               example: succeeded
  *             amount:
  *               type: number
  *             currency:
@@ -88,8 +102,15 @@ router.use(protect);
  *   post:
  *     tags: [Subscriptions]
  *     summary: Initiate subscription payment
+ *     description: "For frontend Stripe Elements flows, call this endpoint with an empty body and use the returned clientSecret. For Postman-only test flows, send paymentMethodId = pm_card_visa and confirm = true, then call verify-payment with the returned paymentIntentId."
  *     security:
  *       - bearerAuth: []
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/SubscriptionPaymentIntentRequest'
  *     responses:
  *       200:
  *         description: Subscription payment initiated successfully
