@@ -46,6 +46,27 @@ export class ServiceProviderController {
     });
   });
 
+  static getOwnServices = catchAsync(async (req: Request, res: Response) => {
+    const userId = getUserId(req);
+    if (!userId) {
+      return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+
+    const pagination = parsePagination(req.query as Record<string, unknown>);
+    const publishStatus =
+      typeof req.query.publishStatus === 'string' ? req.query.publishStatus : undefined;
+
+    const services = await ServiceProviderService.getMine(userId, pagination, {
+      publishStatus: publishStatus as 'pending' | 'published' | 'rejected' | undefined
+    });
+
+    return res.status(200).json({
+      success: true,
+      meta: services.meta,
+      data: services.data
+    });
+  });
+
   static getServiceById = catchAsync(async (req: Request, res: Response) => {
     const service = await ServiceProviderService.getPublicById(req.params.serviceId);
 

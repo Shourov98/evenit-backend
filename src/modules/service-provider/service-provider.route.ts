@@ -5,7 +5,12 @@ import { parseMultipartJsonBody } from '../../common/middlewares/multipart-json.
 import { imageUpload } from '../../common/middlewares/upload.middleware';
 import { validate } from '../../common/middlewares/validate.middleware';
 import { ServiceProviderController } from './service-provider.controller';
-import { createServiceSchema, serviceIdParamSchema, updateServiceSchema } from './service-provider.schema';
+import {
+  createServiceSchema,
+  ownServicesQuerySchema,
+  serviceIdParamSchema,
+  updateServiceSchema
+} from './service-provider.schema';
 
 const router = Router();
 
@@ -262,6 +267,57 @@ const router = Router();
  *         data:
  *           $ref: '#/components/schemas/ServiceEntity'
  */
+
+/**
+ * @openapi
+ * /api/v1/service-provider/my-services:
+ *   get:
+ *     tags: [ServiceProvider]
+ *     summary: Get own services
+ *     description: Authenticated service providers can view only their own services and optionally filter by publish status such as pending or published.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: sortOrder
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *       - in: query
+ *         name: publishStatus
+ *         schema:
+ *           type: string
+ *           enum: [pending, published, rejected]
+ *         description: Use `pending` to see requested services awaiting approval, `published` to see approved services, or omit it to see both.
+ *     responses:
+ *       200:
+ *         description: Own service list
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ServiceListResponse'
+ *       401:
+ *         description: Unauthorized
+ */
+router.get(
+  '/my-services',
+  protect,
+  authorize('service_provider'),
+  validate(ownServicesQuerySchema),
+  ServiceProviderController.getOwnServices
+);
 
 /**
  * @openapi

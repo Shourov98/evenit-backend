@@ -85,14 +85,21 @@ export class VenueProviderService {
     return result;
   }
 
-  static async getMine(ownerId: string, pagination: PaginationOptions) {
+  static async getMine(
+    ownerId: string,
+    pagination: PaginationOptions,
+    filters?: {
+      publishStatus?: 'pending' | 'published' | 'rejected';
+    }
+  ) {
     ensureObjectId(ownerId, 'ownerId');
 
     return paginateModel(
       VenueProviderVenueModel,
       {
         ownerId,
-        isDeleted: false
+        isDeleted: false,
+        ...(filters?.publishStatus ? { publishStatus: filters.publishStatus } : {})
       },
       pagination
     );

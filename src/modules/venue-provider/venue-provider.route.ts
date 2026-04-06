@@ -5,7 +5,12 @@ import { parseMultipartJsonBody } from '../../common/middlewares/multipart-json.
 import { imageUpload } from '../../common/middlewares/upload.middleware';
 import { validate } from '../../common/middlewares/validate.middleware';
 import { VenueProviderController } from './venue-provider.controller';
-import { createVenueSchema, updateVenueSchema, venueIdParamSchema } from './venue-provider.schema';
+import {
+  createVenueSchema,
+  ownVenuesQuerySchema,
+  updateVenueSchema,
+  venueIdParamSchema
+} from './venue-provider.schema';
 
 const router = Router();
 
@@ -251,6 +256,57 @@ const router = Router();
  *         data:
  *           $ref: '#/components/schemas/VenueEntity'
  */
+
+/**
+ * @openapi
+ * /api/v1/venue-provider/my-venues:
+ *   get:
+ *     tags: [VenueProvider]
+ *     summary: Get own venues
+ *     description: Authenticated venue providers can view only their own venues and optionally filter by publish status such as pending or published.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: sortOrder
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *       - in: query
+ *         name: publishStatus
+ *         schema:
+ *           type: string
+ *           enum: [pending, published, rejected]
+ *         description: Use `pending` to see requested venues awaiting approval, `published` to see approved venues, or omit it to see both.
+ *     responses:
+ *       200:
+ *         description: Own venue list
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/VenueListResponse'
+ *       401:
+ *         description: Unauthorized
+ */
+router.get(
+  '/my-venues',
+  protect,
+  authorize('venue_provider'),
+  validate(ownVenuesQuerySchema),
+  VenueProviderController.getOwnVenues
+);
 
 /**
  * @openapi

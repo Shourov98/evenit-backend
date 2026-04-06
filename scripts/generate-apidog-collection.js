@@ -372,6 +372,21 @@ const serviceProviderAuth = folder('Auth', [
 ]);
 
 const serviceProviderServices = folder('Services', [
+  request('Get My Services', 'GET', '/api/v1/service-provider/my-services', {
+    tokenVar: 'serviceProviderToken',
+    query: paginationQuery,
+    event: idCaptureEvent('serviceId')
+  }),
+  request('Get My Pending Services', 'GET', '/api/v1/service-provider/my-services', {
+    tokenVar: 'serviceProviderToken',
+    query: [...paginationQuery, { key: 'publishStatus', value: 'pending' }],
+    event: idCaptureEvent('serviceId')
+  }),
+  request('Get My Published Services', 'GET', '/api/v1/service-provider/my-services', {
+    tokenVar: 'serviceProviderToken',
+    query: [...paginationQuery, { key: 'publishStatus', value: 'published' }],
+    event: idCaptureEvent('serviceId')
+  }),
   request('Get Published Services (Public)', 'GET', '/api/v1/service-provider/services', {
     query: paginationQuery,
     event: idCaptureEvent('serviceId')
@@ -585,6 +600,21 @@ const venueProviderAuth = folder('Auth', [
 ]);
 
 const venueProviderVenues = folder('Venues', [
+  request('Get My Venues', 'GET', '/api/v1/venue-provider/my-venues', {
+    tokenVar: 'venueProviderToken',
+    query: paginationQuery,
+    event: idCaptureEvent('venueId')
+  }),
+  request('Get My Pending Venues', 'GET', '/api/v1/venue-provider/my-venues', {
+    tokenVar: 'venueProviderToken',
+    query: [...paginationQuery, { key: 'publishStatus', value: 'pending' }],
+    event: idCaptureEvent('venueId')
+  }),
+  request('Get My Published Venues', 'GET', '/api/v1/venue-provider/my-venues', {
+    tokenVar: 'venueProviderToken',
+    query: [...paginationQuery, { key: 'publishStatus', value: 'published' }],
+    event: idCaptureEvent('venueId')
+  }),
   request('Get Published Venues (Public)', 'GET', '/api/v1/venue-provider/venues', {
     query: paginationQuery,
     event: idCaptureEvent('venueId')

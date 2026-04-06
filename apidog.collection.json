@@ -1656,6 +1656,185 @@
           "name": "Services",
           "item": [
             {
+              "name": "Get My Services",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{serviceProviderToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/service-provider/my-services?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "service-provider",
+                    "my-services"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "createdAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('serviceId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get My Pending Services",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{serviceProviderToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/service-provider/my-services?page=1&limit=10&sortBy=createdAt&sortOrder=desc&publishStatus=pending",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "service-provider",
+                    "my-services"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "createdAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    },
+                    {
+                      "key": "publishStatus",
+                      "value": "pending"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('serviceId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get My Published Services",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{serviceProviderToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/service-provider/my-services?page=1&limit=10&sortBy=createdAt&sortOrder=desc&publishStatus=published",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "service-provider",
+                    "my-services"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "createdAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    },
+                    {
+                      "key": "publishStatus",
+                      "value": "published"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('serviceId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
               "name": "Get Published Services (Public)",
               "request": {
                 "method": "GET",
@@ -2579,6 +2758,185 @@
         {
           "name": "Venues",
           "item": [
+            {
+              "name": "Get My Venues",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{venueProviderToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/venue-provider/my-venues?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "venue-provider",
+                    "my-venues"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "createdAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('venueId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get My Pending Venues",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{venueProviderToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/venue-provider/my-venues?page=1&limit=10&sortBy=createdAt&sortOrder=desc&publishStatus=pending",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "venue-provider",
+                    "my-venues"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "createdAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    },
+                    {
+                      "key": "publishStatus",
+                      "value": "pending"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('venueId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get My Published Venues",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{venueProviderToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/venue-provider/my-venues?page=1&limit=10&sortBy=createdAt&sortOrder=desc&publishStatus=published",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "venue-provider",
+                    "my-venues"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "createdAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    },
+                    {
+                      "key": "publishStatus",
+                      "value": "published"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('venueId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
             {
               "name": "Get Published Venues (Public)",
               "request": {

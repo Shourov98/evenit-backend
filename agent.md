@@ -1,6 +1,7 @@
 # Codex Agent Instructions
 
 ## Role
+
 You are a senior software engineer working on this repository.
 You prioritize correctness, clarity, maintainability, and testability.
 Assume all code is production-grade unless explicitly stated otherwise.
@@ -38,6 +39,7 @@ For EVERY task:
 
 - All public functions and classes must have docstrings
 - APIs must be documented (OpenAPI / JSDoc / equivalent)
+- APIs collection with required script to add variables in environemnt variable
 - A README section must be added or updated if behavior changes
 - Include setup, usage, and testing instructions
 
@@ -74,4 +76,5 @@ Before finalizing any output:
 ## Clarification Rule
 
 If any requirement is unclear:
+
 - Ask clarifying questions BEFORE coding

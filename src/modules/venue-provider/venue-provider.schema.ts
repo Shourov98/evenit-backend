@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 const objectIdRegex = /^[a-fA-F0-9]{24}$/;
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+const publishStatusSchema = z.enum(['pending', 'published', 'rejected']);
 
 const availabilitySlotSchema = z.object({
   hour: z.number().int().min(8).max(23),
@@ -142,4 +143,16 @@ export const venueIdParamSchema = z.object({
     venueId: z.string().regex(objectIdRegex, 'Invalid venueId')
   }),
   query: z.object({}).optional().default({})
+});
+
+export const ownVenuesQuerySchema = z.object({
+  body: z.object({}).optional().default({}),
+  params: z.object({}).optional().default({}),
+  query: z.object({
+    page: z.coerce.number().int().min(1).optional(),
+    limit: z.coerce.number().int().min(1).optional(),
+    sortBy: z.string().min(1).optional(),
+    sortOrder: z.enum(['asc', 'desc']).optional(),
+    publishStatus: publishStatusSchema.optional()
+  })
 });
