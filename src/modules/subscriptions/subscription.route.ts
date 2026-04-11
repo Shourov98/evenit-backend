@@ -18,6 +18,35 @@ router.use(protect);
  *     description: Subscription payment initiation and verification
  * components:
  *   schemas:
+ *     SubscriptionPaymentLinkResponse:
+ *       type: object
+ *       properties:
+ *         success:
+ *           type: boolean
+ *           example: true
+ *         data:
+ *           type: object
+ *           properties:
+ *             userId:
+ *               type: string
+ *             role:
+ *               type: string
+ *               enum: [customer, service_provider, event_planner, venue_provider]
+ *             subscriptionStatus:
+ *               type: string
+ *               enum: [subscribed, not_subscribed]
+ *             isSubscribed:
+ *               type: boolean
+ *             paymentLink:
+ *               type: string
+ *               format: uri
+ *               description: Stripe Checkout URL with locked email and client_reference_id attached for webhook reconciliation
+ *     StripeWebhookResponse:
+ *       type: object
+ *       properties:
+ *         received:
+ *           type: boolean
+ *           example: true
  *     SubscriptionStatusResponse:
  *       type: object
  *       properties:
@@ -117,6 +146,35 @@ router.use(protect);
  *                   format: date-time
  *
  * @openapi
+ * /api/v1/subscriptions/webhook:
+ *   post:
+ *     tags: [Subscriptions]
+ *     summary: Stripe webhook endpoint for hosted subscription payment updates
+ *     description: Stripe calls this endpoint directly. It must receive the raw request body and should not be called manually from the frontend.
+ *     responses:
+ *       200:
+ *         description: Webhook event received successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/StripeWebhookResponse'
+ *
+ * @openapi
+ * /api/v1/subscriptions/payment-link:
+ *   get:
+ *     tags: [Subscriptions]
+ *     summary: Get the Stripe payment link for the current user's role
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Subscription payment link fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SubscriptionPaymentLinkResponse'
+ *
+ * @openapi
  * /api/v1/subscriptions/status:
  *   get:
  *     tags: [Subscriptions]
@@ -179,6 +237,7 @@ router.post(
   validate(createSubscriptionPaymentIntentSchema),
   SubscriptionController.createPaymentIntent
 );
+router.get('/payment-link', SubscriptionController.getPaymentLink);
 router.get('/status', SubscriptionController.getStatus);
 router.post('/verify-payment', validate(verifySubscriptionPaymentSchema), SubscriptionController.verifyPayment);
 

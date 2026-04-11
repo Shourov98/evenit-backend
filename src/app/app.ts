@@ -3,11 +3,18 @@ import path from 'path';
 import swaggerUi from 'swagger-ui-express';
 import { errorHandler, notFoundHandler } from '../common/middlewares/error.middleware';
 import { applySecurityMiddleware } from '../common/middlewares/security.middleware';
+import { SubscriptionController } from '../modules/subscriptions/subscription.controller';
 import { openApiSpec } from './openapi';
 import { router } from './routes';
 
 const app = express();
 const paymentTestDir = path.resolve(process.cwd(), 'public/payment-test');
+
+app.post(
+  '/api/v1/subscriptions/webhook',
+  express.raw({ type: 'application/json' }),
+  SubscriptionController.handleWebhook
+);
 
 applySecurityMiddleware(app);
 app.get('/payment-test', (_req, res) => {

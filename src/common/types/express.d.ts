@@ -30,6 +30,8 @@ declare global {
             | 'super_admin_plan';
           status: 'subscribed' | 'not_subscribed';
           activatedAt?: Date;
+          stripeCustomerId?: string;
+          stripeSubscriptionId?: string;
           payment: {
             amount: number;
             currency: string;

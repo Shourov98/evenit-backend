@@ -123,6 +123,11 @@ CLOUDINARY_API_SECRET=
 CLOUDINARY_UPLOAD_FOLDER=evenit
 STRIPE_SECRET_KEY=
 STRIPE_PUBLISHABLE_KEY=
+STRIPE_WEBHOOK_SECRET=
+CUSTOMER_SUBSCRIPTION_PAYMENT_LINK=https://buy.stripe.com/test_28E8wR3zx21ZeNN6ALaR200
+SERVICE_PROVIDER_SUBSCRIPTION_PAYMENT_LINK=https://buy.stripe.com/test_dRm28t3zx7mj6hh2kvaR205
+EVENT_PLANNER_SUBSCRIPTION_PAYMENT_LINK=https://buy.stripe.com/test_dRm28t3zx7mj6hh2kvaR205
+VENUE_PROVIDER_SUBSCRIPTION_PAYMENT_LINK=https://buy.stripe.com/test_8x26oJ8TRgWT211gblaR206
 PLATFORM_FEE_PERCENT=10
 RESEND_API_KEY=
 RESEND_FROM_EMAIL=onboarding@resend.dev
@@ -191,6 +196,8 @@ Then mount router in `src/app/routes.ts`.
 - `GET /docs`
 - `GET /payment-test`
 - `GET /api/v1/subscriptions/status` (Bearer token)
+- `GET /api/v1/subscriptions/payment-link` (Bearer token)
+- `POST /api/v1/subscriptions/webhook` (Stripe webhook)
 
 ## Auth + Role Design
 
@@ -329,6 +336,21 @@ Test flow:
 3. Create a subscription PaymentIntent.
 4. Complete the payment in the embedded Stripe form.
 5. Click verify so the backend marks the subscription as active.
+
+## Stripe Payment Link Sync
+
+Use this flow for Stripe-hosted recurring subscriptions:
+
+1. Frontend calls `GET /api/v1/subscriptions/payment-link` with the authenticated user's token.
+2. The backend returns the role-specific Stripe Checkout URL with `client_reference_id` and locked email attached.
+3. Frontend redirects the user to that Stripe URL.
+4. Stripe sends events to `POST /api/v1/subscriptions/webhook`.
+5. The backend updates the user to `subscribed`, so `GET /api/v1/subscriptions/status` returns `isSubscribed: true`.
+
+Required setup:
+
+- Configure a Stripe webhook endpoint pointing to `/api/v1/subscriptions/webhook`
+- Add the webhook signing secret to `STRIPE_WEBHOOK_SECRET`
 
 ## Global Pagination
 

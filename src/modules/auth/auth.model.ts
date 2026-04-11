@@ -119,6 +119,8 @@ export interface IUserSubscription {
   plan: SubscriptionPlan;
   status: SubscriptionStatus;
   activatedAt?: Date;
+  stripeCustomerId?: string;
+  stripeSubscriptionId?: string;
   payment: IUserSubscriptionPayment;
 }
 
@@ -178,6 +180,8 @@ export const hydrateUserSubscription = (
     ...defaults,
     status: subscription?.status ?? defaults.status,
     activatedAt: subscription?.activatedAt,
+    stripeCustomerId: subscription?.stripeCustomerId,
+    stripeSubscriptionId: subscription?.stripeSubscriptionId,
     payment
   };
 };
@@ -486,6 +490,14 @@ const userSubscriptionSchema = new Schema<IUserSubscription>(
     },
     activatedAt: {
       type: Date
+    },
+    stripeCustomerId: {
+      type: String,
+      trim: true
+    },
+    stripeSubscriptionId: {
+      type: String,
+      trim: true
     },
     payment: {
       amount: {

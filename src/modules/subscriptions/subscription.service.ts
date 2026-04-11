@@ -1,4 +1,6 @@
+import Stripe from 'stripe';
 import { AppError } from '../../common/errors/AppError';
+import { env } from '../../config/env';
 import { getStripe, hasStripeConfig } from '../../config/stripe';
 import { hydrateUserSubscription, UserModel, UserRole } from '../auth/auth.model';
 
@@ -19,6 +21,129 @@ const toStripeAmount = (amount: number): number => {
 };
 
 export class SubscriptionService {
+  private static async markSubscriptionActive(params: {
+    userId?: string;
+    email?: string | null;
+    stripeCustomerId?: string | null;
+    stripeSubscriptionId?: string | null;
+  }) {
+    const user = params.userId
+      ? await UserModel.findById(params.userId)
+      : await UserModel.findOne({ email: params.email?.toLowerCase() });
+
+    if (!user) {
+      throw new AppError(
+        404,
+        params.userId
+          ? `User not found for Stripe client_reference_id ${params.userId}`
+          : `User not found for Stripe customer email ${params.email || 'unknown'}`
+      );
+    }
+
+    ensureAllowedRole(user.role);
+
+    user.subscription = {
+      ...hydrateUserSubscription(user.role, user.subscription),
+      status: 'subscribed',
+      activatedAt: user.subscription.activatedAt ?? new Date(),
+      stripeCustomerId: params.stripeCustomerId ?? user.subscription.stripeCustomerId,
+      stripeSubscriptionId: params.stripeSubscriptionId ?? user.subscription.stripeSubscriptionId,
+      payment: {
+        ...hydrateUserSubscription(user.role, user.subscription).payment,
+        status: 'paid',
+        paidAt: new Date()
+      }
+    };
+
+    await user.save();
+    return user;
+  }
+
+  private static async markSubscriptionInactiveByStripeSubscriptionId(stripeSubscriptionId: string) {
+    const user = await UserModel.findOne({
+      'subscription.stripeSubscriptionId': stripeSubscriptionId
+    });
+
+    if (!user) {
+      return;
+    }
+
+    user.subscription = {
+      ...hydrateUserSubscription(user.role, user.subscription),
+      status: 'not_subscribed',
+      activatedAt: undefined,
+      stripeCustomerId: user.subscription.stripeCustomerId,
+      stripeSubscriptionId,
+      payment: {
+        ...hydrateUserSubscription(user.role, user.subscription).payment,
+        status: 'unpaid',
+        paidAt: undefined
+      }
+    };
+
+    await user.save();
+  }
+
+  static async handleWebhookEvent(payload: Buffer, signature: string) {
+    if (!hasStripeConfig()) {
+      throw new AppError(500, 'Stripe is not configured');
+    }
+
+    if (!env.STRIPE_WEBHOOK_SECRET) {
+      throw new AppError(500, 'Stripe webhook secret is not configured');
+    }
+
+    const stripe = getStripe();
+    const event = stripe.webhooks.constructEvent(payload, signature, env.STRIPE_WEBHOOK_SECRET);
+
+    switch (event.type) {
+      case 'checkout.session.completed': {
+        const session = event.data.object as Stripe.Checkout.Session;
+        if (session.mode !== 'subscription') {
+          return;
+        }
+
+        await this.markSubscriptionActive({
+          userId: session.client_reference_id ?? undefined,
+          email: session.customer_details?.email ?? session.customer_email,
+          stripeCustomerId: typeof session.customer === 'string' ? session.customer : null,
+          stripeSubscriptionId:
+            typeof session.subscription === 'string' ? session.subscription : null
+        });
+        return;
+      }
+
+      case 'invoice.paid': {
+        const invoice = event.data.object as Stripe.Invoice;
+        const stripeSubscriptionId =
+          typeof invoice.parent?.subscription_details?.subscription === 'string'
+            ? invoice.parent.subscription_details.subscription
+            : null;
+
+        const customerEmail =
+          typeof invoice.customer_email === 'string'
+            ? invoice.customer_email
+            : null;
+
+        await this.markSubscriptionActive({
+          email: customerEmail,
+          stripeCustomerId: typeof invoice.customer === 'string' ? invoice.customer : null,
+          stripeSubscriptionId
+        });
+        return;
+      }
+
+      case 'customer.subscription.deleted': {
+        const subscription = event.data.object as Stripe.Subscription;
+        await this.markSubscriptionInactiveByStripeSubscriptionId(subscription.id);
+        return;
+      }
+
+      default:
+        return;
+    }
+  }
+
   static async createPaymentIntent(
     userId: string,
     options?: {
@@ -121,6 +246,8 @@ export class SubscriptionService {
       ...hydrateUserSubscription(user.role, user.subscription),
       status: 'subscribed',
       activatedAt: new Date(),
+      stripeCustomerId: user.subscription.stripeCustomerId,
+      stripeSubscriptionId: user.subscription.stripeSubscriptionId,
       payment: {
         ...hydrateUserSubscription(user.role, user.subscription).payment,
         status: 'paid',
