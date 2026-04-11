@@ -314,7 +314,10 @@ export class AdminManagementController {
   static approveVenue = catchAsync(async (req: Request, res: Response) => {
     const approver = getApprover(req);
     if (!approver) {
-      return res.status(401).json({ success: false, message: 'Unauthorized' });
+      return res.status(401).json({
+        success: false,
+        message: 'Authentication required: sign in before approving venues'
+      });
     }
 
     const venue = await AdminManagementService.approveVenue(req.params.venueId, approver);
@@ -337,7 +340,10 @@ export class AdminManagementController {
   static approveService = catchAsync(async (req: Request, res: Response) => {
     const approver = getApprover(req);
     if (!approver) {
-      return res.status(401).json({ success: false, message: 'Unauthorized' });
+      return res.status(401).json({
+        success: false,
+        message: 'Authentication required: sign in before approving services'
+      });
     }
 
     const service = await AdminManagementService.approveService(req.params.serviceId, approver);

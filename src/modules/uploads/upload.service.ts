@@ -36,7 +36,7 @@ const uploadBuffer = (
       },
       (error, result) => {
         if (error || !result) {
-          reject(error || new Error('Cloudinary upload failed'));
+          reject(error || new Error('Cloudinary upload failed while storing the file'));
           return;
         }
 
@@ -54,11 +54,11 @@ export class UploadService {
     resourceType: 'image' | 'auto' = 'image'
   ): Promise<UploadedImage[]> {
     if (!hasCloudinaryConfig()) {
-      throw new AppError(500, 'Cloudinary is not configured');
+      throw new AppError(500, 'File upload is unavailable because Cloudinary credentials are not configured');
     }
 
     if (!files.length) {
-      throw new AppError(400, 'At least one image is required');
+      throw new AppError(400, 'Upload failed: at least one image file is required');
     }
 
     const normalizedFolderSegment = folderSegment
@@ -101,7 +101,7 @@ export class UploadService {
 
   static async uploadProfileImage(userId: string, role: UserRole, file: Express.Multer.File) {
     if (!file) {
-      throw new AppError(400, 'Profile image must be sent using the image field');
+      throw new AppError(400, 'Profile image upload failed: send the file in the image field');
     }
 
     const user = await UserModel.findById(userId);

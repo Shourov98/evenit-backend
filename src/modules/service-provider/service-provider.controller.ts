@@ -1,19 +1,23 @@
 import { Request, Response } from 'express';
+import { AppError } from '../../common/errors/AppError';
 import { parsePagination } from '../../common/utils/pagination';
 import { catchAsync } from '../../common/utils/catchAsync';
 import { UploadService } from '../uploads/upload.service';
 import { ServiceProviderService } from './service-provider.service';
 
-const getUserId = (req: Request): string | null => req.user?.userId || null;
+const getUserId = (req: Request): string => {
+  if (!req.user?.userId) {
+    throw new AppError(401, 'Authentication required: sign in before managing services');
+  }
+
+  return req.user.userId;
+};
 const getFiles = (req: Request): Express.Multer.File[] =>
   Array.isArray(req.files) ? req.files : req.files ? Object.values(req.files).flat() : [];
 
 export class ServiceProviderController {
   static createService = catchAsync(async (req: Request, res: Response) => {
     const userId = getUserId(req);
-    if (!userId) {
-      return res.status(401).json({ success: false, message: 'Unauthorized' });
-    }
 
     const files = getFiles(req);
     const uploadedImages = files.length ? await UploadService.uploadImages(files, 'services') : [];
@@ -48,9 +52,6 @@ export class ServiceProviderController {
 
   static getOwnServices = catchAsync(async (req: Request, res: Response) => {
     const userId = getUserId(req);
-    if (!userId) {
-      return res.status(401).json({ success: false, message: 'Unauthorized' });
-    }
 
     const pagination = parsePagination(req.query as Record<string, unknown>);
     const publishStatus =
@@ -78,9 +79,6 @@ export class ServiceProviderController {
 
   static updateService = catchAsync(async (req: Request, res: Response) => {
     const userId = getUserId(req);
-    if (!userId) {
-      return res.status(401).json({ success: false, message: 'Unauthorized' });
-    }
 
     const files = getFiles(req);
     const uploadedImages = files.length ? await UploadService.uploadImages(files, 'services') : [];
@@ -106,9 +104,6 @@ export class ServiceProviderController {
 
   static deleteService = catchAsync(async (req: Request, res: Response) => {
     const userId = getUserId(req);
-    if (!userId) {
-      return res.status(401).json({ success: false, message: 'Unauthorized' });
-    }
 
     await ServiceProviderService.delete(userId, req.params.serviceId);
 

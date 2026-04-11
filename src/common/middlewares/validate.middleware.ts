@@ -12,7 +12,8 @@ export const validate = (schema: ZodTypeAny) =>
 
     if (!result.success) {
       const issue = result.error.issues[0];
-      return next(new AppError(400, issue?.message || 'Invalid request payload'));
+      const path = issue?.path?.length ? issue.path.join('.') : 'request';
+      return next(new AppError(400, issue?.message ? `Invalid ${path}: ${issue.message}` : 'Invalid request payload'));
     }
 
     req.body = result.data.body;

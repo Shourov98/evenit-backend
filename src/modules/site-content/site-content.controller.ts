@@ -25,7 +25,7 @@ export class SiteContentController {
 
   static upsert = catchAsync(async (req: Request, res: Response) => {
     if (!req.user) {
-      throw new AppError(401, 'Unauthorized');
+      throw new AppError(401, 'Authentication required: sign in before updating site content');
     }
 
     const data = await SiteContentService.upsert(

@@ -15,7 +15,11 @@ export const protect = async (req: Request, _res: Response, next: NextFunction):
     req.user = await authenticateToken(token);
 
     return next();
-  } catch (_error) {
-    return next(new AppError(401, 'Unauthorized: invalid token'));
+  } catch (error) {
+    if (error instanceof AppError) {
+      return next(error);
+    }
+
+    return next(new AppError(401, 'Authentication failed: the access token is invalid'));
   }
 };

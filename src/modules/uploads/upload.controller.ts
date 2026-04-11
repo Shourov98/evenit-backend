@@ -51,7 +51,7 @@ export class UploadController {
 
   static uploadProfileImage = catchAsync(async (req: Request, res: Response) => {
     if (!req.user?.userId || !req.user?.role) {
-      throw new AppError(401, 'Unauthorized');
+      throw new AppError(401, 'Authentication required: sign in before uploading a profile image');
     }
 
     const file = req.file;

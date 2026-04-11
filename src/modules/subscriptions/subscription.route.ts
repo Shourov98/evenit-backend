@@ -18,6 +18,25 @@ router.use(protect);
  *     description: Subscription payment initiation and verification
  * components:
  *   schemas:
+ *     SubscriptionStatusResponse:
+ *       type: object
+ *       properties:
+ *         success:
+ *           type: boolean
+ *           example: true
+ *         data:
+ *           type: object
+ *           properties:
+ *             userId:
+ *               type: string
+ *               example: 65f1a9d0f1b2c3d4e5f60001
+ *             subscriptionStatus:
+ *               type: string
+ *               enum: [subscribed, not_subscribed]
+ *               example: subscribed
+ *             isSubscribed:
+ *               type: boolean
+ *               example: true
  *     SubscriptionPaymentIntentRequest:
  *       type: object
  *       properties:
@@ -98,6 +117,21 @@ router.use(protect);
  *                   format: date-time
  *
  * @openapi
+ * /api/v1/subscriptions/status:
+ *   get:
+ *     tags: [Subscriptions]
+ *     summary: Get current user's subscription status
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Subscription status fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SubscriptionStatusResponse'
+ *
+ * @openapi
  * /api/v1/subscriptions/payment-intent:
  *   post:
  *     tags: [Subscriptions]
@@ -145,6 +179,7 @@ router.post(
   validate(createSubscriptionPaymentIntentSchema),
   SubscriptionController.createPaymentIntent
 );
+router.get('/status', SubscriptionController.getStatus);
 router.post('/verify-payment', validate(verifySubscriptionPaymentSchema), SubscriptionController.verifyPayment);
 
 export const subscriptionRouter = router;

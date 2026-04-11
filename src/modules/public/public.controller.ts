@@ -1,11 +1,22 @@
 import { Request, Response } from 'express';
 import { catchAsync } from '../../common/utils/catchAsync';
 import { parsePagination } from '../../common/utils/pagination';
+import { env } from '../../config/env';
 import { EventPlannerService } from '../event-planner/event-planner.service';
 import { ServiceProviderService } from '../service-provider/service-provider.service';
 import { VenueProviderService } from '../venue-provider/venue-provider.service';
 
 export class PublicController {
+  static getStripeConfig = catchAsync(async (_req: Request, res: Response) => {
+    return res.status(200).json({
+      success: true,
+      data: {
+        publishableKey: env.STRIPE_PUBLISHABLE_KEY,
+        isConfigured: Boolean(env.STRIPE_PUBLISHABLE_KEY)
+      }
+    });
+  });
+
   static getPublishedServices = catchAsync(async (req: Request, res: Response) => {
     const pagination = parsePagination(req.query as Record<string, unknown>);
     const services = await ServiceProviderService.getPublic(pagination);

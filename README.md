@@ -122,6 +122,7 @@ CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=
 CLOUDINARY_UPLOAD_FOLDER=evenit
 STRIPE_SECRET_KEY=
+STRIPE_PUBLISHABLE_KEY=
 PLATFORM_FEE_PERCENT=10
 RESEND_API_KEY=
 RESEND_FROM_EMAIL=onboarding@resend.dev
@@ -170,8 +171,6 @@ Then mount router in `src/app/routes.ts`.
 - `PATCH /api/v1/bookings/:bookingId/approve` (Bearer token, provider roles)
 - `PATCH /api/v1/bookings/:bookingId/reject` (Bearer token, provider roles)
 - `PATCH /api/v1/bookings/:bookingId/cancel` (Bearer token, customer)
-- `POST /api/v1/bookings/:bookingId/payment-intent` (Bearer token, customer)
-- `POST /api/v1/bookings/:bookingId/verify-payment` (Bearer token, customer)
 - `POST /api/v1/service-provider/services` (Bearer token, service_provider)
 - `GET /api/v1/service-provider/my-services` (Bearer token, service_provider)
 - `PATCH /api/v1/service-provider/services/:serviceId` (Bearer token, service_provider)
@@ -190,6 +189,8 @@ Then mount router in `src/app/routes.ts`.
 - `PATCH /api/v1/admin/venues/:venueId/approve` (Bearer token, admin/super_admin)
 - `PATCH /api/v1/admin/venues/:venueId/reject` (Bearer token, admin/super_admin)
 - `GET /docs`
+- `GET /payment-test`
+- `GET /api/v1/subscriptions/status` (Bearer token)
 
 ## Auth + Role Design
 
@@ -284,8 +285,7 @@ Current flow:
 1. Customer creates a booking with `targetType`, `targetId`, `bookingDate`, and one or more `timeSlots`.
 2. The selected slots are reserved immediately in `pending` status, so overlapping requests are rejected.
 3. The provider approves or rejects the booking.
-4. After approval, the customer creates a Stripe PaymentIntent from the booking endpoint.
-5. After the frontend confirms payment with Stripe, it calls the verify-payment endpoint to mark the booking as paid and confirmed.
+4. Approved bookings are confirmed without a second booking-level payment step because booking access is covered by subscription.
 
 Booking statuses:
 
@@ -309,6 +309,26 @@ Important:
 - `service_provider`: `service_provider_plan`, `GBP 5/month`
 - `venue_provider`: `venue_provider_plan`, `GBP 500/year`
 - Bookings are covered by subscription; there is no booking payment flow.
+
+## Payment Test Page
+
+Use the built-in test page at:
+
+- `GET /payment-test`
+
+Requirements:
+
+- `STRIPE_SECRET_KEY` must be set for backend PaymentIntent creation.
+- `STRIPE_PUBLISHABLE_KEY` must be set for the card form on the test page.
+- Use Stripe test mode keys and a dummy card such as `4242 4242 4242 4242`.
+
+Test flow:
+
+1. Register a test user or log in with an existing verified user.
+2. If OTP email delivery is not configured, read the OTP from the server terminal and verify it on the page.
+3. Create a subscription PaymentIntent.
+4. Complete the payment in the embedded Stripe form.
+5. Click verify so the backend marks the subscription as active.
 
 ## Global Pagination
 

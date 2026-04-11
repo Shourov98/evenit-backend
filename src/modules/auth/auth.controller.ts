@@ -47,7 +47,7 @@ export class AuthController {
     if (!userId) {
       res.status(401).json({
         success: false,
-        message: 'Unauthorized'
+        message: 'Authentication required: sign in before submitting onboarding information'
       });
       return null;
     }

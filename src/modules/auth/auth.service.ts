@@ -193,7 +193,10 @@ export class AuthService {
   static async register(payload: RegisterPayload) {
     const existing = await UserModel.findOne({ email: payload.email.toLowerCase() });
     if (existing) {
-      throw new AppError(409, 'Email already in use');
+      throw new AppError(
+        409,
+        `This email is already registered as ${existing.role}. You should use a different email.`
+      );
     }
 
     const user = await UserModel.create({

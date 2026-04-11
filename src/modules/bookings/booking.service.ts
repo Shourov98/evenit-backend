@@ -315,7 +315,7 @@ export class BookingService {
     }
 
     if (!canAccessBooking(booking, actorId, role)) {
-      throw new AppError(403, 'Forbidden');
+      throw new AppError(403, 'Access denied: you are not allowed to access this booking');
     }
 
     return booking;

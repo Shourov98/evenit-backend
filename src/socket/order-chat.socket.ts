@@ -37,7 +37,7 @@ const toSocketError = (error: unknown): Error => {
 
 const getSocketUser = (socket: OrderChatSocket): AuthenticatedUser => {
   if (!socket.data.user) {
-    throw new AppError(401, 'Unauthorized');
+    throw new AppError(401, 'Authentication required: connect with a valid token before using order chat');
   }
 
   return socket.data.user;
@@ -141,4 +141,3 @@ export const registerOrderChatSocket = (io: Server): void => {
     });
   });
 };
-

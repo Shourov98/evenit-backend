@@ -7,7 +7,7 @@ import { getOrderChatRoom, OrderChatService } from './order-chat.service';
 
 const getUser = (req: Request) => {
   if (!req.user) {
-    throw new AppError(401, 'Unauthorized');
+    throw new AppError(401, 'Authentication required: sign in before accessing booking chat');
   }
 
   return req.user;

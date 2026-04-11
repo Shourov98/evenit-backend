@@ -28,7 +28,24 @@ export const applySecurityMiddleware = (app: Express): void => {
   });
 
   app.set('trust proxy', 1);
-  app.use(helmet());
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'", 'https://js.stripe.com'],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          imgSrc: ["'self'", 'data:', 'https:'],
+          connectSrc: ["'self'", 'https://api.stripe.com'],
+          frameSrc: ["'self'", 'https://js.stripe.com', 'https://hooks.stripe.com'],
+          fontSrc: ["'self'", 'https:', 'data:'],
+          objectSrc: ["'none'"],
+          baseUri: ["'self'"],
+          formAction: ["'self'"]
+        }
+      }
+    })
+  );
   app.use(
     cors({
       origin: '*'

@@ -8,7 +8,7 @@ type BookingStatusFilter = 'pending' | 'approved' | 'rejected' | 'completed' | '
 
 const getUser = (req: Request) => {
   if (!req.user) {
-    throw new AppError(401, 'Unauthorized');
+    throw new AppError(401, 'Authentication required: sign in before accessing bookings');
   }
 
   return req.user;

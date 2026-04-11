@@ -9,6 +9,8 @@ import {
 
 const router = Router();
 
+router.get('/stripe-config', PublicController.getStripeConfig);
+
 /**
  * @openapi
  * tags:

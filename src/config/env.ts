@@ -15,6 +15,7 @@ export const env = cleanEnv(process.env, {
   CLOUDINARY_API_SECRET: str({ default: '' }),
   CLOUDINARY_UPLOAD_FOLDER: str({ default: 'evenit' }),
   STRIPE_SECRET_KEY: str({ default: '' }),
+  STRIPE_PUBLISHABLE_KEY: str({ default: '' }),
   PLATFORM_FEE_PERCENT: str({ default: '10' }),
   RESEND_API_KEY: str({ default: '' }),
   RESEND_FROM_EMAIL: str({ default: 'onboarding@resend.dev' }),
