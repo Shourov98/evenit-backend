@@ -39,6 +39,27 @@ export class SubscriptionController {
     }
   };
 
+  static createSubscription = catchAsync(async (req: Request, res: Response) => {
+    const userId = getUserId(req);
+    const role = req.user?.role;
+
+    if (!role || !['customer', 'service_provider', 'event_planner', 'venue_provider'].includes(role)) {
+      throw new AppError(403, 'This role does not require a subscription');
+    }
+
+    const result = await SubscriptionService.createSubscriptionForPaymentElement({
+      userId,
+      role,
+      email: req.user?.email ?? null,
+      fullName: req.user?.fullName ?? null
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: result
+    });
+  });
+
   static getPaymentLink = catchAsync(async (req: Request, res: Response) => {
     const userId = getUserId(req);
     const role = req.user?.role;
@@ -65,15 +86,37 @@ export class SubscriptionController {
     });
   });
 
+  static stopRecurring = catchAsync(async (req: Request, res: Response) => {
+    const userId = getUserId(req);
+    const result = await SubscriptionService.stopRecurringAtPeriodEnd(userId);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Recurring subscription will stop at the end of the current billing period',
+      data: result
+    });
+  });
+
+  static resumeRecurring = catchAsync(async (req: Request, res: Response) => {
+    const userId = getUserId(req);
+    const result = await SubscriptionService.resumeRecurring(userId);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Recurring subscription has been restarted',
+      data: result
+    });
+  });
+
   static getStatus = catchAsync(async (req: Request, res: Response) => {
     const userId = getUserId(req);
+    const state = await SubscriptionService.getSubscriptionManagementState(userId);
 
     return res.status(200).json({
       success: true,
       data: {
         userId,
-        subscriptionStatus: req.user?.subscription.status ?? 'not_subscribed',
-        isSubscribed: req.user?.subscription.status === 'subscribed'
+        ...state
       }
     });
   });

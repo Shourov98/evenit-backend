@@ -17,6 +17,211 @@ const ensureAllowedRole = (role: UserRole): void => {
 };
 
 export class SubscriptionService {
+  static async getSubscriptionManagementState(userId: string) {
+    const user = await this.findUserById(userId);
+    const stripeSubscriptionId = user.subscription.stripeSubscriptionId;
+
+    if (!stripeSubscriptionId || !hasStripeConfig()) {
+      return {
+        role: user.role,
+        subscriptionStatus: user.subscription.status,
+        isSubscribed: user.subscription.status === 'subscribed',
+        cancelAtPeriodEnd: false,
+        currentPeriodEnd: null
+      };
+    }
+
+    const stripe = getStripe();
+    const subscription = await stripe.subscriptions.retrieve(stripeSubscriptionId);
+
+    return {
+      role: user.role,
+      subscriptionStatus: user.subscription.status,
+      isSubscribed: user.subscription.status === 'subscribed',
+      cancelAtPeriodEnd: subscription.cancel_at_period_end,
+      currentPeriodEnd:
+        typeof subscription.items.data[0]?.current_period_end === 'number'
+          ? new Date(subscription.items.data[0].current_period_end * 1000).toISOString()
+          : null
+    };
+  }
+
+  static async stopRecurringAtPeriodEnd(userId: string) {
+    const user = await this.findUserById(userId);
+
+    if (!user.subscription.stripeSubscriptionId) {
+      throw new AppError(400, 'No active Stripe subscription was found for this account');
+    }
+
+    if (!hasStripeConfig()) {
+      throw new AppError(500, 'Stripe is not configured');
+    }
+
+    const stripe = getStripe();
+    const subscription = await stripe.subscriptions.update(user.subscription.stripeSubscriptionId, {
+      cancel_at_period_end: true
+    });
+
+    return {
+      role: user.role,
+      subscriptionStatus: user.subscription.status,
+      isSubscribed: user.subscription.status === 'subscribed',
+      cancelAtPeriodEnd: subscription.cancel_at_period_end,
+      currentPeriodEnd:
+        typeof subscription.items.data[0]?.current_period_end === 'number'
+          ? new Date(subscription.items.data[0].current_period_end * 1000).toISOString()
+          : null
+    };
+  }
+
+  static async resumeRecurring(userId: string) {
+    const user = await this.findUserById(userId);
+
+    if (!user.subscription.stripeSubscriptionId) {
+      throw new AppError(400, 'No active Stripe subscription was found for this account');
+    }
+
+    if (!hasStripeConfig()) {
+      throw new AppError(500, 'Stripe is not configured');
+    }
+
+    const stripe = getStripe();
+    const subscription = await stripe.subscriptions.update(user.subscription.stripeSubscriptionId, {
+      cancel_at_period_end: false
+    });
+
+    return {
+      role: user.role,
+      subscriptionStatus: user.subscription.status,
+      isSubscribed: user.subscription.status === 'subscribed',
+      cancelAtPeriodEnd: subscription.cancel_at_period_end,
+      currentPeriodEnd:
+        typeof subscription.items.data[0]?.current_period_end === 'number'
+          ? new Date(subscription.items.data[0].current_period_end * 1000).toISOString()
+          : null
+    };
+  }
+
+  private static async findUserById(userId: string) {
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      throw new AppError(404, `User not found for id ${userId}`);
+    }
+
+    ensureAllowedRole(user.role);
+    return user;
+  }
+
+  private static async ensureStripeCustomer(params: {
+    userId: string;
+    email?: string | null;
+    fullName?: string | null;
+  }) {
+    const user = await this.findUserById(params.userId);
+    const existingCustomerId = user.subscription.stripeCustomerId;
+
+    if (existingCustomerId) {
+      return { user, stripeCustomerId: existingCustomerId };
+    }
+
+    if (!hasStripeConfig()) {
+      throw new AppError(500, 'Stripe is not configured');
+    }
+
+    const stripe = getStripe();
+    const customer = await stripe.customers.create({
+      email: params.email ?? user.email,
+      name: params.fullName ?? user.fullName,
+      metadata: {
+        userId: String(user._id),
+        role: user.role
+      }
+    });
+
+    user.subscription = {
+      ...hydrateUserSubscription(user.role, user.subscription),
+      stripeCustomerId: customer.id
+    };
+
+    await user.save();
+
+    return { user, stripeCustomerId: customer.id };
+  }
+
+  static async createSubscriptionForPaymentElement(params: {
+    userId: string;
+    role: UserRole;
+    email?: string | null;
+    fullName?: string | null;
+  }) {
+    ensureAllowedRole(params.role);
+
+    if (!hasStripeConfig()) {
+      throw new AppError(500, 'Stripe is not configured');
+    }
+
+    const stripe = getStripe();
+    const { user, stripeCustomerId } = await this.ensureStripeCustomer(params);
+
+    if (user.subscription.status === 'subscribed') {
+      throw new AppError(400, 'Subscription is already active');
+    }
+
+    const rolePriceIdMap: Record<SubscriptionPaymentRole, string> = {
+      customer: env.CUSTOMER_SUBSCRIPTION_PRICE_ID,
+      service_provider: env.SERVICE_PROVIDER_SUBSCRIPTION_PRICE_ID,
+      event_planner: env.EVENT_PLANNER_SUBSCRIPTION_PRICE_ID,
+      venue_provider: env.VENUE_PROVIDER_SUBSCRIPTION_PRICE_ID
+    };
+    const priceId = rolePriceIdMap[params.role as SubscriptionPaymentRole];
+
+    if (!priceId) {
+      throw new AppError(500, `Subscription price is not configured for role ${params.role}`);
+    }
+
+    const subscription = await stripe.subscriptions.create({
+      customer: stripeCustomerId,
+      items: [{ price: priceId }],
+      payment_behavior: 'default_incomplete',
+      payment_settings: {
+        save_default_payment_method: 'on_subscription'
+      },
+      metadata: {
+        userId: String(user._id),
+        role: user.role
+      },
+      expand: ['latest_invoice.confirmation_secret']
+    });
+
+    const confirmationSecret =
+      typeof subscription.latest_invoice !== 'string' &&
+      subscription.latest_invoice?.confirmation_secret?.client_secret
+        ? subscription.latest_invoice.confirmation_secret.client_secret
+        : null;
+
+    if (!confirmationSecret) {
+      throw new AppError(500, 'Stripe did not return a confirmation client secret');
+    }
+
+    user.subscription = {
+      ...hydrateUserSubscription(user.role, user.subscription),
+      stripeCustomerId,
+      stripeSubscriptionId: subscription.id
+    };
+
+    await user.save();
+
+    return {
+      userId: String(user._id),
+      role: user.role,
+      subscriptionId: subscription.id,
+      customerId: stripeCustomerId,
+      clientSecret: confirmationSecret,
+      publishableKey: env.STRIPE_PUBLISHABLE_KEY
+    };
+  }
+
   private static async attachStripeReferences(params: {
     userId?: string;
     email?: string | null;

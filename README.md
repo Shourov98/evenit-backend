@@ -124,6 +124,10 @@ CLOUDINARY_UPLOAD_FOLDER=evenit
 STRIPE_SECRET_KEY=
 STRIPE_PUBLISHABLE_KEY=
 STRIPE_WEBHOOK_SECRET=
+CUSTOMER_SUBSCRIPTION_PRICE_ID=
+SERVICE_PROVIDER_SUBSCRIPTION_PRICE_ID=
+EVENT_PLANNER_SUBSCRIPTION_PRICE_ID=
+VENUE_PROVIDER_SUBSCRIPTION_PRICE_ID=
 CUSTOMER_SUBSCRIPTION_PAYMENT_LINK=https://buy.stripe.com/test_28E8wR3zx21ZeNN6ALaR200
 SERVICE_PROVIDER_SUBSCRIPTION_PAYMENT_LINK=https://buy.stripe.com/test_dRm28t3zx7mj6hh2kvaR205
 EVENT_PLANNER_SUBSCRIPTION_PAYMENT_LINK=https://buy.stripe.com/test_dRm28t3zx7mj6hh2kvaR205
@@ -195,6 +199,7 @@ Then mount router in `src/app/routes.ts`.
 - `PATCH /api/v1/admin/venues/:venueId/reject` (Bearer token, admin/super_admin)
 - `GET /docs`
 - `GET /payment-test`
+- `POST /api/v1/subscriptions/create` (Bearer token)
 - `GET /api/v1/subscriptions/status` (Bearer token)
 - `GET /api/v1/subscriptions/payment-link` (Bearer token)
 - `POST /api/v1/subscriptions/webhook` (Stripe webhook)
@@ -332,25 +337,32 @@ Test flow:
 
 1. Register a test user or log in with an existing verified user.
 2. If OTP email delivery is not configured, read the OTP from the server terminal and verify it on the page.
-3. Open the hosted Stripe subscription checkout link.
-4. Complete the payment on Stripe's hosted checkout page.
-5. Refresh the profile after Stripe redirects back or the webhook completes.
+3. Open the in-app subscription modal or screen.
+4. The frontend calls `POST /api/v1/subscriptions/create`.
+5. Complete the payment in the embedded Stripe Payment Element.
+6. Wait for the webhook or refresh until `GET /api/v1/subscriptions/status` returns `isSubscribed: true`.
 
-## Stripe Payment Link Sync
+## Stripe Subscription Sync
 
-Use this flow for Stripe-hosted recurring subscriptions:
+Use this flow for in-app recurring subscriptions:
 
-1. Frontend calls `GET /api/v1/subscriptions/payment-link` with the authenticated user's token.
-2. The backend returns the role-specific Stripe Checkout URL with `client_reference_id` and locked email attached.
-3. Frontend redirects the user to that Stripe URL.
-4. Stripe sends events to `POST /api/v1/subscriptions/webhook`.
+1. Frontend calls `POST /api/v1/subscriptions/create` with the authenticated user's token.
+2. The backend creates or reuses the Stripe customer, creates an incomplete subscription with the role's Stripe Price, and returns a client secret plus publishable key.
+3. Frontend mounts Stripe Payment Element and confirms the payment without redirecting to a Stripe-hosted checkout page.
+4. Stripe sends subscription and invoice events to `POST /api/v1/subscriptions/webhook`.
 5. The backend updates the user to `subscribed`, so `GET /api/v1/subscriptions/status` returns `isSubscribed: true`.
 
 Required setup:
 
 - Configure a Stripe webhook endpoint pointing to `/api/v1/subscriptions/webhook`
 - Add the webhook signing secret to `STRIPE_WEBHOOK_SECRET`
-- Keep the Stripe payment links and webhook endpoint in Stripe test mode while testing
+- Create one recurring Stripe Price for each role and set:
+- `CUSTOMER_SUBSCRIPTION_PRICE_ID`
+- `SERVICE_PROVIDER_SUBSCRIPTION_PRICE_ID`
+- `EVENT_PLANNER_SUBSCRIPTION_PRICE_ID`
+- `VENUE_PROVIDER_SUBSCRIPTION_PRICE_ID`
+- Set `STRIPE_SECRET_KEY` and `STRIPE_PUBLISHABLE_KEY`
+- Keep the prices, API keys, and webhook endpoint in Stripe test mode while testing
 
 ## Global Pagination
 

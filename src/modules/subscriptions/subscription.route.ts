@@ -67,6 +67,9 @@ router.use(protect);
  *               type: string
  *               enum: [subscribed, not_subscribed]
  *               example: subscribed
+ *             role:
+ *               type: string
+ *               enum: [customer, service_provider, event_planner, venue_provider]
  *             isSubscribed:
  *               type: boolean
  *               example: true
@@ -113,6 +116,18 @@ router.use(protect);
  *               $ref: '#/components/schemas/SubscriptionPaymentLinkResponse'
  *
  * @openapi
+ * /api/v1/subscriptions/create:
+ *   post:
+ *     tags: [Subscriptions]
+ *     summary: Create a Stripe subscription for on-site payment confirmation
+ *     description: Creates an incomplete subscription and returns the client secret needed for Stripe Elements / Payment Element confirmation in your own UI.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Subscription created successfully
+ *
+ * @openapi
  * /api/v1/subscriptions/status:
  *   get:
  *     tags: [Subscriptions]
@@ -127,6 +142,9 @@ router.use(protect);
  *             schema:
  *               $ref: '#/components/schemas/SubscriptionStatusResponse'
  */
+router.post('/create', SubscriptionController.createSubscription);
+router.post('/stop-recurring', SubscriptionController.stopRecurring);
+router.post('/resume-recurring', SubscriptionController.resumeRecurring);
 router.get('/payment-link', SubscriptionController.getPaymentLink);
 router.get('/status', SubscriptionController.getStatus);
 
