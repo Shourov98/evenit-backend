@@ -1795,117 +1795,94 @@
           }
         }
       },
-      "SubscriptionPaymentIntentRequest": {
-        "type": "object",
-        "properties": {
-          "paymentMethodId": {
-            "type": "string",
-            "description": "Optional Stripe PaymentMethod id. In test mode you can use `pm_card_visa` to create and confirm the payment directly from Postman.",
-            "example": "pm_card_visa"
-          },
-          "confirm": {
-            "type": "boolean",
-            "description": "When true, the backend creates and confirms the PaymentIntent immediately. Intended for testing flows such as Postman.",
-            "example": true
-          }
-        }
-      },
-      "SubscriptionPaymentIntentResponse": {
+      "SubscriptionPaymentLinkResponse": {
         "type": "object",
         "properties": {
           "success": {
             "type": "boolean",
             "example": true
           },
-          "message": {
-            "type": "string",
-            "example": "Subscription payment initiated successfully"
-          },
           "data": {
             "type": "object",
             "properties": {
-              "clientSecret": {
+              "userId": {
                 "type": "string"
               },
-              "paymentIntentId": {
-                "type": "string"
-              },
-              "paymentStatus": {
+              "role": {
                 "type": "string",
-                "example": "succeeded"
+                "enum": [
+                  "customer",
+                  "service_provider",
+                  "event_planner",
+                  "venue_provider"
+                ]
               },
-              "amount": {
-                "type": "number"
+              "subscriptionStatus": {
+                "type": "string",
+                "enum": [
+                  "subscribed",
+                  "not_subscribed"
+                ]
               },
-              "currency": {
-                "type": "string"
+              "isSubscribed": {
+                "type": "boolean"
               },
-              "plan": {
-                "type": "string"
-              },
-              "billingCycle": {
-                "type": "string"
+              "paymentLink": {
+                "type": "string",
+                "format": "uri",
+                "description": "Stripe Checkout URL with locked email and client_reference_id attached for webhook reconciliation"
               }
             }
           }
         }
       },
-      "SubscriptionVerifyRequest": {
+      "StripeWebhookResponse": {
         "type": "object",
-        "required": [
-          "paymentIntentId"
-        ],
         "properties": {
-          "paymentIntentId": {
-            "type": "string",
-            "example": "pi_3Qexample123"
+          "received": {
+            "type": "boolean",
+            "example": true
           }
         }
       },
-      "SubscriptionVerifyResponse": {
+      "SubscriptionWebhookErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Stripe webhook signature header is missing"
+          }
+        }
+      },
+      "SubscriptionStatusResponse": {
         "type": "object",
         "properties": {
           "success": {
             "type": "boolean",
             "example": true
           },
-          "message": {
-            "type": "string",
-            "example": "Subscription payment verified successfully"
-          },
           "data": {
             "type": "object",
             "properties": {
-              "plan": {
-                "type": "string"
-              },
-              "status": {
-                "type": "string"
-              },
-              "activatedAt": {
+              "userId": {
                 "type": "string",
-                "format": "date-time"
+                "example": "65f1a9d0f1b2c3d4e5f60001"
               },
-              "payment": {
-                "type": "object",
-                "properties": {
-                  "amount": {
-                    "type": "number"
-                  },
-                  "currency": {
-                    "type": "string"
-                  },
-                  "billingCycle": {
-                    "type": "string"
-                  },
-                  "status": {
-                    "type": "string"
-                  },
-                  "paidAt": {
-                    "type": "string",
-                    "format": "date-time"
-                  }
-                }
+              "subscriptionStatus": {
+                "type": "string",
+                "enum": [
+                  "subscribed",
+                  "not_subscribed"
+                ],
+                "example": "subscribed"
+              },
+              "isSubscribed": {
+                "type": "boolean",
+                "example": true
               }
             }
           }
@@ -6290,35 +6267,40 @@
         }
       }
     },
-    "/api/v1/subscriptions/payment-intent": {
+    "/api/v1/subscriptions/webhook": {
       "post": {
         "tags": [
           "Subscriptions"
         ],
-        "summary": "Initiate subscription payment",
-        "description": "For frontend Stripe Elements flows, call this endpoint with an empty body and use the returned clientSecret. For Postman-only test flows, send paymentMethodId = pm_card_visa and confirm = true, then call verify-payment with the returned paymentIntentId.",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": false,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SubscriptionPaymentIntentRequest"
-              }
-            }
-          }
-        },
+        "summary": "Stripe webhook endpoint for automated subscription updates",
+        "description": "Stripe calls this endpoint directly. It must receive the raw request body. Successful payments and subscription status changes are synced automatically from webhook events.",
         "responses": {
           "200": {
-            "description": "Subscription payment initiated successfully",
+            "description": "Webhook event received successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubscriptionPaymentIntentResponse"
+                  "$ref": "#/components/schemas/StripeWebhookResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid webhook signature or malformed webhook request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionWebhookErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal webhook processing failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionWebhookErrorResponse"
                 }
               }
             }
@@ -6326,34 +6308,50 @@
         }
       }
     },
-    "/api/v1/subscriptions/verify-payment": {
-      "post": {
+    "/api/v1/subscriptions/payment-link": {
+      "get": {
         "tags": [
           "Subscriptions"
         ],
-        "summary": "Verify subscription payment and activate subscription",
+        "summary": "Get the Stripe payment link for the current user's role",
+        "description": "Returns a Stripe-hosted subscription checkout URL in test mode. After a successful checkout, Stripe webhooks update the user's subscription automatically.",
         "security": [
           {
             "bearerAuth": []
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SubscriptionVerifyRequest"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
-            "description": "Subscription payment verified successfully",
+            "description": "Subscription payment link fetched successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubscriptionVerifyResponse"
+                  "$ref": "#/components/schemas/SubscriptionPaymentLinkResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/subscriptions/status": {
+      "get": {
+        "tags": [
+          "Subscriptions"
+        ],
+        "summary": "Get current user's subscription status",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subscription status fetched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionStatusResponse"
                 }
               }
             }

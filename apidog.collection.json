@@ -1276,30 +1276,17 @@
           "name": "Subscriptions",
           "item": [
             {
-              "name": "Create Subscription Payment Intent",
+              "name": "Get Subscription Status",
               "request": {
-                "method": "POST",
+                "method": "GET",
                 "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  },
                   {
                     "key": "Authorization",
                     "value": "Bearer {{customerToken}}"
                   }
                 ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"paymentMethodId\": \"pm_card_visa\",\n  \"confirm\": true\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
                 "url": {
-                  "raw": "{{baseUrl}}/api/v1/subscriptions/payment-intent",
+                  "raw": "{{baseUrl}}/api/v1/subscriptions/status",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -1307,36 +1294,23 @@
                     "api",
                     "v1",
                     "subscriptions",
-                    "payment-intent"
+                    "status"
                   ]
                 }
               }
             },
             {
-              "name": "Verify Subscription Payment",
+              "name": "Get Subscription Payment Link",
               "request": {
-                "method": "POST",
+                "method": "GET",
                 "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  },
                   {
                     "key": "Authorization",
                     "value": "Bearer {{customerToken}}"
                   }
                 ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"paymentIntentId\": \"pi_example_123\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
                 "url": {
-                  "raw": "{{baseUrl}}/api/v1/subscriptions/verify-payment",
+                  "raw": "{{baseUrl}}/api/v1/subscriptions/payment-link",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -1344,7 +1318,7 @@
                     "api",
                     "v1",
                     "subscriptions",
-                    "verify-payment"
+                    "payment-link"
                   ]
                 }
               }
@@ -2399,30 +2373,17 @@
           "name": "Subscriptions",
           "item": [
             {
-              "name": "Create Subscription Payment Intent",
+              "name": "Get Subscription Status",
               "request": {
-                "method": "POST",
+                "method": "GET",
                 "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  },
                   {
                     "key": "Authorization",
                     "value": "Bearer {{serviceProviderToken}}"
                   }
                 ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"paymentMethodId\": \"pm_card_visa\",\n  \"confirm\": true\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
                 "url": {
-                  "raw": "{{baseUrl}}/api/v1/subscriptions/payment-intent",
+                  "raw": "{{baseUrl}}/api/v1/subscriptions/status",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -2430,36 +2391,23 @@
                     "api",
                     "v1",
                     "subscriptions",
-                    "payment-intent"
+                    "status"
                   ]
                 }
               }
             },
             {
-              "name": "Verify Subscription Payment",
+              "name": "Get Subscription Payment Link",
               "request": {
-                "method": "POST",
+                "method": "GET",
                 "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  },
                   {
                     "key": "Authorization",
                     "value": "Bearer {{serviceProviderToken}}"
                   }
                 ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"paymentIntentId\": \"pi_example_123\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
                 "url": {
-                  "raw": "{{baseUrl}}/api/v1/subscriptions/verify-payment",
+                  "raw": "{{baseUrl}}/api/v1/subscriptions/payment-link",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -2467,7 +2415,7 @@
                     "api",
                     "v1",
                     "subscriptions",
-                    "verify-payment"
+                    "payment-link"
                   ]
                 }
               }
@@ -3557,30 +3505,17 @@
           "name": "Subscriptions",
           "item": [
             {
-              "name": "Create Subscription Payment Intent",
+              "name": "Get Subscription Status",
               "request": {
-                "method": "POST",
+                "method": "GET",
                 "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  },
                   {
                     "key": "Authorization",
                     "value": "Bearer {{venueProviderToken}}"
                   }
                 ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"paymentMethodId\": \"pm_card_visa\",\n  \"confirm\": true\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
                 "url": {
-                  "raw": "{{baseUrl}}/api/v1/subscriptions/payment-intent",
+                  "raw": "{{baseUrl}}/api/v1/subscriptions/status",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -3588,36 +3523,23 @@
                     "api",
                     "v1",
                     "subscriptions",
-                    "payment-intent"
+                    "status"
                   ]
                 }
               }
             },
             {
-              "name": "Verify Subscription Payment",
+              "name": "Get Subscription Payment Link",
               "request": {
-                "method": "POST",
+                "method": "GET",
                 "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  },
                   {
                     "key": "Authorization",
                     "value": "Bearer {{venueProviderToken}}"
                   }
                 ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"paymentIntentId\": \"pi_example_123\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
                 "url": {
-                  "raw": "{{baseUrl}}/api/v1/subscriptions/verify-payment",
+                  "raw": "{{baseUrl}}/api/v1/subscriptions/payment-link",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -3625,7 +3547,7 @@
                     "api",
                     "v1",
                     "subscriptions",
-                    "verify-payment"
+                    "payment-link"
                   ]
                 }
               }
@@ -4416,30 +4338,17 @@
           "name": "Subscriptions",
           "item": [
             {
-              "name": "Create Subscription Payment Intent",
+              "name": "Get Subscription Status",
               "request": {
-                "method": "POST",
+                "method": "GET",
                 "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  },
                   {
                     "key": "Authorization",
                     "value": "Bearer {{eventPlannerToken}}"
                   }
                 ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"paymentMethodId\": \"pm_card_visa\",\n  \"confirm\": true\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
                 "url": {
-                  "raw": "{{baseUrl}}/api/v1/subscriptions/payment-intent",
+                  "raw": "{{baseUrl}}/api/v1/subscriptions/status",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -4447,36 +4356,23 @@
                     "api",
                     "v1",
                     "subscriptions",
-                    "payment-intent"
+                    "status"
                   ]
                 }
               }
             },
             {
-              "name": "Verify Subscription Payment",
+              "name": "Get Subscription Payment Link",
               "request": {
-                "method": "POST",
+                "method": "GET",
                 "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  },
                   {
                     "key": "Authorization",
                     "value": "Bearer {{eventPlannerToken}}"
                   }
                 ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"paymentIntentId\": \"pi_example_123\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
                 "url": {
-                  "raw": "{{baseUrl}}/api/v1/subscriptions/verify-payment",
+                  "raw": "{{baseUrl}}/api/v1/subscriptions/payment-link",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -4484,7 +4380,7 @@
                     "api",
                     "v1",
                     "subscriptions",
-                    "verify-payment"
+                    "payment-link"
                   ]
                 }
               }

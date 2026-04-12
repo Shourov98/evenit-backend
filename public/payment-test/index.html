@@ -3,126 +3,107 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EvenIt Payment Test</title>
+    <title>EvenIt Subscription</title>
     <link rel="stylesheet" href="/payment-test/styles.css" />
-    <script src="https://js.stripe.com/v3/"></script>
     <script src="/payment-test/app.js" defer></script>
   </head>
   <body>
     <main class="layout">
       <section class="hero">
         <p class="eyebrow">EvenIt</p>
-        <h1>Subscription Payment Test</h1>
+        <h1>Subscription Payment</h1>
         <p class="lede">
-          Use this page to register or log in a test account, create a Stripe
-          PaymentIntent, pay with a dummy card, and verify the subscription.
+          Sign in, review the subscription plan for your account, and subscribe through Stripe test
+          checkout if your account is not subscribed yet.
         </p>
-        <div class="note">
-          <strong>Test card:</strong> `4242 4242 4242 4242`, any future expiry,
-          any CVC, any ZIP.
-        </div>
       </section>
 
       <section class="panel">
         <div class="panel-header">
-          <h2>1. Session</h2>
-          <button id="refresh-profile" type="button" class="ghost">Refresh profile</button>
+          <h2>Account</h2>
+          <button id="logout-button" type="button" class="ghost">Logout</button>
         </div>
 
         <div class="grid two">
-          <form id="register-form" class="card">
-            <h3>Register</h3>
-            <label>
-              <span>Full name</span>
-              <input name="fullName" type="text" value="Test Customer" required />
-            </label>
+          <form id="login-form" class="card">
+            <h3>Login</h3>
             <label>
               <span>Email</span>
-              <input name="email" type="email" required />
+              <input id="login-email" name="email" type="email" required />
             </label>
             <label>
               <span>Password</span>
-              <input name="password" type="password" value="strongPass123" required />
+              <input id="login-password" name="password" type="password" required />
             </label>
-            <label>
-              <span>Role</span>
-              <select name="role">
-                <option value="customer">customer</option>
-                <option value="service_provider">service_provider</option>
-                <option value="event_planner">event_planner</option>
-                <option value="venue_provider">venue_provider</option>
-              </select>
-            </label>
-            <button type="submit">Register</button>
+            <button type="submit">Login</button>
           </form>
 
-          <div class="stack">
-            <form id="verify-form" class="card">
-              <h3>Verify OTP</h3>
-              <label>
-                <span>Email</span>
-                <input name="email" type="email" required />
-              </label>
-              <label>
-                <span>OTP</span>
-                <input name="otp" type="text" inputmode="numeric" required />
-              </label>
-              <button type="submit">Verify email</button>
-            </form>
-
-            <form id="login-form" class="card">
-              <h3>Login</h3>
-              <label>
-                <span>Email</span>
-                <input name="email" type="email" required />
-              </label>
-              <label>
-                <span>Password</span>
-                <input name="password" type="password" value="strongPass123" required />
-              </label>
-              <button type="submit">Login</button>
-            </form>
+          <div class="card">
+            <h3>Current user</h3>
+            <div class="identity">
+              <p id="user-name" class="identity-main">Not logged in</p>
+              <p id="user-email" class="identity-sub">Please login to continue.</p>
+            </div>
+            <div class="actions top-gap">
+              <button id="refresh-button" type="button" class="ghost">Refresh status</button>
+            </div>
           </div>
-        </div>
-
-        <div class="card token-card">
-          <h3>Token</h3>
-          <label>
-            <span>Bearer token</span>
-            <textarea id="token-input" rows="3" placeholder="JWT token from verify-email or login"></textarea>
-          </label>
-          <div class="actions">
-            <button id="save-token" type="button">Save token</button>
-            <button id="clear-token" type="button" class="ghost">Clear token</button>
-          </div>
-        </div>
-
-        <div id="profile-card" class="card profile-card">
-          <h3>Current profile</h3>
-          <pre id="profile-output">No profile loaded yet.</pre>
         </div>
       </section>
 
       <section class="panel">
         <div class="panel-header">
-          <h2>2. Payment</h2>
-          <button id="create-intent" type="button">Create PaymentIntent</button>
+          <h2>Subscription</h2>
+          <div id="result-badge" class="result-badge result-neutral">Waiting for login</div>
+        </div>
+
+        <div class="grid three">
+          <article class="card metric-card">
+            <p class="metric-label">Role</p>
+            <p id="summary-role" class="metric-value">-</p>
+          </article>
+          <article class="card metric-card">
+            <p class="metric-label">Plan</p>
+            <p id="summary-plan" class="metric-value">-</p>
+          </article>
+          <article class="card metric-card">
+            <p class="metric-label">Status</p>
+            <p id="summary-status" class="metric-value">-</p>
+          </article>
         </div>
 
         <div class="grid two">
           <div class="card">
-            <h3>PaymentIntent</h3>
-            <pre id="intent-output">No PaymentIntent created yet.</pre>
+            <h3>Subscription details</h3>
+            <dl class="summary-list">
+              <div>
+                <dt>Price</dt>
+                <dd id="detail-price">-</dd>
+              </div>
+              <div>
+                <dt>Payment status</dt>
+                <dd id="detail-payment-status">-</dd>
+              </div>
+              <div>
+                <dt>Activated at</dt>
+                <dd id="detail-activated-at">-</dd>
+              </div>
+              <div>
+                <dt>Paid at</dt>
+                <dd id="detail-paid-at">-</dd>
+              </div>
+            </dl>
           </div>
 
-          <form id="payment-form" class="card">
-            <h3>Pay with test card</h3>
-            <div id="payment-element" class="payment-element"></div>
-            <div class="actions">
-              <button id="pay-button" type="submit" disabled>Confirm payment</button>
-              <button id="verify-payment" type="button" class="ghost" disabled>Verify on backend</button>
+          <div class="card">
+            <h3>Payment action</h3>
+            <p id="subscription-message" class="status-copy">
+              Login first. The page will then show the subscription plan for that user.
+            </p>
+            <div class="actions top-gap">
+              <button id="subscribe-button" type="button" disabled>Subscribe</button>
             </div>
-          </form>
+          </div>
         </div>
       </section>
 

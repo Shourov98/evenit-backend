@@ -1,45 +1,157 @@
 const tokenStorageKey = 'evenit-payment-test-token';
+const paymentAttemptStorageKey = 'evenit-payment-attempt';
 
 const state = {
-  stripe: null,
-  elements: null,
-  paymentIntentId: null,
-  clientSecret: null
+  user: null,
+  subscription: null,
+  paymentLink: '',
+  pollTimer: null,
+  pollCount: 0
 };
 
-const elementsById = {
-  tokenInput: document.getElementById('token-input'),
+const elements = {
+  loginForm: document.getElementById('login-form'),
+  logoutButton: document.getElementById('logout-button'),
+  refreshButton: document.getElementById('refresh-button'),
+  subscribeButton: document.getElementById('subscribe-button'),
   logOutput: document.getElementById('log-output'),
-  profileOutput: document.getElementById('profile-output'),
-  intentOutput: document.getElementById('intent-output'),
-  paymentElement: document.getElementById('payment-element'),
-  payButton: document.getElementById('pay-button'),
-  verifyButton: document.getElementById('verify-payment')
-};
-
-const setLog = (message, detail) => {
-  const payload = detail ? `${message}\n\n${formatJson(detail)}` : message;
-  elementsById.logOutput.textContent = payload;
+  resultBadge: document.getElementById('result-badge'),
+  subscriptionMessage: document.getElementById('subscription-message'),
+  userName: document.getElementById('user-name'),
+  userEmail: document.getElementById('user-email'),
+  summaryRole: document.getElementById('summary-role'),
+  summaryPlan: document.getElementById('summary-plan'),
+  summaryStatus: document.getElementById('summary-status'),
+  detailPrice: document.getElementById('detail-price'),
+  detailPaymentStatus: document.getElementById('detail-payment-status'),
+  detailActivatedAt: document.getElementById('detail-activated-at'),
+  detailPaidAt: document.getElementById('detail-paid-at')
 };
 
 const formatJson = (value) => JSON.stringify(value, null, 2);
 
-const getToken = () => elementsById.tokenInput.value.trim();
+const setLog = (message, detail) => {
+  elements.logOutput.textContent = detail ? `${message}\n\n${formatJson(detail)}` : message;
+};
+
+const getToken = () => localStorage.getItem(tokenStorageKey) || '';
 
 const setToken = (token) => {
-  elementsById.tokenInput.value = token;
   if (token) {
     localStorage.setItem(tokenStorageKey, token);
-  } else {
-    localStorage.removeItem(tokenStorageKey);
+    return;
   }
+
+  localStorage.removeItem(tokenStorageKey);
+};
+
+const setPaymentAttempt = (attempt) => {
+  if (!attempt) {
+    sessionStorage.removeItem(paymentAttemptStorageKey);
+    return;
+  }
+
+  sessionStorage.setItem(paymentAttemptStorageKey, JSON.stringify(attempt));
+};
+
+const getPaymentAttempt = () => {
+  const raw = sessionStorage.getItem(paymentAttemptStorageKey);
+  if (!raw) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(raw);
+  } catch (_error) {
+    sessionStorage.removeItem(paymentAttemptStorageKey);
+    return null;
+  }
+};
+
+const formatDateTime = (value) => {
+  if (!value) {
+    return '-';
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return String(value);
+  }
+
+  return date.toLocaleString();
+};
+
+const formatPrice = (subscription) => {
+  if (!subscription?.payment) {
+    return '-';
+  }
+
+  const amount = (subscription.payment.amount / 100).toFixed(2);
+  return `${subscription.payment.currency} ${amount} / ${subscription.payment.billingCycle}`;
+};
+
+const stopPolling = () => {
+  if (state.pollTimer) {
+    window.clearInterval(state.pollTimer);
+    state.pollTimer = null;
+  }
+  state.pollCount = 0;
+};
+
+const setResultState = (variant, message) => {
+  elements.resultBadge.className = `result-badge ${variant}`;
+  elements.resultBadge.textContent = message;
+};
+
+const render = () => {
+  const user = state.user;
+  const subscription = state.subscription;
+  const isSubscribed = subscription?.status === 'subscribed';
+
+  elements.userName.textContent = user?.fullName || 'Not logged in';
+  elements.userEmail.textContent = user?.email || 'Please login to continue.';
+  elements.summaryRole.textContent = user?.role || '-';
+  elements.summaryPlan.textContent = subscription?.plan || '-';
+  elements.summaryStatus.textContent = subscription?.status || '-';
+  elements.detailPrice.textContent = formatPrice(subscription);
+  elements.detailPaymentStatus.textContent = subscription?.payment?.status || '-';
+  elements.detailActivatedAt.textContent = formatDateTime(subscription?.activatedAt);
+  elements.detailPaidAt.textContent = formatDateTime(subscription?.payment?.paidAt);
+
+  if (!user) {
+    setResultState('result-neutral', 'Waiting for login');
+    elements.subscriptionMessage.textContent =
+      'Login first. The page will then show the subscription plan for that user.';
+    elements.subscribeButton.disabled = true;
+    return;
+  }
+
+  if (isSubscribed) {
+    setResultState('result-success', 'Payment successful');
+    elements.subscriptionMessage.textContent =
+      'This user is already subscribed. No further payment is required.';
+    elements.subscribeButton.disabled = true;
+    return;
+  }
+
+  const attempt = getPaymentAttempt();
+  if (attempt && attempt.email === user.email) {
+    setResultState('result-pending', 'Checking payment');
+    elements.subscriptionMessage.textContent =
+      'We are checking whether the Stripe payment completed for this user.';
+  } else {
+    setResultState('result-neutral', 'Not subscribed');
+    elements.subscriptionMessage.textContent =
+      'This user is not subscribed. Click subscribe to continue to Stripe checkout.';
+  }
+
+  elements.subscribeButton.disabled = false;
 };
 
 const handleResponse = async (response) => {
   const body = await response.json().catch(() => ({}));
   if (!response.ok || body.success === false) {
-    const message = body.message || `Request failed with status ${response.status}`;
-    throw new Error(message);
+    throw new Error(body.message || `Request failed with status ${response.status}`);
   }
 
   return body;
@@ -64,117 +176,76 @@ const apiRequest = async (path, options = {}) => {
   return handleResponse(response);
 };
 
-const setProfile = (profile) => {
-  elementsById.profileOutput.textContent = profile
-    ? formatJson(profile)
-    : 'No profile loaded yet.';
-};
-
-const setIntent = (intent) => {
-  elementsById.intentOutput.textContent = intent
-    ? formatJson(intent)
-    : 'No PaymentIntent created yet.';
-};
-
-const mountPaymentElement = async () => {
-  if (!state.clientSecret || !state.stripe) {
-    return;
-  }
-
-  if (state.elements) {
-    state.elements = null;
-    elementsById.paymentElement.innerHTML = '';
-  }
-
-  state.elements = state.stripe.elements({
-    clientSecret: state.clientSecret,
-    appearance: {
-      theme: 'stripe',
-      variables: {
-        colorPrimary: '#be5b2d',
-        colorText: '#1f2933',
-        borderRadius: '14px'
-      }
-    }
-  });
-
-  const paymentElement = state.elements.create('payment');
-  paymentElement.mount('#payment-element');
-  elementsById.payButton.disabled = false;
-};
-
-const initializeStripe = async () => {
-  const config = await apiRequest('/api/v1/public/stripe-config', { method: 'GET' });
-  const publishableKey = config.data.publishableKey;
-
-  if (!publishableKey) {
-    setLog(
-      'Stripe publishable key is missing. Set STRIPE_PUBLISHABLE_KEY in your .env before using the card form.',
-      config.data
-    );
-    return;
-  }
-
-  state.stripe = Stripe(publishableKey);
-};
-
-const refreshProfile = async () => {
+const loadCurrentUser = async ({ silent = false } = {}) => {
   try {
     const response = await apiRequest('/api/v1/auth/me', { method: 'GET' });
-    setProfile(response.data);
-    setLog('Loaded current profile.', response.data);
+    state.user = response.data;
+    state.subscription = response.data.subscription || null;
+    render();
+
+    if (!silent) {
+      setLog('Loaded current user subscription state.', response.data);
+    }
+
+    const attempt = getPaymentAttempt();
+    if (attempt && attempt.email === state.user?.email && state.subscription?.status === 'subscribed') {
+      setPaymentAttempt(null);
+      stopPolling();
+      setResultState('result-success', 'Payment successful');
+      elements.subscriptionMessage.textContent =
+        'Payment successful. This user is now subscribed.';
+      setLog('Stripe payment completed and the user is subscribed.', response.data);
+    }
+
+    return response.data;
   } catch (error) {
-    setProfile(null);
-    setLog(error.message);
+    state.user = null;
+    state.subscription = null;
+    render();
+
+    if (!silent) {
+      setLog(error.message);
+    }
+
+    throw error;
   }
 };
 
-const fillAuthForms = (email, password) => {
-  document.querySelector('#register-form [name="email"]').value = email;
-  document.querySelector('#verify-form [name="email"]').value = email;
-  document.querySelector('#login-form [name="email"]').value = email;
-  document.querySelector('#login-form [name="password"]').value = password;
+const fetchPaymentLink = async () => {
+  const response = await apiRequest('/api/v1/subscriptions/payment-link', { method: 'GET' });
+  state.paymentLink = response.data.paymentLink;
+  return response.data;
 };
 
-document.getElementById('register-form').addEventListener('submit', async (event) => {
-  event.preventDefault();
-  const form = new FormData(event.currentTarget);
-  const payload = Object.fromEntries(form.entries());
+const beginPaymentCheck = () => {
+  stopPolling();
+  state.pollCount = 0;
 
-  try {
-    const response = await apiRequest('/api/v1/auth/register', {
-      method: 'POST',
-      body: JSON.stringify(payload)
-    });
-    fillAuthForms(payload.email, payload.password);
-    setLog(
-      'Registration complete. If email delivery is not configured, read the OTP from the server terminal, then submit it below.',
-      response
-    );
-  } catch (error) {
-    setLog(error.message);
-  }
-});
+  state.pollTimer = window.setInterval(async () => {
+    state.pollCount += 1;
 
-document.getElementById('verify-form').addEventListener('submit', async (event) => {
-  event.preventDefault();
-  const form = new FormData(event.currentTarget);
-  const payload = Object.fromEntries(form.entries());
+    try {
+      await loadCurrentUser({ silent: true });
 
-  try {
-    const response = await apiRequest('/api/v1/auth/verify-email', {
-      method: 'POST',
-      body: JSON.stringify(payload)
-    });
-    setToken(response.data.token);
-    setProfile(response.data.user);
-    setLog('Email verified and token saved.', response);
-  } catch (error) {
-    setLog(error.message);
-  }
-});
+      if (state.subscription?.status === 'subscribed') {
+        return;
+      }
 
-document.getElementById('login-form').addEventListener('submit', async (event) => {
+      if (state.pollCount >= 24) {
+        stopPolling();
+        setPaymentAttempt(null);
+        setResultState('result-failed', 'Payment failed');
+        elements.subscriptionMessage.textContent =
+          'Payment failed or was not completed for this user.';
+        setLog('Payment was not confirmed for the user within the expected time window.');
+      }
+    } catch (_error) {
+      stopPolling();
+    }
+  }, 5000);
+};
+
+elements.loginForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   const form = new FormData(event.currentTarget);
   const payload = Object.fromEntries(form.entries());
@@ -184,112 +255,88 @@ document.getElementById('login-form').addEventListener('submit', async (event) =
       method: 'POST',
       body: JSON.stringify(payload)
     });
+
     setToken(response.data.token);
-    setLog('Logged in and token saved.', response);
-    await refreshProfile();
+    setLog('Logged in successfully. Loading subscription details for this user.', response.data);
+    await loadCurrentUser({ silent: true });
   } catch (error) {
     setLog(error.message);
   }
 });
 
-document.getElementById('save-token').addEventListener('click', () => {
-  setToken(getToken());
-  setLog('Token saved locally.');
-});
-
-document.getElementById('clear-token').addEventListener('click', () => {
+elements.logoutButton.addEventListener('click', () => {
+  stopPolling();
   setToken('');
-  setProfile(null);
-  setIntent(null);
-  setLog('Token cleared.');
+  setPaymentAttempt(null);
+  state.user = null;
+  state.subscription = null;
+  state.paymentLink = '';
+  render();
+  setLog('Logged out.');
 });
 
-document.getElementById('refresh-profile').addEventListener('click', refreshProfile);
-
-document.getElementById('create-intent').addEventListener('click', async () => {
+elements.refreshButton.addEventListener('click', async () => {
   try {
-    const response = await apiRequest('/api/v1/subscriptions/payment-intent', {
-      method: 'POST',
-      body: JSON.stringify({})
-    });
+    await loadCurrentUser();
+  } catch (_error) {
+    // handled by loadCurrentUser
+  }
+});
 
-    state.clientSecret = response.data.clientSecret;
-    state.paymentIntentId = response.data.paymentIntentId;
-    setIntent(response.data);
-    elementsById.verifyButton.disabled = true;
-    await mountPaymentElement();
-    setLog('PaymentIntent created. Enter the Stripe test card details and confirm the payment.', response.data);
+elements.subscribeButton.addEventListener('click', async () => {
+  try {
+    if (!state.user) {
+      throw new Error('Login first before starting payment.');
+    }
+
+    const paymentLinkData = await fetchPaymentLink();
+    setPaymentAttempt({
+      email: state.user.email,
+      startedAt: Date.now()
+    });
+    render();
+    setLog('Redirecting to Stripe checkout for the logged-in user.', paymentLinkData);
+    window.location.assign(paymentLinkData.paymentLink);
   } catch (error) {
-    setIntent(null);
     setLog(error.message);
   }
 });
 
-document.getElementById('payment-form').addEventListener('submit', async (event) => {
-  event.preventDefault();
-  if (!state.stripe || !state.elements || !state.clientSecret) {
-    setLog('Create a PaymentIntent first.');
+window.addEventListener('focus', async () => {
+  const attempt = getPaymentAttempt();
+  if (!attempt || !getToken()) {
     return;
   }
 
   try {
-    const submitResult = await state.elements.submit();
-    if (submitResult.error) {
-      throw new Error(submitResult.error.message || 'Payment details are incomplete');
+    await loadCurrentUser({ silent: true });
+    if (state.subscription?.status !== 'subscribed') {
+      beginPaymentCheck();
     }
-
-    const result = await state.stripe.confirmPayment({
-      elements: state.elements,
-      clientSecret: state.clientSecret,
-      redirect: 'if_required'
-    });
-
-    if (result.error) {
-      throw new Error(result.error.message || 'Stripe payment failed');
-    }
-
-    state.paymentIntentId = result.paymentIntent.id;
-    elementsById.verifyButton.disabled = result.paymentIntent.status !== 'succeeded';
-    setIntent(result.paymentIntent);
-    setLog('Stripe confirmation completed.', result.paymentIntent);
-  } catch (error) {
-    setLog(error.message);
-  }
-});
-
-document.getElementById('verify-payment').addEventListener('click', async () => {
-  if (!state.paymentIntentId) {
-    setLog('No PaymentIntent is available to verify.');
-    return;
-  }
-
-  try {
-    const response = await apiRequest('/api/v1/subscriptions/verify-payment', {
-      method: 'POST',
-      body: JSON.stringify({ paymentIntentId: state.paymentIntentId })
-    });
-    setLog('Backend verification completed and subscription updated.', response.data);
-    await refreshProfile();
-  } catch (error) {
-    setLog(error.message);
+  } catch (_error) {
+    // silent focus refresh
   }
 });
 
 const boot = async () => {
-  const savedToken = localStorage.getItem(tokenStorageKey) || '';
-  if (savedToken) {
-    setToken(savedToken);
+  render();
+
+  const token = getToken();
+  if (!token) {
+    return;
   }
 
   try {
-    await initializeStripe();
-  } catch (error) {
-    setLog(error.message);
-  }
-
-  if (savedToken) {
-    await refreshProfile();
+    await loadCurrentUser({ silent: true });
+    const attempt = getPaymentAttempt();
+    if (attempt && attempt.email === state.user?.email && state.subscription?.status !== 'subscribed') {
+      beginPaymentCheck();
+    }
+  } catch (_error) {
+    setToken('');
+    setPaymentAttempt(null);
+    render();
   }
 };
 
-void boot();
+boot();

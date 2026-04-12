@@ -4,41 +4,84 @@ import { env } from '../../config/env';
 import { getStripe, hasStripeConfig } from '../../config/stripe';
 import { hydrateUserSubscription, UserModel, UserRole } from '../auth/auth.model';
 
-const subscriptionPaymentRoles: UserRole[] = ['customer', 'service_provider', 'event_planner', 'venue_provider'];
+const subscriptionPaymentRoles = ['customer', 'service_provider', 'event_planner', 'venue_provider'] as const;
+type SubscriptionPaymentRole = (typeof subscriptionPaymentRoles)[number];
+
+const isSubscriptionPaymentRole = (role: UserRole): role is SubscriptionPaymentRole =>
+  subscriptionPaymentRoles.includes(role as SubscriptionPaymentRole);
 
 const ensureAllowedRole = (role: UserRole): void => {
-  if (!subscriptionPaymentRoles.includes(role)) {
+  if (!isSubscriptionPaymentRole(role)) {
     throw new AppError(403, 'This role does not require subscription payment');
   }
 };
 
-const toStripeAmount = (amount: number): number => {
-  if (!Number.isFinite(amount) || amount < 0) {
-    throw new AppError(400, 'Invalid subscription amount');
+export class SubscriptionService {
+  private static async attachStripeReferences(params: {
+    userId?: string;
+    email?: string | null;
+    stripeCustomerId?: string | null;
+    stripeSubscriptionId?: string | null;
+  }) {
+    const user = await this.findUserForStripeEvent(params);
+
+    ensureAllowedRole(user.role);
+
+    user.subscription = {
+      ...hydrateUserSubscription(user.role, user.subscription),
+      stripeCustomerId: params.stripeCustomerId ?? user.subscription.stripeCustomerId,
+      stripeSubscriptionId: params.stripeSubscriptionId ?? user.subscription.stripeSubscriptionId
+    };
+
+    await user.save();
+    return user;
   }
 
-  return Math.round(amount);
-};
+  private static async findUserForStripeEvent(params: {
+    userId?: string;
+    email?: string | null;
+    stripeCustomerId?: string | null;
+  }) {
+    if (params.userId) {
+      const user = await UserModel.findById(params.userId);
+      if (user) {
+        return user;
+      }
+    }
 
-export class SubscriptionService {
+    if (params.stripeCustomerId) {
+      const user = await UserModel.findOne({
+        'subscription.stripeCustomerId': params.stripeCustomerId
+      });
+      if (user) {
+        return user;
+      }
+    }
+
+    if (params.email) {
+      const user = await UserModel.findOne({ email: params.email.toLowerCase() });
+      if (user) {
+        return user;
+      }
+    }
+
+    throw new AppError(
+      404,
+      params.userId
+        ? `User not found for Stripe client_reference_id ${params.userId}`
+        : params.stripeCustomerId
+          ? `User not found for Stripe customer ${params.stripeCustomerId}`
+          : `User not found for Stripe customer email ${params.email || 'unknown'}`
+    );
+  }
+
   private static async markSubscriptionActive(params: {
     userId?: string;
     email?: string | null;
     stripeCustomerId?: string | null;
     stripeSubscriptionId?: string | null;
   }) {
-    const user = params.userId
-      ? await UserModel.findById(params.userId)
-      : await UserModel.findOne({ email: params.email?.toLowerCase() });
-
-    if (!user) {
-      throw new AppError(
-        404,
-        params.userId
-          ? `User not found for Stripe client_reference_id ${params.userId}`
-          : `User not found for Stripe customer email ${params.email || 'unknown'}`
-      );
-    }
+    const user = await this.findUserForStripeEvent(params);
 
     ensureAllowedRole(user.role);
 
@@ -59,21 +102,38 @@ export class SubscriptionService {
     return user;
   }
 
-  private static async markSubscriptionInactiveByStripeSubscriptionId(stripeSubscriptionId: string) {
-    const user = await UserModel.findOne({
-      'subscription.stripeSubscriptionId': stripeSubscriptionId
-    });
+  private static async markSubscriptionInactive(params: {
+    stripeSubscriptionId?: string | null;
+    stripeCustomerId?: string | null;
+    email?: string | null;
+  }) {
+    const user =
+      (params.stripeSubscriptionId
+        ? await UserModel.findOne({
+            'subscription.stripeSubscriptionId': params.stripeSubscriptionId
+          })
+        : null) ??
+      (params.stripeCustomerId
+        ? await UserModel.findOne({
+            'subscription.stripeCustomerId': params.stripeCustomerId
+          })
+        : null) ??
+      (params.email
+        ? await UserModel.findOne({
+            email: params.email.toLowerCase()
+          })
+        : null);
 
     if (!user) {
-      return;
+      return null;
     }
 
     user.subscription = {
       ...hydrateUserSubscription(user.role, user.subscription),
       status: 'not_subscribed',
       activatedAt: undefined,
-      stripeCustomerId: user.subscription.stripeCustomerId,
-      stripeSubscriptionId,
+      stripeCustomerId: params.stripeCustomerId ?? user.subscription.stripeCustomerId,
+      stripeSubscriptionId: params.stripeSubscriptionId ?? user.subscription.stripeSubscriptionId,
       payment: {
         ...hydrateUserSubscription(user.role, user.subscription).payment,
         status: 'unpaid',
@@ -82,6 +142,27 @@ export class SubscriptionService {
     };
 
     await user.save();
+    return user;
+  }
+
+  private static async syncSubscriptionFromStripeSubscription(subscription: Stripe.Subscription) {
+    const stripeCustomerId = typeof subscription.customer === 'string' ? subscription.customer : null;
+    const status = subscription.status;
+
+    if (['active', 'trialing'].includes(status)) {
+      await this.markSubscriptionActive({
+        stripeCustomerId,
+        stripeSubscriptionId: subscription.id
+      });
+      return;
+    }
+
+    if (['past_due', 'unpaid', 'canceled', 'incomplete', 'incomplete_expired', 'paused'].includes(status)) {
+      await this.markSubscriptionInactive({
+        stripeSubscriptionId: subscription.id,
+        stripeCustomerId
+      });
+    }
   }
 
   static async handleWebhookEvent(payload: Buffer, signature: string) {
@@ -103,12 +184,29 @@ export class SubscriptionService {
           return;
         }
 
-        await this.markSubscriptionActive({
+        await this.attachStripeReferences({
           userId: session.client_reference_id ?? undefined,
           email: session.customer_details?.email ?? session.customer_email,
           stripeCustomerId: typeof session.customer === 'string' ? session.customer : null,
           stripeSubscriptionId:
             typeof session.subscription === 'string' ? session.subscription : null
+        });
+        return;
+      }
+
+      case 'customer.subscription.created':
+      case 'customer.subscription.updated':
+      case 'customer.subscription.resumed': {
+        const subscription = event.data.object as Stripe.Subscription;
+        await this.syncSubscriptionFromStripeSubscription(subscription);
+        return;
+      }
+
+      case 'customer.subscription.paused': {
+        const subscription = event.data.object as Stripe.Subscription;
+        await this.markSubscriptionInactive({
+          stripeSubscriptionId: subscription.id,
+          stripeCustomerId: typeof subscription.customer === 'string' ? subscription.customer : null
         });
         return;
       }
@@ -120,22 +218,51 @@ export class SubscriptionService {
             ? invoice.parent.subscription_details.subscription
             : null;
 
-        const customerEmail =
-          typeof invoice.customer_email === 'string'
-            ? invoice.customer_email
-            : null;
-
         await this.markSubscriptionActive({
-          email: customerEmail,
+          email: typeof invoice.customer_email === 'string' ? invoice.customer_email : null,
           stripeCustomerId: typeof invoice.customer === 'string' ? invoice.customer : null,
           stripeSubscriptionId
         });
         return;
       }
 
+      case 'invoice.payment_action_required':
+      case 'invoice.finalization_failed': {
+        const invoice = event.data.object as Stripe.Invoice;
+        const stripeSubscriptionId =
+          typeof invoice.parent?.subscription_details?.subscription === 'string'
+            ? invoice.parent.subscription_details.subscription
+            : null;
+
+        await this.markSubscriptionInactive({
+          stripeSubscriptionId,
+          stripeCustomerId: typeof invoice.customer === 'string' ? invoice.customer : null,
+          email: typeof invoice.customer_email === 'string' ? invoice.customer_email : null
+        });
+        return;
+      }
+
+      case 'invoice.payment_failed': {
+        const invoice = event.data.object as Stripe.Invoice;
+        const stripeSubscriptionId =
+          typeof invoice.parent?.subscription_details?.subscription === 'string'
+            ? invoice.parent.subscription_details.subscription
+            : null;
+
+        await this.markSubscriptionInactive({
+          stripeSubscriptionId,
+          stripeCustomerId: typeof invoice.customer === 'string' ? invoice.customer : null,
+          email: typeof invoice.customer_email === 'string' ? invoice.customer_email : null
+        });
+        return;
+      }
+
       case 'customer.subscription.deleted': {
         const subscription = event.data.object as Stripe.Subscription;
-        await this.markSubscriptionInactiveByStripeSubscriptionId(subscription.id);
+        await this.markSubscriptionInactive({
+          stripeSubscriptionId: subscription.id,
+          stripeCustomerId: typeof subscription.customer === 'string' ? subscription.customer : null
+        });
         return;
       }
 
@@ -144,119 +271,30 @@ export class SubscriptionService {
     }
   }
 
-  static async createPaymentIntent(
-    userId: string,
-    options?: {
-      paymentMethodId?: string;
-      confirm?: boolean;
-    }
-  ) {
-    if (!hasStripeConfig()) {
-      throw new AppError(500, 'Stripe is not configured');
-    }
+  static async getHostedPaymentLink(userId: string, role: UserRole, email?: string | null) {
+    ensureAllowedRole(role);
+    const paymentRole = role as SubscriptionPaymentRole;
 
-    const user = await UserModel.findById(userId);
-    if (!user) {
-      throw new AppError(404, 'User not found');
-    }
-
-    ensureAllowedRole(user.role);
-
-    const hydratedSubscription = hydrateUserSubscription(user.role, user.subscription);
-    if (JSON.stringify(user.subscription) !== JSON.stringify(hydratedSubscription)) {
-      user.subscription = hydratedSubscription;
-      await user.save();
-    }
-
-    if (user.subscription.status === 'subscribed') {
-      throw new AppError(400, 'Subscription is already active');
-    }
-
-    const amount = toStripeAmount(user.subscription.payment.amount);
-    if (amount <= 0) {
-      throw new AppError(400, 'This subscription does not require online payment');
-    }
-
-    const stripe = getStripe();
-    const shouldConfirm = Boolean(options?.confirm);
-    if (shouldConfirm && !options?.paymentMethodId) {
-      throw new AppError(400, 'paymentMethodId is required when confirm is true');
-    }
-
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount,
-      currency: user.subscription.payment.currency.toLowerCase(),
-      ...(options?.paymentMethodId ? { payment_method: options.paymentMethodId } : {}),
-      ...(shouldConfirm
-        ? {
-            confirm: true,
-            automatic_payment_methods: {
-              enabled: true,
-              allow_redirects: 'never' as const
-            }
-          }
-        : {
-            automatic_payment_methods: {
-              enabled: true
-            }
-          }),
-      metadata: {
-        userId: String(user._id),
-        role: user.role,
-        plan: user.subscription.plan,
-        billingCycle: user.subscription.payment.billingCycle
-      }
-    });
-
-    return {
-      clientSecret: paymentIntent.client_secret,
-      paymentIntentId: paymentIntent.id,
-      paymentStatus: paymentIntent.status,
-      amount: user.subscription.payment.amount,
-      currency: user.subscription.payment.currency,
-      plan: user.subscription.plan,
-      billingCycle: user.subscription.payment.billingCycle
-    };
-  }
-
-  static async verifyPayment(userId: string, paymentIntentId: string) {
-    if (!hasStripeConfig()) {
-      throw new AppError(500, 'Stripe is not configured');
-    }
-
-    const user = await UserModel.findById(userId);
-    if (!user) {
-      throw new AppError(404, 'User not found');
-    }
-
-    ensureAllowedRole(user.role);
-
-    const stripe = getStripe();
-    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-
-    if (paymentIntent.metadata.userId !== String(user._id)) {
-      throw new AppError(403, 'Payment does not belong to the authenticated user');
-    }
-
-    if (paymentIntent.status !== 'succeeded') {
-      throw new AppError(400, `PaymentIntent is ${paymentIntent.status}, not succeeded`);
-    }
-
-    user.subscription = {
-      ...hydrateUserSubscription(user.role, user.subscription),
-      status: 'subscribed',
-      activatedAt: new Date(),
-      stripeCustomerId: user.subscription.stripeCustomerId,
-      stripeSubscriptionId: user.subscription.stripeSubscriptionId,
-      payment: {
-        ...hydrateUserSubscription(user.role, user.subscription).payment,
-        status: 'paid',
-        paidAt: new Date()
-      }
+    const rolePaymentLinkMap: Record<SubscriptionPaymentRole, string> = {
+      customer: env.CUSTOMER_SUBSCRIPTION_PAYMENT_LINK,
+      service_provider: env.SERVICE_PROVIDER_SUBSCRIPTION_PAYMENT_LINK,
+      event_planner: env.EVENT_PLANNER_SUBSCRIPTION_PAYMENT_LINK,
+      venue_provider: env.VENUE_PROVIDER_SUBSCRIPTION_PAYMENT_LINK
     };
 
-    await user.save();
+    const paymentLink = rolePaymentLinkMap[paymentRole];
+    if (!paymentLink) {
+      throw new AppError(500, `Subscription payment link is not configured for role ${paymentRole}`);
+    }
 
-    return user.subscription;
+    const checkoutUrl = new URL(paymentLink);
+    checkoutUrl.searchParams.set('client_reference_id', userId);
+
+    if (email) {
+      checkoutUrl.searchParams.set('prefilled_email', email);
+      checkoutUrl.searchParams.set('locked_prefilled_email', email);
+    }
+
+    return checkoutUrl.toString();
   }
 }

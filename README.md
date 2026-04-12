@@ -325,17 +325,16 @@ Use the built-in test page at:
 
 Requirements:
 
-- `STRIPE_SECRET_KEY` must be set for backend PaymentIntent creation.
-- `STRIPE_PUBLISHABLE_KEY` must be set for the card form on the test page.
+- `STRIPE_WEBHOOK_SECRET` must be set so Stripe can authenticate webhook events.
 - Use Stripe test mode keys and a dummy card such as `4242 4242 4242 4242`.
 
 Test flow:
 
 1. Register a test user or log in with an existing verified user.
 2. If OTP email delivery is not configured, read the OTP from the server terminal and verify it on the page.
-3. Create a subscription PaymentIntent.
-4. Complete the payment in the embedded Stripe form.
-5. Click verify so the backend marks the subscription as active.
+3. Open the hosted Stripe subscription checkout link.
+4. Complete the payment on Stripe's hosted checkout page.
+5. Refresh the profile after Stripe redirects back or the webhook completes.
 
 ## Stripe Payment Link Sync
 
@@ -351,6 +350,7 @@ Required setup:
 
 - Configure a Stripe webhook endpoint pointing to `/api/v1/subscriptions/webhook`
 - Add the webhook signing secret to `STRIPE_WEBHOOK_SECRET`
+- Keep the Stripe payment links and webhook endpoint in Stripe test mode while testing
 
 ## Global Pagination
 
