@@ -4,8 +4,22 @@ import { PaginationOptions, paginateModel } from '../../common/utils/pagination'
 import { UserModel } from '../auth/auth.model';
 
 export class EventPlannerService {
+  private static serializeEventPlanner<T extends { toObject?: () => Record<string, unknown>; profileImage?: unknown }>(
+    eventPlanner: T
+  ) {
+    const plain =
+      typeof eventPlanner?.toObject === 'function'
+        ? eventPlanner.toObject()
+        : ({ ...eventPlanner } as Record<string, unknown>);
+
+    return {
+      ...plain,
+      profileImage: plain.profileImage ?? null
+    };
+  }
+
   static async getPublic(pagination: PaginationOptions) {
-    return paginateModel(
+    const result = await paginateModel(
       UserModel,
       {
         role: 'event_planner',
@@ -14,6 +28,11 @@ export class EventPlannerService {
       },
       pagination
     );
+
+    return {
+      ...result,
+      data: result.data.map((eventPlanner) => this.serializeEventPlanner(eventPlanner))
+    };
   }
 
   static async getAll(pagination: PaginationOptions) {
@@ -36,6 +55,6 @@ export class EventPlannerService {
       throw new AppError(404, 'Event planner not found');
     }
 
-    return eventPlanner;
+    return this.serializeEventPlanner(eventPlanner);
   }
 }
