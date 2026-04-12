@@ -26,6 +26,7 @@ export class SubscriptionService {
         role: user.role,
         subscriptionStatus: user.subscription.status,
         isSubscribed: user.subscription.status === 'subscribed',
+        stripeSubscriptionStatus: null,
         cancelAtPeriodEnd: false,
         currentPeriodEnd: null
       };
@@ -38,6 +39,7 @@ export class SubscriptionService {
       role: user.role,
       subscriptionStatus: user.subscription.status,
       isSubscribed: user.subscription.status === 'subscribed',
+      stripeSubscriptionStatus: subscription.status,
       cancelAtPeriodEnd: subscription.cancel_at_period_end,
       currentPeriodEnd:
         typeof subscription.items.data[0]?.current_period_end === 'number'
@@ -66,6 +68,7 @@ export class SubscriptionService {
       role: user.role,
       subscriptionStatus: user.subscription.status,
       isSubscribed: user.subscription.status === 'subscribed',
+      stripeSubscriptionStatus: subscription.status,
       cancelAtPeriodEnd: subscription.cancel_at_period_end,
       currentPeriodEnd:
         typeof subscription.items.data[0]?.current_period_end === 'number'
@@ -86,6 +89,21 @@ export class SubscriptionService {
     }
 
     const stripe = getStripe();
+    const existingSubscription = await stripe.subscriptions.retrieve(
+      user.subscription.stripeSubscriptionId
+    );
+
+    if (!existingSubscription.cancel_at_period_end) {
+      throw new AppError(400, 'This subscription is not scheduled to stop recurring');
+    }
+
+    if (!['active', 'trialing'].includes(existingSubscription.status)) {
+      throw new AppError(
+        400,
+        'This subscription cannot be resumed directly. Start a new payment flow instead.'
+      );
+    }
+
     const subscription = await stripe.subscriptions.update(user.subscription.stripeSubscriptionId, {
       cancel_at_period_end: false
     });
@@ -94,6 +112,7 @@ export class SubscriptionService {
       role: user.role,
       subscriptionStatus: user.subscription.status,
       isSubscribed: user.subscription.status === 'subscribed',
+      stripeSubscriptionStatus: subscription.status,
       cancelAtPeriodEnd: subscription.cancel_at_period_end,
       currentPeriodEnd:
         typeof subscription.items.data[0]?.current_period_end === 'number'
