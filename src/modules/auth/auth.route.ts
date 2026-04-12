@@ -350,6 +350,208 @@ const router = Router();
  *           example: venue@example.com
  *         profileInfo:
  *           $ref: '#/components/schemas/VenueProviderProfileInfoInput'
+ *     ServiceProviderProfileInfoUpdateInput:
+ *       type: object
+ *       properties:
+ *         nidOrTradeLicenseNumber:
+ *           type: string
+ *           example: 1234567890123
+ *         serviceName:
+ *           type: string
+ *           example: Premium Catering
+ *         serviceCategory:
+ *           type: string
+ *           example: Catering
+ *         serviceDescription:
+ *           type: string
+ *           example: Updated service description
+ *         coverageArea:
+ *           type: array
+ *           items:
+ *             type: string
+ *           example: ["Dhaka", "Gazipur"]
+ *         verification:
+ *           type: object
+ *           properties:
+ *             businessType:
+ *               type: string
+ *               enum: [individual, company]
+ *               example: company
+ *             companyName:
+ *               type: string
+ *               example: Evenit Ltd
+ *             nationalIdOrTradeLicenseFiles:
+ *               type: array
+ *               items:
+ *                 type: string
+ *                 format: uri
+ *               example: ["https://example.com/trade-license.pdf"]
+ *     EventPlannerProfileInfoUpdateInput:
+ *       type: object
+ *       properties:
+ *         nidOrTradeLicenseNumber:
+ *           type: string
+ *           example: 1234567890123
+ *         name:
+ *           type: string
+ *           example: Star Events
+ *         description:
+ *           type: string
+ *           example: Updated planner description
+ *         coverageArea:
+ *           type: array
+ *           items:
+ *             type: string
+ *           example: ["Dhaka", "Chattogram"]
+ *         address:
+ *           type: string
+ *           example: Banani, Dhaka
+ *         verification:
+ *           type: object
+ *           properties:
+ *             businessType:
+ *               type: string
+ *               enum: [individual, company]
+ *               example: company
+ *             companyName:
+ *               type: string
+ *               example: Star Events Ltd
+ *             nationalIdOrTradeLicenseFiles:
+ *               type: array
+ *               items:
+ *                 type: string
+ *                 format: uri
+ *               example: ["https://example.com/trade-license.pdf"]
+ *     VenueProviderProfileInfoUpdateInput:
+ *       type: object
+ *       properties:
+ *         nidOrTradeLicenseNumber:
+ *           type: string
+ *           example: 1234567890123
+ *         nationalIdOrTradeLicenseFiles:
+ *           type: array
+ *           items:
+ *             type: string
+ *             format: uri
+ *           example: ["https://cdn.example.com/trade-license.pdf"]
+ *         businessName:
+ *           type: string
+ *           example: Royal Hall
+ *         businessType:
+ *           type: string
+ *           enum: [individual, company]
+ *           example: company
+ *         legalBusinessName:
+ *           type: string
+ *           example: Royal Hall Ltd
+ *         registrationNo:
+ *           type: string
+ *           example: TRD-123456
+ *         businessMail:
+ *           type: string
+ *           format: email
+ *           example: info@royalhall.com
+ *         businessPhoneNo:
+ *           type: string
+ *           example: +8801700000000
+ *     ServiceProviderProfileUpdateRequest:
+ *       type: object
+ *       description: >
+ *         Partial update payload for authenticated service providers.
+ *         Common account fields can be updated at the top level.
+ *         Provider-specific editable fields live inside `serviceProvider.profileInfo`.
+ *         There is no common `phone` field on the user model.
+ *       properties:
+ *         fullName:
+ *           type: string
+ *           description: Updates both the top-level user fullName and onboarding.serviceProvider.name.
+ *           example: Marvin McKinney
+ *         email:
+ *           type: string
+ *           format: email
+ *           description: Updates both the top-level user email and onboarding.serviceProvider.email.
+ *           example: marvin@example.com
+ *         serviceCategories:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: Stored on the top-level user document for service providers only.
+ *           example: ["Catering", "Decoration"]
+ *         serviceProvider:
+ *           type: object
+ *           description: Role-specific profile fields for service providers.
+ *           properties:
+ *             profileInfo:
+ *               $ref: '#/components/schemas/ServiceProviderProfileInfoUpdateInput'
+ *             services:
+ *               type: array
+ *               items:
+ *                 type: string
+ *               description: Replaces onboarding.serviceProvider.services.
+ *               example: ["Buffet", "Corporate Events"]
+ *     EventPlannerProfileUpdateRequest:
+ *       type: object
+ *       description: >
+ *         Partial update payload for authenticated event planners.
+ *         Common account fields can be updated at the top level.
+ *         Planner-specific editable fields live inside `eventPlanner.profileInfo`.
+ *         There is no common `phone` field on the user model.
+ *       properties:
+ *         fullName:
+ *           type: string
+ *           description: Updates both the top-level user fullName and onboarding.eventProvider.fullName.
+ *           example: Star Events
+ *         email:
+ *           type: string
+ *           format: email
+ *           description: Updates both the top-level user email and onboarding.eventProvider.email.
+ *           example: planner@example.com
+ *         eventPlanner:
+ *           type: object
+ *           description: Role-specific profile fields for event planners.
+ *           properties:
+ *             profileInfo:
+ *               $ref: '#/components/schemas/EventPlannerProfileInfoUpdateInput'
+ *     VenueProviderProfileUpdateRequest:
+ *       type: object
+ *       description: >
+ *         Partial update payload for authenticated venue providers.
+ *         Common account fields can be updated at the top level.
+ *         Venue-specific editable fields live inside `venueProvider.profileInfo`.
+ *         Venue providers do not have a common phone field, but they do have
+ *         `businessPhoneNo` inside `venueProvider.profileInfo`.
+ *       properties:
+ *         fullName:
+ *           type: string
+ *           description: Updates both the top-level user fullName and onboarding.venueProvider.fullName.
+ *           example: Royal Hall Owner
+ *         email:
+ *           type: string
+ *           format: email
+ *           description: Updates both the top-level user email and onboarding.venueProvider.email.
+ *           example: venue@example.com
+ *         venueProvider:
+ *           type: object
+ *           description: Role-specific profile fields for venue providers.
+ *           properties:
+ *             profileInfo:
+ *               $ref: '#/components/schemas/VenueProviderProfileInfoUpdateInput'
+ *     CustomerProfileUpdateRequest:
+ *       type: object
+ *       description: >
+ *         Partial update payload for authenticated customers.
+ *         Only common account fields are available. There is currently no stored
+ *         common `phone` field for customers.
+ *       properties:
+ *         fullName:
+ *           type: string
+ *           description: Updates the top-level user fullName.
+ *           example: Marvin McKinney
+ *         email:
+ *           type: string
+ *           format: email
+ *           description: Updates the top-level user email.
+ *           example: marvin@example.com
  *     AuthUserResponse:
  *       type: object
  *       properties:
@@ -760,6 +962,17 @@ router.post(
  *   patch:
  *     tags: [Auth]
  *     summary: Update current authenticated user profile
+ *     description: >
+ *       Role-aware partial profile update endpoint for the authenticated user.
+ *       All roles can update common account fields such as `fullName` and `email`.
+ *       Service providers can additionally update `serviceCategories`,
+ *       `serviceProvider.profileInfo`, and `serviceProvider.services`.
+ *       Event planners can update `eventPlanner.profileInfo`.
+ *       Venue providers can update `venueProvider.profileInfo`, including `businessPhoneNo`.
+ *       Customers can update only common account fields.
+ *       There is currently no top-level/common `phone` field stored in the user model.
+ *       If provider onboarding has not been completed yet, role-specific nested profile
+ *       sections cannot be updated.
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -767,23 +980,55 @@ router.post(
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               fullName:
- *                 type: string
- *               email:
- *                 type: string
- *                 format: email
- *               serviceCategories:
- *                 type: array
- *                 items:
- *                   type: string
- *               serviceProvider:
- *                 type: object
- *               eventPlanner:
- *                 type: object
- *               venueProvider:
- *                 type: object
+ *             oneOf:
+ *               - $ref: '#/components/schemas/CustomerProfileUpdateRequest'
+ *               - $ref: '#/components/schemas/ServiceProviderProfileUpdateRequest'
+ *               - $ref: '#/components/schemas/EventPlannerProfileUpdateRequest'
+ *               - $ref: '#/components/schemas/VenueProviderProfileUpdateRequest'
+ *           examples:
+ *             customer:
+ *               summary: Customer update
+ *               value:
+ *                 fullName: Marvin McKinney
+ *                 email: marvin@example.com
+ *             serviceProvider:
+ *               summary: Service provider update
+ *               value:
+ *                 fullName: Marvin McKinney
+ *                 email: marvin@example.com
+ *                 serviceCategories:
+ *                   - Catering
+ *                   - Decoration
+ *                 serviceProvider:
+ *                   profileInfo:
+ *                     serviceName: Premium Catering
+ *                     serviceCategory: Catering
+ *                     coverageArea:
+ *                       - Dhaka
+ *                       - Gazipur
+ *                   services:
+ *                     - Buffet
+ *                     - Corporate Events
+ *             eventPlanner:
+ *               summary: Event planner update
+ *               value:
+ *                 fullName: Star Events
+ *                 eventPlanner:
+ *                   profileInfo:
+ *                     name: Star Events
+ *                     address: Banani, Dhaka
+ *                     coverageArea:
+ *                       - Dhaka
+ *                       - Chattogram
+ *             venueProvider:
+ *               summary: Venue provider update
+ *               value:
+ *                 fullName: Royal Hall Owner
+ *                 venueProvider:
+ *                   profileInfo:
+ *                     businessName: Royal Hall
+ *                     businessMail: info@royalhall.com
+ *                     businessPhoneNo: +8801700000000
  *     responses:
  *       200:
  *         description: Profile updated successfully
@@ -792,7 +1037,7 @@ router.post(
  *             schema:
  *               $ref: '#/components/schemas/AuthUserResponse'
  *       400:
- *         description: Validation error
+ *         description: Validation error or role-specific payload mismatch
  *       401:
  *         description: Unauthorized
  *       409:

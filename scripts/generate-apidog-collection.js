@@ -159,6 +159,21 @@ const buildOrderChatFolder = (tokenVar, actorLabel) =>
     })
   ]);
 
+const buildProfileImageUploadRequest = (tokenVar, actorLabel) =>
+  request(`Upload ${actorLabel} Profile Image`, 'POST', '/api/v1/uploads/profile-image', {
+    tokenVar,
+    description:
+      'Multipart/form-data request. Attach the new profile image file in the `image` field.',
+    body: formDataBody([
+      {
+        key: 'image',
+        type: 'file',
+        src: [],
+        description: 'Attach one image file for the authenticated user profile.'
+      }
+    ])
+  });
+
 const customerAuth = folder('Auth', [
   request('Register Customer', 'POST', '/api/v1/auth/register', {
     contentType: 'application/json',
@@ -207,8 +222,82 @@ const customerAuth = folder('Auth', [
   request('Get Current User', 'GET', '/api/v1/auth/me', {
     tokenVar: 'customerToken',
     event: idCaptureEvent('customerUserId')
-  })
+  }),
+  request('Update Customer Profile', 'PATCH', '/api/v1/auth/profile', {
+    tokenVar: 'customerToken',
+    contentType: 'application/json',
+    description:
+      'Updates only common customer account fields. There is no common phone field in the backend user model.',
+    body: jsonBody({
+      fullName: 'Customer Example Updated',
+      email: 'customer.updated@example.com'
+    })
+  }),
+  buildProfileImageUploadRequest('customerToken', 'Customer')
 ]);
+
+const serviceProviderProfileUpdateBody = {
+  fullName: 'Service Provider Example Updated',
+  email: 'service.provider.updated@example.com',
+  serviceCategories: ['Catering', 'Decoration'],
+  serviceProvider: {
+    profileInfo: {
+      nidOrTradeLicenseNumber: 'SP-987654321',
+      serviceName: 'Premium Catering Plus',
+      serviceCategory: 'Catering',
+      serviceDescription: 'Updated service description for premium events.',
+      coverageArea: ['Dhaka', 'Gazipur', 'Narayanganj'],
+      verification: {
+        businessType: 'company',
+        companyName: 'Service Provider Example Ltd',
+        nationalIdOrTradeLicenseFiles: [
+          'https://example.com/service-provider/trade-license.pdf'
+        ]
+      }
+    },
+    services: ['Buffet', 'Corporate Events', 'Wedding Catering']
+  }
+};
+
+const eventPlannerProfileUpdateBody = {
+  fullName: 'Event Planner Example Updated',
+  email: 'event.planner.updated@example.com',
+  eventPlanner: {
+    profileInfo: {
+      nidOrTradeLicenseNumber: 'EP-987654321',
+      name: 'Event Planner Example Pro',
+      description: 'Updated planner description for weddings and corporate events.',
+      coverageArea: ['Dhaka', 'Chattogram', 'Sylhet'],
+      address: 'Gulshan, Dhaka',
+      verification: {
+        businessType: 'company',
+        companyName: 'Event Planner Example Ltd',
+        nationalIdOrTradeLicenseFiles: [
+          'https://example.com/event-planner/trade-license.pdf'
+        ]
+      }
+    }
+  }
+};
+
+const venueProviderProfileUpdateBody = {
+  fullName: 'Venue Provider Example Updated',
+  email: 'venue.provider.updated@example.com',
+  venueProvider: {
+    profileInfo: {
+      nidOrTradeLicenseNumber: 'VP-987654321',
+      businessName: 'Royal Hall Premium',
+      businessType: 'company',
+      legalBusinessName: 'Royal Hall Premium Ltd',
+      registrationNo: 'TR-654321',
+      businessMail: 'business.updated@royalhall.com',
+      businessPhoneNo: '+8801711111111',
+      nationalIdOrTradeLicenseFiles: [
+        'https://example.com/venue-provider/trade-license.pdf'
+      ]
+    }
+  }
+};
 
 const customerBookings = folder('Bookings', [
   request('Create Booking', 'POST', '/api/v1/bookings', {
@@ -362,7 +451,15 @@ const serviceProviderAuth = folder('Auth', [
   request('Get Current User', 'GET', '/api/v1/auth/me', {
     tokenVar: 'serviceProviderToken',
     event: idCaptureEvent('serviceProviderUserId')
-  })
+  }),
+  request('Update Service Provider Profile', 'PATCH', '/api/v1/auth/profile', {
+    tokenVar: 'serviceProviderToken',
+    contentType: 'application/json',
+    description:
+      'Updates common service provider account fields plus service categories and onboarding.serviceProvider profile data.',
+    body: jsonBody(serviceProviderProfileUpdateBody)
+  }),
+  buildProfileImageUploadRequest('serviceProviderToken', 'Service Provider')
 ]);
 
 const serviceProviderServices = folder('Services', [
@@ -627,7 +724,15 @@ const venueProviderAuth = folder('Auth', [
   request('Get Current User', 'GET', '/api/v1/auth/me', {
     tokenVar: 'venueProviderToken',
     event: idCaptureEvent('venueProviderUserId')
-  })
+  }),
+  request('Update Venue Provider Profile', 'PATCH', '/api/v1/auth/profile', {
+    tokenVar: 'venueProviderToken',
+    contentType: 'application/json',
+    description:
+      'Updates common venue provider account fields plus onboarding.venueProvider profile data, including businessPhoneNo.',
+    body: jsonBody(venueProviderProfileUpdateBody)
+  }),
+  buildProfileImageUploadRequest('venueProviderToken', 'Venue Provider')
 ]);
 
 const venueProviderVenues = folder('Venues', [
@@ -892,7 +997,15 @@ const eventPlannerAuth = folder('Auth', [
   request('Get Current User', 'GET', '/api/v1/auth/me', {
     tokenVar: 'eventPlannerToken',
     event: idCaptureEvent('eventPlannerUserId')
-  })
+  }),
+  request('Update Event Planner Profile', 'PATCH', '/api/v1/auth/profile', {
+    tokenVar: 'eventPlannerToken',
+    contentType: 'application/json',
+    description:
+      'Updates common event planner account fields plus onboarding.eventProvider profile data.',
+    body: jsonBody(eventPlannerProfileUpdateBody)
+  }),
+  buildProfileImageUploadRequest('eventPlannerToken', 'Event Planner')
 ]);
 
 const eventPlannerPublic = folder('Public APIs', [

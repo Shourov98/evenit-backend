@@ -866,6 +866,80 @@
                   }
                 }
               ]
+            },
+            {
+              "name": "Update Customer Profile",
+              "request": {
+                "method": "PATCH",
+                "description": "Updates only common customer account fields. There is no common phone field in the backend user model.",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{customerToken}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fullName\": \"Customer Example Updated\",\n  \"email\": \"customer.updated@example.com\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/auth/profile",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "profile"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Upload Customer Profile Image",
+              "request": {
+                "method": "POST",
+                "description": "Multipart/form-data request. Attach the new profile image file in the `image` field.",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{customerToken}}"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "image",
+                      "type": "file",
+                      "src": [],
+                      "description": "Attach one image file for the authenticated user profile."
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/uploads/profile-image",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "uploads",
+                    "profile-image"
+                  ]
+                }
+              }
             }
           ]
         },
@@ -1623,6 +1697,80 @@
                   }
                 }
               ]
+            },
+            {
+              "name": "Update Service Provider Profile",
+              "request": {
+                "method": "PATCH",
+                "description": "Updates common service provider account fields plus service categories and onboarding.serviceProvider profile data.",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{serviceProviderToken}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fullName\": \"Service Provider Example Updated\",\n  \"email\": \"service.provider.updated@example.com\",\n  \"serviceCategories\": [\n    \"Catering\",\n    \"Decoration\"\n  ],\n  \"serviceProvider\": {\n    \"profileInfo\": {\n      \"nidOrTradeLicenseNumber\": \"SP-987654321\",\n      \"serviceName\": \"Premium Catering Plus\",\n      \"serviceCategory\": \"Catering\",\n      \"serviceDescription\": \"Updated service description for premium events.\",\n      \"coverageArea\": [\n        \"Dhaka\",\n        \"Gazipur\",\n        \"Narayanganj\"\n      ],\n      \"verification\": {\n        \"businessType\": \"company\",\n        \"companyName\": \"Service Provider Example Ltd\",\n        \"nationalIdOrTradeLicenseFiles\": [\n          \"https://example.com/service-provider/trade-license.pdf\"\n        ]\n      }\n    },\n    \"services\": [\n      \"Buffet\",\n      \"Corporate Events\",\n      \"Wedding Catering\"\n    ]\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/auth/profile",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "profile"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Upload Service Provider Profile Image",
+              "request": {
+                "method": "POST",
+                "description": "Multipart/form-data request. Attach the new profile image file in the `image` field.",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{serviceProviderToken}}"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "image",
+                      "type": "file",
+                      "src": [],
+                      "description": "Attach one image file for the authenticated user profile."
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/uploads/profile-image",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "uploads",
+                    "profile-image"
+                  ]
+                }
+              }
             }
           ]
         },
@@ -2720,6 +2868,80 @@
                   }
                 }
               ]
+            },
+            {
+              "name": "Update Venue Provider Profile",
+              "request": {
+                "method": "PATCH",
+                "description": "Updates common venue provider account fields plus onboarding.venueProvider profile data, including businessPhoneNo.",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{venueProviderToken}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fullName\": \"Venue Provider Example Updated\",\n  \"email\": \"venue.provider.updated@example.com\",\n  \"venueProvider\": {\n    \"profileInfo\": {\n      \"nidOrTradeLicenseNumber\": \"VP-987654321\",\n      \"businessName\": \"Royal Hall Premium\",\n      \"businessType\": \"company\",\n      \"legalBusinessName\": \"Royal Hall Premium Ltd\",\n      \"registrationNo\": \"TR-654321\",\n      \"businessMail\": \"business.updated@royalhall.com\",\n      \"businessPhoneNo\": \"+8801711111111\",\n      \"nationalIdOrTradeLicenseFiles\": [\n        \"https://example.com/venue-provider/trade-license.pdf\"\n      ]\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/auth/profile",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "profile"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Upload Venue Provider Profile Image",
+              "request": {
+                "method": "POST",
+                "description": "Multipart/form-data request. Attach the new profile image file in the `image` field.",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{venueProviderToken}}"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "image",
+                      "type": "file",
+                      "src": [],
+                      "description": "Attach one image file for the authenticated user profile."
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/uploads/profile-image",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "uploads",
+                    "profile-image"
+                  ]
+                }
+              }
             }
           ]
         },
@@ -3852,6 +4074,80 @@
                   }
                 }
               ]
+            },
+            {
+              "name": "Update Event Planner Profile",
+              "request": {
+                "method": "PATCH",
+                "description": "Updates common event planner account fields plus onboarding.eventProvider profile data.",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{eventPlannerToken}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fullName\": \"Event Planner Example Updated\",\n  \"email\": \"event.planner.updated@example.com\",\n  \"eventPlanner\": {\n    \"profileInfo\": {\n      \"nidOrTradeLicenseNumber\": \"EP-987654321\",\n      \"name\": \"Event Planner Example Pro\",\n      \"description\": \"Updated planner description for weddings and corporate events.\",\n      \"coverageArea\": [\n        \"Dhaka\",\n        \"Chattogram\",\n        \"Sylhet\"\n      ],\n      \"address\": \"Gulshan, Dhaka\",\n      \"verification\": {\n        \"businessType\": \"company\",\n        \"companyName\": \"Event Planner Example Ltd\",\n        \"nationalIdOrTradeLicenseFiles\": [\n          \"https://example.com/event-planner/trade-license.pdf\"\n        ]\n      }\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/auth/profile",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "auth",
+                    "profile"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Upload Event Planner Profile Image",
+              "request": {
+                "method": "POST",
+                "description": "Multipart/form-data request. Attach the new profile image file in the `image` field.",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{eventPlannerToken}}"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "image",
+                      "type": "file",
+                      "src": [],
+                      "description": "Attach one image file for the authenticated user profile."
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/uploads/profile-image",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "uploads",
+                    "profile-image"
+                  ]
+                }
+              }
             }
           ]
         },
