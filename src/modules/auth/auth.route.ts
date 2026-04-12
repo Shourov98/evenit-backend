@@ -15,6 +15,7 @@ import {
   submitEventProviderOnboardingSchema,
   submitServiceProviderOnboardingSchema,
   submitVenueProviderOnboardingSchema,
+  updateProfileSchema,
   verifyEmailOtpSchema
 } from './auth.schema';
 
@@ -752,6 +753,52 @@ router.post(
   validate(submitVenueProviderOnboardingSchema),
   AuthController.submitVenueProviderOnboarding
 );
+
+/**
+ * @openapi
+ * /api/v1/auth/profile:
+ *   patch:
+ *     tags: [Auth]
+ *     summary: Update current authenticated user profile
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               fullName:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               serviceCategories:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               serviceProvider:
+ *                 type: object
+ *               eventPlanner:
+ *                 type: object
+ *               venueProvider:
+ *                 type: object
+ *     responses:
+ *       200:
+ *         description: Profile updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AuthUserResponse'
+ *       400:
+ *         description: Validation error
+ *       401:
+ *         description: Unauthorized
+ *       409:
+ *         description: Duplicate email
+ */
+router.patch('/profile', protect, validate(updateProfileSchema), AuthController.updateProfile);
 
 /**
  * @openapi

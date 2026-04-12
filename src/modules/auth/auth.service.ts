@@ -48,6 +48,22 @@ type SubmitEventProviderOnboardingPayload = SubmitOnboardingCommonPayload &
   IEventProviderOnboarding;
 type SubmitVenueProviderOnboardingPayload = SubmitOnboardingCommonPayload &
   IVenueProviderOnboarding;
+interface UpdateProfilePayload {
+  userId: string;
+  fullName?: string;
+  email?: string;
+  serviceCategories?: string[];
+  serviceProvider?: {
+    profileInfo?: Partial<IServiceProviderOnboarding['profileInfo']>;
+    services?: string[];
+  };
+  eventPlanner?: {
+    profileInfo?: Partial<IEventProviderOnboarding['profileInfo']>;
+  };
+  venueProvider?: {
+    profileInfo?: Partial<IVenueProviderOnboarding['profileInfo']>;
+  };
+}
 
 const sendOtpForPurpose = async (
   user: IUser,
@@ -146,6 +162,10 @@ const ensureUserSubscription = async (user: IUser): Promise<IUser> => {
 };
 
 export class AuthService {
+  private static normalizeEmail(email: string) {
+    return email.trim().toLowerCase();
+  }
+
   private static async authenticateUser(payload: { email: string; password: string }) {
     const user = await UserModel.findOne({ email: payload.email.toLowerCase() }).select(
       '+password'
@@ -216,6 +236,192 @@ export class AuthService {
     );
 
     return { user, deliveryMode };
+  }
+
+  static async updateProfile(payload: UpdateProfilePayload) {
+    const user = await UserModel.findById(payload.userId);
+
+    if (!user) {
+      throw new AppError(404, 'User not found');
+    }
+
+    if (payload.email) {
+      const normalizedEmail = this.normalizeEmail(payload.email);
+
+      if (normalizedEmail !== user.email) {
+        const existing = await UserModel.findOne({
+          email: normalizedEmail,
+          _id: { $ne: user._id }
+        });
+
+        if (existing) {
+          throw new AppError(
+            409,
+            `This email is already registered as ${existing.role}. You should use a different email.`
+          );
+        }
+      }
+
+      user.email = normalizedEmail;
+    }
+
+    if (payload.fullName) {
+      user.fullName = payload.fullName.trim();
+    }
+
+    if (payload.serviceCategories) {
+      if (user.role !== 'service_provider') {
+        throw new AppError(400, 'serviceCategories can only be updated for service providers');
+      }
+
+      user.serviceCategories = payload.serviceCategories;
+    }
+
+    if (payload.serviceProvider || payload.eventPlanner || payload.venueProvider) {
+      if (!user.onboarding) {
+        throw new AppError(400, 'Profile-specific onboarding data is not available for this user');
+      }
+    }
+
+    switch (user.role) {
+      case 'service_provider': {
+        if (payload.eventPlanner || payload.venueProvider) {
+          throw new AppError(400, 'Only service provider profile data can be updated for this user');
+        }
+
+        if (payload.serviceProvider) {
+          if (!user.onboarding?.serviceProvider) {
+            throw new AppError(400, 'Service provider onboarding has not been completed yet');
+          }
+
+          const existingProfileInfo = user.onboarding.serviceProvider.profileInfo;
+          const nextVerification = payload.serviceProvider.profileInfo?.verification
+            ? {
+                ...existingProfileInfo.verification,
+                ...payload.serviceProvider.profileInfo.verification
+              }
+            : existingProfileInfo.verification;
+
+          const nextProfileInfo = payload.serviceProvider.profileInfo
+            ? {
+                ...existingProfileInfo,
+                ...payload.serviceProvider.profileInfo,
+                verification: nextVerification
+              }
+            : existingProfileInfo;
+
+          user.onboarding.serviceProvider.name = user.fullName;
+          user.onboarding.serviceProvider.email = user.email;
+          user.onboarding.serviceProvider.profileInfo = nextProfileInfo;
+
+          if (payload.serviceProvider.services) {
+            user.onboarding.serviceProvider.services = payload.serviceProvider.services;
+          }
+
+          user.onboarding.verification = {
+            businessType: nextVerification.businessType,
+            companyName: nextVerification.companyName,
+            nationalIdOrTradeLicenseUrl: nextVerification.nationalIdOrTradeLicenseFiles[0]
+          };
+        }
+
+        break;
+      }
+
+      case 'event_planner': {
+        if (payload.serviceProvider || payload.venueProvider) {
+          throw new AppError(400, 'Only event planner profile data can be updated for this user');
+        }
+
+        if (payload.eventPlanner) {
+          if (!user.onboarding?.eventProvider) {
+            throw new AppError(400, 'Event planner onboarding has not been completed yet');
+          }
+
+          const existingProfileInfo = user.onboarding.eventProvider.profileInfo;
+          const nextVerification = payload.eventPlanner.profileInfo?.verification
+            ? {
+                ...existingProfileInfo.verification,
+                ...payload.eventPlanner.profileInfo.verification
+              }
+            : existingProfileInfo.verification;
+
+          const nextProfileInfo = payload.eventPlanner.profileInfo
+            ? {
+                ...existingProfileInfo,
+                ...payload.eventPlanner.profileInfo,
+                verification: nextVerification
+              }
+            : existingProfileInfo;
+
+          user.onboarding.eventProvider.fullName = user.fullName;
+          user.onboarding.eventProvider.email = user.email;
+          user.onboarding.eventProvider.profileInfo = nextProfileInfo;
+          user.onboarding.verification = {
+            businessType: nextVerification.businessType,
+            companyName: nextVerification.companyName,
+            nationalIdOrTradeLicenseUrl: nextVerification.nationalIdOrTradeLicenseFiles[0]
+          };
+        }
+
+        break;
+      }
+
+      case 'venue_provider': {
+        if (payload.serviceProvider || payload.eventPlanner) {
+          throw new AppError(400, 'Only venue provider profile data can be updated for this user');
+        }
+
+        if (payload.venueProvider) {
+          if (!user.onboarding?.venueProvider) {
+            throw new AppError(400, 'Venue provider onboarding has not been completed yet');
+          }
+
+          const existingProfileInfo = user.onboarding.venueProvider.profileInfo;
+          const nextProfileInfo = payload.venueProvider.profileInfo
+            ? {
+                ...existingProfileInfo,
+                ...payload.venueProvider.profileInfo,
+                businessMail: payload.venueProvider.profileInfo.businessMail
+                  ? this.normalizeEmail(payload.venueProvider.profileInfo.businessMail)
+                  : existingProfileInfo.businessMail
+              }
+            : existingProfileInfo;
+
+          user.onboarding.venueProvider.fullName = user.fullName;
+          user.onboarding.venueProvider.email = user.email;
+          user.onboarding.venueProvider.profileInfo = nextProfileInfo;
+          user.onboarding.verification = {
+            businessType: nextProfileInfo.businessType,
+            companyName: nextProfileInfo.legalBusinessName,
+            nationalIdOrTradeLicenseUrl:
+              nextProfileInfo.nationalIdOrTradeLicenseFiles?.[0] ??
+              nextProfileInfo.registrationNo ??
+              ''
+          };
+        }
+
+        break;
+      }
+
+      case 'customer': {
+        if (payload.serviceProvider || payload.eventPlanner || payload.venueProvider) {
+          throw new AppError(400, 'Customers can only update common account fields');
+        }
+
+        break;
+      }
+
+      default:
+        if (payload.serviceProvider || payload.eventPlanner || payload.venueProvider) {
+          throw new AppError(400, 'This role cannot update provider profile data');
+        }
+    }
+
+    await user.save();
+    await ensureUserSubscription(user);
+
+    return user;
   }
 
   static async submitServiceProviderOnboarding(

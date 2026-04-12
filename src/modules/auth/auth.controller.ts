@@ -2,6 +2,28 @@ import { Request, Response } from 'express';
 import { catchAsync } from '../../common/utils/catchAsync';
 import { AuthService } from './auth.service';
 
+const serializeAuthUser = (user: {
+  _id: unknown;
+  fullName: string;
+  email: string;
+  role: string;
+  serviceCategories: string[];
+  isEmailVerified: boolean;
+  profileImage?: unknown;
+  subscription?: unknown;
+  onboarding?: unknown;
+}) => ({
+  id: String(user._id),
+  fullName: user.fullName,
+  email: user.email,
+  role: user.role,
+  serviceCategories: user.serviceCategories,
+  isEmailVerified: user.isEmailVerified,
+  profileImage: user.profileImage ?? null,
+  subscription: user.subscription,
+  onboarding: user.onboarding ?? null
+});
+
 export class AuthController {
   static register = catchAsync(async (req: Request, res: Response) => {
     const { fullName, email, password, role, serviceCategories } = req.body as {
@@ -27,17 +49,7 @@ export class AuthController {
           ? 'User registered successfully. OTP printed in the server terminal for verification.'
           : 'User registered successfully. OTP sent to email for verification.',
       data: {
-        user: {
-          id: String(user._id),
-          fullName: user.fullName,
-          email: user.email,
-          role: user.role,
-          serviceCategories: user.serviceCategories,
-          isEmailVerified: user.isEmailVerified,
-          profileImage: user.profileImage ?? null,
-          subscription: user.subscription,
-          onboarding: user.onboarding ?? null
-        }
+        user: serializeAuthUser(user)
       }
     });
   });
@@ -71,17 +83,7 @@ export class AuthController {
       message: 'Onboarding information submitted successfully',
       data: {
         onboarding: user.onboarding ?? null,
-        user: {
-          id: String(user._id),
-          fullName: user.fullName,
-          email: user.email,
-          role: user.role,
-          serviceCategories: user.serviceCategories,
-          isEmailVerified: user.isEmailVerified,
-          profileImage: user.profileImage ?? null,
-          subscription: user.subscription,
-          onboarding: user.onboarding ?? null
-        }
+        user: serializeAuthUser(user)
       }
     });
   });
@@ -102,17 +104,7 @@ export class AuthController {
       message: 'Onboarding information submitted successfully',
       data: {
         onboarding: user.onboarding ?? null,
-        user: {
-          id: String(user._id),
-          fullName: user.fullName,
-          email: user.email,
-          role: user.role,
-          serviceCategories: user.serviceCategories,
-          isEmailVerified: user.isEmailVerified,
-          profileImage: user.profileImage ?? null,
-          subscription: user.subscription,
-          onboarding: user.onboarding ?? null
-        }
+        user: serializeAuthUser(user)
       }
     });
   });
@@ -133,17 +125,7 @@ export class AuthController {
       message: 'Onboarding information submitted successfully',
       data: {
         onboarding: user.onboarding ?? null,
-        user: {
-          id: String(user._id),
-          fullName: user.fullName,
-          email: user.email,
-          role: user.role,
-          serviceCategories: user.serviceCategories,
-          isEmailVerified: user.isEmailVerified,
-          profileImage: user.profileImage ?? null,
-          subscription: user.subscription,
-          onboarding: user.onboarding ?? null
-        }
+        user: serializeAuthUser(user)
       }
     });
   });
@@ -170,16 +152,7 @@ export class AuthController {
       message: 'Email verified successfully',
       data: {
         token,
-        user: {
-          id: String(user._id),
-          fullName: user.fullName,
-          email: user.email,
-          role: user.role,
-          serviceCategories: user.serviceCategories,
-          isEmailVerified: user.isEmailVerified,
-          subscription: user.subscription,
-          onboarding: user.onboarding ?? null
-        }
+        user: serializeAuthUser(user)
       }
     });
   });
@@ -193,16 +166,7 @@ export class AuthController {
       message: 'Logged in successfully',
       data: {
         token,
-        user: {
-          id: String(user._id),
-          fullName: user.fullName,
-          email: user.email,
-          role: user.role,
-          serviceCategories: user.serviceCategories,
-          isEmailVerified: user.isEmailVerified,
-          profileImage: user.profileImage ?? null,
-          onboarding: user.onboarding ?? null
-        }
+        user: serializeAuthUser(user)
       }
     });
   });
@@ -216,16 +180,7 @@ export class AuthController {
       message: 'Admin logged in successfully',
       data: {
         token,
-        user: {
-          id: String(user._id),
-          fullName: user.fullName,
-          email: user.email,
-          role: user.role,
-          serviceCategories: user.serviceCategories,
-          isEmailVerified: user.isEmailVerified,
-          profileImage: user.profileImage ?? null,
-          onboarding: user.onboarding ?? null
-        }
+        user: serializeAuthUser(user)
       }
     });
   });
@@ -255,6 +210,26 @@ export class AuthController {
     return res.status(200).json({
       success: true,
       message: 'Password reset successful'
+    });
+  });
+
+  static updateProfile = catchAsync(async (req: Request, res: Response) => {
+    const userId = AuthController.getAuthorizedUserId(req, res);
+    if (!userId) {
+      return;
+    }
+
+    const user = await AuthService.updateProfile({
+      userId,
+      ...req.body
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Profile updated successfully',
+      data: {
+        user: serializeAuthUser(user)
+      }
     });
   });
 
