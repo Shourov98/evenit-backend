@@ -103,5 +103,6 @@ const router = Router();
  *               $ref: '#/components/schemas/EventPlannerListResponse'
  */
 router.get('/', EventPlannerController.getAll);
+router.get('/:eventPlannerId', EventPlannerController.getById);
 
 export const eventPlannerRouter = router;

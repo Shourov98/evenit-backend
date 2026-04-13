@@ -218,9 +218,12 @@ const updateEventPlannerProfileSchema = z
   .object({
     nidOrTradeLicenseNumber: z.string().min(2).max(50).optional(),
     name: z.string().min(2).max(120).optional(),
+    phoneNumber: z.string().min(5).max(30).optional(),
     description: z.string().max(2000).optional(),
     coverageArea: z.array(z.string().min(1)).min(1).max(30).optional(),
     address: z.string().min(3).max(240).optional(),
+    hourlyRate: z.number().min(0).optional(),
+    currency: z.string().length(3).optional(),
     verification: z
       .object({
         businessType: z.enum(['individual', 'company']).optional(),
@@ -243,6 +246,67 @@ const updateVenueProviderProfileSchema = z
     businessPhoneNo: z.string().min(5).max(30).optional()
   })
   .strict();
+
+const buildProfileUpdateRequestSchema = (bodySchema: z.AnyZodObject) =>
+  z.object({
+    body: bodySchema
+      .strict()
+      .refine(
+        (body) =>
+          Object.values(body as Record<string, unknown>).some((value) => value !== undefined),
+        { message: 'At least one profile field is required' }
+      ),
+    params: z.object({}).optional().default({}),
+    query: z.object({}).optional().default({})
+  });
+
+export const updateCustomerProfileSchema = buildProfileUpdateRequestSchema(
+  z.object({
+    fullName: z.string().min(2).max(120).optional(),
+    email: z.string().email().optional()
+  })
+);
+
+export const updateServiceProviderProfileRequestSchema = buildProfileUpdateRequestSchema(
+  z.object({
+    fullName: z.string().min(2).max(120).optional(),
+    email: z.string().email().optional(),
+    serviceCategories: z.array(z.string().min(1)).max(20).optional(),
+    serviceProvider: z
+      .object({
+        profileInfo: updateServiceProviderProfileSchema.optional(),
+        services: z.array(z.string().min(1)).max(100).optional()
+      })
+      .strict()
+      .optional()
+  })
+);
+
+export const updateEventPlannerProfileRequestSchema = buildProfileUpdateRequestSchema(
+  z.object({
+    fullName: z.string().min(2).max(120).optional(),
+    email: z.string().email().optional(),
+    eventPlanner: z
+      .object({
+        profileInfo: updateEventPlannerProfileSchema.optional()
+      })
+      .strict()
+      .optional()
+  })
+);
+
+export const updateVenueProviderProfileRequestSchema = buildProfileUpdateRequestSchema(
+  z.object({
+    fullName: z.string().min(2).max(120).optional(),
+    email: z.string().email().optional(),
+    venueProvider: z
+      .object({
+        profileInfo: updateVenueProviderProfileSchema.optional()
+      })
+      .strict()
+      .optional()
+  })
+);
 
 export const updateProfileSchema = z.object({
   body: z

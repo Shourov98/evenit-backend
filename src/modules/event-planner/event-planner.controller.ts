@@ -14,4 +14,13 @@ export class EventPlannerController {
       data: eventPlanners.data
     });
   });
+
+  static getById = catchAsync(async (req: Request, res: Response) => {
+    const eventPlanner = await EventPlannerService.getPublicById(req.params.eventPlannerId);
+
+    return res.status(200).json({
+      success: true,
+      data: eventPlanner
+    });
+  });
 }

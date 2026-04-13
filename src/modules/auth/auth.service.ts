@@ -3,6 +3,7 @@ import { AppError } from '../../common/errors/AppError';
 import { sendOtpEmail } from '../../common/utils/email';
 import { signJwt } from '../../common/utils/jwt';
 import { generateOtpCode, hashOtpCode } from '../../common/utils/otp';
+import { UploadService } from '../uploads/upload.service';
 import { AuthOtpModel, OtpPurpose } from './auth-otp.model';
 import {
   createDefaultUserSubscription,
@@ -50,8 +51,11 @@ type SubmitVenueProviderOnboardingPayload = SubmitOnboardingCommonPayload &
   IVenueProviderOnboarding;
 interface UpdateProfilePayload {
   userId: string;
+  role: UserRole;
   fullName?: string;
   email?: string;
+  profileImageFile?: Express.Multer.File;
+  coverImageFile?: Express.Multer.File;
   serviceCategories?: string[];
   serviceProvider?: {
     profileInfo?: Partial<IServiceProviderOnboarding['profileInfo']>;
@@ -350,6 +354,9 @@ export class AuthService {
             ? {
                 ...existingProfileInfo,
                 ...payload.eventPlanner.profileInfo,
+                currency: payload.eventPlanner.profileInfo.currency
+                  ? payload.eventPlanner.profileInfo.currency.toUpperCase()
+                  : existingProfileInfo.currency,
                 verification: nextVerification
               }
             : existingProfileInfo;
@@ -416,6 +423,24 @@ export class AuthService {
         if (payload.serviceProvider || payload.eventPlanner || payload.venueProvider) {
           throw new AppError(400, 'This role cannot update provider profile data');
         }
+    }
+
+    if (payload.profileImageFile) {
+      const uploadedProfile = await UploadService.uploadProfileImage(
+        payload.userId,
+        payload.role,
+        payload.profileImageFile
+      );
+      user.profileImage = uploadedProfile.profileImage;
+    }
+
+    if (payload.coverImageFile) {
+      const uploadedCover = await UploadService.uploadCoverImage(
+        payload.userId,
+        payload.role,
+        payload.coverImageFile
+      );
+      user.coverImage = uploadedCover.coverImage;
     }
 
     await user.save();

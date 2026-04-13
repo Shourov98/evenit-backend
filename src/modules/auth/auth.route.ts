@@ -3,6 +3,7 @@ import { protect } from '../../common/middlewares/auth.middleware';
 import { parseMultipartJsonBody } from '../../common/middlewares/multipart-json.middleware';
 import { authLimiter } from '../../common/middlewares/security.middleware';
 import { onboardingDocumentUpload } from '../../common/middlewares/upload.middleware';
+import { imageUpload } from '../../common/middlewares/upload.middleware';
 import { validate } from '../../common/middlewares/validate.middleware';
 import { uploadOnboardingFiles } from './auth-onboarding-upload.middleware';
 import { AuthController } from './auth.controller';
@@ -15,7 +16,10 @@ import {
   submitEventProviderOnboardingSchema,
   submitServiceProviderOnboardingSchema,
   submitVenueProviderOnboardingSchema,
-  updateProfileSchema,
+  updateCustomerProfileSchema,
+  updateEventPlannerProfileRequestSchema,
+  updateServiceProviderProfileRequestSchema,
+  updateVenueProviderProfileRequestSchema,
   verifyEmailOtpSchema
 } from './auth.schema';
 
@@ -1043,7 +1047,53 @@ router.post(
  *       409:
  *         description: Duplicate email
  */
-router.patch('/profile', protect, validate(updateProfileSchema), AuthController.updateProfile);
+router.patch(
+  '/profile/customer',
+  protect,
+  imageUpload.fields([
+    { name: 'profileImage', maxCount: 1 },
+    { name: 'coverImage', maxCount: 1 }
+  ]),
+  parseMultipartJsonBody(),
+  validate(updateCustomerProfileSchema),
+  AuthController.updateCustomerProfile
+);
+
+router.patch(
+  '/profile/service-provider',
+  protect,
+  imageUpload.fields([
+    { name: 'profileImage', maxCount: 1 },
+    { name: 'coverImage', maxCount: 1 }
+  ]),
+  parseMultipartJsonBody(),
+  validate(updateServiceProviderProfileRequestSchema),
+  AuthController.updateServiceProviderProfile
+);
+
+router.patch(
+  '/profile/event-planner',
+  protect,
+  imageUpload.fields([
+    { name: 'profileImage', maxCount: 1 },
+    { name: 'coverImage', maxCount: 1 }
+  ]),
+  parseMultipartJsonBody(),
+  validate(updateEventPlannerProfileRequestSchema),
+  AuthController.updateEventPlannerProfile
+);
+
+router.patch(
+  '/profile/venue-provider',
+  protect,
+  imageUpload.fields([
+    { name: 'profileImage', maxCount: 1 },
+    { name: 'coverImage', maxCount: 1 }
+  ]),
+  parseMultipartJsonBody(),
+  validate(updateVenueProviderProfileRequestSchema),
+  AuthController.updateVenueProviderProfile
+);
 
 /**
  * @openapi

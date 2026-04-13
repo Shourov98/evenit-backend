@@ -23,6 +23,15 @@ const roleProfileFolderMap: Record<UserRole, string> = {
   super_admin: 'super-admins/profile-images'
 };
 
+const roleCoverFolderMap: Record<UserRole, string> = {
+  customer: 'customers/cover-images',
+  service_provider: 'service-providers/cover-images',
+  event_planner: 'event-planners/cover-images',
+  venue_provider: 'venue-providers/cover-images',
+  admin: 'admins/cover-images',
+  super_admin: 'super-admins/cover-images'
+};
+
 const uploadBuffer = (
   buffer: Buffer,
   folder: string,
@@ -48,6 +57,40 @@ const uploadBuffer = (
   });
 
 export class UploadService {
+  private static async replaceUserImageAsset(
+    userId: string,
+    role: UserRole,
+    file: Express.Multer.File,
+    field: 'profileImage' | 'coverImage'
+  ) {
+    if (!file) {
+      throw new AppError(400, `${field} upload failed: send the file in the ${field} field`);
+    }
+
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      throw new AppError(404, 'User not found');
+    }
+
+    const folderMap = field === 'profileImage' ? roleProfileFolderMap : roleCoverFolderMap;
+    const [uploaded] = await this.uploadImages([file], folderMap[role]);
+    const existingAsset = user[field];
+
+    if (existingAsset?.publicId) {
+      await getCloudinary().uploader.destroy(existingAsset.publicId, {
+        resource_type: 'image'
+      });
+    }
+
+    user[field] = {
+      url: uploaded.url,
+      publicId: uploaded.publicId
+    };
+    await user.save();
+
+    return user[field];
+  }
+
   private static async uploadFiles(
     files: Express.Multer.File[],
     folderSegment = 'uploads',
@@ -100,32 +143,16 @@ export class UploadService {
   }
 
   static async uploadProfileImage(userId: string, role: UserRole, file: Express.Multer.File) {
-    if (!file) {
-      throw new AppError(400, 'Profile image upload failed: send the file in the image field');
-    }
-
-    const user = await UserModel.findById(userId);
-    if (!user) {
-      throw new AppError(404, 'User not found');
-    }
-
-    const [uploaded] = await this.uploadImages([file], roleProfileFolderMap[role]);
-
-    if (user.profileImage?.publicId) {
-      await getCloudinary().uploader.destroy(user.profileImage.publicId, {
-        resource_type: 'image'
-      });
-    }
-
-    user.profileImage = {
-      url: uploaded.url,
-      publicId: uploaded.publicId
-    };
-    await user.save();
-
     return {
       role,
-      profileImage: user.profileImage
+      profileImage: await this.replaceUserImageAsset(userId, role, file, 'profileImage')
+    };
+  }
+
+  static async uploadCoverImage(userId: string, role: UserRole, file: Express.Multer.File) {
+    return {
+      role,
+      coverImage: await this.replaceUserImageAsset(userId, role, file, 'coverImage')
     };
   }
 }

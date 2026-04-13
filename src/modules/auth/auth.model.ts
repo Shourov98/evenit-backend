@@ -72,9 +72,12 @@ export interface IEventProviderOnboarding {
   profileInfo: {
     nidOrTradeLicenseNumber: string;
     name: string;
+    phoneNumber?: string;
     description?: string;
     coverageArea: string[];
     address: string;
+    hourlyRate?: number;
+    currency?: string;
     verification: IServiceProviderVerificationInfo;
   };
 }
@@ -125,6 +128,11 @@ export interface IUserSubscription {
 }
 
 export interface IUserProfileImage {
+  url: string;
+  publicId: string;
+}
+
+export interface IUserCoverImage {
   url: string;
   publicId: string;
 }
@@ -196,6 +204,7 @@ export interface IUser extends Document {
   isBlocked: boolean;
   subscription: IUserSubscription;
   profileImage?: IUserProfileImage;
+  coverImage?: IUserCoverImage;
   onboarding?: IProviderOnboarding;
   comparePassword(candidate: string): Promise<boolean>;
 }
@@ -407,6 +416,12 @@ const eventProviderOnboardingSchema = new Schema<IEventProviderOnboarding>(
         minlength: 2,
         maxlength: 120
       },
+      phoneNumber: {
+        type: String,
+        trim: true,
+        minlength: 5,
+        maxlength: 30
+      },
       description: {
         type: String,
         trim: true,
@@ -423,6 +438,16 @@ const eventProviderOnboardingSchema = new Schema<IEventProviderOnboarding>(
         trim: true,
         minlength: 3,
         maxlength: 240
+      },
+      hourlyRate: {
+        type: Number,
+        min: 0
+      },
+      currency: {
+        type: String,
+        uppercase: true,
+        minlength: 3,
+        maxlength: 3
       },
       verification: {
         businessType: {
@@ -546,6 +571,22 @@ const userProfileImageSchema = new Schema<IUserProfileImage>(
   { _id: false }
 );
 
+const userCoverImageSchema = new Schema<IUserCoverImage>(
+  {
+    url: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    publicId: {
+      type: String,
+      required: true,
+      trim: true
+    }
+  },
+  { _id: false }
+);
+
 const userSchema = new Schema<IUser>(
   {
     fullName: {
@@ -596,6 +637,9 @@ const userSchema = new Schema<IUser>(
     },
     profileImage: {
       type: userProfileImageSchema
+    },
+    coverImage: {
+      type: userCoverImageSchema
     },
     onboarding: {
       type: providerOnboardingSchema

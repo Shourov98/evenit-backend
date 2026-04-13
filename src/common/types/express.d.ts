@@ -20,6 +20,10 @@ declare global {
           url: string;
           publicId: string;
         } | null;
+        coverImage?: {
+          url: string;
+          publicId: string;
+        } | null;
         subscription: {
           plan:
             | 'customer_plan'

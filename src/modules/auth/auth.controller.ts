@@ -10,6 +10,7 @@ const serializeAuthUser = (user: {
   serviceCategories: string[];
   isEmailVerified: boolean;
   profileImage?: unknown;
+  coverImage?: unknown;
   subscription?: unknown;
   onboarding?: unknown;
 }) => ({
@@ -20,11 +21,49 @@ const serializeAuthUser = (user: {
   serviceCategories: user.serviceCategories,
   isEmailVerified: user.isEmailVerified,
   profileImage: user.profileImage ?? null,
+  coverImage: user.coverImage ?? null,
   subscription: user.subscription,
   onboarding: user.onboarding ?? null
 });
 
 export class AuthController {
+  private static getMultipartFiles(req: Request) {
+    return req.files && !Array.isArray(req.files) ? req.files : undefined;
+  }
+
+  private static updateProfileByRole(expectedRole: 'customer' | 'service_provider' | 'event_planner' | 'venue_provider') {
+    return catchAsync(async (req: Request, res: Response) => {
+      const userId = AuthController.getAuthorizedUserId(req, res);
+      if (!userId) {
+        return;
+      }
+
+      if (req.user?.role !== expectedRole) {
+        return res.status(400).json({
+          success: false,
+          message: `This endpoint can only be used by ${expectedRole}`
+        });
+      }
+
+      const files = AuthController.getMultipartFiles(req);
+      const user = await AuthService.updateProfile({
+        userId,
+        role: req.user.role,
+        profileImageFile: files?.profileImage?.[0],
+        coverImageFile: files?.coverImage?.[0],
+        ...req.body
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: 'Profile updated successfully',
+        data: {
+          user: serializeAuthUser(user)
+        }
+      });
+    });
+  }
+
   static register = catchAsync(async (req: Request, res: Response) => {
     const { fullName, email, password, role, serviceCategories } = req.body as {
       fullName: string;
@@ -213,25 +252,10 @@ export class AuthController {
     });
   });
 
-  static updateProfile = catchAsync(async (req: Request, res: Response) => {
-    const userId = AuthController.getAuthorizedUserId(req, res);
-    if (!userId) {
-      return;
-    }
-
-    const user = await AuthService.updateProfile({
-      userId,
-      ...req.body
-    });
-
-    return res.status(200).json({
-      success: true,
-      message: 'Profile updated successfully',
-      data: {
-        user: serializeAuthUser(user)
-      }
-    });
-  });
+  static updateCustomerProfile = AuthController.updateProfileByRole('customer');
+  static updateServiceProviderProfile = AuthController.updateProfileByRole('service_provider');
+  static updateEventPlannerProfile = AuthController.updateProfileByRole('event_planner');
+  static updateVenueProviderProfile = AuthController.updateProfileByRole('venue_provider');
 
   static me = catchAsync(async (req: Request, res: Response) => {
     return res.status(200).json({
