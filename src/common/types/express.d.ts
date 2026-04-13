@@ -16,14 +16,8 @@ declare global {
           | 'customer';
         serviceCategories: string[];
         isBlocked?: boolean;
-        profileImage?: {
-          url: string;
-          publicId: string;
-        } | null;
-        coverImage?: {
-          url: string;
-          publicId: string;
-        } | null;
+        profileImage?: string | null;
+        coverImage?: string | null;
         subscription: {
           plan:
             | 'customer_plan'

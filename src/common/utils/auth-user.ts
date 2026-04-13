@@ -36,8 +36,8 @@ export const authenticateToken = async (token: string): Promise<AuthenticatedUse
       role: user.role,
       serviceCategories: user.serviceCategories,
       isBlocked: user.isBlocked,
-      profileImage: user.profileImage ?? null,
-      coverImage: user.coverImage ?? null,
+      profileImage: user.profileImage?.url ?? null,
+      coverImage: user.coverImage?.url ?? null,
       subscription: user.subscription,
       onboarding: user.onboarding ?? null
     };

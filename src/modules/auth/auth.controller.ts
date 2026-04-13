@@ -20,8 +20,14 @@ const serializeAuthUser = (user: {
   role: user.role,
   serviceCategories: user.serviceCategories,
   isEmailVerified: user.isEmailVerified,
-  profileImage: user.profileImage ?? null,
-  coverImage: user.coverImage ?? null,
+  profileImage:
+    user.profileImage && typeof user.profileImage === 'object' && 'url' in user.profileImage
+      ? user.profileImage.url
+      : null,
+  coverImage:
+    user.coverImage && typeof user.coverImage === 'object' && 'url' in user.coverImage
+      ? user.coverImage.url
+      : null,
   subscription: user.subscription,
   onboarding: user.onboarding ?? null
 });

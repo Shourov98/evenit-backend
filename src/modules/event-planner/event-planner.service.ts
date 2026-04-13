@@ -79,8 +79,18 @@ export class EventPlannerService {
 
     return {
       ...plain,
-      profileImage: plain.profileImage ?? null,
-      coverImage: plain.coverImage ?? null,
+      profileImage:
+        plain.profileImage &&
+        typeof plain.profileImage === 'object' &&
+        'url' in plain.profileImage
+          ? plain.profileImage.url
+          : null,
+      coverImage:
+        plain.coverImage &&
+        typeof plain.coverImage === 'object' &&
+        'url' in plain.coverImage
+          ? plain.coverImage.url
+          : null,
       onboarding: this.normalizeEventPlannerOnboarding(
         plain.onboarding && typeof plain.onboarding === 'object'
           ? (plain.onboarding as Record<string, unknown>)
