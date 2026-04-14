@@ -969,6 +969,7 @@
               "name": "Get Service Booking Context",
               "request": {
                 "method": "GET",
+                "description": "Use this before rendering the customer service booking page. Returns `targetType`, full `target` service details, `provider` details, `bookingMeta`, and merged `availability` for the current and next month. Each availability item is keyed by `YYYY-MM-DD` and contains `bookedHours` and `blockedHours` arrays so the UI can disable already-reserved or unavailable time slots before creating the booking.",
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/services/{{serviceId}}/context",
                   "host": [
@@ -1004,6 +1005,7 @@
               "name": "Get Venue Booking Context",
               "request": {
                 "method": "GET",
+                "description": "Use this before rendering the customer venue booking page. Returns `targetType`, full `target` venue details, `provider` details, `bookingMeta`, and merged `availability` for the current and next month. `bookingMeta` includes venue booking requirements such as `requiresGuestCount` and `maximumGuests`, and each availability item contains `bookedHours` and `blockedHours` arrays for calendar rendering.",
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/venues/{{venueId}}/context",
                   "host": [
@@ -1039,6 +1041,7 @@
               "name": "Get Event Planner Booking Context",
               "request": {
                 "method": "GET",
+                "description": "Use this before rendering the customer event planner booking page. Returns `targetType`, full planner `target` details, `provider` details, `bookingMeta`, and merged `availability` for the current and next month. Each availability item is keyed by `YYYY-MM-DD` and contains `bookedHours` and `blockedHours` arrays so the customer can select only free consecutive hours.",
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/bookings/event-planners/{{eventPlannerId}}/context",
                   "host": [
@@ -1125,6 +1128,7 @@
               "name": "Create Service Booking",
               "request": {
                 "method": "POST",
+                "description": "Create a service booking with consecutive hour integers. The backend calculates duration automatically from the selected hours.",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -1178,6 +1182,7 @@
               "name": "Create Venue Booking",
               "request": {
                 "method": "POST",
+                "description": "Create a venue booking with consecutive hour integers. `guest_count` is required and must not exceed the venue capacity returned by the venue booking context API.",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -1231,6 +1236,7 @@
               "name": "Create Event Planner Booking",
               "request": {
                 "method": "POST",
+                "description": "Create an event planner booking with consecutive hour integers. The backend calculates duration automatically from the selected hours.",
                 "header": [
                   {
                     "key": "Content-Type",

@@ -310,12 +310,18 @@ const venueProviderProfileUpdateBody = {
 
 const customerBookings = folder('Bookings', [
   request('Get Service Booking Context', 'GET', '/api/v1/bookings/services/{serviceId}/context', {
+    description:
+      'Use this before rendering the customer service booking page. Returns `targetType`, full `target` service details, `provider` details, `bookingMeta`, and merged `availability` for the current and next month. Each availability item is keyed by `YYYY-MM-DD` and contains `bookedHours` and `blockedHours` arrays so the UI can disable already-reserved or unavailable time slots before creating the booking.',
     event: idCaptureEvent('serviceId')
   }),
   request('Get Venue Booking Context', 'GET', '/api/v1/bookings/venues/{venueId}/context', {
+    description:
+      'Use this before rendering the customer venue booking page. Returns `targetType`, full `target` venue details, `provider` details, `bookingMeta`, and merged `availability` for the current and next month. `bookingMeta` includes venue booking requirements such as `requiresGuestCount` and `maximumGuests`, and each availability item contains `bookedHours` and `blockedHours` arrays for calendar rendering.',
     event: idCaptureEvent('venueId')
   }),
   request('Get Event Planner Booking Context', 'GET', '/api/v1/bookings/event-planners/{eventPlannerId}/context', {
+    description:
+      'Use this before rendering the customer event planner booking page. Returns `targetType`, full planner `target` details, `provider` details, `bookingMeta`, and merged `availability` for the current and next month. Each availability item is keyed by `YYYY-MM-DD` and contains `bookedHours` and `blockedHours` arrays so the customer can select only free consecutive hours.',
     event: idCaptureEvent('eventPlannerId')
   }),
   request('Create Booking', 'POST', '/api/v1/bookings', {
@@ -334,6 +340,8 @@ const customerBookings = folder('Bookings', [
   request('Create Service Booking', 'POST', '/api/v1/bookings/services/{serviceId}', {
     tokenVar: 'customerToken',
     contentType: 'application/json',
+    description:
+      'Create a service booking with consecutive hour integers. The backend calculates duration automatically from the selected hours.',
     body: jsonBody({
       bookingDate: '2026-04-10',
       hours: [10, 11],
@@ -345,6 +353,8 @@ const customerBookings = folder('Bookings', [
   request('Create Venue Booking', 'POST', '/api/v1/bookings/venues/{venueId}', {
     tokenVar: 'customerToken',
     contentType: 'application/json',
+    description:
+      'Create a venue booking with consecutive hour integers. `guest_count` is required and must not exceed the venue capacity returned by the venue booking context API.',
     body: jsonBody({
       bookingDate: '2026-04-15',
       hours: [14, 15, 16],
@@ -356,6 +366,8 @@ const customerBookings = folder('Bookings', [
   request('Create Event Planner Booking', 'POST', '/api/v1/bookings/event-planners/{eventPlannerId}', {
     tokenVar: 'customerToken',
     contentType: 'application/json',
+    description:
+      'Create an event planner booking with consecutive hour integers. The backend calculates duration automatically from the selected hours.',
     body: jsonBody({
       bookingDate: '2026-04-20',
       hours: [9, 10],

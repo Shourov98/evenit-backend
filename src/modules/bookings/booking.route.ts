@@ -25,11 +25,60 @@ router.use(protect);
  *     description: Customer and provider booking lifecycle
  * components:
  *   schemas:
+ *     BookingAvailabilityDay:
+ *       type: object
+ *       properties:
+ *         bookedHours:
+ *           type: array
+ *           items:
+ *             type: integer
+ *           example: [14, 15, 16]
+ *         blockedHours:
+ *           type: array
+ *           items:
+ *             type: integer
+ *           example: [10, 11]
+ *     BookingMeta:
+ *       type: object
+ *       properties:
+ *         currency:
+ *           type: string
+ *           example: BDT
+ *         durationMode:
+ *           type: string
+ *           example: consecutive_hours
+ *         minHour:
+ *           type: integer
+ *           example: 8
+ *         maxHour:
+ *           type: integer
+ *           example: 23
+ *         currentMonth:
+ *           type: string
+ *           example: 2026-04
+ *         nextMonth:
+ *           type: string
+ *           example: 2026-05
+ *         requiresGuestCount:
+ *           type: boolean
+ *           nullable: true
+ *           example: true
+ *         maximumGuests:
+ *           type: integer
+ *           nullable: true
+ *           example: 200
+ *     BookingContextTarget:
+ *       type: object
+ *       additionalProperties: true
+ *     BookingContextProvider:
+ *       type: object
+ *       additionalProperties: true
  *     BookingContextResponse:
  *       type: object
  *       properties:
  *         success:
  *           type: boolean
+ *           example: true
  *         data:
  *           type: object
  *           properties:
@@ -37,13 +86,71 @@ router.use(protect);
  *               type: string
  *               enum: [venue, service, event]
  *             target:
- *               type: object
+ *               $ref: '#/components/schemas/BookingContextTarget'
  *             provider:
- *               type: object
+ *               $ref: '#/components/schemas/BookingContextProvider'
  *             bookingMeta:
- *               type: object
+ *               $ref: '#/components/schemas/BookingMeta'
  *             availability:
  *               type: object
+ *               additionalProperties:
+ *                 $ref: '#/components/schemas/BookingAvailabilityDay'
+ *       example:
+ *         success: true
+ *         data:
+ *           targetType: venue
+ *           target:
+ *             _id: 680000000000000000000102
+ *             information:
+ *               venueName: Grand Ballroom
+ *               venueType: Convention Center
+ *               description: Large indoor venue for meetings and events.
+ *               addressLine: 123 Main Street
+ *               city: Dhaka
+ *               area: Banani
+ *             pricing:
+ *               basePrice: 1701
+ *               currency: BDT
+ *               discount:
+ *                 type: fixed
+ *                 value: 100
+ *               amenities:
+ *                 parking: true
+ *                 catering: true
+ *                 soundSystem: true
+ *             capacity:
+ *               maximumGuests: 200
+ *             media:
+ *               galleryImages:
+ *                 - https://cdn.example.com/venue-1.jpg
+ *                 - https://cdn.example.com/venue-2.jpg
+ *             publishStatus: published
+ *           provider:
+ *             _id: 680000000000000000000202
+ *             fullName: Venue Provider Example
+ *             email: venue@example.com
+ *             role: venue_provider
+ *             profileImage: https://cdn.example.com/venue-provider.jpg
+ *             venueProvider:
+ *               businessName: Grand Ballroom Ltd
+ *               businessMail: business@grandballroom.com
+ *               businessPhoneNo: +8801700000000
+ *           bookingMeta:
+ *             currency: BDT
+ *             durationMode: consecutive_hours
+ *             minHour: 8
+ *             maxHour: 23
+ *             requiresGuestCount: true
+ *             maximumGuests: 200
+ *             currentMonth: 2026-04
+ *             nextMonth: 2026-05
+ *           availability:
+ *             2026-04-15:
+ *               bookedHours: [14, 15, 16]
+ *               blockedHours: [10, 11]
+ *             2026-05-06:
+ *               bookedHours: [18, 19]
+ *               blockedHours: []
  *     BookingCreateRequest:
  *       type: object
  *       required:
@@ -235,6 +342,64 @@ router.use(protect);
  *         message:
  *           type: string
  *           example: One or more selected time slots are already booked
+ *     ServiceBookingCreateRequest:
+ *       type: object
+ *       required: [bookingDate, hours]
+ *       properties:
+ *         bookingDate:
+ *           type: string
+ *           format: date
+ *           example: 2026-04-18
+ *         hours:
+ *           type: array
+ *           items:
+ *             type: integer
+ *           example: [10, 11, 12]
+ *         location:
+ *           type: string
+ *           example: Banani, Dhaka
+ *         specialInstructions:
+ *           type: string
+ *           example: Need premium buffet setup.
+ *     VenueBookingCreateRequest:
+ *       type: object
+ *       required: [bookingDate, hours, guest_count]
+ *       properties:
+ *         bookingDate:
+ *           type: string
+ *           format: date
+ *           example: 2026-04-15
+ *         hours:
+ *           type: array
+ *           items:
+ *             type: integer
+ *           example: [14, 15, 16]
+ *         guest_count:
+ *           type: integer
+ *           minimum: 1
+ *           example: 150
+ *         specialInstructions:
+ *           type: string
+ *           example: Need projector and stage.
+ *     EventPlannerBookingCreateRequest:
+ *       type: object
+ *       required: [bookingDate, hours]
+ *       properties:
+ *         bookingDate:
+ *           type: string
+ *           format: date
+ *           example: 2026-04-22
+ *         hours:
+ *           type: array
+ *           items:
+ *             type: integer
+ *           example: [9, 10]
+ *         location:
+ *           type: string
+ *           example: Gulshan, Dhaka
+ *         specialInstructions:
+ *           type: string
+ *           example: Need wedding planning consultation.
  */
 
 /**
@@ -296,6 +461,43 @@ router.post('/', authorize('customer'), validate(createBookingSchema), BookingCo
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/BookingContextResponse'
+ *             example:
+ *               success: true
+ *               data:
+ *                 targetType: service
+ *                 target:
+ *                   _id: 680000000000000000000101
+ *                   information:
+ *                     serviceName: Premium Catering
+ *                     category: Catering
+ *                     description: Corporate and wedding catering service.
+ *                     serviceArea: [Dhaka, Gazipur]
+ *                     tags: [wedding, corporate]
+ *                   pricing:
+ *                     amount: 50000
+ *                     pricingType: package
+ *                     currency: BDT
+ *                   settings:
+ *                     amenities:
+ *                       deliveryIncluded: true
+ *                       setupIncluded: true
+ *                     capacity: 300
+ *                 provider:
+ *                   _id: 680000000000000000000201
+ *                   fullName: Service Provider Example
+ *                   email: provider@example.com
+ *                   role: service_provider
+ *                 bookingMeta:
+ *                   currency: BDT
+ *                   durationMode: consecutive_hours
+ *                   minHour: 8
+ *                   maxHour: 23
+ *                   currentMonth: 2026-04
+ *                   nextMonth: 2026-05
+ *                 availability:
+ *                   2026-04-18:
+ *                     bookedHours: [10, 11, 12]
+ *                     blockedHours: [14, 15]
  *       404:
  *         description: Service not found
  */
@@ -325,22 +527,7 @@ router.get(
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required: [bookingDate, hours]
- *             properties:
- *               bookingDate:
- *                 type: string
- *                 format: date
- *                 example: 2026-03-20
- *               hours:
- *                 type: array
- *                 items:
- *                   type: integer
- *                   example: 14
- *               location:
- *                 type: string
- *               specialInstructions:
- *                 type: string
+ *             $ref: '#/components/schemas/ServiceBookingCreateRequest'
  *     responses:
  *       201:
  *         description: Service booking created successfully
@@ -382,6 +569,42 @@ router.post(
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/BookingContextResponse'
+ *             example:
+ *               success: true
+ *               data:
+ *                 targetType: venue
+ *                 target:
+ *                   _id: 680000000000000000000102
+ *                   information:
+ *                     venueName: Grand Ballroom
+ *                     venueType: Convention Center
+ *                     description: Large indoor venue for meetings and events.
+ *                     addressLine: 123 Main Street
+ *                     city: Dhaka
+ *                     area: Banani
+ *                   pricing:
+ *                     basePrice: 1701
+ *                     currency: BDT
+ *                   capacity:
+ *                     maximumGuests: 200
+ *                 provider:
+ *                   _id: 680000000000000000000202
+ *                   fullName: Venue Provider Example
+ *                   email: venue@example.com
+ *                   role: venue_provider
+ *                 bookingMeta:
+ *                   currency: BDT
+ *                   durationMode: consecutive_hours
+ *                   minHour: 8
+ *                   maxHour: 23
+ *                   requiresGuestCount: true
+ *                   maximumGuests: 200
+ *                   currentMonth: 2026-04
+ *                   nextMonth: 2026-05
+ *                 availability:
+ *                   2026-04-15:
+ *                     bookedHours: [14, 15, 16]
+ *                     blockedHours: [10, 11]
  *       404:
  *         description: Venue not found
  */
@@ -411,26 +634,7 @@ router.get(
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required: [bookingDate, hours, guest_count]
- *             properties:
- *               bookingDate:
- *                 type: string
- *                 format: date
- *                 example: 2026-03-20
- *               hours:
- *                 type: array
- *                 items:
- *                   type: integer
- *                   example: 14
- *               guest_count:
- *                 type: integer
- *                 minimum: 1
- *                 example: 250
- *               location:
- *                 type: string
- *               specialInstructions:
- *                 type: string
+ *             $ref: '#/components/schemas/VenueBookingCreateRequest'
  *     responses:
  *       201:
  *         description: Venue booking created successfully
@@ -472,6 +676,36 @@ router.post(
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/BookingContextResponse'
+ *             example:
+ *               success: true
+ *               data:
+ *                 targetType: event
+ *                 target:
+ *                   _id: 680000000000000000000103
+ *                   fullName: Elite Event Planner
+ *                   email: planner@example.com
+ *                   role: event_planner
+ *                   eventPlanner:
+ *                     name: Elite Event Planner
+ *                     description: Wedding and corporate event planning.
+ *                     coverageArea: [Dhaka, Chattogram]
+ *                     address: Gulshan, Dhaka
+ *                 provider:
+ *                   _id: 680000000000000000000103
+ *                   fullName: Elite Event Planner
+ *                   email: planner@example.com
+ *                   role: event_planner
+ *                 bookingMeta:
+ *                   currency: BDT
+ *                   durationMode: consecutive_hours
+ *                   minHour: 8
+ *                   maxHour: 23
+ *                   currentMonth: 2026-04
+ *                   nextMonth: 2026-05
+ *                 availability:
+ *                   2026-04-22:
+ *                     bookedHours: [9, 10]
+ *                     blockedHours: [15, 16]
  *       404:
  *         description: Event planner not found
  */
@@ -501,22 +735,7 @@ router.get(
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required: [bookingDate, hours]
- *             properties:
- *               bookingDate:
- *                 type: string
- *                 format: date
- *                 example: 2026-03-20
- *               hours:
- *                 type: array
- *                 items:
- *                   type: integer
- *                   example: 14
- *               location:
- *                 type: string
- *               specialInstructions:
- *                 type: string
+ *             $ref: '#/components/schemas/EventPlannerBookingCreateRequest'
  *     responses:
  *       201:
  *         description: Event planner booking created successfully
