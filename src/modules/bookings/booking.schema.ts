@@ -1,48 +1,35 @@
 import { z } from 'zod';
+import { BOOKING_END_HOUR, BOOKING_START_HOUR } from '../../common/utils/availability';
 
 const objectIdRegex = /^[a-fA-F0-9]{24}$/;
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-const timeSlotRegex = /^([01]\d|2[0-3]):00$/;
 const bookingStatusFilterValues = ['pending', 'approved', 'rejected', 'completed', 'confirmed', 'cancelled'] as const;
-const isAllowedBookingHour = (timeSlot: string): boolean => {
-  const hour = Number.parseInt(timeSlot.split(':')[0] || '', 10);
-  return Number.isInteger(hour) && hour >= 8 && hour <= 23;
-};
+
+const hoursSchema = z.array(z.number().int().min(BOOKING_START_HOUR).max(BOOKING_END_HOUR)).min(1).max(16);
 
 const createBookingBodyBaseSchema = z.object({
   targetType: z.enum(['venue', 'service', 'event']),
   targetId: z.string().regex(objectIdRegex, 'Invalid targetId'),
   bookingDate: z.string().regex(dateRegex, 'bookingDate must be in YYYY-MM-DD format'),
-  timeSlots: z.array(z.string().regex(timeSlotRegex, 'timeSlots must use HH:00 format')).min(1).max(16),
-  durationHours: z.number().int().min(1).max(24).optional(),
+  hours: hoursSchema,
   location: z.string().min(2).max(240).optional(),
   specialInstructions: z.string().max(2000).optional()
 });
 
-const withBookingTimeValidation = <T extends z.ZodTypeAny>(schema: T) =>
+const withBookingHourValidation = <T extends z.ZodTypeAny>(schema: T) =>
   schema.superRefine((data, ctx) => {
-    const unique = new Set(data.timeSlots);
-    if (unique.size !== data.timeSlots.length) {
+    const payload = data as { hours: number[] };
+    const unique = new Set(payload.hours);
+    if (unique.size !== payload.hours.length) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        path: ['timeSlots'],
-        message: 'timeSlots cannot contain duplicates'
+        path: ['hours'],
+        message: 'hours cannot contain duplicates'
       });
-    }
-
-    for (const timeSlot of data.timeSlots) {
-      if (!isAllowedBookingHour(timeSlot)) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ['timeSlots'],
-          message: 'Bookings are only allowed between 08:00 and 23:00'
-        });
-        return;
-      }
     }
   });
 
-const createBookingBodySchema = withBookingTimeValidation(createBookingBodyBaseSchema);
+const createBookingBodySchema = withBookingHourValidation(createBookingBodyBaseSchema);
 
 const bookingIdParamsSchema = z.object({
   bookingId: z.string().regex(objectIdRegex, 'Invalid bookingId')
@@ -73,19 +60,19 @@ export const bookingIdParamSchema = z.object({
 });
 
 export const createServiceBookingSchema = z.object({
-  body: withBookingTimeValidation(createBookingBodyBaseSchema.omit({ targetType: true, targetId: true })),
+  body: withBookingHourValidation(createBookingBodyBaseSchema.omit({ targetType: true, targetId: true })),
   params: serviceBookingParamsSchema,
   query: z.object({}).optional().default({})
 });
 
 export const createVenueBookingSchema = z.object({
-  body: withBookingTimeValidation(createBookingBodyBaseSchema.omit({ targetType: true, targetId: true })),
+  body: withBookingHourValidation(createBookingBodyBaseSchema.omit({ targetType: true, targetId: true })),
   params: venueBookingParamsSchema,
   query: z.object({}).optional().default({})
 });
 
 export const createEventPlannerBookingSchema = z.object({
-  body: withBookingTimeValidation(createBookingBodyBaseSchema.omit({ targetType: true, targetId: true })),
+  body: withBookingHourValidation(createBookingBodyBaseSchema.omit({ targetType: true, targetId: true })),
   params: eventPlannerBookingParamsSchema,
   query: z.object({}).optional().default({})
 });

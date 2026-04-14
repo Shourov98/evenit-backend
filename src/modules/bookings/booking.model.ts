@@ -16,7 +16,7 @@ export interface IBooking extends Document {
   targetId: Types.ObjectId;
   reservedSlots: string[];
   bookingDate: string;
-  timeSlots: string[];
+  hours: number[];
   durationHours: number;
   location?: string;
   specialInstructions?: string;
@@ -75,14 +75,14 @@ const bookingSchema = new Schema<IBooking>(
       match: /^\d{4}-\d{2}-\d{2}$/,
       index: true
     },
-    timeSlots: {
-      type: [String],
+    hours: {
+      type: [Number],
       required: true,
       validate: {
-        validator(value: string[]) {
+        validator(value: number[]) {
           return value.length > 0;
         },
-        message: 'At least one time slot is required'
+        message: 'At least one hour is required'
       }
     },
     durationHours: {

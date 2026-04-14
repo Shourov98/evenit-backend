@@ -9,7 +9,9 @@ import {
   createServiceSchema,
   ownServicesQuerySchema,
   serviceIdParamSchema,
-  updateServiceSchema
+  serviceAvailabilityQuerySchema,
+  updateServiceSchema,
+  updateServiceAvailabilitySchema
 } from './service-provider.schema';
 
 const router = Router();
@@ -384,6 +386,24 @@ router.get('/services', ServiceProviderController.getServices);
 router.get('/services/:serviceId', validate(serviceIdParamSchema), ServiceProviderController.getServiceById);
 
 router.use(protect, authorize('service_provider'));
+
+router.get(
+  '/services/:serviceId/availability',
+  validate(serviceAvailabilityQuerySchema),
+  ServiceProviderController.getAvailability
+);
+
+router.patch(
+  '/services/:serviceId/availability',
+  validate(updateServiceAvailabilitySchema),
+  ServiceProviderController.blockAvailability
+);
+
+router.delete(
+  '/services/:serviceId/availability',
+  validate(updateServiceAvailabilitySchema),
+  ServiceProviderController.unblockAvailability
+);
 
 /**
  * @openapi

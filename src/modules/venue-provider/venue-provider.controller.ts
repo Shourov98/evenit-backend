@@ -112,4 +112,50 @@ export class VenueProviderController {
       message: 'Venue deleted successfully'
     });
   });
+
+  static getAvailability = catchAsync(async (req: Request, res: Response) => {
+    const userId = getUserId(req);
+    const availability = await VenueProviderService.getAvailability(
+      userId,
+      req.params.venueId,
+      typeof req.query.month === 'string' ? req.query.month : undefined
+    );
+
+    return res.status(200).json({
+      success: true,
+      data: availability
+    });
+  });
+
+  static blockAvailability = catchAsync(async (req: Request, res: Response) => {
+    const userId = getUserId(req);
+    const result = await VenueProviderService.blockAvailability(
+      userId,
+      req.params.venueId,
+      req.body.date,
+      req.body.hours
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: 'Availability updated successfully',
+      data: result
+    });
+  });
+
+  static unblockAvailability = catchAsync(async (req: Request, res: Response) => {
+    const userId = getUserId(req);
+    const result = await VenueProviderService.unblockAvailability(
+      userId,
+      req.params.venueId,
+      req.body.date,
+      req.body.hours
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: 'Availability updated successfully',
+      data: result
+    });
+  });
 }

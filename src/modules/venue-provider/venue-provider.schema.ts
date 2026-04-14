@@ -1,18 +1,48 @@
 import { z } from 'zod';
+import { BOOKING_END_HOUR, BOOKING_START_HOUR } from '../../common/utils/availability';
 
 const objectIdRegex = /^[a-fA-F0-9]{24}$/;
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+const monthRegex = /^\d{4}-\d{2}$/;
 const publishStatusSchema = z.enum(['pending', 'published', 'rejected']);
 
-const availabilitySlotSchema = z.object({
-  hour: z.number().int().min(8).max(23),
-  status: z.enum(['available', 'pending', 'booked'])
+const hoursSchema = z.array(z.number().int().min(BOOKING_START_HOUR).max(BOOKING_END_HOUR)).min(1).max(16);
+
+const availabilityEntrySchema = z.object({
+  date: z.string().regex(dateRegex, 'date must be in YYYY-MM-DD format'),
+  hours: hoursSchema
 });
 
-const availabilityOverrideSchema = z.object({
-  date: z.string().regex(dateRegex, 'date must be in YYYY-MM-DD format'),
-  slots: z.array(availabilitySlotSchema).min(1).max(16)
-});
+const withUniqueAvailabilityDates = <T extends z.ZodTypeAny>(schema: T) =>
+  schema.superRefine((data, ctx) => {
+    const payload = data as { availabilityCalendar?: Array<{ date: string; hours: number[] }> };
+    const seen = new Set<string>();
+    const availability = payload.availabilityCalendar || [];
+    for (const item of availability) {
+      if (seen.has(item.date)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['availabilityCalendar'],
+          message: 'availabilityCalendar cannot contain duplicate dates'
+        });
+        return;
+      }
+      seen.add(item.date);
+
+      const seenHours = new Set<number>();
+      for (const hour of item.hours) {
+        if (seenHours.has(hour)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['availabilityCalendar'],
+            message: `availabilityCalendar for ${item.date} cannot contain duplicate hours`
+          });
+          return;
+        }
+        seenHours.add(hour);
+      }
+    }
+  });
 
 const venueBodySchema = z.object({
   information: z.object({
@@ -41,7 +71,7 @@ const venueBodySchema = z.object({
     galleryImages: z.array(z.string().url()).max(10).optional().default([]),
     videoUrl: z.string().url().optional()
   }),
-  availabilityOverrides: z.array(availabilityOverrideSchema).optional().default([])
+  availabilityCalendar: z.array(availabilityEntrySchema).optional().default([])
 });
 
 const updateVenueBodySchema = z
@@ -81,7 +111,7 @@ const updateVenueBodySchema = z
         videoUrl: z.string().url().nullable().optional()
       })
       .optional(),
-    availabilityOverrides: z.array(availabilityOverrideSchema).optional()
+    availabilityCalendar: z.array(availabilityEntrySchema).optional()
   })
   .superRefine((data, ctx) => {
     if (Object.keys(data).length === 0) {
@@ -89,37 +119,6 @@ const updateVenueBodySchema = z
         code: z.ZodIssueCode.custom,
         message: 'At least one field is required to update venue'
       });
-    }
-  });
-
-const withUniqueAvailabilityDates = <T extends z.ZodTypeAny>(schema: T) =>
-  schema.superRefine((data, ctx) => {
-    const payload = data as { availabilityOverrides?: Array<{ date: string; slots: Array<{ hour: number }> }> };
-    const seen = new Set<string>();
-    const availability = payload.availabilityOverrides || [];
-    for (const item of availability) {
-      if (seen.has(item.date)) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ['availabilityOverrides'],
-          message: 'availabilityOverrides cannot contain duplicate dates'
-        });
-        return;
-      }
-      seen.add(item.date);
-
-      const seenHours = new Set<number>();
-      for (const slot of item.slots) {
-        if (seenHours.has(slot.hour)) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ['availabilityOverrides'],
-            message: `availabilityOverrides for ${item.date} cannot contain duplicate hours`
-          });
-          return;
-        }
-        seenHours.add(slot.hour);
-      }
     }
   });
 
@@ -155,4 +154,25 @@ export const ownVenuesQuerySchema = z.object({
     sortOrder: z.enum(['asc', 'desc']).optional(),
     publishStatus: publishStatusSchema.optional()
   })
+});
+
+export const venueAvailabilityQuerySchema = z.object({
+  body: z.object({}).optional().default({}),
+  params: z.object({
+    venueId: z.string().regex(objectIdRegex, 'Invalid venueId')
+  }),
+  query: z.object({
+    month: z.string().regex(monthRegex, 'month must be in YYYY-MM format').optional()
+  })
+});
+
+export const updateVenueAvailabilitySchema = z.object({
+  body: z.object({
+    date: z.string().regex(dateRegex, 'date must be in YYYY-MM-DD format'),
+    hours: hoursSchema
+  }),
+  params: z.object({
+    venueId: z.string().regex(objectIdRegex, 'Invalid venueId')
+  }),
+  query: z.object({}).optional().default({})
 });

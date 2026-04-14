@@ -119,11 +119,15 @@ export class BookingController {
 
   static approveBooking = catchAsync(async (req: Request, res: Response) => {
     const user = getUser(req);
-    const booking = await BookingService.approve(req.params.bookingId, user.userId);
+    const booking = await BookingService.approve(
+      req.params.bookingId,
+      user.userId,
+      user.role as 'venue_provider' | 'service_provider' | 'event_planner'
+    );
 
     return res.status(200).json({
       success: true,
-      message: 'Booking approved successfully',
+      message: 'Booking accepted successfully',
       data: booking
     });
   });
@@ -136,7 +140,12 @@ export class BookingController {
 
   static rejectBooking = catchAsync(async (req: Request, res: Response) => {
     const user = getUser(req);
-    const booking = await BookingService.reject(req.params.bookingId, user.userId, req.body.reason);
+    const booking = await BookingService.reject(
+      req.params.bookingId,
+      user.userId,
+      user.role as 'venue_provider' | 'service_provider' | 'event_planner',
+      req.body.reason
+    );
 
     return res.status(200).json({
       success: true,

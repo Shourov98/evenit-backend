@@ -1,8 +1,18 @@
 import { isValidObjectId } from 'mongoose';
 import { AppError } from '../../common/errors/AppError';
+import {
+  AvailabilityEntry,
+  availabilityEntriesToCalendar,
+  buildCalendarWindow,
+  filterCalendarToWindow,
+  normalizeAvailabilityEntries,
+  removeAvailabilityEntryHours,
+  upsertAvailabilityEntry
+} from '../../common/utils/availability';
 import { PaginationOptions, paginateModel } from '../../common/utils/pagination';
 import { buildPublicProviderInfo } from '../../common/utils/public-provider';
-import { UserModel } from '../auth/auth.model';
+import { hydrateUserSubscription, UserModel } from '../auth/auth.model';
+import { BookingModel } from '../bookings/booking.model';
 import { ServiceProviderServiceModel } from './service-provider.model';
 
 type CreateServicePayload = {
@@ -30,13 +40,7 @@ type CreateServicePayload = {
     galleryImages: string[];
     videoUrl?: string;
   };
-  availabilityOverrides: Array<{
-    date: string;
-    slots: Array<{
-      hour: number;
-      status: 'available' | 'pending' | 'booked';
-    }>;
-  }>;
+  availabilityCalendar: AvailabilityEntry[];
 };
 
 type UpdateServicePayload = Partial<CreateServicePayload>;
@@ -73,17 +77,74 @@ const normalizeCurrency = <
   return payload;
 };
 
+const serializeService = <T extends { toObject?: () => Record<string, unknown>; ownerId?: unknown }>(
+  service: T
+) => {
+  const plain =
+    typeof service?.toObject === 'function'
+      ? service.toObject()
+      : ({ ...service } as Record<string, unknown>);
+
+  return {
+    ...plain,
+    availability: availabilityEntriesToCalendar((plain.availabilityCalendar as AvailabilityEntry[] | undefined) ?? [])
+  };
+};
+
+const buildConfirmedBookingCalendar = async (serviceId: string, range: { from: string; to: string }) => {
+  const bookings = await BookingModel.find({
+    targetType: 'service',
+    targetId: serviceId,
+    status: 'confirmed',
+    bookingDate: {
+      $gte: range.from,
+      $lte: range.to
+    }
+  }).select('bookingDate hours');
+
+  const calendar: Record<string, number[]> = {};
+  for (const booking of bookings) {
+    calendar[booking.bookingDate] = [...new Set([...(calendar[booking.bookingDate] ?? []), ...booking.hours])].sort(
+      (left, right) => left - right
+    );
+  }
+
+  return calendar;
+};
+
 export class ServiceProviderService {
+  private static async ensureSubscribedServiceProvider(ownerId: string) {
+    const owner = await UserModel.findById(ownerId);
+
+    if (!owner || owner.role !== 'service_provider') {
+      throw new AppError(403, 'Only service providers can manage services');
+    }
+
+    const hydratedSubscription = hydrateUserSubscription(owner.role, owner.subscription);
+    if (JSON.stringify(owner.subscription) !== JSON.stringify(hydratedSubscription)) {
+      owner.subscription = hydratedSubscription;
+      await owner.save();
+    }
+
+    if (owner.subscription.status !== 'subscribed') {
+      throw new AppError(403, 'A subscribed account is required for this action');
+    }
+  }
+
   static async create(ownerId: string, payload: CreateServicePayload) {
     ensureObjectId(ownerId, 'ownerId');
+    await this.ensureSubscribedServiceProvider(ownerId);
 
-    return ServiceProviderServiceModel.create({
+    const service = await ServiceProviderServiceModel.create({
       ownerId,
       ...normalizeCurrency(payload),
+      availabilityCalendar: normalizeAvailabilityEntries(payload.availabilityCalendar ?? []),
       publishStatus: 'pending',
       approvedBy: undefined,
       approvedAt: undefined
     });
+
+    return serializeService(service);
   }
 
   static async getMine(
@@ -95,7 +156,7 @@ export class ServiceProviderService {
   ) {
     ensureObjectId(ownerId, 'ownerId');
 
-    return paginateModel(
+    const services = await paginateModel(
       ServiceProviderServiceModel,
       {
         ownerId,
@@ -104,6 +165,11 @@ export class ServiceProviderService {
       },
       pagination
     );
+
+    return {
+      ...services,
+      data: services.data.map((service) => serializeService(service))
+    };
   }
 
   static async getPublic(pagination: PaginationOptions) {
@@ -124,14 +190,10 @@ export class ServiceProviderService {
 
     return {
       ...services,
-      data: hydratedServices.map((service) => {
-        const serviceObject = service.toObject();
-
-        return {
-          ...serviceObject,
-          provider: buildPublicProviderInfo(service.ownerId as never)
-        };
-      })
+      data: hydratedServices.map((service) => ({
+        ...serializeService(service),
+        provider: buildPublicProviderInfo(service.ownerId as never)
+      }))
     };
   }
 
@@ -152,10 +214,8 @@ export class ServiceProviderService {
       throw new AppError(404, 'Service not found');
     }
 
-    const serviceObject = service.toObject();
-
     return {
-      ...serviceObject,
+      ...serializeService(service),
       provider: buildPublicProviderInfo(service.ownerId as never)
     };
   }
@@ -178,6 +238,7 @@ export class ServiceProviderService {
   }
 
   static async update(ownerId: string, serviceId: string, payload: UpdateServicePatchPayload) {
+    await this.ensureSubscribedServiceProvider(ownerId);
     const service = await this.getById(ownerId, serviceId);
     const normalizedPayload = normalizeCurrency(payload);
 
@@ -233,8 +294,8 @@ export class ServiceProviderService {
       };
     }
 
-    if (normalizedPayload.availabilityOverrides) {
-      service.availabilityOverrides = normalizedPayload.availabilityOverrides;
+    if (normalizedPayload.availabilityCalendar) {
+      service.availabilityCalendar = normalizeAvailabilityEntries(normalizedPayload.availabilityCalendar);
     }
 
     service.publishStatus = 'pending';
@@ -242,7 +303,54 @@ export class ServiceProviderService {
     service.approvedAt = undefined;
 
     await service.save();
-    return service;
+    return serializeService(service);
+  }
+
+  static async getAvailability(ownerId: string, serviceId: string, month?: string) {
+    const service = await this.getById(ownerId, serviceId);
+    const range = buildCalendarWindow(month);
+    const manualCalendar = filterCalendarToWindow(
+      availabilityEntriesToCalendar(service.availabilityCalendar),
+      range
+    );
+    const bookingCalendar = await buildConfirmedBookingCalendar(serviceId, range);
+
+    return {
+      range,
+      availability: {
+        ...manualCalendar,
+        ...Object.fromEntries(
+          Object.entries(bookingCalendar).map(([date, hours]) => [
+            date,
+            [...new Set([...(manualCalendar[date] ?? []), ...hours])].sort((left, right) => left - right)
+          ])
+        )
+      }
+    };
+  }
+
+  static async blockAvailability(ownerId: string, serviceId: string, date: string, hours: number[]) {
+    await this.ensureSubscribedServiceProvider(ownerId);
+    const service = await this.getById(ownerId, serviceId);
+    service.availabilityCalendar = upsertAvailabilityEntry(service.availabilityCalendar, date, hours);
+    await service.save();
+
+    return {
+      date,
+      hours: availabilityEntriesToCalendar(service.availabilityCalendar)[date] ?? []
+    };
+  }
+
+  static async unblockAvailability(ownerId: string, serviceId: string, date: string, hours: number[]) {
+    await this.ensureSubscribedServiceProvider(ownerId);
+    const service = await this.getById(ownerId, serviceId);
+    service.availabilityCalendar = removeAvailabilityEntryHours(service.availabilityCalendar, date, hours);
+    await service.save();
+
+    return {
+      date,
+      hours: availabilityEntriesToCalendar(service.availabilityCalendar)[date] ?? []
+    };
   }
 
   static async delete(ownerId: string, serviceId: string) {

@@ -1,7 +1,38 @@
 import { Router } from 'express';
+import { protect } from '../../common/middlewares/auth.middleware';
+import { authorize } from '../../common/middlewares/authorize.middleware';
+import { validate } from '../../common/middlewares/validate.middleware';
 import { EventPlannerController } from './event-planner.controller';
+import {
+  eventPlannerAvailabilityQuerySchema,
+  updateEventPlannerAvailabilitySchema
+} from './event-planner.schema';
 
 const router = Router();
+
+router.get(
+  '/me/availability',
+  protect,
+  authorize('event_planner'),
+  validate(eventPlannerAvailabilityQuerySchema),
+  EventPlannerController.getMyAvailability
+);
+
+router.patch(
+  '/me/availability',
+  protect,
+  authorize('event_planner'),
+  validate(updateEventPlannerAvailabilitySchema),
+  EventPlannerController.blockMyAvailability
+);
+
+router.delete(
+  '/me/availability',
+  protect,
+  authorize('event_planner'),
+  validate(updateEventPlannerAvailabilitySchema),
+  EventPlannerController.unblockMyAvailability
+);
 
 /**
  * @openapi

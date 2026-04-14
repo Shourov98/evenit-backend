@@ -1,8 +1,18 @@
 import { isValidObjectId } from 'mongoose';
 import { AppError } from '../../common/errors/AppError';
+import {
+  AvailabilityEntry,
+  availabilityEntriesToCalendar,
+  buildCalendarWindow,
+  filterCalendarToWindow,
+  normalizeAvailabilityEntries,
+  removeAvailabilityEntryHours,
+  upsertAvailabilityEntry
+} from '../../common/utils/availability';
 import { PaginationOptions, paginateModel } from '../../common/utils/pagination';
 import { buildPublicProviderInfo } from '../../common/utils/public-provider';
-import { UserModel } from '../auth/auth.model';
+import { hydrateUserSubscription, UserModel } from '../auth/auth.model';
+import { BookingModel } from '../bookings/booking.model';
 import { VenueProviderVenueModel } from './venue-provider.model';
 
 type CreateVenuePayload = {
@@ -30,13 +40,7 @@ type CreateVenuePayload = {
     galleryImages: string[];
     videoUrl?: string;
   };
-  availabilityOverrides: Array<{
-    date: string;
-    slots: Array<{
-      hour: number;
-      status: 'available' | 'pending' | 'booked';
-    }>;
-  }>;
+  availabilityCalendar: AvailabilityEntry[];
 };
 
 type UpdateVenuePayload = Partial<CreateVenuePayload>;
@@ -70,19 +74,74 @@ const normalizeCurrency = <
   return payload;
 };
 
+const serializeVenue = <T extends { toObject?: () => Record<string, unknown>; ownerId?: unknown }>(
+  venue: T
+) => {
+  const plain =
+    typeof venue?.toObject === 'function'
+      ? venue.toObject()
+      : ({ ...venue } as Record<string, unknown>);
+
+  return {
+    ...plain,
+    availability: availabilityEntriesToCalendar((plain.availabilityCalendar as AvailabilityEntry[] | undefined) ?? [])
+  };
+};
+
+const buildConfirmedBookingCalendar = async (venueId: string, range: { from: string; to: string }) => {
+  const bookings = await BookingModel.find({
+    targetType: 'venue',
+    targetId: venueId,
+    status: 'confirmed',
+    bookingDate: {
+      $gte: range.from,
+      $lte: range.to
+    }
+  }).select('bookingDate hours');
+
+  const calendar: Record<string, number[]> = {};
+  for (const booking of bookings) {
+    calendar[booking.bookingDate] = [...new Set([...(calendar[booking.bookingDate] ?? []), ...booking.hours])].sort(
+      (left, right) => left - right
+    );
+  }
+
+  return calendar;
+};
+
 export class VenueProviderService {
+  private static async ensureSubscribedVenueProvider(ownerId: string) {
+    const owner = await UserModel.findById(ownerId);
+
+    if (!owner || owner.role !== 'venue_provider') {
+      throw new AppError(403, 'Only venue providers can manage venues');
+    }
+
+    const hydratedSubscription = hydrateUserSubscription(owner.role, owner.subscription);
+    if (JSON.stringify(owner.subscription) !== JSON.stringify(hydratedSubscription)) {
+      owner.subscription = hydratedSubscription;
+      await owner.save();
+    }
+
+    if (owner.subscription.status !== 'subscribed') {
+      throw new AppError(403, 'A subscribed account is required for this action');
+    }
+  }
+
   static async create(ownerId: string, payload: CreateVenuePayload) {
     ensureObjectId(ownerId, 'ownerId');
+    await this.ensureSubscribedVenueProvider(ownerId);
 
     const result = await VenueProviderVenueModel.create({
       ownerId,
       ...normalizeCurrency(payload),
+      availabilityCalendar: normalizeAvailabilityEntries(payload.availabilityCalendar ?? []),
       publishStatus: 'pending',
       approvedBy: undefined,
       approvedAt: undefined
     });
 
-    return result;
+    return serializeVenue(result);
   }
 
   static async getMine(
@@ -94,7 +153,7 @@ export class VenueProviderService {
   ) {
     ensureObjectId(ownerId, 'ownerId');
 
-    return paginateModel(
+    const venues = await paginateModel(
       VenueProviderVenueModel,
       {
         ownerId,
@@ -103,6 +162,11 @@ export class VenueProviderService {
       },
       pagination
     );
+
+    return {
+      ...venues,
+      data: venues.data.map((venue) => serializeVenue(venue))
+    };
   }
 
   static async getPublic(pagination: PaginationOptions) {
@@ -123,14 +187,10 @@ export class VenueProviderService {
 
     return {
       ...venues,
-      data: hydratedVenues.map((venue) => {
-        const venueObject = venue.toObject();
-
-        return {
-          ...venueObject,
-          provider: buildPublicProviderInfo(venue.ownerId as never)
-        };
-      })
+      data: hydratedVenues.map((venue) => ({
+        ...serializeVenue(venue),
+        provider: buildPublicProviderInfo(venue.ownerId as never)
+      }))
     };
   }
 
@@ -151,10 +211,8 @@ export class VenueProviderService {
       throw new AppError(404, 'Venue not found');
     }
 
-    const venueObject = venue.toObject();
-
     return {
-      ...venueObject,
+      ...serializeVenue(venue),
       provider: buildPublicProviderInfo(venue.ownerId as never)
     };
   }
@@ -177,6 +235,7 @@ export class VenueProviderService {
   }
 
   static async update(ownerId: string, venueId: string, payload: UpdateVenuePatchPayload) {
+    await this.ensureSubscribedVenueProvider(ownerId);
     const venue = await this.getById(ownerId, venueId);
     const normalizedPayload = normalizeCurrency(payload);
 
@@ -224,8 +283,8 @@ export class VenueProviderService {
       };
     }
 
-    if (normalizedPayload.availabilityOverrides) {
-      venue.availabilityOverrides = normalizedPayload.availabilityOverrides;
+    if (normalizedPayload.availabilityCalendar) {
+      venue.availabilityCalendar = normalizeAvailabilityEntries(normalizedPayload.availabilityCalendar);
     }
 
     venue.publishStatus = 'pending';
@@ -233,7 +292,54 @@ export class VenueProviderService {
     venue.approvedAt = undefined;
 
     await venue.save();
-    return venue;
+    return serializeVenue(venue);
+  }
+
+  static async getAvailability(ownerId: string, venueId: string, month?: string) {
+    const venue = await this.getById(ownerId, venueId);
+    const range = buildCalendarWindow(month);
+    const manualCalendar = filterCalendarToWindow(
+      availabilityEntriesToCalendar(venue.availabilityCalendar),
+      range
+    );
+    const bookingCalendar = await buildConfirmedBookingCalendar(venueId, range);
+
+    return {
+      range,
+      availability: {
+        ...manualCalendar,
+        ...Object.fromEntries(
+          Object.entries(bookingCalendar).map(([date, hours]) => [
+            date,
+            [...new Set([...(manualCalendar[date] ?? []), ...hours])].sort((left, right) => left - right)
+          ])
+        )
+      }
+    };
+  }
+
+  static async blockAvailability(ownerId: string, venueId: string, date: string, hours: number[]) {
+    await this.ensureSubscribedVenueProvider(ownerId);
+    const venue = await this.getById(ownerId, venueId);
+    venue.availabilityCalendar = upsertAvailabilityEntry(venue.availabilityCalendar, date, hours);
+    await venue.save();
+
+    return {
+      date,
+      hours: availabilityEntriesToCalendar(venue.availabilityCalendar)[date] ?? []
+    };
+  }
+
+  static async unblockAvailability(ownerId: string, venueId: string, date: string, hours: number[]) {
+    await this.ensureSubscribedVenueProvider(ownerId);
+    const venue = await this.getById(ownerId, venueId);
+    venue.availabilityCalendar = removeAvailabilityEntryHours(venue.availabilityCalendar, date, hours);
+    await venue.save();
+
+    return {
+      date,
+      hours: availabilityEntriesToCalendar(venue.availabilityCalendar)[date] ?? []
+    };
   }
 
   static async delete(ownerId: string, venueId: string) {

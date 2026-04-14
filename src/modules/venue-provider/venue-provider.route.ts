@@ -9,6 +9,8 @@ import {
   createVenueSchema,
   ownVenuesQuerySchema,
   updateVenueSchema,
+  updateVenueAvailabilitySchema,
+  venueAvailabilityQuerySchema,
   venueIdParamSchema
 } from './venue-provider.schema';
 
@@ -373,6 +375,24 @@ router.get('/venues', VenueProviderController.getVenues);
 router.get('/venues/:venueId', validate(venueIdParamSchema), VenueProviderController.getVenueById);
 
 router.use(protect, authorize('venue_provider'));
+
+router.get(
+  '/venues/:venueId/availability',
+  validate(venueAvailabilityQuerySchema),
+  VenueProviderController.getAvailability
+);
+
+router.patch(
+  '/venues/:venueId/availability',
+  validate(updateVenueAvailabilitySchema),
+  VenueProviderController.blockAvailability
+);
+
+router.delete(
+  '/venues/:venueId/availability',
+  validate(updateVenueAvailabilitySchema),
+  VenueProviderController.unblockAvailability
+);
 
 /**
  * @openapi

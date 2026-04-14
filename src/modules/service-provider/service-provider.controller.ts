@@ -112,4 +112,50 @@ export class ServiceProviderController {
       message: 'Service deleted successfully'
     });
   });
+
+  static getAvailability = catchAsync(async (req: Request, res: Response) => {
+    const userId = getUserId(req);
+    const availability = await ServiceProviderService.getAvailability(
+      userId,
+      req.params.serviceId,
+      typeof req.query.month === 'string' ? req.query.month : undefined
+    );
+
+    return res.status(200).json({
+      success: true,
+      data: availability
+    });
+  });
+
+  static blockAvailability = catchAsync(async (req: Request, res: Response) => {
+    const userId = getUserId(req);
+    const result = await ServiceProviderService.blockAvailability(
+      userId,
+      req.params.serviceId,
+      req.body.date,
+      req.body.hours
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: 'Availability updated successfully',
+      data: result
+    });
+  });
+
+  static unblockAvailability = catchAsync(async (req: Request, res: Response) => {
+    const userId = getUserId(req);
+    const result = await ServiceProviderService.unblockAvailability(
+      userId,
+      req.params.serviceId,
+      req.body.date,
+      req.body.hours
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: 'Availability updated successfully',
+      data: result
+    });
+  });
 }

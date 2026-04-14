@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { Document, Model, Schema, model, models } from 'mongoose';
+import { AvailabilityEntry } from '../../common/utils/availability';
 
 export const USER_ROLES = [
   'super_admin',
@@ -206,6 +207,7 @@ export interface IUser extends Document {
   profileImage?: IUserProfileImage;
   coverImage?: IUserCoverImage;
   onboarding?: IProviderOnboarding;
+  availabilityCalendar: AvailabilityEntry[];
   comparePassword(candidate: string): Promise<boolean>;
 }
 
@@ -587,6 +589,22 @@ const userCoverImageSchema = new Schema<IUserCoverImage>(
   { _id: false }
 );
 
+const availabilityEntrySchema = new Schema<AvailabilityEntry>(
+  {
+    date: {
+      type: String,
+      required: true,
+      match: /^\d{4}-\d{2}-\d{2}$/
+    },
+    hours: {
+      type: [Number],
+      required: true,
+      default: []
+    }
+  },
+  { _id: false }
+);
+
 const userSchema = new Schema<IUser>(
   {
     fullName: {
@@ -643,6 +661,10 @@ const userSchema = new Schema<IUser>(
     },
     onboarding: {
       type: providerOnboardingSchema
+    },
+    availabilityCalendar: {
+      type: [availabilityEntrySchema],
+      default: []
     }
   },
   {

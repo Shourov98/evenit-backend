@@ -793,6 +793,13 @@ router.patch(
   BookingController.approveServiceProviderBooking
 );
 
+router.patch(
+  '/services/:bookingId/accept',
+  authorize('service_provider'),
+  validate(bookingIdParamSchema),
+  BookingController.approveServiceProviderBooking
+);
+
 /**
  * @openapi
  * /api/v1/bookings/venue-provider/{bookingId}/approve:
@@ -823,6 +830,13 @@ router.patch(
   BookingController.approveVenueProviderBooking
 );
 
+router.patch(
+  '/venues/:bookingId/accept',
+  authorize('venue_provider'),
+  validate(bookingIdParamSchema),
+  BookingController.approveVenueProviderBooking
+);
+
 /**
  * @openapi
  * /api/v1/bookings/event-planner/{bookingId}/approve:
@@ -848,6 +862,13 @@ router.patch(
  */
 router.patch(
   '/event-planner/:bookingId/approve',
+  authorize('event_planner'),
+  validate(bookingIdParamSchema),
+  BookingController.approveEventPlannerBooking
+);
+
+router.patch(
+  '/event-planners/:bookingId/accept',
   authorize('event_planner'),
   validate(bookingIdParamSchema),
   BookingController.approveEventPlannerBooking
@@ -931,6 +952,13 @@ router.patch(
   BookingController.rejectServiceProviderBooking
 );
 
+router.patch(
+  '/services/:bookingId/reject',
+  authorize('service_provider'),
+  validate(rejectBookingSchema),
+  BookingController.rejectServiceProviderBooking
+);
+
 /**
  * @openapi
  * /api/v1/bookings/venue-provider/{bookingId}/reject:
@@ -967,6 +995,13 @@ router.patch(
   BookingController.rejectVenueProviderBooking
 );
 
+router.patch(
+  '/venues/:bookingId/reject',
+  authorize('venue_provider'),
+  validate(rejectBookingSchema),
+  BookingController.rejectVenueProviderBooking
+);
+
 /**
  * @openapi
  * /api/v1/bookings/event-planner/{bookingId}/reject:
@@ -998,6 +1033,13 @@ router.patch(
  */
 router.patch(
   '/event-planner/:bookingId/reject',
+  authorize('event_planner'),
+  validate(rejectBookingSchema),
+  BookingController.rejectEventPlannerBooking
+);
+
+router.patch(
+  '/event-planners/:bookingId/reject',
   authorize('event_planner'),
   validate(rejectBookingSchema),
   BookingController.rejectEventPlannerBooking

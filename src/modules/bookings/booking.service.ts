@@ -1,5 +1,10 @@
 import { isValidObjectId, Types } from 'mongoose';
 import { AppError } from '../../common/errors/AppError';
+import {
+  availabilityEntriesToCalendar,
+  AvailabilityEntry,
+  normalizeHours
+} from '../../common/utils/availability';
 import { PaginationOptions, paginateModel } from '../../common/utils/pagination';
 import { env } from '../../config/env';
 import { hydrateUserSubscription, UserModel } from '../auth/auth.model';
@@ -11,8 +16,7 @@ type CreateBookingPayload = {
   targetType: 'venue' | 'service' | 'event';
   targetId: string;
   bookingDate: string;
-  timeSlots: string[];
-  durationHours?: number;
+  hours: number[];
   location?: string;
   specialInstructions?: string;
 };
@@ -27,9 +31,7 @@ const ensureObjectId = (id: string, label: string): void => {
   }
 };
 
-const sortTimeSlots = (timeSlots: string[]): string[] => [...timeSlots].sort((a, b) => a.localeCompare(b));
-
-const hasOverlap = (left: string[], right: string[]): boolean => {
+const hasOverlap = (left: number[], right: number[]): boolean => {
   const rightSet = new Set(right);
   return left.some((slot) => rightSet.has(slot));
 };
@@ -80,8 +82,6 @@ const applyDiscount = (
   return Math.max(0, subtotal - discount.value);
 };
 
-const parseTimeSlotHour = (timeSlot: string): number => Number.parseInt(timeSlot.split(':')[0] || '', 10);
-
 const getCurrentUtcDate = (): string => new Date().toISOString().slice(0, 10);
 
 export const isPastBookingDate = (bookingDate: string): boolean => bookingDate < getCurrentUtcDate();
@@ -90,35 +90,21 @@ export const buildReservedSlots = (
   targetType: CreateBookingPayload['targetType'],
   targetId: string,
   bookingDate: string,
-  timeSlots: string[]
-): string[] => timeSlots.map((timeSlot) => `${targetType}:${targetId}:${bookingDate}:${timeSlot}`);
+  hours: number[]
+): string[] => hours.map((hour) => `${targetType}:${targetId}:${bookingDate}:${hour}`);
 
-const ensureVenueAvailability = (venue: IVenue, bookingDate: string, timeSlots: string[]): void => {
-  const override = venue.availabilityOverrides.find((item) => item.date === bookingDate);
-  if (!override) {
-    return;
-  }
+const ensureHoursAvailable = (
+  calendarEntries: AvailabilityEntry[] | undefined,
+  bookingDate: string,
+  hours: number[],
+  label: string
+): void => {
+  const calendar = availabilityEntriesToCalendar(calendarEntries);
+  const blockedHours = calendar[bookingDate] ?? [];
 
-  const selectedHours = timeSlots.map(parseTimeSlotHour);
-  for (const hour of selectedHours) {
-    const slot = override.slots.find((item) => item.hour === hour);
-    if (slot && slot.status !== 'available') {
-      throw new AppError(409, `Venue is ${slot.status} on ${bookingDate} at ${String(hour).padStart(2, '0')}:00`);
-    }
-  }
-};
-
-const ensureServiceAvailability = (service: IServiceProviderService, bookingDate: string, timeSlots: string[]): void => {
-  const override = service.availabilityOverrides.find((item) => item.date === bookingDate);
-  if (!override) {
-    return;
-  }
-
-  const selectedHours = timeSlots.map(parseTimeSlotHour);
-  for (const hour of selectedHours) {
-    const slot = override.slots.find((item) => item.hour === hour);
-    if (slot && slot.status !== 'available') {
-      throw new AppError(409, `Service is ${slot.status} on ${bookingDate} at ${String(hour).padStart(2, '0')}:00`);
+  for (const hour of hours) {
+    if (blockedHours.includes(hour)) {
+      throw new AppError(409, `${label} is booked on ${bookingDate} at ${String(hour).padStart(2, '0')}:00`);
     }
   }
 };
@@ -134,6 +120,87 @@ export class BookingService {
     }
 
     return { status };
+  }
+
+  private static async ensureSubscribedUser(userId: string, role: 'customer' | 'event_planner' | 'service_provider' | 'venue_provider') {
+    const user = await UserModel.findById(userId);
+
+    if (!user || user.role !== role) {
+      throw new AppError(403, 'Access denied for this booking action');
+    }
+
+    const hydratedSubscription = hydrateUserSubscription(user.role, user.subscription);
+    if (JSON.stringify(user.subscription) !== JSON.stringify(hydratedSubscription)) {
+      user.subscription = hydratedSubscription;
+      await user.save();
+    }
+
+    if (user.subscription.status !== 'subscribed') {
+      throw new AppError(403, 'A subscribed account is required for this action');
+    }
+
+    return user;
+  }
+
+  private static async getTargetForCreate(payload: CreateBookingPayload) {
+    if (payload.targetType === 'venue') {
+      const venue = await VenueProviderVenueModel.findOne({
+        _id: payload.targetId,
+        isDeleted: false,
+        publishStatus: 'published'
+      });
+
+      if (!venue) {
+        throw new AppError(404, 'Venue not found');
+      }
+
+      ensureHoursAvailable(venue.availabilityCalendar, payload.bookingDate, payload.hours, 'Venue');
+      return {
+        providerId: venue.ownerId,
+        subtotal: venue.pricing.basePrice * payload.hours.length,
+        currency: venue.pricing.currency,
+        target: venue
+      };
+    }
+
+    if (payload.targetType === 'service') {
+      const service = await ServiceProviderServiceModel.findOne({
+        _id: payload.targetId,
+        isDeleted: false,
+        publishStatus: 'published'
+      });
+
+      if (!service) {
+        throw new AppError(404, 'Service not found');
+      }
+
+      ensureHoursAvailable(service.availabilityCalendar, payload.bookingDate, payload.hours, 'Service');
+      return {
+        providerId: service.ownerId,
+        subtotal: applyDiscount(computeServiceSubtotal(service, payload.hours.length), service.pricing.discount),
+        currency: service.pricing.currency,
+        target: service
+      };
+    }
+
+    const eventPlanner = await UserModel.findOne({
+      _id: payload.targetId,
+      role: 'event_planner',
+      isEmailVerified: true,
+      'onboarding.eventProvider': { $exists: true }
+    });
+
+    if (!eventPlanner) {
+      throw new AppError(404, 'Event planner not found');
+    }
+
+    ensureHoursAvailable(eventPlanner.availabilityCalendar, payload.bookingDate, payload.hours, 'Event planner');
+    return {
+      providerId: eventPlanner._id as Types.ObjectId,
+      subtotal: 0,
+      currency: eventPlanner.subscription.payment.currency,
+      target: eventPlanner
+    };
   }
 
   static async createForTarget(
@@ -157,112 +224,50 @@ export class BookingService {
       throw new AppError(400, 'bookingDate cannot be in the past');
     }
 
-    const customer = await UserModel.findById(customerId);
-    if (!customer || customer.role !== 'customer') {
-      throw new AppError(403, 'Only customers can create bookings');
-    }
-    const hydratedSubscription = hydrateUserSubscription(customer.role, customer.subscription);
-    if (JSON.stringify(customer.subscription) !== JSON.stringify(hydratedSubscription)) {
-      customer.subscription = hydratedSubscription;
-      await customer.save();
-    }
-    if (customer.subscription.status !== 'subscribed') {
-      throw new AppError(403, 'A subscribed account is required to create a booking');
-    }
+    const customer = await this.ensureSubscribedUser(customerId, 'customer');
+    const hours = normalizeHours(payload.hours);
+    const durationHours = hours.length;
 
-    const timeSlots = sortTimeSlots(payload.timeSlots);
-    const durationHours = payload.durationHours ?? timeSlots.length;
-
-    if (durationHours !== timeSlots.length) {
-      throw new AppError(400, 'durationHours must match the number of selected time slots');
-    }
-
-    let providerId: Types.ObjectId;
-    let subtotal = 0;
-    let currency = customer.subscription.payment.currency;
-
-    if (payload.targetType === 'venue') {
-      const venue = await VenueProviderVenueModel.findOne({
-        _id: payload.targetId,
-        isDeleted: false,
-        publishStatus: 'published'
-      });
-
-      if (!venue) {
-        throw new AppError(404, 'Venue not found');
-      }
-
-      ensureVenueAvailability(venue, payload.bookingDate, timeSlots);
-      providerId = venue.ownerId;
-      subtotal = venue.pricing.basePrice * durationHours;
-      currency = venue.pricing.currency;
-    } else if (payload.targetType === 'service') {
-      const service = await ServiceProviderServiceModel.findOne({
-        _id: payload.targetId,
-        isDeleted: false,
-        publishStatus: 'published'
-      });
-
-      if (!service) {
-        throw new AppError(404, 'Service not found');
-      }
-
-      ensureServiceAvailability(service, payload.bookingDate, timeSlots);
-      providerId = service.ownerId;
-      subtotal = applyDiscount(computeServiceSubtotal(service, durationHours), service.pricing.discount);
-      currency = service.pricing.currency;
-    } else {
-      const eventPlanner = await UserModel.findOne({
-        _id: payload.targetId,
-        role: 'event_planner',
-        isEmailVerified: true,
-        'onboarding.eventProvider': { $exists: true }
-      });
-
-      if (!eventPlanner) {
-        throw new AppError(404, 'Event planner not found');
-      }
-
-      providerId = eventPlanner._id as Types.ObjectId;
-      subtotal = 0;
-      currency = customer.subscription.payment.currency;
-    }
+    const targetData = await this.getTargetForCreate({
+      ...payload,
+      hours
+    });
 
     const conflictingBookings = await BookingModel.find({
       targetType: payload.targetType,
       targetId: payload.targetId,
       bookingDate: payload.bookingDate,
       status: { $in: activeBookingStatuses }
-    }).select('timeSlots');
+    }).select('hours');
 
-    const hasConflictingBooking = conflictingBookings.some((booking) => hasOverlap(booking.timeSlots, timeSlots));
+    const hasConflictingBooking = conflictingBookings.some((booking) => hasOverlap(booking.hours, hours));
     if (hasConflictingBooking) {
-      throw new AppError(409, 'One or more selected time slots are already booked');
+      throw new AppError(409, 'One or more selected hours are already booked');
     }
 
-    const platformFeeAmount = Number(((subtotal * getPlatformFeePercent()) / 100).toFixed(2));
+    const platformFeeAmount = Number(((targetData.subtotal * getPlatformFeePercent()) / 100).toFixed(2));
     const taxAmount = 0;
-    const totalAmount = Number((subtotal + taxAmount).toFixed(2));
+    const totalAmount = Number((targetData.subtotal + taxAmount).toFixed(2));
 
     try {
       return await BookingModel.create({
         customerId,
-        providerId,
+        providerId: targetData.providerId,
         targetType: payload.targetType,
         targetId: payload.targetId,
-        reservedSlots: buildReservedSlots(payload.targetType, payload.targetId, payload.bookingDate, timeSlots),
+        reservedSlots: buildReservedSlots(payload.targetType, payload.targetId, payload.bookingDate, hours),
         bookingDate: payload.bookingDate,
-        timeSlots,
+        hours,
         durationHours,
         location: payload.location,
         specialInstructions: payload.specialInstructions,
         pricing: {
-          unitAmount: Number((subtotal / durationHours).toFixed(2)),
-          subtotal,
+          unitAmount: Number((targetData.subtotal / durationHours || 0).toFixed(2)),
+          subtotal: targetData.subtotal,
           taxAmount,
           platformFeeAmount,
           totalAmount,
-          currency: currency.toUpperCase()
+          currency: targetData.currency.toUpperCase()
         },
         status: 'pending',
         payment: {
@@ -272,7 +277,7 @@ export class BookingService {
     } catch (error) {
       const duplicateKeyError = error as { code?: number };
       if (duplicateKeyError?.code === 11000) {
-        throw new AppError(409, 'One or more selected time slots are already booked');
+        throw new AppError(409, 'One or more selected hours are already booked');
       }
 
       throw error;
@@ -321,14 +326,38 @@ export class BookingService {
     return booking;
   }
 
-  static async approve(bookingId: string, providerId: string) {
-    const booking = await this.getById(bookingId, providerId, 'venue_provider');
+  static async approve(bookingId: string, providerId: string, role: 'venue_provider' | 'service_provider' | 'event_planner') {
+    await this.ensureSubscribedUser(providerId, role);
+    const booking = await this.getById(bookingId, providerId, role);
     if (String(booking.providerId) !== providerId) {
       throw new AppError(403, 'Only the provider can approve this booking');
     }
 
     if (booking.status !== 'pending') {
       throw new AppError(400, 'Only pending bookings can be approved');
+    }
+
+    const conflictingBookings = await BookingModel.find({
+      _id: { $ne: booking._id },
+      targetType: booking.targetType,
+      targetId: booking.targetId,
+      bookingDate: booking.bookingDate,
+      status: { $in: activeBookingStatuses }
+    }).select('hours');
+
+    if (conflictingBookings.some((item) => hasOverlap(item.hours, booking.hours))) {
+      throw new AppError(409, 'One or more selected hours are already booked');
+    }
+
+    if (booking.targetType === 'venue') {
+      const venue = await VenueProviderVenueModel.findById(booking.targetId).select('availabilityCalendar');
+      ensureHoursAvailable(venue?.availabilityCalendar, booking.bookingDate, booking.hours, 'Venue');
+    } else if (booking.targetType === 'service') {
+      const service = await ServiceProviderServiceModel.findById(booking.targetId).select('availabilityCalendar');
+      ensureHoursAvailable(service?.availabilityCalendar, booking.bookingDate, booking.hours, 'Service');
+    } else {
+      const eventPlanner = await UserModel.findById(booking.targetId).select('availabilityCalendar');
+      ensureHoursAvailable(eventPlanner?.availabilityCalendar, booking.bookingDate, booking.hours, 'Event planner');
     }
 
     booking.status = 'confirmed';
@@ -342,8 +371,9 @@ export class BookingService {
     return booking;
   }
 
-  static async reject(bookingId: string, providerId: string, reason?: string) {
-    const booking = await this.getById(bookingId, providerId, 'venue_provider');
+  static async reject(bookingId: string, providerId: string, role: 'venue_provider' | 'service_provider' | 'event_planner', reason?: string) {
+    await this.ensureSubscribedUser(providerId, role);
+    const booking = await this.getById(bookingId, providerId, role);
     if (String(booking.providerId) !== providerId) {
       throw new AppError(403, 'Only the provider can reject this booking');
     }

@@ -1,23 +1,11 @@
 import { Document, Model, Schema, Types, model, models } from 'mongoose';
-
-const SERVICE_AVAILABILITY_STATUSES = ['available', 'pending', 'booked'] as const;
-export type ServiceAvailabilityStatus = (typeof SERVICE_AVAILABILITY_STATUSES)[number];
+import { AvailabilityEntry } from '../../common/utils/availability';
 
 const DISCOUNT_TYPES = ['percentage', 'fixed'] as const;
 export type ServiceDiscountType = (typeof DISCOUNT_TYPES)[number];
 
 const PRICING_TYPES = ['fixed', 'hourly', 'daily', 'package'] as const;
 export type ServicePricingType = (typeof PRICING_TYPES)[number];
-
-export interface IServiceAvailabilitySlot {
-  hour: number;
-  status: ServiceAvailabilityStatus;
-}
-
-export interface IServiceAvailabilityOverride {
-  date: string;
-  slots: IServiceAvailabilitySlot[];
-}
 
 export interface IServiceReview {
   reviewerName: string;
@@ -53,7 +41,7 @@ export interface IServiceProviderService extends Document {
     galleryImages: string[];
     videoUrl?: string;
   };
-  availabilityOverrides: IServiceAvailabilityOverride[];
+  availabilityCalendar: AvailabilityEntry[];
   publishStatus: 'pending' | 'published' | 'rejected';
   approvedBy?: {
     name: string;
@@ -66,32 +54,15 @@ export interface IServiceProviderService extends Document {
   updatedAt: Date;
 }
 
-const serviceAvailabilitySlotSchema = new Schema<IServiceAvailabilitySlot>(
-  {
-    hour: {
-      type: Number,
-      required: true,
-      min: 8,
-      max: 23
-    },
-    status: {
-      type: String,
-      enum: SERVICE_AVAILABILITY_STATUSES,
-      required: true
-    }
-  },
-  { _id: false }
-);
-
-const serviceAvailabilityOverrideSchema = new Schema<IServiceAvailabilityOverride>(
+const serviceAvailabilityEntrySchema = new Schema<AvailabilityEntry>(
   {
     date: {
       type: String,
       required: true,
       match: /^\d{4}-\d{2}-\d{2}$/
     },
-    slots: {
-      type: [serviceAvailabilitySlotSchema],
+    hours: {
+      type: [Number],
       default: []
     }
   },
@@ -149,8 +120,8 @@ const serviceProviderServiceSchema = new Schema<IServiceProviderService>(
       },
       videoUrl: { type: String, trim: true }
     },
-    availabilityOverrides: {
-      type: [serviceAvailabilityOverrideSchema],
+    availabilityCalendar: {
+      type: [serviceAvailabilityEntrySchema],
       default: []
     },
     publishStatus: {

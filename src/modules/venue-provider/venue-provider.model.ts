@@ -1,20 +1,8 @@
 import { Document, Model, Schema, Types, model, models } from 'mongoose';
-
-const VENUE_AVAILABILITY_STATUSES = ['available', 'pending', 'booked'] as const;
-export type VenueAvailabilityStatus = (typeof VENUE_AVAILABILITY_STATUSES)[number];
+import { AvailabilityEntry } from '../../common/utils/availability';
 
 const DISCOUNT_TYPES = ['percentage', 'fixed'] as const;
 export type DiscountType = (typeof DISCOUNT_TYPES)[number];
-
-export interface IAvailabilitySlot {
-  hour: number;
-  status: VenueAvailabilityStatus;
-}
-
-export interface IAvailabilityOverride {
-  date: string;
-  slots: IAvailabilitySlot[];
-}
 
 export interface IVenueReview {
   reviewerName: string;
@@ -50,7 +38,7 @@ export interface IVenue extends Document {
     galleryImages: string[];
     videoUrl?: string;
   };
-  availabilityOverrides: IAvailabilityOverride[];
+  availabilityCalendar: AvailabilityEntry[];
   publishStatus: 'pending' | 'published' | 'rejected';
   approvedBy?: {
     name: string;
@@ -63,32 +51,15 @@ export interface IVenue extends Document {
   updatedAt: Date;
 }
 
-const availabilitySlotSchema = new Schema<IAvailabilitySlot>(
-  {
-    hour: {
-      type: Number,
-      required: true,
-      min: 8,
-      max: 23
-    },
-    status: {
-      type: String,
-      enum: VENUE_AVAILABILITY_STATUSES,
-      required: true
-    }
-  },
-  { _id: false }
-);
-
-const availabilityOverrideSchema = new Schema<IAvailabilityOverride>(
+const availabilityEntrySchema = new Schema<AvailabilityEntry>(
   {
     date: {
       type: String,
       required: true,
       match: /^\d{4}-\d{2}-\d{2}$/
     },
-    slots: {
-      type: [availabilitySlotSchema],
+    hours: {
+      type: [Number],
       default: []
     }
   },
@@ -146,8 +117,8 @@ const venueSchema = new Schema<IVenue>(
       },
       videoUrl: { type: String, trim: true }
     },
-    availabilityOverrides: {
-      type: [availabilityOverrideSchema],
+    availabilityCalendar: {
+      type: [availabilityEntrySchema],
       default: []
     },
     publishStatus: {
