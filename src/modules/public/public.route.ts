@@ -9,6 +9,17 @@ import {
 
 const router = Router();
 
+/**
+ * @openapi
+ * /api/v1/public/stripe-config:
+ *   get:
+ *     tags: [Public]
+ *     summary: Get public Stripe client configuration
+ *     description: Returns the publishable key required by the frontend subscription/payment UI.
+ *     responses:
+ *       200:
+ *         description: Stripe client configuration returned
+ */
 router.get('/stripe-config', PublicController.getStripeConfig);
 
 /**
@@ -70,13 +81,10 @@ router.get('/stripe-config', PublicController.getStripeConfig);
  *               - https://cdn.example.com/service/image-1.jpg
  *               - https://cdn.example.com/service/image-2.jpg
  *             videoUrl: https://youtube.com/watch?v=abc123
- *           availabilityOverrides:
- *             - date: 2026-04-12
- *               slots:
- *                 - hour: 10
- *                   status: booked
- *                 - hour: 11
- *                   status: booked
+ *           availability:
+ *             2026-04-12:
+ *               - 10
+ *               - 11
  *           publishStatus: published
  *           approvedBy:
  *             name: Admin Example
@@ -141,13 +149,10 @@ router.get('/stripe-config', PublicController.getStripeConfig);
  *               - https://cdn.example.com/venue/image-1.jpg
  *               - https://cdn.example.com/venue/image-2.jpg
  *             videoUrl: https://youtube.com/watch?v=venue123
- *           availabilityOverrides:
- *             - date: 2026-04-18
- *               slots:
- *                 - hour: 14
- *                   status: booked
- *                 - hour: 15
- *                   status: booked
+ *           availability:
+ *             2026-04-18:
+ *               - 14
+ *               - 15
  *           publishStatus: published
  *           approvedBy:
  *             name: Admin Example
@@ -285,7 +290,7 @@ router.get('/stripe-config', PublicController.getStripeConfig);
  *                   media:
  *                     galleryImages:
  *                       - https://cdn.example.com/service/image-1.jpg
- *                   availabilityOverrides: []
+ *                   availability: {}
  *                   publishStatus: published
  *                   approvedBy:
  *                     name: Admin Example
@@ -409,7 +414,7 @@ router.get(
  *                   media:
  *                     galleryImages:
  *                       - https://cdn.example.com/venue/image-1.jpg
- *                   availabilityOverrides: []
+ *                   availability: {}
  *                   publishStatus: published
  *                   approvedBy:
  *                     name: Admin Example

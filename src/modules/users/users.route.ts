@@ -65,6 +65,27 @@ const router = Router();
  *               format: date-time
  *
  * @openapi
+ * /api/v1/users:
+ *   post:
+ *     tags: [Users]
+ *     summary: Create a user document
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       201:
+ *         description: User created successfully
+ *   get:
+ *     tags: [Users]
+ *     summary: Get all users
+ *     responses:
+ *       200:
+ *         description: User list returned
+ *
+ * @openapi
  * /api/v1/users/{userId}/profile:
  *   get:
  *     tags: [Users]

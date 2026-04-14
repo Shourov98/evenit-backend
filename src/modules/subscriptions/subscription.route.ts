@@ -141,6 +141,38 @@ router.use(protect);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/SubscriptionStatusResponse'
+ *
+ * @openapi
+ * /api/v1/subscriptions/stop-recurring:
+ *   post:
+ *     tags: [Subscriptions]
+ *     summary: Stop recurring billing at the end of the current period
+ *     description: Marks the authenticated user's Stripe subscription to cancel at period end. Requires an active Stripe subscription.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Recurring billing stop scheduled successfully
+ *       400:
+ *         description: No active Stripe subscription or subscription already cannot be changed
+ *       401:
+ *         description: Unauthorized
+ *
+ * @openapi
+ * /api/v1/subscriptions/resume-recurring:
+ *   post:
+ *     tags: [Subscriptions]
+ *     summary: Resume recurring billing for the current subscription
+ *     description: Removes the cancel-at-period-end flag for the authenticated user's active Stripe subscription.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Recurring billing resumed successfully
+ *       400:
+ *         description: Subscription cannot be resumed directly
+ *       401:
+ *         description: Unauthorized
  */
 router.post('/create', SubscriptionController.createSubscription);
 router.post('/stop-recurring', SubscriptionController.stopRecurring);

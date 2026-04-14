@@ -10,6 +10,87 @@ import {
 
 const router = Router();
 
+/**
+ * @openapi
+ * /api/v1/event-planners/me/availability:
+ *   get:
+ *     tags: [EventPlanner]
+ *     summary: Get the authenticated event planner availability calendar
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: month
+ *         schema:
+ *           type: string
+ *           pattern: '^\d{4}-\d{2}$'
+ *           example: 2026-04
+ *     responses:
+ *       200:
+ *         description: Event planner availability returned
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Only event planners can access this endpoint
+ *   patch:
+ *     tags: [EventPlanner]
+ *     summary: Block event planner availability hours
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [date, hours]
+ *             properties:
+ *               date:
+ *                 type: string
+ *                 format: date
+ *                 example: 2026-04-18
+ *               hours:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *                 example: [10, 11, 12]
+ *     responses:
+ *       200:
+ *         description: Availability blocked successfully
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Only event planners can access this endpoint
+ *   delete:
+ *     tags: [EventPlanner]
+ *     summary: Unblock event planner availability hours
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [date, hours]
+ *             properties:
+ *               date:
+ *                 type: string
+ *                 format: date
+ *                 example: 2026-04-18
+ *               hours:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *                 example: [10, 11]
+ *     responses:
+ *       200:
+ *         description: Availability unblocked successfully
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Only event planners can access this endpoint
+ */
 router.get(
   '/me/availability',
   protect,
@@ -134,6 +215,26 @@ router.delete(
  *               $ref: '#/components/schemas/EventPlannerListResponse'
  */
 router.get('/', EventPlannerController.getAll);
+
+/**
+ * @openapi
+ * /api/v1/event-planners/{eventPlannerId}:
+ *   get:
+ *     tags: [EventPlanner]
+ *     summary: Get one event planner by id
+ *     description: Returns one verified public event planner profile.
+ *     parameters:
+ *       - in: path
+ *         name: eventPlannerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Event planner details
+ *       404:
+ *         description: Event planner not found
+ */
 router.get('/:eventPlannerId', EventPlannerController.getById);
 
 export const eventPlannerRouter = router;

@@ -124,6 +124,24 @@
           }
         },
         {
+          "name": "Get Stripe Config",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/public/stripe-config",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "public",
+                "stripe-config"
+              ]
+            }
+          }
+        },
+        {
           "name": "Get Published Services",
           "request": {
             "method": "GET",
@@ -892,7 +910,7 @@
                   }
                 },
                 "url": {
-                  "raw": "{{baseUrl}}/api/v1/auth/profile",
+                  "raw": "{{baseUrl}}/api/v1/auth/profile/customer",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -900,7 +918,8 @@
                     "api",
                     "v1",
                     "auth",
-                    "profile"
+                    "profile",
+                    "customer"
                   ]
                 }
               }
@@ -1350,6 +1369,30 @@
           "name": "Subscriptions",
           "item": [
             {
+              "name": "Create Subscription",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{customerToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/subscriptions/create",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "subscriptions",
+                    "create"
+                  ]
+                }
+              }
+            },
+            {
               "name": "Get Subscription Status",
               "request": {
                 "method": "GET",
@@ -1393,6 +1436,54 @@
                     "v1",
                     "subscriptions",
                     "payment-link"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Stop Recurring Subscription",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{customerToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/subscriptions/stop-recurring",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "subscriptions",
+                    "stop-recurring"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Resume Recurring Subscription",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{customerToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/subscriptions/resume-recurring",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "subscriptions",
+                    "resume-recurring"
                   ]
                 }
               }
@@ -1723,7 +1814,7 @@
                   }
                 },
                 "url": {
-                  "raw": "{{baseUrl}}/api/v1/auth/profile",
+                  "raw": "{{baseUrl}}/api/v1/auth/profile/service-provider",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -1731,7 +1822,8 @@
                     "api",
                     "v1",
                     "auth",
-                    "profile"
+                    "profile",
+                    "service-provider"
                   ]
                 }
               }
@@ -2057,7 +2149,7 @@
                     {
                       "key": "payload",
                       "type": "text",
-                      "value": "{\n  \"information\": {\n    \"serviceName\": \"Premium Catering\",\n    \"category\": \"Catering\",\n    \"description\": \"Corporate and wedding catering\",\n    \"serviceArea\": [\n      \"Dhaka\",\n      \"Gazipur\"\n    ],\n    \"tags\": [\n      \"wedding\",\n      \"corporate\"\n    ]\n  },\n  \"pricing\": {\n    \"amount\": 50000,\n    \"pricingType\": \"package\",\n    \"currency\": \"BDT\",\n    \"discount\": {\n      \"type\": \"percentage\",\n      \"value\": 10\n    }\n  },\n  \"settings\": {\n    \"amenities\": {\n      \"deliveryIncluded\": true,\n      \"setupIncluded\": true,\n      \"staffIncluded\": false\n    },\n    \"capacity\": 300\n  },\n  \"media\": {\n    \"galleryImages\": [],\n    \"videoUrl\": \"https://youtube.com/watch?v=abc123\"\n  },\n  \"availabilityOverrides\": [\n    {\n      \"date\": \"2026-04-12\",\n      \"slots\": [\n        {\n          \"hour\": 10,\n          \"status\": \"booked\"\n        },\n        {\n          \"hour\": 11,\n          \"status\": \"booked\"\n        }\n      ]\n    }\n  ]\n}",
+                      "value": "{\n  \"information\": {\n    \"serviceName\": \"Premium Catering\",\n    \"category\": \"Catering\",\n    \"description\": \"Corporate and wedding catering\",\n    \"serviceArea\": [\n      \"Dhaka\",\n      \"Gazipur\"\n    ],\n    \"tags\": [\n      \"wedding\",\n      \"corporate\"\n    ]\n  },\n  \"pricing\": {\n    \"amount\": 50000,\n    \"pricingType\": \"package\",\n    \"currency\": \"BDT\",\n    \"discount\": {\n      \"type\": \"percentage\",\n      \"value\": 10\n    }\n  },\n  \"settings\": {\n    \"amenities\": {\n      \"deliveryIncluded\": true,\n      \"setupIncluded\": true,\n      \"staffIncluded\": false\n    },\n    \"capacity\": 300\n  },\n  \"media\": {\n    \"galleryImages\": [],\n    \"videoUrl\": \"https://youtube.com/watch?v=abc123\"\n  },\n  \"availabilityCalendar\": [\n    {\n      \"date\": \"2026-04-12\",\n      \"hours\": [\n        10,\n        11\n      ]\n    }\n  ]\n}",
                       "description": "JSON string payload. The backend uploads attached files and appends the returned URLs to media.galleryImages."
                     },
                     {
@@ -2119,7 +2211,7 @@
                     {
                       "key": "payload",
                       "type": "text",
-                      "value": "{\n  \"pricing\": {\n    \"amount\": 45000,\n    \"discount\": {\n      \"type\": \"fixed\",\n      \"value\": 5000\n    }\n  },\n  \"media\": {\n    \"galleryImages\": [],\n    \"videoUrl\": \"https://youtube.com/watch?v=updated-service\"\n  },\n  \"availabilityOverrides\": [\n    {\n      \"date\": \"2026-04-13\",\n      \"slots\": [\n        {\n          \"hour\": 12,\n          \"status\": \"booked\"\n        }\n      ]\n    }\n  ]\n}",
+                      "value": "{\n  \"pricing\": {\n    \"amount\": 45000,\n    \"discount\": {\n      \"type\": \"fixed\",\n      \"value\": 5000\n    }\n  },\n  \"media\": {\n    \"galleryImages\": [],\n    \"videoUrl\": \"https://youtube.com/watch?v=updated-service\"\n  },\n  \"availabilityCalendar\": [\n    {\n      \"date\": \"2026-04-13\",\n      \"hours\": [\n        12\n      ]\n    }\n  ]\n}",
                       "description": "JSON string payload. The backend uploads attached files and appends the returned URLs to media.galleryImages."
                     },
                     {
@@ -2172,6 +2264,116 @@
                     "service-provider",
                     "services",
                     "{{serviceId}}"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Get Service Availability",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{serviceProviderToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/service-provider/services/{{serviceId}}/availability?month=2026-04",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "service-provider",
+                    "services",
+                    "{{serviceId}}",
+                    "availability"
+                  ],
+                  "query": [
+                    {
+                      "key": "month",
+                      "value": "2026-04"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Block Service Availability",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{serviceProviderToken}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"date\": \"2026-04-18\",\n  \"hours\": [\n    10,\n    11\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/service-provider/services/{{serviceId}}/availability",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "service-provider",
+                    "services",
+                    "{{serviceId}}",
+                    "availability"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Unblock Service Availability",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{serviceProviderToken}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"date\": \"2026-04-18\",\n  \"hours\": [\n    10\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/service-provider/services/{{serviceId}}/availability",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "service-provider",
+                    "services",
+                    "{{serviceId}}",
+                    "availability"
                   ]
                 }
               }
@@ -2521,6 +2723,30 @@
           "name": "Subscriptions",
           "item": [
             {
+              "name": "Create Subscription",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{serviceProviderToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/subscriptions/create",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "subscriptions",
+                    "create"
+                  ]
+                }
+              }
+            },
+            {
               "name": "Get Subscription Status",
               "request": {
                 "method": "GET",
@@ -2564,6 +2790,54 @@
                     "v1",
                     "subscriptions",
                     "payment-link"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Stop Recurring Subscription",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{serviceProviderToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/subscriptions/stop-recurring",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "subscriptions",
+                    "stop-recurring"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Resume Recurring Subscription",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{serviceProviderToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/subscriptions/resume-recurring",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "subscriptions",
+                    "resume-recurring"
                   ]
                 }
               }
@@ -2894,7 +3168,7 @@
                   }
                 },
                 "url": {
-                  "raw": "{{baseUrl}}/api/v1/auth/profile",
+                  "raw": "{{baseUrl}}/api/v1/auth/profile/venue-provider",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -2902,7 +3176,8 @@
                     "api",
                     "v1",
                     "auth",
-                    "profile"
+                    "profile",
+                    "venue-provider"
                   ]
                 }
               }
@@ -3228,7 +3503,7 @@
                     {
                       "key": "payload",
                       "type": "text",
-                      "value": "{\n  \"information\": {\n    \"venueName\": \"Royal Hall\",\n    \"venueType\": \"Banquet\",\n    \"description\": \"Large indoor venue\",\n    \"addressLine\": \"Road 12, Dhanmondi\",\n    \"city\": \"Dhaka\",\n    \"area\": \"Dhanmondi\"\n  },\n  \"pricing\": {\n    \"basePrice\": 120000,\n    \"currency\": \"BDT\",\n    \"discount\": {\n      \"type\": \"percentage\",\n      \"value\": 15\n    },\n    \"amenities\": {\n      \"parking\": true,\n      \"airConditioned\": true,\n      \"stage\": true\n    }\n  },\n  \"capacity\": {\n    \"maximumGuests\": 500\n  },\n  \"media\": {\n    \"galleryImages\": [],\n    \"videoUrl\": \"https://youtube.com/watch?v=venue123\"\n  },\n  \"availabilityOverrides\": [\n    {\n      \"date\": \"2026-04-18\",\n      \"slots\": [\n        {\n          \"hour\": 14,\n          \"status\": \"booked\"\n        },\n        {\n          \"hour\": 15,\n          \"status\": \"booked\"\n        }\n      ]\n    }\n  ]\n}",
+                      "value": "{\n  \"information\": {\n    \"venueName\": \"Royal Hall\",\n    \"venueType\": \"Banquet\",\n    \"description\": \"Large indoor venue\",\n    \"addressLine\": \"Road 12, Dhanmondi\",\n    \"city\": \"Dhaka\",\n    \"area\": \"Dhanmondi\"\n  },\n  \"pricing\": {\n    \"basePrice\": 120000,\n    \"currency\": \"BDT\",\n    \"discount\": {\n      \"type\": \"percentage\",\n      \"value\": 15\n    },\n    \"amenities\": {\n      \"parking\": true,\n      \"airConditioned\": true,\n      \"stage\": true\n    }\n  },\n  \"capacity\": {\n    \"maximumGuests\": 500\n  },\n  \"media\": {\n    \"galleryImages\": [],\n    \"videoUrl\": \"https://youtube.com/watch?v=venue123\"\n  },\n  \"availabilityCalendar\": [\n    {\n      \"date\": \"2026-04-18\",\n      \"hours\": [\n        14,\n        15\n      ]\n    }\n  ]\n}",
                       "description": "JSON string payload. The backend uploads attached files and appends the returned URLs to media.galleryImages."
                     },
                     {
@@ -3290,7 +3565,7 @@
                     {
                       "key": "payload",
                       "type": "text",
-                      "value": "{\n  \"capacity\": {\n    \"maximumGuests\": 550\n  },\n  \"media\": {\n    \"galleryImages\": [],\n    \"videoUrl\": \"https://youtube.com/watch?v=updated-venue\"\n  },\n  \"availabilityOverrides\": [\n    {\n      \"date\": \"2026-04-19\",\n      \"slots\": [\n        {\n          \"hour\": 18,\n          \"status\": \"booked\"\n        }\n      ]\n    }\n  ]\n}",
+                      "value": "{\n  \"capacity\": {\n    \"maximumGuests\": 550\n  },\n  \"media\": {\n    \"galleryImages\": [],\n    \"videoUrl\": \"https://youtube.com/watch?v=updated-venue\"\n  },\n  \"availabilityCalendar\": [\n    {\n      \"date\": \"2026-04-19\",\n      \"hours\": [\n        18\n      ]\n    }\n  ]\n}",
                       "description": "JSON string payload. The backend uploads attached files and appends the returned URLs to media.galleryImages."
                     },
                     {
@@ -3343,6 +3618,116 @@
                     "venue-provider",
                     "venues",
                     "{{venueId}}"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Get Venue Availability",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{venueProviderToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/venue-provider/venues/{{venueId}}/availability?month=2026-04",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "venue-provider",
+                    "venues",
+                    "{{venueId}}",
+                    "availability"
+                  ],
+                  "query": [
+                    {
+                      "key": "month",
+                      "value": "2026-04"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Block Venue Availability",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{venueProviderToken}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"date\": \"2026-04-20\",\n  \"hours\": [\n    14,\n    15\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/venue-provider/venues/{{venueId}}/availability",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "venue-provider",
+                    "venues",
+                    "{{venueId}}",
+                    "availability"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Unblock Venue Availability",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{venueProviderToken}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"date\": \"2026-04-20\",\n  \"hours\": [\n    14\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/venue-provider/venues/{{venueId}}/availability",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "venue-provider",
+                    "venues",
+                    "{{venueId}}",
+                    "availability"
                   ]
                 }
               }
@@ -3727,6 +4112,30 @@
           "name": "Subscriptions",
           "item": [
             {
+              "name": "Create Subscription",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{venueProviderToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/subscriptions/create",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "subscriptions",
+                    "create"
+                  ]
+                }
+              }
+            },
+            {
               "name": "Get Subscription Status",
               "request": {
                 "method": "GET",
@@ -3770,6 +4179,54 @@
                     "v1",
                     "subscriptions",
                     "payment-link"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Stop Recurring Subscription",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{venueProviderToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/subscriptions/stop-recurring",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "subscriptions",
+                    "stop-recurring"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Resume Recurring Subscription",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{venueProviderToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/subscriptions/resume-recurring",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "subscriptions",
+                    "resume-recurring"
                   ]
                 }
               }
@@ -4100,7 +4557,7 @@
                   }
                 },
                 "url": {
-                  "raw": "{{baseUrl}}/api/v1/auth/profile",
+                  "raw": "{{baseUrl}}/api/v1/auth/profile/event-planner",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -4108,7 +4565,8 @@
                     "api",
                     "v1",
                     "auth",
-                    "profile"
+                    "profile",
+                    "event-planner"
                   ]
                 }
               }
@@ -4185,6 +4643,39 @@
                       "key": "sortOrder",
                       "value": "desc"
                     }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('eventPlannerId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get Event Planner By ID",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/event-planners/{{eventPlannerId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "event-planners",
+                    "{{eventPlannerId}}"
                   ]
                 }
               },
@@ -4288,6 +4779,118 @@
                   }
                 }
               ]
+            }
+          ]
+        },
+        {
+          "name": "Availability",
+          "item": [
+            {
+              "name": "Get My Availability",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{eventPlannerToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/event-planners/me/availability?month=2026-04",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "event-planners",
+                    "me",
+                    "availability"
+                  ],
+                  "query": [
+                    {
+                      "key": "month",
+                      "value": "2026-04"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Block My Availability",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{eventPlannerToken}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"date\": \"2026-04-21\",\n  \"hours\": [\n    10,\n    11\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/event-planners/me/availability",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "event-planners",
+                    "me",
+                    "availability"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Unblock My Availability",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{eventPlannerToken}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"date\": \"2026-04-21\",\n  \"hours\": [\n    10\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/event-planners/me/availability",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "event-planners",
+                    "me",
+                    "availability"
+                  ]
+                }
+              }
             }
           ]
         },
@@ -4634,6 +5237,30 @@
           "name": "Subscriptions",
           "item": [
             {
+              "name": "Create Subscription",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{eventPlannerToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/subscriptions/create",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "subscriptions",
+                    "create"
+                  ]
+                }
+              }
+            },
+            {
               "name": "Get Subscription Status",
               "request": {
                 "method": "GET",
@@ -4677,6 +5304,54 @@
                     "v1",
                     "subscriptions",
                     "payment-link"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Stop Recurring Subscription",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{eventPlannerToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/subscriptions/stop-recurring",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "subscriptions",
+                    "stop-recurring"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Resume Recurring Subscription",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{eventPlannerToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/subscriptions/resume-recurring",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "subscriptions",
+                    "resume-recurring"
                   ]
                 }
               }

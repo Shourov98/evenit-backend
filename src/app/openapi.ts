@@ -19,9 +19,9 @@ const buildSpecFromJSDoc = () =>
     definition: {
       openapi: '3.0.3',
       info: {
-        title: 'Saqib Express API',
+        title: 'EvenIt Backend API',
         version: '1.0.0',
-        description: 'Production-grade modular Express API with TypeScript'
+        description: 'Role-based event marketplace backend for auth, onboarding, listings, bookings, subscriptions, uploads, and admin moderation.'
       },
       servers: [
         {

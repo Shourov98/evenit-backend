@@ -23,36 +23,24 @@ const router = Router();
  *     description: Public listing and provider management for services
  * components:
  *   schemas:
- *     AvailabilityOverride:
+ *     AvailabilityCalendarEntry:
  *       type: object
- *       required: [date, slots]
+ *       required: [date, hours]
  *       properties:
  *         date:
  *           type: string
  *           format: date
  *           example: 2026-03-20
- *         slots:
+ *         hours:
  *           type: array
  *           items:
- *             type: object
- *             required: [hour, status]
- *             properties:
- *               hour:
- *                 type: integer
- *                 minimum: 8
- *                 maximum: 23
- *                 example: 8
- *               status:
- *                 type: string
- *                 enum: [available, pending, booked]
- *                 example: available
+ *             type: integer
+ *             minimum: 8
+ *             maximum: 23
  *           example:
- *             - hour: 8
- *               status: available
- *             - hour: 9
- *               status: booked
- *             - hour: 10
- *               status: pending
+ *             - 10
+ *             - 11
+ *             - 12
  *     ServiceCreateRequest:
  *       type: object
  *       required: [information, pricing, settings, media]
@@ -84,19 +72,11 @@ const router = Router();
  *             - https://cdn.example.com/services/catering-1.jpg
  *             - https://cdn.example.com/services/catering-2.jpg
  *           videoUrl: https://www.youtube.com/watch?v=abc123
- *         availabilityOverrides:
+ *         availabilityCalendar:
  *           - date: 2026-03-20
- *             slots:
- *               - hour: 10
- *                 status: booked
- *               - hour: 11
- *                 status: booked
+ *             hours: [10, 11]
  *           - date: 2026-03-21
- *             slots:
- *               - hour: 14
- *                 status: pending
- *               - hour: 15
- *                 status: pending
+ *             hours: [14, 15]
  *       properties:
  *         information:
  *           type: object
@@ -172,11 +152,11 @@ const router = Router();
  *               type: string
  *               format: uri
  *               example: https://www.youtube.com/watch?v=abc123
- *         availabilityOverrides:
+ *         availabilityCalendar:
  *           type: array
- *           description: Each date requires a slots array. A plain date plus status is not valid.
+ *           description: Each date requires a list of blocked or reserved hours.
  *           items:
- *             $ref: '#/components/schemas/AvailabilityOverride'
+ *             $ref: '#/components/schemas/AvailabilityCalendarEntry'
  *     ServiceUpdateRequest:
  *       type: object
  *       properties:
@@ -188,10 +168,10 @@ const router = Router();
  *           type: object
  *         media:
  *           type: object
- *         availabilityOverrides:
+ *         availabilityCalendar:
  *           type: array
  *           items:
- *             $ref: '#/components/schemas/AvailabilityOverride'
+ *             $ref: '#/components/schemas/AvailabilityCalendarEntry'
  *     ServiceEntity:
  *       type: object
  *       properties:
@@ -207,10 +187,12 @@ const router = Router();
  *           type: object
  *         media:
  *           type: object
- *         availabilityOverrides:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/AvailabilityOverride'
+ *         availability:
+ *           type: object
+ *           additionalProperties:
+ *             type: array
+ *             items:
+ *               type: integer
  *         publishStatus:
  *           type: string
  *           enum: [pending, published, rejected]
@@ -385,6 +367,76 @@ router.get('/services', ServiceProviderController.getServices);
  */
 router.get('/services/:serviceId', validate(serviceIdParamSchema), ServiceProviderController.getServiceById);
 
+/**
+ * @openapi
+ * /api/v1/service-provider/services/{serviceId}/availability:
+ *   get:
+ *     tags: [ServiceProvider]
+ *     summary: Get one service availability calendar
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: serviceId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: month
+ *         schema:
+ *           type: string
+ *           pattern: '^\d{4}-\d{2}$'
+ *           example: 2026-04
+ *     responses:
+ *       200:
+ *         description: Availability returned
+ *   patch:
+ *     tags: [ServiceProvider]
+ *     summary: Block service availability hours
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [date, hours]
+ *             properties:
+ *               date:
+ *                 type: string
+ *                 format: date
+ *               hours:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *     responses:
+ *       200:
+ *         description: Availability blocked successfully
+ *   delete:
+ *     tags: [ServiceProvider]
+ *     summary: Unblock service availability hours
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [date, hours]
+ *             properties:
+ *               date:
+ *                 type: string
+ *                 format: date
+ *               hours:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *     responses:
+ *       200:
+ *         description: Availability unblocked successfully
+ */
 router.use(protect, authorize('service_provider'));
 
 router.get(
@@ -425,7 +477,7 @@ router.delete(
  *               payload:
  *                 type: string
  *                 description: JSON string matching ServiceCreateRequest. Include `media.galleryImages` only for already-hosted image URLs. Files sent in `images` or `image` are uploaded by the backend automatically.
- *                 example: '{"information":{"serviceName":"Premium Catering","category":"Catering","description":"Corporate and wedding catering service.","serviceArea":["Dhaka","Gazipur"],"tags":["wedding","corporate"]},"pricing":{"amount":50000,"pricingType":"package","currency":"BDT","discount":{"type":"percentage","value":10}},"settings":{"amenities":{"deliveryIncluded":true,"setupIncluded":true},"capacity":300},"media":{"galleryImages":[],"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityOverrides":[{"date":"2026-03-20","slots":[{"hour":10,"status":"booked"},{"hour":11,"status":"booked"}]},{"date":"2026-03-21","slots":[{"hour":14,"status":"pending"},{"hour":15,"status":"pending"}]}]}'
+ *                 example: '{"information":{"serviceName":"Premium Catering","category":"Catering","description":"Corporate and wedding catering service.","serviceArea":["Dhaka","Gazipur"],"tags":["wedding","corporate"]},"pricing":{"amount":50000,"pricingType":"package","currency":"BDT","discount":{"type":"percentage","value":10}},"settings":{"amenities":{"deliveryIncluded":true,"setupIncluded":true},"capacity":300},"media":{"galleryImages":[],"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityCalendar":[{"date":"2026-03-20","hours":[10,11]},{"date":"2026-03-21","hours":[14,15]}]}'
  *               images:
  *                 type: array
  *                 items:
@@ -440,7 +492,7 @@ router.delete(
  *             validService:
  *               summary: Valid service creation payload
  *               value:
- *                 payload: '{"information":{"serviceName":"Premium Catering","category":"Catering","description":"Corporate and wedding catering service.","serviceArea":["Dhaka","Gazipur"],"tags":["wedding","corporate"]},"pricing":{"amount":50000,"pricingType":"package","currency":"BDT","discount":{"type":"percentage","value":10}},"settings":{"amenities":{"deliveryIncluded":true,"setupIncluded":true},"capacity":300},"media":{"galleryImages":[],"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityOverrides":[{"date":"2026-03-20","slots":[{"hour":10,"status":"booked"},{"hour":11,"status":"booked"}]},{"date":"2026-03-21","slots":[{"hour":14,"status":"pending"},{"hour":15,"status":"pending"}]}]}'
+ *                 payload: '{"information":{"serviceName":"Premium Catering","category":"Catering","description":"Corporate and wedding catering service.","serviceArea":["Dhaka","Gazipur"],"tags":["wedding","corporate"]},"pricing":{"amount":50000,"pricingType":"package","currency":"BDT","discount":{"type":"percentage","value":10}},"settings":{"amenities":{"deliveryIncluded":true,"setupIncluded":true},"capacity":300},"media":{"galleryImages":[],"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityCalendar":[{"date":"2026-03-20","hours":[10,11]},{"date":"2026-03-21","hours":[14,15]}]}'
  *     responses:
  *       201:
  *         description: Service created successfully
@@ -492,7 +544,7 @@ router.post(
  *               payload:
  *                 type: string
  *                 description: JSON string matching ServiceUpdateRequest. Files sent in `images` or `image` are uploaded by the backend automatically.
- *                 example: '{"pricing":{"amount":45000,"discount":{"type":"fixed","value":5000}},"media":{"galleryImages":[],"videoUrl":"https://youtube.com/watch?v=updated-service"},"availabilityOverrides":[{"date":"2026-04-13","slots":[{"hour":12,"status":"booked"}]}]}'
+ *                 example: '{"pricing":{"amount":45000,"discount":{"type":"fixed","value":5000}},"media":{"galleryImages":[],"videoUrl":"https://youtube.com/watch?v=updated-service"},"availabilityCalendar":[{"date":"2026-04-13","hours":[12]}]}'
  *               images:
  *                 type: array
  *                 items:
@@ -507,7 +559,7 @@ router.post(
  *             validServiceUpdate:
  *               summary: Valid service update payload
  *               value:
- *                 payload: '{"pricing":{"amount":45000,"discount":{"type":"fixed","value":5000}},"media":{"galleryImages":[],"videoUrl":"https://youtube.com/watch?v=updated-service"},"availabilityOverrides":[{"date":"2026-04-13","slots":[{"hour":12,"status":"booked"}]}]}'
+ *                 payload: '{"pricing":{"amount":45000,"discount":{"type":"fixed","value":5000}},"media":{"galleryImages":[],"videoUrl":"https://youtube.com/watch?v=updated-service"},"availabilityCalendar":[{"date":"2026-04-13","hours":[12]}]}'
  *     responses:
  *       200:
  *         description: Service updated successfully

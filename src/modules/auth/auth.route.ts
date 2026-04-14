@@ -962,21 +962,11 @@ router.post(
 
 /**
  * @openapi
- * /api/v1/auth/profile:
+ * /api/v1/auth/profile/customer:
  *   patch:
  *     tags: [Auth]
- *     summary: Update current authenticated user profile
- *     description: >
- *       Role-aware partial profile update endpoint for the authenticated user.
- *       All roles can update common account fields such as `fullName` and `email`.
- *       Service providers can additionally update `serviceCategories`,
- *       `serviceProvider.profileInfo`, and `serviceProvider.services`.
- *       Event planners can update `eventPlanner.profileInfo`.
- *       Venue providers can update `venueProvider.profileInfo`, including `businessPhoneNo`.
- *       Customers can update only common account fields.
- *       There is currently no top-level/common `phone` field stored in the user model.
- *       If provider onboarding has not been completed yet, role-specific nested profile
- *       sections cannot be updated.
+ *     summary: Update the authenticated customer profile
+ *     description: Accepts either JSON or multipart form-data. For multipart requests, send the JSON payload in a `payload` field and optional files in `profileImage` and `coverImage`.
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -984,64 +974,137 @@ router.post(
  *       content:
  *         application/json:
  *           schema:
- *             oneOf:
- *               - $ref: '#/components/schemas/CustomerProfileUpdateRequest'
- *               - $ref: '#/components/schemas/ServiceProviderProfileUpdateRequest'
- *               - $ref: '#/components/schemas/EventPlannerProfileUpdateRequest'
- *               - $ref: '#/components/schemas/VenueProviderProfileUpdateRequest'
- *           examples:
- *             customer:
- *               summary: Customer update
- *               value:
- *                 fullName: Marvin McKinney
- *                 email: marvin@example.com
- *             serviceProvider:
- *               summary: Service provider update
- *               value:
- *                 fullName: Marvin McKinney
- *                 email: marvin@example.com
- *                 serviceCategories:
- *                   - Catering
- *                   - Decoration
- *                 serviceProvider:
- *                   profileInfo:
- *                     serviceName: Premium Catering
- *                     serviceCategory: Catering
- *                     coverageArea:
- *                       - Dhaka
- *                       - Gazipur
- *                   services:
- *                     - Buffet
- *                     - Corporate Events
- *             eventPlanner:
- *               summary: Event planner update
- *               value:
- *                 fullName: Star Events
- *                 eventPlanner:
- *                   profileInfo:
- *                     name: Star Events
- *                     address: Banani, Dhaka
- *                     coverageArea:
- *                       - Dhaka
- *                       - Chattogram
- *             venueProvider:
- *               summary: Venue provider update
- *               value:
- *                 fullName: Royal Hall Owner
- *                 venueProvider:
- *                   profileInfo:
- *                     businessName: Royal Hall
- *                     businessMail: info@royalhall.com
- *                     businessPhoneNo: +8801700000000
+ *             $ref: '#/components/schemas/CustomerProfileUpdateRequest'
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required: [payload]
+ *             properties:
+ *               payload:
+ *                 type: string
+ *                 example: '{"fullName":"Marvin McKinney","email":"marvin@example.com"}'
+ *               profileImage:
+ *                 type: string
+ *                 format: binary
+ *               coverImage:
+ *                 type: string
+ *                 format: binary
  *     responses:
  *       200:
  *         description: Profile updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/AuthUserResponse'
  *       400:
- *         description: Validation error or role-specific payload mismatch
+ *         description: Validation error or role mismatch
+ *       401:
+ *         description: Unauthorized
+ *       409:
+ *         description: Duplicate email
+ *
+ * /api/v1/auth/profile/service-provider:
+ *   patch:
+ *     tags: [Auth]
+ *     summary: Update the authenticated service provider profile
+ *     description: Accepts either JSON or multipart form-data. For multipart requests, send the JSON payload in a `payload` field and optional files in `profileImage` and `coverImage`.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ServiceProviderProfileUpdateRequest'
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required: [payload]
+ *             properties:
+ *               payload:
+ *                 type: string
+ *                 example: '{"fullName":"Service Provider Example","serviceCategories":["Catering"],"serviceProvider":{"profileInfo":{"serviceName":"Premium Catering","serviceCategory":"Catering","coverageArea":["Dhaka"]}}}'
+ *               profileImage:
+ *                 type: string
+ *                 format: binary
+ *               coverImage:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Profile updated successfully
+ *       400:
+ *         description: Validation error or role mismatch
+ *       401:
+ *         description: Unauthorized
+ *       409:
+ *         description: Duplicate email
+ *
+ * /api/v1/auth/profile/event-planner:
+ *   patch:
+ *     tags: [Auth]
+ *     summary: Update the authenticated event planner profile
+ *     description: Accepts either JSON or multipart form-data. For multipart requests, send the JSON payload in a `payload` field and optional files in `profileImage` and `coverImage`.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/EventPlannerProfileUpdateRequest'
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required: [payload]
+ *             properties:
+ *               payload:
+ *                 type: string
+ *                 example: '{"fullName":"Star Events","eventPlanner":{"profileInfo":{"name":"Star Events","address":"Banani, Dhaka","coverageArea":["Dhaka","Chattogram"]}}}'
+ *               profileImage:
+ *                 type: string
+ *                 format: binary
+ *               coverImage:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Profile updated successfully
+ *       400:
+ *         description: Validation error or role mismatch
+ *       401:
+ *         description: Unauthorized
+ *       409:
+ *         description: Duplicate email
+ *
+ * /api/v1/auth/profile/venue-provider:
+ *   patch:
+ *     tags: [Auth]
+ *     summary: Update the authenticated venue provider profile
+ *     description: Accepts either JSON or multipart form-data. For multipart requests, send the JSON payload in a `payload` field and optional files in `profileImage` and `coverImage`.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/VenueProviderProfileUpdateRequest'
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required: [payload]
+ *             properties:
+ *               payload:
+ *                 type: string
+ *                 example: '{"fullName":"Royal Hall Owner","venueProvider":{"profileInfo":{"businessName":"Royal Hall","businessMail":"info@royalhall.com","businessPhoneNo":"+8801700000000"}}}'
+ *               profileImage:
+ *                 type: string
+ *                 format: binary
+ *               coverImage:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Profile updated successfully
+ *       400:
+ *         description: Validation error or role mismatch
  *       401:
  *         description: Unauthorized
  *       409:

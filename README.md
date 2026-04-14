@@ -1,90 +1,89 @@
-# Modular Express Backend (TypeScript)
+# EvenIt Backend
 
-High-standard Express backend starter with TypeScript and module-first architecture.
+Express + TypeScript backend for the EvenIt event marketplace. It provides authentication, provider onboarding, public catalog endpoints, subscriptions, bookings, uploads, site-content management, and realtime booking chat.
 
-## Included
+## Tech Stack
 
-- TypeScript + strict config
-- Modular folder structure (`module/model/controller/service/route/schema/test`)
-- JWT auth (`fullName`, `email`, `password`)
-- Email OTP verification with Resend
-- Forgot password via OTP (30s resend cooldown)
-- OTP falls back to terminal output if email delivery is not configured or fails
-- MongoDB (Mongoose) setup
-- Global error handling
-- Validation middleware (`zod`)
-- Security middleware stack
-- Rate limiting + slowdown protection (DDoS baseline)
-- OpenAPI docs (`/docs`)
-- Module generator script
+- Express 4
+- TypeScript
+- MongoDB + Mongoose
+- Zod validation
+- JWT auth
+- Socket.IO
+- Stripe
+- Cloudinary
+- Resend
+- Swagger / OpenAPI
 
-## Structure
+## Features
 
-```text
-src/
-  app/
-    app.ts
-    openapi.ts
-    routes.ts
-  config/
-    database.ts
-    env.ts
-  common/
-    errors/
-      AppError.ts
-    middlewares/
-      auth.middleware.ts
-      error.middleware.ts
-      security.middleware.ts
-      validate.middleware.ts
-    types/
-      express.d.ts
-    utils/
-      catchAsync.ts
-      jwt.ts
-  modules/
-    auth/
-      auth.controller.ts
-      auth.model.ts
-      auth.route.ts
-      auth.schema.ts
-      auth.service.ts
-      auth.test.ts
-  server.ts
-scripts/
-  generate-module.ts
-```
+- Email OTP verification and password reset
+- Role-based auth for `customer`, `service_provider`, `event_planner`, `venue_provider`, `admin`, and `super_admin`
+- Provider onboarding with multipart file uploads
+- Public listing and detail endpoints for services, venues, and event planners
+- Service and venue management APIs
+- Booking lifecycle APIs
+- Stripe subscription lifecycle endpoints
+- Profile image and gallery uploads
+- Admin approval flows
+- Realtime order chat over Socket.IO
+- Swagger docs at `/docs`
 
-## Setup
+## Requirements
 
-1. Install dependencies:
+- Node.js 20+
+- pnpm 9+
+- MongoDB 7+ locally, or Docker for the bundled stack
+
+## Install And Run
+
+Install dependencies:
 
 ```bash
 pnpm install
 ```
 
-2. Create env:
+Create env file:
 
 ```bash
 cp .env.example .env
 ```
 
-3. Run dev:
+Run in development:
 
 ```bash
 pnpm run dev
 ```
 
-4. Build + start production:
+Build and run production output:
 
 ```bash
 pnpm run build
 pnpm start
 ```
 
+Run tests:
+
+```bash
+pnpm test
+```
+
+Generate a new module skeleton:
+
+```bash
+pnpm run module:generate -- product
+```
+
+## Local URLs
+
+- API root: `http://localhost:5000`
+- Health check: `http://localhost:5000/health`
+- Swagger docs: `http://localhost:5000/docs`
+- Payment test page: `http://localhost:5000/payment-test`
+
 ## Docker
 
-Run full stack (app + MongoDB + Nginx):
+Run the bundled production-style stack:
 
 ```bash
 docker compose up --build -d
@@ -92,23 +91,28 @@ docker compose up --build -d
 
 Services:
 
-- API behind Nginx: `http://localhost`
-- Swagger docs: `http://localhost/docs`
-- MongoDB: `localhost:27017`
+- Nginx proxy: `http://localhost`
+- API through Nginx: `http://localhost`
+- Swagger docs through Nginx: `http://localhost/docs`
+- MongoDB: `mongodb://localhost:27017`
 
-Stop stack:
+Stop containers:
 
 ```bash
 docker compose down
 ```
 
-Reset database volume:
+Remove containers and Mongo volume:
 
 ```bash
 docker compose down -v
 ```
 
 ## Environment
+
+Copy [`.env.example`](/home/shourov/Documents/work_projects/evenit/evenit-backend/.env.example:1) and adjust values as needed.
+
+Runtime variables currently supported:
 
 ```env
 NODE_ENV=development
@@ -128,291 +132,188 @@ CUSTOMER_SUBSCRIPTION_PRICE_ID=
 SERVICE_PROVIDER_SUBSCRIPTION_PRICE_ID=
 EVENT_PLANNER_SUBSCRIPTION_PRICE_ID=
 VENUE_PROVIDER_SUBSCRIPTION_PRICE_ID=
-CUSTOMER_SUBSCRIPTION_PAYMENT_LINK=https://buy.stripe.com/test_28E8wR3zx21ZeNN6ALaR200
-SERVICE_PROVIDER_SUBSCRIPTION_PAYMENT_LINK=https://buy.stripe.com/test_dRm28t3zx7mj6hh2kvaR205
-EVENT_PLANNER_SUBSCRIPTION_PAYMENT_LINK=https://buy.stripe.com/test_dRm28t3zx7mj6hh2kvaR205
-VENUE_PROVIDER_SUBSCRIPTION_PAYMENT_LINK=https://buy.stripe.com/test_8x26oJ8TRgWT211gblaR206
+CUSTOMER_SUBSCRIPTION_PAYMENT_LINK=
+SERVICE_PROVIDER_SUBSCRIPTION_PAYMENT_LINK=
+EVENT_PLANNER_SUBSCRIPTION_PAYMENT_LINK=
+VENUE_PROVIDER_SUBSCRIPTION_PAYMENT_LINK=
 PLATFORM_FEE_PERCENT=10
 RESEND_API_KEY=
 RESEND_FROM_EMAIL=onboarding@resend.dev
+ADMIN_NAME=Admin
+ADMIN_EMAIL=
+ADMIN_PASSWORD=
 OTP_EXPIRY_MINUTES=10
 OTP_RESEND_COOLDOWN_SECONDS=30
 ```
 
-## Module Generator
+Notes:
 
-Create any new module with all required base files:
+- Empty Stripe values disable or partially limit Stripe-backed flows.
+- Empty Resend configuration causes OTP delivery to fall back to terminal logging.
+- `ADMIN_EMAIL` and `ADMIN_PASSWORD` are used by the admin seed flow.
 
-```bash
-pnpm run module:generate -- product
-# or
-pnpm run module:generate --name=product
-```
+## API Surface
 
-This creates:
+Mounted route groups:
 
-- `src/modules/product/product.model.ts`
-- `src/modules/product/product.schema.ts`
-- `src/modules/product/product.service.ts`
-- `src/modules/product/product.controller.ts`
-- `src/modules/product/product.route.ts`
-- `src/modules/product/product.test.ts`
-
-Then mount router in `src/app/routes.ts`.
-
-## API Endpoints
-
+- `GET /`
 - `GET /health`
+- `/api/v1/auth`
+- `/api/v1/bookings`
+- `/api/v1/event-planners`
+- `/api/v1/order-chats`
+- `/api/v1/public`
+- `/api/v1/service-provider`
+- `/api/v1/site-content`
+- `/api/v1/subscriptions`
+- `/api/v1/uploads`
+- `/api/v1/users`
+- `/api/v1/venue-provider`
+- `/api/v1/admin`
+- `GET /docs`
+- `GET /payment-test`
+
+## Important Endpoints
+
+Auth:
+
 - `POST /api/v1/auth/register`
 - `POST /api/v1/auth/verify-email`
 - `POST /api/v1/auth/resend-verification-otp`
 - `POST /api/v1/auth/login`
 - `POST /api/v1/auth/forgot-password`
 - `POST /api/v1/auth/reset-password`
-- `POST /api/v1/auth/onboarding/service-provider` (Bearer token)
-- `POST /api/v1/auth/onboarding/event-planner` (Bearer token)
-- `POST /api/v1/auth/onboarding/venue-provider` (Bearer token)
-- `GET /api/v1/auth/me` (Bearer token)
-- `POST /api/v1/bookings` (Bearer token, customer)
-- `GET /api/v1/bookings/my` (Bearer token, customer)
-- `GET /api/v1/bookings/provider` (Bearer token, provider roles)
-- `GET /api/v1/bookings/:bookingId` (Bearer token, booking owner/provider/admin)
-- `PATCH /api/v1/bookings/:bookingId/approve` (Bearer token, provider roles)
-- `PATCH /api/v1/bookings/:bookingId/reject` (Bearer token, provider roles)
-- `PATCH /api/v1/bookings/:bookingId/cancel` (Bearer token, customer)
-- `POST /api/v1/service-provider/services` (Bearer token, service_provider)
-- `GET /api/v1/service-provider/my-services` (Bearer token, service_provider)
-- `PATCH /api/v1/service-provider/services/:serviceId` (Bearer token, service_provider)
-- `DELETE /api/v1/service-provider/services/:serviceId` (Bearer token, service_provider)
-- `GET /api/v1/service-provider/services` (public published services)
-- `GET /api/v1/service-provider/services/:serviceId` (public published service by id)
-- `POST /api/v1/uploads/venue-images` (Bearer token, multipart form-data)
-- `POST /api/v1/venue-provider/venues` (Bearer token, venue_provider)
-- `GET /api/v1/venue-provider/my-venues` (Bearer token, venue_provider)
-- `PATCH /api/v1/venue-provider/venues/:venueId` (Bearer token, venue_provider)
-- `DELETE /api/v1/venue-provider/venues/:venueId` (Bearer token, venue_provider)
-- `GET /api/v1/venue-provider/venues` (public published venues)
-- `GET /api/v1/venue-provider/venues/:venueId` (public published venue by id)
-- `PATCH /api/v1/admin/services/:serviceId/approve` (Bearer token, admin/super_admin)
-- `PATCH /api/v1/admin/services/:serviceId/reject` (Bearer token, admin/super_admin)
-- `PATCH /api/v1/admin/venues/:venueId/approve` (Bearer token, admin/super_admin)
-- `PATCH /api/v1/admin/venues/:venueId/reject` (Bearer token, admin/super_admin)
-- `GET /docs`
-- `GET /payment-test`
-- `POST /api/v1/subscriptions/create` (Bearer token)
-- `GET /api/v1/subscriptions/status` (Bearer token)
-- `GET /api/v1/subscriptions/payment-link` (Bearer token)
-- `POST /api/v1/subscriptions/webhook` (Stripe webhook)
+- `GET /api/v1/auth/me`
 
-## Auth + Role Design
+Onboarding and profile:
 
-- Signup fields: `fullName`, `email`, `password`, `role`, optional `serviceCategories`.
-- `fullName` must include at least 2 words (first + last name).
-- Public signup roles allowed: `customer`, `service_provider`, `event_planner`, `venue_provider`.
-- Restricted roles `admin` and `super_admin` should be created only through protected admin-only flows.
-- `serviceCategories` is optional for all public signup roles.
-- Login is blocked until email OTP verification is completed.
-- OTP request is unlimited but enforced with a 30-second cooldown per purpose.
+- `POST /api/v1/auth/onboarding/service-provider`
+- `POST /api/v1/auth/onboarding/event-planner`
+- `POST /api/v1/auth/onboarding/venue-provider`
+- `PATCH /api/v1/auth/profile/customer`
+- `PATCH /api/v1/auth/profile/service-provider`
+- `PATCH /api/v1/auth/profile/event-planner`
+- `PATCH /api/v1/auth/profile/venue-provider`
 
-## Provider Onboarding API
+Public catalog:
 
-Endpoint:
+- `GET /api/v1/public/services`
+- `GET /api/v1/public/services/:serviceId`
+- `GET /api/v1/public/venues`
+- `GET /api/v1/public/venues/:venueId`
+- `GET /api/v1/public/event-planners`
+- `GET /api/v1/public/event-planners/:eventPlannerId`
+- `GET /api/v1/public/stripe-config`
 
-- `POST /api/v1/auth/onboarding/service-provider` (Bearer token required)
-- `POST /api/v1/auth/onboarding/event-planner` (Bearer token required)
-- `POST /api/v1/auth/onboarding/venue-provider` (Bearer token required)
+Service provider:
 
-Role-specific required fields:
+- `POST /api/v1/service-provider/services`
+- `GET /api/v1/service-provider/my-services`
+- `GET /api/v1/service-provider/services/:serviceId`
+- `PATCH /api/v1/service-provider/services/:serviceId`
+- `DELETE /api/v1/service-provider/services/:serviceId`
+- `GET /api/v1/service-provider/services/:serviceId/availability`
+- `PATCH /api/v1/service-provider/services/:serviceId/availability`
+- `DELETE /api/v1/service-provider/services/:serviceId/availability`
 
-- Service provider onboarding: `_id`, `name`, `email`, `profileInfo`, `services`
-- `profileInfo`: `nidOrTradeLicenseNumber`, `serviceName`, `serviceCategory` (single value), optional `serviceDescription`, `coverageArea[]`, `verification`
-- Service provider `profileInfo.verification`: `businessType`, optional `companyName`, `nationalIdOrTradeLicenseFiles[]`
-- `stripeAccountId` is not accepted in service provider onboarding payload.
-- Event planner onboarding: `_id`, `fullName`, `email`, `profileInfo`
-- Event planner `profileInfo`: `nidOrTradeLicenseNumber`, `name`, optional `description`, `coverageArea[]`, `address`, `verification`
-- Event planner `profileInfo.verification`: `businessType`, optional `companyName`, `nationalIdOrTradeLicenseFiles[]`
-- Venue provider onboarding: `_id`, `fullName`, `email`, `profileInfo`
-- Venue provider `profileInfo`: `nidOrTradeLicenseNumber`, optional `nationalIdOrTradeLicenseFiles[]`, `businessName`, `businessType`, optional `legalBusinessName`, optional `registrationNo`, `businessMail`, `businessPhoneNo`
+Venue provider:
 
-Note:
+- `POST /api/v1/venue-provider/venues`
+- `GET /api/v1/venue-provider/my-venues`
+- `GET /api/v1/venue-provider/venues/:venueId`
+- `PATCH /api/v1/venue-provider/venues/:venueId`
+- `DELETE /api/v1/venue-provider/venues/:venueId`
+- `GET /api/v1/venue-provider/venues/:venueId/availability`
+- `PATCH /api/v1/venue-provider/venues/:venueId/availability`
+- `DELETE /api/v1/venue-provider/venues/:venueId/availability`
 
-- Send onboarding requests as `multipart/form-data`.
-- Put the structured JSON body inside a `payload` text field.
-- Attach selected image/PDF files using the `nationalIdOrTradeLicenseFiles` file field. The backend uploads them and stores the hosted URLs in the onboarding payload.
-- Payment info / bank card fields are not accepted in onboarding payload.
-- `stripeAccountId` is not accepted in service provider, event planner, or venue provider onboarding payloads.
+Event planner:
 
-## Service Provider Service API
+- `GET /api/v1/event-planners`
+- `GET /api/v1/event-planners/:eventPlannerId`
+- `GET /api/v1/event-planners/me/availability`
+- `PATCH /api/v1/event-planners/me/availability`
+- `DELETE /api/v1/event-planners/me/availability`
 
-Base path:
+Bookings:
 
-- `/api/v1/service-provider/services`
+- `POST /api/v1/bookings`
+- `POST /api/v1/bookings/services/:serviceId`
+- `POST /api/v1/bookings/venues/:venueId`
+- `POST /api/v1/bookings/event-planners/:eventPlannerId`
+- `GET /api/v1/bookings/my`
+- `GET /api/v1/bookings/provider`
+- `GET /api/v1/bookings/:bookingId`
+- `PATCH /api/v1/bookings/:bookingId/approve`
+- `PATCH /api/v1/bookings/:bookingId/reject`
+- `PATCH /api/v1/bookings/:bookingId/cancel`
 
-Fields supported:
+Subscriptions:
 
-- `information`: `serviceName`, `category`, `description`, `serviceArea[]`, `tags[]`
-- `pricing`: `amount`, `pricingType` (`fixed|hourly|daily|package`), `currency`, optional `discount`
-- `settings`: `amenities` (boolean map), optional `capacity`
-- `media`: `galleryImages` (max 10), optional `videoUrl`
-- `availabilityOverrides`: date-level states (`available|pending|booked`)
+- `POST /api/v1/subscriptions/create`
+- `POST /api/v1/subscriptions/stop-recurring`
+- `POST /api/v1/subscriptions/resume-recurring`
+- `GET /api/v1/subscriptions/payment-link`
+- `GET /api/v1/subscriptions/status`
+- `POST /api/v1/subscriptions/webhook`
 
-Calendar behavior:
+Uploads:
 
-- Any date not listed in `availabilityOverrides` should be considered `available` by default.
+- `POST /api/v1/uploads/images`
+- `POST /api/v1/uploads/profile-image`
+- `POST /api/v1/uploads/venue-images`
 
-## Venue Image Upload API
+Other:
 
-Venue creation and service creation already support direct `multipart/form-data` uploads. The frontend can send image files to the create endpoints, and the backend uploads those files and stores the resulting URLs in `media.galleryImages`.
+- `GET /api/v1/site-content`
+- `GET /api/v1/site-content/:section`
+- `POST /api/v1/site-content/:section`
+- `POST /api/v1/users`
+- `GET /api/v1/users`
+- `GET /api/v1/users/:userId/profile`
 
-Use the separate upload endpoint only when you need standalone venue image uploads before venue creation or update.
+Admin:
 
-Endpoint:
+- Admin approval and management routes are mounted under `/api/v1/admin`.
+- Use Swagger docs for the complete current contract.
 
-- `POST /api/v1/uploads/venue-images` (Bearer token required)
+## Auth And Roles
 
-Request:
+- Public signup roles: `customer`, `service_provider`, `event_planner`, `venue_provider`
+- Protected roles: `admin`, `super_admin`
+- Login requires verified email
+- OTP resend is cooldown-limited
+- Most write endpoints require a bearer token
 
-- `multipart/form-data`
-- field name: `images`
-- max files: `10`
-- allowed mime types: `image/jpeg`, `image/png`, `image/webp`, `image/gif`
-- max size per file: `10MB`
+## File Upload Conventions
 
-Response items include:
+Onboarding requests:
 
-- `url`
-- `publicId`
-- `format`
-- `width`
-- `height`
-- `bytes`
-- `originalName`
+- Send as `multipart/form-data`
+- Put the JSON payload in the `payload` field
+- Send verification files in `nationalIdOrTradeLicenseFiles`
 
-## Booking Flow
+General image uploads:
 
-The booking module supports a shared booking resource for venue and service bookings. Event bookings are intentionally blocked until a real event entity exists in the system.
+- Supported fields include `image`, `images`, `file`, and `files`
+- Profile image upload expects `image`
 
-Current flow:
+## Realtime Chat
 
-1. Customer creates a booking with `targetType`, `targetId`, `bookingDate`, and one or more `timeSlots`.
-2. The selected slots are reserved immediately in `pending` status, so overlapping requests are rejected.
-3. The provider approves or rejects the booking.
-4. Approved bookings are confirmed without a second booking-level payment step because booking access is covered by subscription.
+Socket.IO is initialized on the same HTTP server as the API. Booking chat HTTP routes live under `/api/v1/order-chats`, and realtime events are registered during server startup.
 
-Booking statuses:
+## Project Structure
 
-- `pending`
-- `approved`
-- `rejected`
-- `confirmed`
-- `cancelled`
-- `completed`
-
-Payment statuses:
-
-- `covered_by_subscription`
-
-Important:
-
-- Every user has a subscription record.
-- New users default to `not_subscribed` with role-based pricing:
-- `customer`: `customer_plan`, `GBP 5/month`
-- `event_planner`: `event_planner_plan`, `GBP 20/month`
-- `service_provider`: `service_provider_plan`, `GBP 5/month`
-- `venue_provider`: `venue_provider_plan`, `GBP 500/year`
-- Bookings are covered by subscription; there is no booking payment flow.
-
-## Payment Test Page
-
-Use the built-in test page at:
-
-- `GET /payment-test`
-
-Requirements:
-
-- `STRIPE_WEBHOOK_SECRET` must be set so Stripe can authenticate webhook events.
-- Use Stripe test mode keys and a dummy card such as `4242 4242 4242 4242`.
-
-Test flow:
-
-1. Register a test user or log in with an existing verified user.
-2. If OTP email delivery is not configured, read the OTP from the server terminal and verify it on the page.
-3. Open the in-app subscription modal or screen.
-4. The frontend calls `POST /api/v1/subscriptions/create`.
-5. Complete the payment in the embedded Stripe Payment Element.
-6. Wait for the webhook or refresh until `GET /api/v1/subscriptions/status` returns `isSubscribed: true`.
-
-## Stripe Subscription Sync
-
-Use this flow for in-app recurring subscriptions:
-
-1. Frontend calls `POST /api/v1/subscriptions/create` with the authenticated user's token.
-2. The backend creates or reuses the Stripe customer, creates an incomplete subscription with the role's Stripe Price, and returns a client secret plus publishable key.
-3. Frontend mounts Stripe Payment Element and confirms the payment without redirecting to a Stripe-hosted checkout page.
-4. Stripe sends subscription and invoice events to `POST /api/v1/subscriptions/webhook`.
-5. The backend updates the user to `subscribed`, so `GET /api/v1/subscriptions/status` returns `isSubscribed: true`.
-
-Required setup:
-
-- Configure a Stripe webhook endpoint pointing to `/api/v1/subscriptions/webhook`
-- Add the webhook signing secret to `STRIPE_WEBHOOK_SECRET`
-- Create one recurring Stripe Price for each role and set:
-- `CUSTOMER_SUBSCRIPTION_PRICE_ID`
-- `SERVICE_PROVIDER_SUBSCRIPTION_PRICE_ID`
-- `EVENT_PLANNER_SUBSCRIPTION_PRICE_ID`
-- `VENUE_PROVIDER_SUBSCRIPTION_PRICE_ID`
-- Set `STRIPE_SECRET_KEY` and `STRIPE_PUBLISHABLE_KEY`
-- Keep the prices, API keys, and webhook endpoint in Stripe test mode while testing
-
-## Global Pagination
-
-List endpoints use a shared pagination utility (`src/common/utils/pagination.ts`) and support:
-
-- `page` (default: `1`)
-- `limit` (default: `10`, max: `100`)
-- `sortBy` (default: `createdAt`)
-- `sortOrder` (`asc` or `desc`, default: `desc`)
-
-Paginated response format:
-
-- `meta`: `page`, `limit`, `total`, `totalPages`, `hasNextPage`, `hasPrevPage`
-- `data`: array of records
-
-## Approval Workflow
-
-- Any newly created or updated service/venue is stored with `publishStatus: pending`.
-- Only `admin` or `super_admin` can approve/reject publishing.
-- On approval, the record is updated as:
-  - `publishStatus: published`
-  - `approvedBy: { "name": "<admin_or_super_admin_name>", "email": "<admin_or_super_admin_email>" }`
-  - `approvedAt: <timestamp>`
-- On rejection, the record is updated with `publishStatus: rejected`.
-
-## Apidog Collection
-
-Use the OpenAPI file at:
-
-- `apidog.openapi.json`
-- `apidog.collection.json` (recommended for Apidog request collection with prefilled sample bodies)
-
-Import in Apidog:
-
-1. Open Apidog.
-2. Create or open a project.
-3. Choose `Import` -> `OpenAPI/Swagger`.
-4. Select `apidog.openapi.json` or `apidog.collection.json`.
-
-## Test
-
-```bash
-pnpm test
+```text
+src/
+  app/
+  common/
+  config/
+  modules/
+  socket/
+  server.ts
+scripts/
+public/
+nginx/
+docker-compose.yml
 ```
-
-## CI/CD
-
-GitHub Actions workflow: `.github/workflows/ci-cd.yml`
-
-- CI runs on pull requests and pushes to `main`.
-- CI steps: install dependencies, build TypeScript, run tests.
-- CD runs on push to `main`.
-- CD steps: build Docker image and push to `ghcr.io/<owner>/<repo>` with `latest` and `sha` tags.

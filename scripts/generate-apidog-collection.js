@@ -223,7 +223,7 @@ const customerAuth = folder('Auth', [
     tokenVar: 'customerToken',
     event: idCaptureEvent('customerUserId')
   }),
-  request('Update Customer Profile', 'PATCH', '/api/v1/auth/profile', {
+  request('Update Customer Profile', 'PATCH', '/api/v1/auth/profile/customer', {
     tokenVar: 'customerToken',
     contentType: 'application/json',
     description:
@@ -363,10 +363,19 @@ const customerBookings = folder('Bookings', [
 ]);
 
 const customerSubscriptions = folder('Subscriptions', [
+  request('Create Subscription', 'POST', '/api/v1/subscriptions/create', {
+    tokenVar: 'customerToken'
+  }),
   request('Get Subscription Status', 'GET', '/api/v1/subscriptions/status', {
     tokenVar: 'customerToken'
   }),
   request('Get Subscription Payment Link', 'GET', '/api/v1/subscriptions/payment-link', {
+    tokenVar: 'customerToken'
+  }),
+  request('Stop Recurring Subscription', 'POST', '/api/v1/subscriptions/stop-recurring', {
+    tokenVar: 'customerToken'
+  }),
+  request('Resume Recurring Subscription', 'POST', '/api/v1/subscriptions/resume-recurring', {
     tokenVar: 'customerToken'
   })
 ]);
@@ -452,7 +461,7 @@ const serviceProviderAuth = folder('Auth', [
     tokenVar: 'serviceProviderToken',
     event: idCaptureEvent('serviceProviderUserId')
   }),
-  request('Update Service Provider Profile', 'PATCH', '/api/v1/auth/profile', {
+  request('Update Service Provider Profile', 'PATCH', '/api/v1/auth/profile/service-provider', {
     tokenVar: 'serviceProviderToken',
     contentType: 'application/json',
     description:
@@ -520,13 +529,10 @@ const serviceProviderServices = folder('Services', [
               galleryImages: [],
               videoUrl: 'https://youtube.com/watch?v=abc123'
             },
-            availabilityOverrides: [
+            availabilityCalendar: [
               {
                 date: '2026-04-12',
-                slots: [
-                  { hour: 10, status: 'booked' },
-                  { hour: 11, status: 'booked' }
-                ]
+                hours: [10, 11]
               }
             ]
           },
@@ -568,10 +574,10 @@ const serviceProviderServices = folder('Services', [
               galleryImages: [],
               videoUrl: 'https://youtube.com/watch?v=updated-service'
             },
-            availabilityOverrides: [
+            availabilityCalendar: [
               {
                 date: '2026-04-13',
-                slots: [{ hour: 12, status: 'booked' }]
+                hours: [12]
               }
             ]
           },
@@ -596,6 +602,26 @@ const serviceProviderServices = folder('Services', [
   }),
   request('Delete Service', 'DELETE', '/api/v1/service-provider/services/{serviceId}', {
     tokenVar: 'serviceProviderToken'
+  }),
+  request('Get Service Availability', 'GET', '/api/v1/service-provider/services/{serviceId}/availability', {
+    tokenVar: 'serviceProviderToken',
+    query: [{ key: 'month', value: '2026-04' }]
+  }),
+  request('Block Service Availability', 'PATCH', '/api/v1/service-provider/services/{serviceId}/availability', {
+    tokenVar: 'serviceProviderToken',
+    contentType: 'application/json',
+    body: jsonBody({
+      date: '2026-04-18',
+      hours: [10, 11]
+    })
+  }),
+  request('Unblock Service Availability', 'DELETE', '/api/v1/service-provider/services/{serviceId}/availability', {
+    tokenVar: 'serviceProviderToken',
+    contentType: 'application/json',
+    body: jsonBody({
+      date: '2026-04-18',
+      hours: [10]
+    })
   })
 ]);
 
@@ -638,10 +664,19 @@ const serviceProviderBookings = folder('Bookings', [
 ]);
 
 const serviceProviderSubscriptions = folder('Subscriptions', [
+  request('Create Subscription', 'POST', '/api/v1/subscriptions/create', {
+    tokenVar: 'serviceProviderToken'
+  }),
   request('Get Subscription Status', 'GET', '/api/v1/subscriptions/status', {
     tokenVar: 'serviceProviderToken'
   }),
   request('Get Subscription Payment Link', 'GET', '/api/v1/subscriptions/payment-link', {
+    tokenVar: 'serviceProviderToken'
+  }),
+  request('Stop Recurring Subscription', 'POST', '/api/v1/subscriptions/stop-recurring', {
+    tokenVar: 'serviceProviderToken'
+  }),
+  request('Resume Recurring Subscription', 'POST', '/api/v1/subscriptions/resume-recurring', {
     tokenVar: 'serviceProviderToken'
   })
 ]);
@@ -725,7 +760,7 @@ const venueProviderAuth = folder('Auth', [
     tokenVar: 'venueProviderToken',
     event: idCaptureEvent('venueProviderUserId')
   }),
-  request('Update Venue Provider Profile', 'PATCH', '/api/v1/auth/profile', {
+  request('Update Venue Provider Profile', 'PATCH', '/api/v1/auth/profile/venue-provider', {
     tokenVar: 'venueProviderToken',
     contentType: 'application/json',
     description:
@@ -793,13 +828,10 @@ const venueProviderVenues = folder('Venues', [
               galleryImages: [],
               videoUrl: 'https://youtube.com/watch?v=venue123'
             },
-            availabilityOverrides: [
+            availabilityCalendar: [
               {
                 date: '2026-04-18',
-                slots: [
-                  { hour: 14, status: 'booked' },
-                  { hour: 15, status: 'booked' }
-                ]
+                hours: [14, 15]
               }
             ]
           },
@@ -837,10 +869,10 @@ const venueProviderVenues = folder('Venues', [
               galleryImages: [],
               videoUrl: 'https://youtube.com/watch?v=updated-venue'
             },
-            availabilityOverrides: [
+            availabilityCalendar: [
               {
                 date: '2026-04-19',
-                slots: [{ hour: 18, status: 'booked' }]
+                hours: [18]
               }
             ]
           },
@@ -865,6 +897,26 @@ const venueProviderVenues = folder('Venues', [
   }),
   request('Delete Venue', 'DELETE', '/api/v1/venue-provider/venues/{venueId}', {
     tokenVar: 'venueProviderToken'
+  }),
+  request('Get Venue Availability', 'GET', '/api/v1/venue-provider/venues/{venueId}/availability', {
+    tokenVar: 'venueProviderToken',
+    query: [{ key: 'month', value: '2026-04' }]
+  }),
+  request('Block Venue Availability', 'PATCH', '/api/v1/venue-provider/venues/{venueId}/availability', {
+    tokenVar: 'venueProviderToken',
+    contentType: 'application/json',
+    body: jsonBody({
+      date: '2026-04-20',
+      hours: [14, 15]
+    })
+  }),
+  request('Unblock Venue Availability', 'DELETE', '/api/v1/venue-provider/venues/{venueId}/availability', {
+    tokenVar: 'venueProviderToken',
+    contentType: 'application/json',
+    body: jsonBody({
+      date: '2026-04-20',
+      hours: [14]
+    })
   })
 ]);
 
@@ -909,10 +961,19 @@ const venueProviderBookings = folder('Bookings', [
 ]);
 
 const venueProviderSubscriptions = folder('Subscriptions', [
+  request('Create Subscription', 'POST', '/api/v1/subscriptions/create', {
+    tokenVar: 'venueProviderToken'
+  }),
   request('Get Subscription Status', 'GET', '/api/v1/subscriptions/status', {
     tokenVar: 'venueProviderToken'
   }),
   request('Get Subscription Payment Link', 'GET', '/api/v1/subscriptions/payment-link', {
+    tokenVar: 'venueProviderToken'
+  }),
+  request('Stop Recurring Subscription', 'POST', '/api/v1/subscriptions/stop-recurring', {
+    tokenVar: 'venueProviderToken'
+  }),
+  request('Resume Recurring Subscription', 'POST', '/api/v1/subscriptions/resume-recurring', {
     tokenVar: 'venueProviderToken'
   })
 ]);
@@ -998,7 +1059,7 @@ const eventPlannerAuth = folder('Auth', [
     tokenVar: 'eventPlannerToken',
     event: idCaptureEvent('eventPlannerUserId')
   }),
-  request('Update Event Planner Profile', 'PATCH', '/api/v1/auth/profile', {
+  request('Update Event Planner Profile', 'PATCH', '/api/v1/auth/profile/event-planner', {
     tokenVar: 'eventPlannerToken',
     contentType: 'application/json',
     description:
@@ -1013,12 +1074,38 @@ const eventPlannerPublic = folder('Public APIs', [
     query: paginationQuery,
     event: idCaptureEvent('eventPlannerId')
   }),
+  request('Get Event Planner By ID', 'GET', '/api/v1/event-planners/{eventPlannerId}', {
+    event: idCaptureEvent('eventPlannerId')
+  }),
   request('Get Public Event Planners', 'GET', '/api/v1/public/event-planners', {
     query: paginationQuery,
     event: idCaptureEvent('eventPlannerId')
   }),
   request('Get Public Event Planner By ID', 'GET', '/api/v1/public/event-planners/{eventPlannerId}', {
     event: idCaptureEvent('eventPlannerId')
+  })
+]);
+
+const eventPlannerAvailability = folder('Availability', [
+  request('Get My Availability', 'GET', '/api/v1/event-planners/me/availability', {
+    tokenVar: 'eventPlannerToken',
+    query: [{ key: 'month', value: '2026-04' }]
+  }),
+  request('Block My Availability', 'PATCH', '/api/v1/event-planners/me/availability', {
+    tokenVar: 'eventPlannerToken',
+    contentType: 'application/json',
+    body: jsonBody({
+      date: '2026-04-21',
+      hours: [10, 11]
+    })
+  }),
+  request('Unblock My Availability', 'DELETE', '/api/v1/event-planners/me/availability', {
+    tokenVar: 'eventPlannerToken',
+    contentType: 'application/json',
+    body: jsonBody({
+      date: '2026-04-21',
+      hours: [10]
+    })
   })
 ]);
 
@@ -1059,10 +1146,19 @@ const eventPlannerBookings = folder('Bookings', [
 ]);
 
 const eventPlannerSubscriptions = folder('Subscriptions', [
+  request('Create Subscription', 'POST', '/api/v1/subscriptions/create', {
+    tokenVar: 'eventPlannerToken'
+  }),
   request('Get Subscription Status', 'GET', '/api/v1/subscriptions/status', {
     tokenVar: 'eventPlannerToken'
   }),
   request('Get Subscription Payment Link', 'GET', '/api/v1/subscriptions/payment-link', {
+    tokenVar: 'eventPlannerToken'
+  }),
+  request('Stop Recurring Subscription', 'POST', '/api/v1/subscriptions/stop-recurring', {
+    tokenVar: 'eventPlannerToken'
+  }),
+  request('Resume Recurring Subscription', 'POST', '/api/v1/subscriptions/resume-recurring', {
     tokenVar: 'eventPlannerToken'
   })
 ]);
@@ -1421,6 +1517,7 @@ const superAdminBookings = folder('Bookings', [
 const publicApis = folder('Public', [
   request('Root Status', 'GET', '/'),
   request('Health Check', 'GET', '/health'),
+  request('Get Stripe Config', 'GET', '/api/v1/public/stripe-config'),
   request('Get Published Services', 'GET', '/api/v1/public/services', {
     description:
       'Public GET endpoint. No request body. Use query params for pagination and sorting. Returns published services only.',
@@ -1515,6 +1612,7 @@ const collection = {
     folder('Event Planner', [
       eventPlannerAuth,
       eventPlannerPublic,
+      eventPlannerAvailability,
       eventPlannerUploads,
       eventPlannerBookings,
       eventPlannerOrderChat,

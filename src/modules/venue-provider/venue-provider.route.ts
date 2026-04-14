@@ -23,36 +23,24 @@ const router = Router();
  *     description: Public listing and provider management for venues
  * components:
  *   schemas:
- *     VenueAvailabilityOverride:
+ *     VenueAvailabilityCalendarEntry:
  *       type: object
- *       required: [date, slots]
+ *       required: [date, hours]
  *       properties:
  *         date:
  *           type: string
  *           format: date
  *           example: 2026-03-20
- *         slots:
+ *         hours:
  *           type: array
  *           items:
- *             type: object
- *             required: [hour, status]
- *             properties:
- *               hour:
- *                 type: integer
- *                 minimum: 8
- *                 maximum: 23
- *                 example: 8
- *               status:
- *                 type: string
- *                 enum: [available, pending, booked]
- *                 example: available
+ *             type: integer
+ *             minimum: 8
+ *             maximum: 23
  *           example:
- *             - hour: 8
- *               status: available
- *             - hour: 9
- *               status: booked
- *             - hour: 10
- *               status: pending
+ *             - 8
+ *             - 9
+ *             - 10
  *     VenueCreateRequest:
  *       type: object
  *       required: [information, pricing, capacity, media]
@@ -81,15 +69,9 @@ const router = Router();
  *             - https://cdn.example.com/venues/grand-hall-1.jpg
  *             - https://cdn.example.com/venues/grand-hall-2.jpg
  *           videoUrl: https://www.youtube.com/watch?v=abc123
- *         availabilityOverrides:
+ *         availabilityCalendar:
  *           - date: 2026-03-20
- *             slots:
- *               - hour: 8
- *                 status: available
- *               - hour: 9
- *                 status: booked
- *               - hour: 10
- *                 status: pending
+ *             hours: [8, 9, 10]
  *       properties:
  *         information:
  *           type: object
@@ -162,10 +144,10 @@ const router = Router();
  *               type: string
  *               format: uri
  *               example: https://www.youtube.com/watch?v=abc123
- *         availabilityOverrides:
+ *         availabilityCalendar:
  *           type: array
  *           items:
- *             $ref: '#/components/schemas/VenueAvailabilityOverride'
+ *             $ref: '#/components/schemas/VenueAvailabilityCalendarEntry'
  *     VenueUpdateRequest:
  *       type: object
  *       properties:
@@ -177,10 +159,10 @@ const router = Router();
  *           type: object
  *         media:
  *           type: object
- *         availabilityOverrides:
+ *         availabilityCalendar:
  *           type: array
  *           items:
- *             $ref: '#/components/schemas/VenueAvailabilityOverride'
+ *             $ref: '#/components/schemas/VenueAvailabilityCalendarEntry'
  *     VenueEntity:
  *       type: object
  *       properties:
@@ -196,10 +178,12 @@ const router = Router();
  *           type: object
  *         media:
  *           type: object
- *         availabilityOverrides:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/VenueAvailabilityOverride'
+ *         availability:
+ *           type: object
+ *           additionalProperties:
+ *             type: array
+ *             items:
+ *               type: integer
  *         publishStatus:
  *           type: string
  *           enum: [pending, published, rejected]
@@ -374,6 +358,76 @@ router.get('/venues', VenueProviderController.getVenues);
  */
 router.get('/venues/:venueId', validate(venueIdParamSchema), VenueProviderController.getVenueById);
 
+/**
+ * @openapi
+ * /api/v1/venue-provider/venues/{venueId}/availability:
+ *   get:
+ *     tags: [VenueProvider]
+ *     summary: Get one venue availability calendar
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: venueId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: month
+ *         schema:
+ *           type: string
+ *           pattern: '^\d{4}-\d{2}$'
+ *           example: 2026-04
+ *     responses:
+ *       200:
+ *         description: Availability returned
+ *   patch:
+ *     tags: [VenueProvider]
+ *     summary: Block venue availability hours
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [date, hours]
+ *             properties:
+ *               date:
+ *                 type: string
+ *                 format: date
+ *               hours:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *     responses:
+ *       200:
+ *         description: Availability blocked successfully
+ *   delete:
+ *     tags: [VenueProvider]
+ *     summary: Unblock venue availability hours
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [date, hours]
+ *             properties:
+ *               date:
+ *                 type: string
+ *                 format: date
+ *               hours:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *     responses:
+ *       200:
+ *         description: Availability unblocked successfully
+ */
 router.use(protect, authorize('venue_provider'));
 
 router.get(
@@ -414,7 +468,7 @@ router.delete(
  *               payload:
  *                 type: string
  *                 description: JSON string matching VenueCreateRequest. Include `media.galleryImages` only for already-hosted image URLs. Files sent in `images` or `image` are uploaded by the backend automatically.
- *                 example: '{"information":{"venueName":"Grand Hall","venueType":"Banquet","description":"Premium event venue in central Dhaka.","addressLine":"123 Main Road","city":"Dhaka","area":"Farmgate"},"pricing":{"basePrice":5000,"currency":"BDT","discount":{"type":"percentage","value":10},"amenities":{"wifi":true,"parking":true,"ac":true}},"capacity":{"maximumGuests":300},"media":{"galleryImages":[],"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityOverrides":[{"date":"2026-03-20","slots":[{"hour":8,"status":"available"},{"hour":9,"status":"booked"},{"hour":10,"status":"pending"}]}]}'
+ *                 example: '{"information":{"venueName":"Grand Hall","venueType":"Banquet","description":"Premium event venue in central Dhaka.","addressLine":"123 Main Road","city":"Dhaka","area":"Farmgate"},"pricing":{"basePrice":5000,"currency":"BDT","discount":{"type":"percentage","value":10},"amenities":{"wifi":true,"parking":true,"ac":true}},"capacity":{"maximumGuests":300},"media":{"galleryImages":[],"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityCalendar":[{"date":"2026-03-20","hours":[8,9,10]}]}'
  *               images:
  *                 type: array
  *                 items:
@@ -429,7 +483,7 @@ router.delete(
  *             validVenue:
  *               summary: Valid venue creation payload
  *               value:
- *                 payload: '{"information":{"venueName":"Grand Hall","venueType":"Banquet","description":"Premium event venue in central Dhaka.","addressLine":"123 Main Road","city":"Dhaka","area":"Farmgate"},"pricing":{"basePrice":5000,"currency":"BDT","discount":{"type":"percentage","value":10},"amenities":{"wifi":true,"parking":true,"ac":true}},"capacity":{"maximumGuests":300},"media":{"galleryImages":[],"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityOverrides":[{"date":"2026-03-20","slots":[{"hour":8,"status":"available"},{"hour":9,"status":"booked"},{"hour":10,"status":"pending"}]}]}'
+ *                 payload: '{"information":{"venueName":"Grand Hall","venueType":"Banquet","description":"Premium event venue in central Dhaka.","addressLine":"123 Main Road","city":"Dhaka","area":"Farmgate"},"pricing":{"basePrice":5000,"currency":"BDT","discount":{"type":"percentage","value":10},"amenities":{"wifi":true,"parking":true,"ac":true}},"capacity":{"maximumGuests":300},"media":{"galleryImages":[],"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityCalendar":[{"date":"2026-03-20","hours":[8,9,10]}]}'
  *     responses:
  *       201:
  *         description: Venue created successfully
@@ -481,7 +535,7 @@ router.post(
  *               payload:
  *                 type: string
  *                 description: JSON string matching VenueUpdateRequest. Files sent in `images` or `image` are uploaded by the backend automatically.
- *                 example: '{"capacity":{"maximumGuests":550},"media":{"galleryImages":[],"videoUrl":"https://youtube.com/watch?v=updated-venue"},"availabilityOverrides":[{"date":"2026-04-19","slots":[{"hour":18,"status":"booked"}]}]}'
+ *                 example: '{"capacity":{"maximumGuests":550},"media":{"galleryImages":[],"videoUrl":"https://youtube.com/watch?v=updated-venue"},"availabilityCalendar":[{"date":"2026-04-19","hours":[18]}]}'
  *               images:
  *                 type: array
  *                 items:
@@ -496,7 +550,7 @@ router.post(
  *             validVenueUpdate:
  *               summary: Valid venue update payload
  *               value:
- *                 payload: '{"capacity":{"maximumGuests":550},"media":{"galleryImages":[],"videoUrl":"https://youtube.com/watch?v=updated-venue"},"availabilityOverrides":[{"date":"2026-04-19","slots":[{"hour":18,"status":"booked"}]}]}'
+ *                 payload: '{"capacity":{"maximumGuests":550},"media":{"galleryImages":[],"videoUrl":"https://youtube.com/watch?v=updated-venue"},"availabilityCalendar":[{"date":"2026-04-19","hours":[18]}]}'
  *     responses:
  *       200:
  *         description: Venue updated successfully
