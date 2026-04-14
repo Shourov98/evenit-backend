@@ -12,19 +12,28 @@ const createBookingBodyBaseSchema = z.object({
   targetId: z.string().regex(objectIdRegex, 'Invalid targetId'),
   bookingDate: z.string().regex(dateRegex, 'bookingDate must be in YYYY-MM-DD format'),
   hours: hoursSchema,
+  guest_count: z.number().int().positive().optional(),
   location: z.string().min(2).max(240).optional(),
   specialInstructions: z.string().max(2000).optional()
 });
 
 const withBookingHourValidation = <T extends z.ZodTypeAny>(schema: T) =>
   schema.superRefine((data, ctx) => {
-    const payload = data as { hours: number[] };
+    const payload = data as { hours: number[]; targetType?: 'venue' | 'service' | 'event'; guest_count?: number };
     const unique = new Set(payload.hours);
     if (unique.size !== payload.hours.length) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['hours'],
         message: 'hours cannot contain duplicates'
+      });
+    }
+
+    if (payload.targetType === 'venue' && typeof payload.guest_count !== 'number') {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['guest_count'],
+        message: 'guest_count is required for venue bookings'
       });
     }
   });
@@ -66,7 +75,11 @@ export const createServiceBookingSchema = z.object({
 });
 
 export const createVenueBookingSchema = z.object({
-  body: withBookingHourValidation(createBookingBodyBaseSchema.omit({ targetType: true, targetId: true })),
+  body: withBookingHourValidation(
+    createBookingBodyBaseSchema.omit({ targetType: true, targetId: true }).extend({
+      guest_count: z.number().int().positive()
+    })
+  ),
   params: venueBookingParamsSchema,
   query: z.object({}).optional().default({})
 });

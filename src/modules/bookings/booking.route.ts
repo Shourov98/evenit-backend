@@ -30,7 +30,7 @@ router.use(protect);
  *         - targetType
  *         - targetId
  *         - bookingDate
- *         - timeSlots
+ *         - hours
  *       properties:
  *         targetType:
  *           type: string
@@ -43,18 +43,17 @@ router.use(protect);
  *           type: string
  *           format: date
  *           example: 2026-03-20
- *         timeSlots:
+ *         hours:
  *           type: array
  *           minItems: 1
  *           items:
- *             type: string
- *             example: "14:00"
- *           example: ["14:00", "15:00", "16:00"]
- *         durationHours:
+ *             type: integer
+ *             example: 14
+ *           example: [14, 15, 16]
+ *         guest_count:
  *           type: integer
  *           minimum: 1
- *           maximum: 24
- *           example: 3
+ *           example: 250
  *         location:
  *           type: string
  *           example: Farmgate, Dhaka
@@ -90,11 +89,15 @@ router.use(protect);
  *           type: string
  *           format: date
  *           example: 2026-03-20
- *         timeSlots:
+ *         hours:
  *           type: array
  *           items:
- *             type: string
- *           example: ["14:00", "15:00", "16:00"]
+ *             type: integer
+ *           example: [14, 15, 16]
+ *         guest_count:
+ *           type: integer
+ *           nullable: true
+ *           example: 250
  *         durationHours:
  *           type: integer
  *           example: 3
@@ -274,21 +277,17 @@ router.post('/', authorize('customer'), validate(createBookingSchema), BookingCo
  *         application/json:
  *           schema:
  *             type: object
- *             required: [bookingDate, timeSlots]
+ *             required: [bookingDate, hours]
  *             properties:
  *               bookingDate:
  *                 type: string
  *                 format: date
  *                 example: 2026-03-20
- *               timeSlots:
+ *               hours:
  *                 type: array
  *                 items:
- *                   type: string
- *                   example: "14:00"
- *               durationHours:
- *                 type: integer
- *                 minimum: 1
- *                 maximum: 24
+ *                   type: integer
+ *                   example: 14
  *               location:
  *                 type: string
  *               specialInstructions:
@@ -305,7 +304,7 @@ router.post('/', authorize('customer'), validate(createBookingSchema), BookingCo
  *       404:
  *         description: Service not found
  *       409:
- *         description: Time slot conflict
+ *         description: Hour conflict
  */
 router.post(
   '/services/:serviceId',
@@ -335,21 +334,21 @@ router.post(
  *         application/json:
  *           schema:
  *             type: object
- *             required: [bookingDate, timeSlots]
+ *             required: [bookingDate, hours, guest_count]
  *             properties:
  *               bookingDate:
  *                 type: string
  *                 format: date
  *                 example: 2026-03-20
- *               timeSlots:
+ *               hours:
  *                 type: array
  *                 items:
- *                   type: string
- *                   example: "14:00"
- *               durationHours:
+ *                   type: integer
+ *                   example: 14
+ *               guest_count:
  *                 type: integer
  *                 minimum: 1
- *                 maximum: 24
+ *                 example: 250
  *               location:
  *                 type: string
  *               specialInstructions:
@@ -366,7 +365,7 @@ router.post(
  *       404:
  *         description: Venue not found
  *       409:
- *         description: Time slot conflict
+ *         description: Hour conflict or guest_count exceeds venue capacity
  */
 router.post(
   '/venues/:venueId',
@@ -396,21 +395,17 @@ router.post(
  *         application/json:
  *           schema:
  *             type: object
- *             required: [bookingDate, timeSlots]
+ *             required: [bookingDate, hours]
  *             properties:
  *               bookingDate:
  *                 type: string
  *                 format: date
  *                 example: 2026-03-20
- *               timeSlots:
+ *               hours:
  *                 type: array
  *                 items:
- *                   type: string
- *                   example: "14:00"
- *               durationHours:
- *                 type: integer
- *                 minimum: 1
- *                 maximum: 24
+ *                   type: integer
+ *                   example: 14
  *               location:
  *                 type: string
  *               specialInstructions:

@@ -981,7 +981,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"targetType\": \"service\",\n  \"targetId\": \"{{serviceId}}\",\n  \"bookingDate\": \"2026-04-10\",\n  \"timeSlots\": [\n    \"10:00\",\n    \"11:00\"\n  ],\n  \"durationHours\": 2,\n  \"location\": \"Banani, Dhaka\",\n  \"specialInstructions\": \"Please confirm decoration options.\"\n}",
+                  "raw": "{\n  \"targetType\": \"service\",\n  \"targetId\": \"{{serviceId}}\",\n  \"bookingDate\": \"2026-04-10\",\n  \"hours\": [\n    10,\n    11\n  ],\n  \"location\": \"Banani, Dhaka\",\n  \"specialInstructions\": \"Please confirm decoration options.\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -1032,7 +1032,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"bookingDate\": \"2026-04-10\",\n  \"timeSlots\": [\n    \"10:00\",\n    \"11:00\"\n  ],\n  \"durationHours\": 2,\n  \"location\": \"Banani, Dhaka\",\n  \"specialInstructions\": \"Need premium package.\"\n}",
+                  "raw": "{\n  \"bookingDate\": \"2026-04-10\",\n  \"hours\": [\n    10,\n    11\n  ],\n  \"location\": \"Banani, Dhaka\",\n  \"specialInstructions\": \"Need premium package.\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -1085,7 +1085,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"bookingDate\": \"2026-04-15\",\n  \"timeSlots\": [\n    \"14:00\",\n    \"15:00\",\n    \"16:00\"\n  ],\n  \"durationHours\": 3,\n  \"specialInstructions\": \"Need projector and stage.\"\n}",
+                  "raw": "{\n  \"bookingDate\": \"2026-04-15\",\n  \"hours\": [\n    14,\n    15,\n    16\n  ],\n  \"guest_count\": 250,\n  \"specialInstructions\": \"Need projector and stage.\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -1138,7 +1138,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"bookingDate\": \"2026-04-20\",\n  \"timeSlots\": [\n    \"09:00\",\n    \"10:00\"\n  ],\n  \"durationHours\": 2,\n  \"location\": \"Gulshan, Dhaka\",\n  \"specialInstructions\": \"Wedding planning consultation.\"\n}",
+                  "raw": "{\n  \"bookingDate\": \"2026-04-20\",\n  \"hours\": [\n    9,\n    10\n  ],\n  \"location\": \"Gulshan, Dhaka\",\n  \"specialInstructions\": \"Wedding planning consultation.\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"

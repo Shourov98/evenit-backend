@@ -17,6 +17,7 @@ type CreateBookingPayload = {
   targetId: string;
   bookingDate: string;
   hours: number[];
+  guest_count?: number;
   location?: string;
   specialInstructions?: string;
 };
@@ -144,6 +145,10 @@ export class BookingService {
 
   private static async getTargetForCreate(payload: CreateBookingPayload) {
     if (payload.targetType === 'venue') {
+      if (typeof payload.guest_count !== 'number') {
+        throw new AppError(400, 'guest_count is required for venue bookings');
+      }
+
       const venue = await VenueProviderVenueModel.findOne({
         _id: payload.targetId,
         isDeleted: false,
@@ -152,6 +157,10 @@ export class BookingService {
 
       if (!venue) {
         throw new AppError(404, 'Venue not found');
+      }
+
+      if (payload.guest_count > venue.capacity.maximumGuests) {
+        throw new AppError(400, `guest_count cannot exceed venue maximumGuests (${venue.capacity.maximumGuests})`);
       }
 
       ensureHoursAvailable(venue.availabilityCalendar, payload.bookingDate, payload.hours, 'Venue');
@@ -258,6 +267,7 @@ export class BookingService {
         reservedSlots: buildReservedSlots(payload.targetType, payload.targetId, payload.bookingDate, hours),
         bookingDate: payload.bookingDate,
         hours,
+        guest_count: payload.guest_count,
         durationHours,
         location: payload.location,
         specialInstructions: payload.specialInstructions,

@@ -980,7 +980,7 @@
           "targetType",
           "targetId",
           "bookingDate",
-          "timeSlots"
+          "hours"
         ],
         "properties": {
           "targetType": {
@@ -1001,24 +1001,23 @@
             "format": "date",
             "example": "2026-03-20"
           },
-          "timeSlots": {
+          "hours": {
             "type": "array",
             "minItems": 1,
             "items": {
-              "type": "string",
-              "example": "14:00"
+              "type": "integer",
+              "example": 14
             },
             "example": [
-              "14:00",
-              "15:00",
-              "16:00"
+              14,
+              15,
+              16
             ]
           },
-          "durationHours": {
+          "guest_count": {
             "type": "integer",
             "minimum": 1,
-            "maximum": 24,
-            "example": 3
+            "example": 250
           },
           "location": {
             "type": "string",
@@ -1072,16 +1071,21 @@
             "format": "date",
             "example": "2026-03-20"
           },
-          "timeSlots": {
+          "hours": {
             "type": "array",
             "items": {
-              "type": "string"
+              "type": "integer"
             },
             "example": [
-              "14:00",
-              "15:00",
-              "16:00"
+              14,
+              15,
+              16
             ]
+          },
+          "guest_count": {
+            "type": "integer",
+            "nullable": true,
+            "example": 250
           },
           "durationHours": {
             "type": "integer",
@@ -4513,7 +4517,7 @@
                 "type": "object",
                 "required": [
                   "bookingDate",
-                  "timeSlots"
+                  "hours"
                 ],
                 "properties": {
                   "bookingDate": {
@@ -4521,17 +4525,12 @@
                     "format": "date",
                     "example": "2026-03-20"
                   },
-                  "timeSlots": {
+                  "hours": {
                     "type": "array",
                     "items": {
-                      "type": "string",
-                      "example": "14:00"
+                      "type": "integer",
+                      "example": 14
                     }
-                  },
-                  "durationHours": {
-                    "type": "integer",
-                    "minimum": 1,
-                    "maximum": 24
                   },
                   "location": {
                     "type": "string"
@@ -4561,7 +4560,7 @@
             "description": "Service not found"
           },
           "409": {
-            "description": "Time slot conflict"
+            "description": "Hour conflict"
           }
         }
       }
@@ -4596,7 +4595,8 @@
                 "type": "object",
                 "required": [
                   "bookingDate",
-                  "timeSlots"
+                  "hours",
+                  "guest_count"
                 ],
                 "properties": {
                   "bookingDate": {
@@ -4604,17 +4604,17 @@
                     "format": "date",
                     "example": "2026-03-20"
                   },
-                  "timeSlots": {
+                  "hours": {
                     "type": "array",
                     "items": {
-                      "type": "string",
-                      "example": "14:00"
+                      "type": "integer",
+                      "example": 14
                     }
                   },
-                  "durationHours": {
+                  "guest_count": {
                     "type": "integer",
                     "minimum": 1,
-                    "maximum": 24
+                    "example": 250
                   },
                   "location": {
                     "type": "string"
@@ -4644,7 +4644,7 @@
             "description": "Venue not found"
           },
           "409": {
-            "description": "Time slot conflict"
+            "description": "Hour conflict or guest_count exceeds venue capacity"
           }
         }
       }
@@ -4679,7 +4679,7 @@
                 "type": "object",
                 "required": [
                   "bookingDate",
-                  "timeSlots"
+                  "hours"
                 ],
                 "properties": {
                   "bookingDate": {
@@ -4687,17 +4687,12 @@
                     "format": "date",
                     "example": "2026-03-20"
                   },
-                  "timeSlots": {
+                  "hours": {
                     "type": "array",
                     "items": {
-                      "type": "string",
-                      "example": "14:00"
+                      "type": "integer",
+                      "example": 14
                     }
-                  },
-                  "durationHours": {
-                    "type": "integer",
-                    "minimum": 1,
-                    "maximum": 24
                   },
                   "location": {
                     "type": "string"

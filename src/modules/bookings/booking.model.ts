@@ -17,6 +17,7 @@ export interface IBooking extends Document {
   reservedSlots: string[];
   bookingDate: string;
   hours: number[];
+  guest_count?: number;
   durationHours: number;
   location?: string;
   specialInstructions?: string;
@@ -84,6 +85,10 @@ const bookingSchema = new Schema<IBooking>(
         },
         message: 'At least one hour is required'
       }
+    },
+    guest_count: {
+      type: Number,
+      min: 1
     },
     durationHours: {
       type: Number,

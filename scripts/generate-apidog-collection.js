@@ -307,8 +307,7 @@ const customerBookings = folder('Bookings', [
       targetType: 'service',
       targetId: '{{serviceId}}',
       bookingDate: '2026-04-10',
-      timeSlots: ['10:00', '11:00'],
-      durationHours: 2,
+      hours: [10, 11],
       location: 'Banani, Dhaka',
       specialInstructions: 'Please confirm decoration options.'
     }),
@@ -319,8 +318,7 @@ const customerBookings = folder('Bookings', [
     contentType: 'application/json',
     body: jsonBody({
       bookingDate: '2026-04-10',
-      timeSlots: ['10:00', '11:00'],
-      durationHours: 2,
+      hours: [10, 11],
       location: 'Banani, Dhaka',
       specialInstructions: 'Need premium package.'
     }),
@@ -331,8 +329,8 @@ const customerBookings = folder('Bookings', [
     contentType: 'application/json',
     body: jsonBody({
       bookingDate: '2026-04-15',
-      timeSlots: ['14:00', '15:00', '16:00'],
-      durationHours: 3,
+      hours: [14, 15, 16],
+      guest_count: 250,
       specialInstructions: 'Need projector and stage.'
     }),
     event: idCaptureEvent('bookingId')
@@ -342,8 +340,7 @@ const customerBookings = folder('Bookings', [
     contentType: 'application/json',
     body: jsonBody({
       bookingDate: '2026-04-20',
-      timeSlots: ['09:00', '10:00'],
-      durationHours: 2,
+      hours: [9, 10],
       location: 'Gulshan, Dhaka',
       specialInstructions: 'Wedding planning consultation.'
     }),
