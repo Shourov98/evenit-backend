@@ -31,6 +31,33 @@ export class BookingController {
     });
   });
 
+  static getServiceBookingContext = catchAsync(async (req: Request, res: Response) => {
+    const data = await BookingService.getServiceBookingContext(req.params.serviceId);
+
+    return res.status(200).json({
+      success: true,
+      data
+    });
+  });
+
+  static getVenueBookingContext = catchAsync(async (req: Request, res: Response) => {
+    const data = await BookingService.getVenueBookingContext(req.params.venueId);
+
+    return res.status(200).json({
+      success: true,
+      data
+    });
+  });
+
+  static getEventPlannerBookingContext = catchAsync(async (req: Request, res: Response) => {
+    const data = await BookingService.getEventPlannerBookingContext(req.params.eventPlannerId);
+
+    return res.status(200).json({
+      success: true,
+      data
+    });
+  });
+
   static createServiceBooking = catchAsync(async (req: Request, res: Response) => {
     const user = getUser(req);
     const booking = await BookingService.createForTarget(user.userId, 'service', req.params.serviceId, req.body);

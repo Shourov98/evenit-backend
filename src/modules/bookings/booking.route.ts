@@ -4,6 +4,7 @@ import { protect } from '../../common/middlewares/auth.middleware';
 import { validate } from '../../common/middlewares/validate.middleware';
 import { BookingController } from './booking.controller';
 import {
+  bookingTargetContextParamSchema,
   bookingIdParamSchema,
   bookingListQuerySchema,
   createEventPlannerBookingSchema,
@@ -24,6 +25,25 @@ router.use(protect);
  *     description: Customer and provider booking lifecycle
  * components:
  *   schemas:
+ *     BookingContextResponse:
+ *       type: object
+ *       properties:
+ *         success:
+ *           type: boolean
+ *         data:
+ *           type: object
+ *           properties:
+ *             targetType:
+ *               type: string
+ *               enum: [venue, service, event]
+ *             target:
+ *               type: object
+ *             provider:
+ *               type: object
+ *             bookingMeta:
+ *               type: object
+ *             availability:
+ *               type: object
  *     BookingCreateRequest:
  *       type: object
  *       required:
@@ -258,6 +278,35 @@ router.post('/', authorize('customer'), validate(createBookingSchema), BookingCo
 
 /**
  * @openapi
+ * /api/v1/bookings/services/{serviceId}/context:
+ *   get:
+ *     tags: [Bookings]
+ *     summary: Get full booking context for a service
+ *     description: Returns full service info, provider info, and merged blocked/booked availability for the current and next month.
+ *     parameters:
+ *       - in: path
+ *         name: serviceId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Service booking context returned
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/BookingContextResponse'
+ *       404:
+ *         description: Service not found
+ */
+router.get(
+  '/services/:serviceId/context',
+  validate(bookingTargetContextParamSchema),
+  BookingController.getServiceBookingContext
+);
+
+/**
+ * @openapi
  * /api/v1/bookings/services/{serviceId}:
  *   post:
  *     tags: [Bookings]
@@ -311,6 +360,35 @@ router.post(
   authorize('customer'),
   validate(createServiceBookingSchema),
   BookingController.createServiceBooking
+);
+
+/**
+ * @openapi
+ * /api/v1/bookings/venues/{venueId}/context:
+ *   get:
+ *     tags: [Bookings]
+ *     summary: Get full booking context for a venue
+ *     description: Returns full venue info, provider info, and merged blocked/booked availability for the current and next month.
+ *     parameters:
+ *       - in: path
+ *         name: venueId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Venue booking context returned
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/BookingContextResponse'
+ *       404:
+ *         description: Venue not found
+ */
+router.get(
+  '/venues/:venueId/context',
+  validate(bookingTargetContextParamSchema),
+  BookingController.getVenueBookingContext
 );
 
 /**
@@ -372,6 +450,35 @@ router.post(
   authorize('customer'),
   validate(createVenueBookingSchema),
   BookingController.createVenueBooking
+);
+
+/**
+ * @openapi
+ * /api/v1/bookings/event-planners/{eventPlannerId}/context:
+ *   get:
+ *     tags: [Bookings]
+ *     summary: Get full booking context for an event planner
+ *     description: Returns full event planner info and merged blocked/booked availability for the current and next month.
+ *     parameters:
+ *       - in: path
+ *         name: eventPlannerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Event planner booking context returned
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/BookingContextResponse'
+ *       404:
+ *         description: Event planner not found
+ */
+router.get(
+  '/event-planners/:eventPlannerId/context',
+  validate(bookingTargetContextParamSchema),
+  BookingController.getEventPlannerBookingContext
 );
 
 /**

@@ -974,6 +974,39 @@
           }
         }
       },
+      "BookingContextResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "targetType": {
+                "type": "string",
+                "enum": [
+                  "venue",
+                  "service",
+                  "event"
+                ]
+              },
+              "target": {
+                "type": "object"
+              },
+              "provider": {
+                "type": "object"
+              },
+              "bookingMeta": {
+                "type": "object"
+              },
+              "availability": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
       "BookingCreateRequest": {
         "type": "object",
         "required": [
@@ -4487,6 +4520,40 @@
         }
       }
     },
+    "/api/v1/bookings/services/{serviceId}/context": {
+      "get": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Get full booking context for a service",
+        "description": "Returns full service info, provider info, and merged blocked/booked availability for the current and next month.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "serviceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Service booking context returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingContextResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Service not found"
+          }
+        }
+      }
+    },
     "/api/v1/bookings/services/{serviceId}": {
       "post": {
         "tags": [
@@ -4561,6 +4628,40 @@
           },
           "409": {
             "description": "Hour conflict"
+          }
+        }
+      }
+    },
+    "/api/v1/bookings/venues/{venueId}/context": {
+      "get": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Get full booking context for a venue",
+        "description": "Returns full venue info, provider info, and merged blocked/booked availability for the current and next month.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venueId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Venue booking context returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingContextResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Venue not found"
           }
         }
       }
@@ -4645,6 +4746,40 @@
           },
           "409": {
             "description": "Hour conflict or guest_count exceeds venue capacity"
+          }
+        }
+      }
+    },
+    "/api/v1/bookings/event-planners/{eventPlannerId}/context": {
+      "get": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Get full booking context for an event planner",
+        "description": "Returns full event planner info and merged blocked/booked availability for the current and next month.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventPlannerId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event planner booking context returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingContextResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Event planner not found"
           }
         }
       }

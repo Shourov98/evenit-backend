@@ -309,6 +309,15 @@ const venueProviderProfileUpdateBody = {
 };
 
 const customerBookings = folder('Bookings', [
+  request('Get Service Booking Context', 'GET', '/api/v1/bookings/services/{serviceId}/context', {
+    event: idCaptureEvent('serviceId')
+  }),
+  request('Get Venue Booking Context', 'GET', '/api/v1/bookings/venues/{venueId}/context', {
+    event: idCaptureEvent('venueId')
+  }),
+  request('Get Event Planner Booking Context', 'GET', '/api/v1/bookings/event-planners/{eventPlannerId}/context', {
+    event: idCaptureEvent('eventPlannerId')
+  }),
   request('Create Booking', 'POST', '/api/v1/bookings', {
     tokenVar: 'customerToken',
     contentType: 'application/json',

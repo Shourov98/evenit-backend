@@ -29,6 +29,18 @@ const withBookingHourValidation = <T extends z.ZodTypeAny>(schema: T) =>
       });
     }
 
+    const sortedHours = [...payload.hours].sort((left, right) => left - right);
+    for (let index = 1; index < sortedHours.length; index += 1) {
+      if (sortedHours[index] !== sortedHours[index - 1] + 1) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['hours'],
+          message: 'hours must be consecutive'
+        });
+        break;
+      }
+    }
+
     if (payload.targetType === 'venue' && typeof payload.guest_count !== 'number') {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -59,6 +71,19 @@ const eventPlannerBookingParamsSchema = z.object({
 export const createBookingSchema = z.object({
   body: createBookingBodySchema,
   params: z.object({}).optional().default({}),
+  query: z.object({}).optional().default({})
+});
+
+export const bookingTargetContextParamSchema = z.object({
+  body: z.object({}).optional().default({}),
+  params: z
+    .object({
+      serviceId: z.string().regex(objectIdRegex, 'Invalid serviceId').optional(),
+      venueId: z.string().regex(objectIdRegex, 'Invalid venueId').optional(),
+      eventPlannerId: z.string().regex(objectIdRegex, 'Invalid eventPlannerId').optional()
+    })
+    .optional()
+    .default({}),
   query: z.object({}).optional().default({})
 });
 

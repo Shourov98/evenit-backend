@@ -3,6 +3,9 @@ import { AppError } from '../../common/errors/AppError';
 import {
   availabilityEntriesToCalendar,
   AvailabilityEntry,
+  BOOKING_END_HOUR,
+  BOOKING_START_HOUR,
+  mergeCalendars,
   normalizeHours
 } from '../../common/utils/availability';
 import { PaginationOptions, paginateModel } from '../../common/utils/pagination';
@@ -21,6 +24,14 @@ type CreateBookingPayload = {
   location?: string;
   specialInstructions?: string;
 };
+
+type BookingContextCalendar = Record<
+  string,
+  {
+    bookedHours: number[];
+    blockedHours: number[];
+  }
+>;
 
 type BookingStatusFilter = 'pending' | 'approved' | 'rejected' | 'completed' | 'confirmed' | 'cancelled';
 
@@ -93,6 +104,107 @@ export const buildReservedSlots = (
   bookingDate: string,
   hours: number[]
 ): string[] => hours.map((hour) => `${targetType}:${targetId}:${bookingDate}:${hour}`);
+
+const getCurrentAndNextMonthWindow = () => {
+  const now = new Date();
+  const year = now.getUTCFullYear();
+  const month = now.getUTCMonth();
+  const fromDate = new Date(Date.UTC(year, month, 1));
+  const toDate = new Date(Date.UTC(year, month + 2, 0));
+
+  return {
+    from: fromDate.toISOString().slice(0, 10),
+    to: toDate.toISOString().slice(0, 10),
+    currentMonth: `${year}-${String(month + 1).padStart(2, '0')}`,
+    nextMonth: `${toDate.getUTCFullYear()}-${String(toDate.getUTCMonth() + 1).padStart(2, '0')}`
+  };
+};
+
+const filterCalendarToRange = (
+  calendar: Record<string, number[]>,
+  range: { from: string; to: string }
+): Record<string, number[]> =>
+  Object.fromEntries(
+    Object.entries(calendar)
+      .filter(([date]) => date >= range.from && date <= range.to)
+      .sort(([left], [right]) => left.localeCompare(right))
+  );
+
+const buildBookedCalendar = async (
+  targetType: CreateBookingPayload['targetType'],
+  targetId: string,
+  range: { from: string; to: string }
+): Promise<Record<string, number[]>> => {
+  const bookings = await BookingModel.find({
+    targetType,
+    targetId,
+    status: { $in: activeBookingStatuses },
+    bookingDate: {
+      $gte: range.from,
+      $lte: range.to
+    }
+  }).select('bookingDate hours');
+
+  const calendar: Record<string, number[]> = {};
+  for (const booking of bookings) {
+    calendar[booking.bookingDate] = normalizeHours([...(calendar[booking.bookingDate] ?? []), ...booking.hours]);
+  }
+
+  return calendar;
+};
+
+const buildAvailabilityView = (
+  blockedCalendar: Record<string, number[]>,
+  bookedCalendar: Record<string, number[]>
+): BookingContextCalendar => {
+  const dates = new Set([...Object.keys(blockedCalendar), ...Object.keys(bookedCalendar)]);
+
+  return Object.fromEntries(
+    [...dates]
+      .sort((left, right) => left.localeCompare(right))
+      .map((date) => [
+        date,
+        {
+          bookedHours: bookedCalendar[date] ?? [],
+          blockedHours: blockedCalendar[date] ?? []
+        }
+      ])
+  );
+};
+
+const serializeProvider = (user: {
+  _id: unknown;
+  fullName: string;
+  email: string;
+  role: string;
+  profileImage?: unknown;
+  onboarding?: Record<string, unknown> | null;
+}) => {
+  const onboarding = user.onboarding ?? null;
+
+  return {
+    _id: String(user._id),
+    fullName: user.fullName,
+    email: user.email,
+    role: user.role,
+    profileImage:
+      user.profileImage && typeof user.profileImage === 'object' && 'url' in user.profileImage
+        ? user.profileImage.url
+        : null,
+    serviceProvider:
+      user.role === 'service_provider' && onboarding && typeof onboarding === 'object' && 'serviceProvider' in onboarding
+        ? (onboarding as Record<string, any>).serviceProvider?.profileInfo ?? null
+        : null,
+    venueProvider:
+      user.role === 'venue_provider' && onboarding && typeof onboarding === 'object' && 'venueProvider' in onboarding
+        ? (onboarding as Record<string, any>).venueProvider?.profileInfo ?? null
+        : null,
+    eventPlanner:
+      user.role === 'event_planner' && onboarding && typeof onboarding === 'object' && 'eventProvider' in onboarding
+        ? (onboarding as Record<string, any>).eventProvider?.profileInfo ?? null
+        : null
+  };
+};
 
 const ensureHoursAvailable = (
   calendarEntries: AvailabilityEntry[] | undefined,
@@ -292,6 +404,143 @@ export class BookingService {
 
       throw error;
     }
+  }
+
+  static async getServiceBookingContext(serviceId: string) {
+    ensureObjectId(serviceId, 'serviceId');
+    const service = await ServiceProviderServiceModel.findOne({
+      _id: serviceId,
+      isDeleted: false,
+      publishStatus: 'published'
+    }).populate({
+      path: 'ownerId',
+      model: UserModel,
+      select: 'fullName email role profileImage onboarding.serviceProvider'
+    });
+
+    if (!service) {
+      throw new AppError(404, 'Service not found');
+    }
+
+    const range = getCurrentAndNextMonthWindow();
+    const blockedCalendar = filterCalendarToRange(
+      availabilityEntriesToCalendar(service.availabilityCalendar),
+      range
+    );
+    const bookedCalendar = await buildBookedCalendar('service', serviceId, range);
+
+    return {
+      targetType: 'service',
+      target: {
+        ...service.toObject(),
+        availability: undefined,
+        availabilityCalendar: undefined
+      },
+      provider: serializeProvider(service.ownerId as any),
+      bookingMeta: {
+        currency: service.pricing.currency,
+        durationMode: 'consecutive_hours',
+        minHour: BOOKING_START_HOUR,
+        maxHour: BOOKING_END_HOUR,
+        currentMonth: range.currentMonth,
+        nextMonth: range.nextMonth
+      },
+      availability: buildAvailabilityView(blockedCalendar, bookedCalendar)
+    };
+  }
+
+  static async getVenueBookingContext(venueId: string) {
+    ensureObjectId(venueId, 'venueId');
+    const venue = await VenueProviderVenueModel.findOne({
+      _id: venueId,
+      isDeleted: false,
+      publishStatus: 'published'
+    }).populate({
+      path: 'ownerId',
+      model: UserModel,
+      select: 'fullName email role profileImage onboarding.venueProvider'
+    });
+
+    if (!venue) {
+      throw new AppError(404, 'Venue not found');
+    }
+
+    const range = getCurrentAndNextMonthWindow();
+    const blockedCalendar = filterCalendarToRange(
+      availabilityEntriesToCalendar(venue.availabilityCalendar),
+      range
+    );
+    const bookedCalendar = await buildBookedCalendar('venue', venueId, range);
+
+    return {
+      targetType: 'venue',
+      target: {
+        ...venue.toObject(),
+        availability: undefined,
+        availabilityCalendar: undefined
+      },
+      provider: serializeProvider(venue.ownerId as any),
+      bookingMeta: {
+        currency: venue.pricing.currency,
+        durationMode: 'consecutive_hours',
+        minHour: BOOKING_START_HOUR,
+        maxHour: BOOKING_END_HOUR,
+        requiresGuestCount: true,
+        maximumGuests: venue.capacity.maximumGuests,
+        currentMonth: range.currentMonth,
+        nextMonth: range.nextMonth
+      },
+      availability: buildAvailabilityView(blockedCalendar, bookedCalendar)
+    };
+  }
+
+  static async getEventPlannerBookingContext(eventPlannerId: string) {
+    ensureObjectId(eventPlannerId, 'eventPlannerId');
+    const eventPlanner = await UserModel.findOne({
+      _id: eventPlannerId,
+      role: 'event_planner',
+      isEmailVerified: true,
+      'onboarding.eventProvider': { $exists: true }
+    }).select('fullName email role profileImage onboarding availabilityCalendar subscription');
+
+    if (!eventPlanner) {
+      throw new AppError(404, 'Event planner not found');
+    }
+
+    const range = getCurrentAndNextMonthWindow();
+    const blockedCalendar = filterCalendarToRange(
+      availabilityEntriesToCalendar(eventPlanner.availabilityCalendar),
+      range
+    );
+    const bookedCalendar = await buildBookedCalendar('event', eventPlannerId, range);
+    const profileInfo = (eventPlanner.onboarding as Record<string, any>)?.eventProvider?.profileInfo ?? null;
+
+    return {
+      targetType: 'event',
+      target: {
+        _id: String(eventPlanner._id),
+        fullName: eventPlanner.fullName,
+        email: eventPlanner.email,
+        role: eventPlanner.role,
+        profileImage:
+          eventPlanner.profileImage &&
+          typeof eventPlanner.profileImage === 'object' &&
+          'url' in eventPlanner.profileImage
+            ? eventPlanner.profileImage.url
+            : null,
+        eventPlanner: profileInfo
+      },
+      provider: serializeProvider(eventPlanner as any),
+      bookingMeta: {
+        currency: eventPlanner.subscription?.payment?.currency ?? 'BDT',
+        durationMode: 'consecutive_hours',
+        minHour: BOOKING_START_HOUR,
+        maxHour: BOOKING_END_HOUR,
+        currentMonth: range.currentMonth,
+        nextMonth: range.nextMonth
+      },
+      availability: buildAvailabilityView(blockedCalendar, bookedCalendar)
+    };
   }
 
   static async getMyBookings(customerId: string, pagination: PaginationOptions, status?: BookingStatusFilter) {

@@ -966,6 +966,111 @@
           "name": "Bookings",
           "item": [
             {
+              "name": "Get Service Booking Context",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/bookings/services/{{serviceId}}/context",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "bookings",
+                    "services",
+                    "{{serviceId}}",
+                    "context"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('serviceId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get Venue Booking Context",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/bookings/venues/{{venueId}}/context",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "bookings",
+                    "venues",
+                    "{{venueId}}",
+                    "context"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('venueId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get Event Planner Booking Context",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/bookings/event-planners/{{eventPlannerId}}/context",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "bookings",
+                    "event-planners",
+                    "{{eventPlannerId}}",
+                    "context"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const data = json?.data;",
+                      "const firstItem = Array.isArray(data) ? data[0] : null;",
+                      "const id = data?._id || data?.id || data?.user?.id || firstItem?._id || firstItem?.id || null;",
+                      "if (id) pm.collectionVariables.set('eventPlannerId', String(id));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
               "name": "Create Booking",
               "request": {
                 "method": "POST",
