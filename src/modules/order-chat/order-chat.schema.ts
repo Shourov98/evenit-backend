@@ -6,6 +6,17 @@ const bookingIdParamsSchema = z.object({
   bookingId: z.string().regex(objectIdRegex, 'Invalid bookingId')
 });
 
+export const orderChatConversationListQuerySchema = z.object({
+  body: z.object({}).optional().default({}),
+  params: z.object({}).optional().default({}),
+  query: z.object({
+    page: z.coerce.number().int().positive().optional(),
+    limit: z.coerce.number().int().positive().optional(),
+    sortBy: z.string().trim().min(1).optional(),
+    sortOrder: z.enum(['asc', 'desc']).optional()
+  })
+});
+
 export const orderChatMessagesQuerySchema = z.object({
   body: z.object({}).optional().default({}),
   params: bookingIdParamsSchema,
@@ -22,4 +33,3 @@ export const sendOrderChatMessageSchema = z.object({
   params: bookingIdParamsSchema,
   query: z.object({}).optional().default({})
 });
-

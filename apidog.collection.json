@@ -1291,6 +1291,47 @@
           "name": "Order Chat",
           "item": [
             {
+              "name": "Get Customer Chat Conversations",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{customerToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/order-chats?page=1&limit=20&sortBy=updatedAt&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "order-chats"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "updatedAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              }
+            },
+            {
               "name": "Get Customer Order Chat Messages",
               "request": {
                 "method": "GET",
@@ -2644,6 +2685,47 @@
         {
           "name": "Order Chat",
           "item": [
+            {
+              "name": "Get Service Provider Chat Conversations",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{serviceProviderToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/order-chats?page=1&limit=20&sortBy=updatedAt&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "order-chats"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "updatedAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              }
+            },
             {
               "name": "Get Service Provider Order Chat Messages",
               "request": {
@@ -4034,6 +4116,47 @@
           "name": "Order Chat",
           "item": [
             {
+              "name": "Get Venue Provider Chat Conversations",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{venueProviderToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/order-chats?page=1&limit=20&sortBy=updatedAt&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "order-chats"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "updatedAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              }
+            },
+            {
               "name": "Get Venue Provider Order Chat Messages",
               "request": {
                 "method": "GET",
@@ -5158,6 +5281,47 @@
         {
           "name": "Order Chat",
           "item": [
+            {
+              "name": "Get Event Planner Chat Conversations",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{eventPlannerToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/order-chats?page=1&limit=20&sortBy=updatedAt&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "order-chats"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": "updatedAt"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              }
+            },
             {
               "name": "Get Event Planner Order Chat Messages",
               "request": {

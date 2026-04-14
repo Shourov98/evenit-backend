@@ -14,6 +14,18 @@ const getUser = (req: Request) => {
 };
 
 export class OrderChatController {
+  static listConversations = catchAsync(async (req: Request, res: Response) => {
+    const user = getUser(req);
+    const pagination = parsePagination(req.query as Record<string, unknown>);
+    const conversations = await OrderChatService.listConversations(user.userId, pagination);
+
+    return res.status(200).json({
+      success: true,
+      meta: conversations.meta,
+      data: conversations.data
+    });
+  });
+
   static getMessages = catchAsync(async (req: Request, res: Response) => {
     const user = getUser(req);
     const pagination = parsePagination(req.query as Record<string, unknown>);

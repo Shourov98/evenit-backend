@@ -1,7 +1,13 @@
 import { Server, Socket } from 'socket.io';
 import { AppError } from '../common/errors/AppError';
 import { authenticateToken, AuthenticatedUser } from '../common/utils/auth-user';
-import { OrderChatService, getOrderChatRoom } from '../modules/order-chat/order-chat.service';
+import {
+  getOrderChatPresenceRoom,
+  getOrderChatRoom,
+  getUserSocketRoom,
+  OrderChatService
+} from '../modules/order-chat/order-chat.service';
+import { markUserOffline, markUserOnline } from './presence';
 
 type OrderChatSocket = Socket & {
   data: {
@@ -61,6 +67,10 @@ export const registerOrderChatSocket = (io: Server): void => {
   io.on('connection', (rawSocket) => {
     const socket = rawSocket as OrderChatSocket;
     const user = getSocketUser(socket);
+    const presence = markUserOnline(user.userId);
+
+    void socket.join(getUserSocketRoom(user.userId));
+    void socket.join(getOrderChatPresenceRoom());
 
     socket.emit('order-chat:connected', {
       success: true,
@@ -69,6 +79,20 @@ export const registerOrderChatSocket = (io: Server): void => {
         fullName: user.fullName,
         email: user.email,
         role: user.role
+      },
+      presence: {
+        userId: user.userId,
+        isOnline: presence.isOnline,
+        lastSeenAt: presence.lastSeenAt
+      }
+    });
+
+    io.to(getOrderChatPresenceRoom()).emit('order-chat:presence:update', {
+      success: true,
+      data: {
+        userId: user.userId,
+        isOnline: true,
+        lastSeenAt: presence.lastSeenAt
       }
     });
 
@@ -138,6 +162,19 @@ export const registerOrderChatSocket = (io: Server): void => {
           message: toSocketError(error).message
         });
       }
+    });
+
+    socket.on('disconnect', () => {
+      const snapshot = markUserOffline(user.userId);
+
+      io.to(getOrderChatPresenceRoom()).emit('order-chat:presence:update', {
+        success: true,
+        data: {
+          userId: user.userId,
+          isOnline: snapshot.isOnline,
+          lastSeenAt: snapshot.lastSeenAt
+        }
+      });
     });
   });
 };

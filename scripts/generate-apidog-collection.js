@@ -143,6 +143,15 @@ const bookingListQuery = [...paginationQuery, { key: 'status', value: 'pending' 
 
 const buildOrderChatFolder = (tokenVar, actorLabel) =>
   folder('Order Chat', [
+    request(`Get ${actorLabel} Chat Conversations`, 'GET', '/api/v1/order-chats', {
+      tokenVar,
+      query: [
+        { key: 'page', value: '1' },
+        { key: 'limit', value: '20' },
+        { key: 'sortBy', value: 'updatedAt' },
+        { key: 'sortOrder', value: 'desc' }
+      ]
+    }),
     request(`Get ${actorLabel} Order Chat Messages`, 'GET', '/api/v1/order-chats/{bookingId}/messages', {
       tokenVar,
       query: [

@@ -2,7 +2,11 @@ import { Router } from 'express';
 import { protect } from '../../common/middlewares/auth.middleware';
 import { validate } from '../../common/middlewares/validate.middleware';
 import { OrderChatController } from './order-chat.controller';
-import { orderChatMessagesQuerySchema, sendOrderChatMessageSchema } from './order-chat.schema';
+import {
+  orderChatConversationListQuerySchema,
+  orderChatMessagesQuerySchema,
+  sendOrderChatMessageSchema
+} from './order-chat.schema';
 
 const router = Router();
 
@@ -14,6 +18,38 @@ router.use(protect);
  *   - name: Order Chat
  *     description: Realtime chat between booking customer and provider
  */
+
+/**
+ * @openapi
+ * /api/v1/order-chats:
+ *   get:
+ *     tags: [Order Chat]
+ *     summary: Get booking-linked chat conversation list for the authenticated user
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: sortOrder
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *     responses:
+ *       200:
+ *         description: Conversation list returned
+ */
+router.get('/', validate(orderChatConversationListQuerySchema), OrderChatController.listConversations);
 
 /**
  * @openapi
@@ -78,4 +114,3 @@ router.get('/:bookingId/messages', validate(orderChatMessagesQuerySchema), Order
 router.post('/:bookingId/messages', validate(sendOrderChatMessageSchema), OrderChatController.sendMessage);
 
 export const orderChatRouter = router;
-
