@@ -11,6 +11,7 @@ import { subscriptionRouter } from '../modules/subscriptions/subscription.route'
 import { uploadRouter } from '../modules/uploads/upload.route';
 import { usersRouter } from '../modules/users/users.route';
 import { venueProviderRouter } from '../modules/venue-provider/venue-provider.route';
+import { reviewRouter } from '../modules/reviews/review.route';
 
 const router = Router();
 
@@ -60,5 +61,6 @@ router.use('/api/v1/uploads', uploadRouter);
 router.use('/api/v1/users', usersRouter);
 router.use('/api/v1/venue-provider', venueProviderRouter);
 router.use('/api/v1/admin', adminManagementRouter);
+router.use('/api/v1/reviews', reviewRouter);
 
 export { router };
