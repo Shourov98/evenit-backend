@@ -12,7 +12,6 @@ import { uploadRouter } from '../modules/uploads/upload.route';
 import { usersRouter } from '../modules/users/users.route';
 import { venueProviderRouter } from '../modules/venue-provider/venue-provider.route';
 import { reviewRouter } from '../modules/reviews/review.route';
-
 const router = Router();
 
 /**

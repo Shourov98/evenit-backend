@@ -197,4 +197,15 @@ export class BookingController {
       data: booking
     });
   });
+
+  static completeBooking = catchAsync(async (req: Request, res: Response) => {
+    const user = getUser(req);
+    const booking = await BookingService.complete(req.params.bookingId, user.userId);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Booking completed successfully',
+      data: booking
+    });
+  });
 }

@@ -38,6 +38,7 @@ export interface IBooking extends Document {
   rejectedAt?: Date;
   rejectionReason?: string;
   cancelledAt?: Date;
+  completedAt?: Date;
 }
 
 const bookingSchema = new Schema<IBooking>(
@@ -141,6 +142,9 @@ const bookingSchema = new Schema<IBooking>(
       maxlength: 500
     },
     cancelledAt: {
+      type: Date
+    },
+    completedAt: {
       type: Date
     }
   },

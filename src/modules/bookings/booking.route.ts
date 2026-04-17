@@ -285,6 +285,10 @@ router.use(protect);
  *           type: string
  *           format: date-time
  *           nullable: true
+ *         completedAt:
+ *           type: string
+ *           format: date-time
+ *           nullable: true
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -1396,5 +1400,36 @@ router.patch(
  *         description: Booking not found
  */
 router.patch('/:bookingId/cancel', authorize('customer'), validate(bookingIdParamSchema), BookingController.cancelBooking);
+
+/**
+ * @openapi
+ * /api/v1/bookings/{bookingId}/complete:
+ *   patch:
+ *     tags: [Bookings]
+ *     summary: Complete a booking
+ *     description: Customer marks a confirmed booking as completed on or after the booking date. Reviews can be submitted only after completion.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: bookingId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Booking completed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/BookingResponse'
+ *       400:
+ *         description: Booking is not confirmed or the booking date has not arrived yet
+ *       403:
+ *         description: Only the customer can complete the booking
+ *       404:
+ *         description: Booking not found
+ */
+router.patch('/:bookingId/complete', authorize('customer'), validate(bookingIdParamSchema), BookingController.completeBooking);
 
 export const bookingRouter = router;

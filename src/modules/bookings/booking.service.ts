@@ -97,6 +97,7 @@ const applyDiscount = (
 const getCurrentUtcDate = (): string => new Date().toISOString().slice(0, 10);
 
 export const isPastBookingDate = (bookingDate: string): boolean => bookingDate < getCurrentUtcDate();
+export const isFutureBookingDate = (bookingDate: string): boolean => bookingDate > getCurrentUtcDate();
 
 export const buildReservedSlots = (
   targetType: CreateBookingPayload['targetType'],
@@ -179,7 +180,11 @@ const serializeProvider = (user: {
   role: string;
   profileImage?: unknown;
   onboarding?: Record<string, unknown> | null;
-}) => {
+} | null | undefined) => {
+  if (!user) {
+    throw new AppError(404, 'Booking provider not found');
+  }
+
   const onboarding = user.onboarding ?? null;
 
   return {
@@ -663,6 +668,27 @@ export class BookingService {
 
     booking.status = 'cancelled';
     booking.cancelledAt = new Date();
+    await booking.save();
+
+    return booking;
+  }
+
+  static async complete(bookingId: string, customerId: string) {
+    const booking = await this.getById(bookingId, customerId, 'customer');
+    if (String(booking.customerId) !== customerId) {
+      throw new AppError(403, 'Only the customer can complete this booking');
+    }
+
+    if (booking.status !== 'confirmed') {
+      throw new AppError(400, 'Only confirmed bookings can be completed');
+    }
+
+    if (isFutureBookingDate(booking.bookingDate)) {
+      throw new AppError(400, 'Booking cannot be completed before the booking date');
+    }
+
+    booking.status = 'completed';
+    booking.completedAt = new Date();
     await booking.save();
 
     return booking;
