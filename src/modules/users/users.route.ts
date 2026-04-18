@@ -32,6 +32,9 @@ const router = Router();
  *             email:
  *               type: string
  *               format: email
+ *             phoneNumber:
+ *               type: string
+ *               nullable: true
  *             role:
  *               type: string
  *               enum: [customer, service_provider, event_planner, venue_provider, admin, super_admin]

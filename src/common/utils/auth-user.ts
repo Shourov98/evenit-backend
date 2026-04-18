@@ -29,11 +29,12 @@ export const authenticateToken = async (token: string): Promise<AuthenticatedUse
       await user.save();
     }
 
-    return {
-      userId: String(user._id),
-      email: user.email,
-      fullName: user.fullName,
-      role: user.role,
+      return {
+        userId: String(user._id),
+        email: user.email,
+        fullName: user.fullName,
+        phoneNumber: user.phoneNumber ?? null,
+        role: user.role,
       serviceCategories: user.serviceCategories,
       isBlocked: user.isBlocked,
       profileImage: user.profileImage?.url ?? null,

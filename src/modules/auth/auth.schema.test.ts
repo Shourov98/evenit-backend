@@ -1,7 +1,11 @@
 import {
   submitServiceProviderOnboardingSchema,
   submitEventProviderOnboardingSchema,
-  submitVenueProviderOnboardingSchema
+  submitVenueProviderOnboardingSchema,
+  updateCustomerProfileSchema,
+  updateEventPlannerProfileRequestSchema,
+  updateServiceProviderProfileRequestSchema,
+  updateVenueProviderProfileRequestSchema
 } from './auth.schema';
 
 describe('auth onboarding schemas', () => {
@@ -65,6 +69,103 @@ describe('auth onboarding schemas', () => {
           businessMail: 'business@royalhall.com',
           businessPhoneNo: '+8801712345678'
         }
+      }
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects fullName and email updates for service provider profiles', () => {
+    const result = updateServiceProviderProfileRequestSchema.safeParse({
+      body: {
+        fullName: 'Blocked Update',
+        email: 'blocked@example.com'
+      }
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('accepts service provider location-only profile updates', () => {
+    const result = updateServiceProviderProfileRequestSchema.safeParse({
+      body: {
+        phoneNumber: '+8801712345678',
+        serviceProvider: {
+          profileInfo: {
+            coverageArea: ['Dhaka', 'Gazipur']
+          }
+        }
+      }
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('accepts event planner phone and location updates only', () => {
+    const result = updateEventPlannerProfileRequestSchema.safeParse({
+      body: {
+        phoneNumber: '+8801712345678',
+        eventPlanner: {
+          profileInfo: {
+            coverageArea: ['Dhaka'],
+            address: 'Banani, Dhaka'
+          }
+        }
+      }
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects event planner fullName and email updates', () => {
+    const result = updateEventPlannerProfileRequestSchema.safeParse({
+      body: {
+        fullName: 'Blocked Update',
+        email: 'blocked@example.com'
+      }
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('accepts venue provider phone-only updates', () => {
+    const result = updateVenueProviderProfileRequestSchema.safeParse({
+      body: {
+        phoneNumber: '+8801712345678',
+        venueProvider: {
+          profileInfo: {
+            businessPhoneNo: '+8801712345678'
+          }
+        }
+      }
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects venue provider fullName and email updates', () => {
+    const result = updateVenueProviderProfileRequestSchema.safeParse({
+      body: {
+        fullName: 'Blocked Update',
+        email: 'blocked@example.com'
+      }
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('accepts an empty customer profile update body', () => {
+    const result = updateCustomerProfileSchema.safeParse({
+      body: {}
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('accepts a customer phone-only update', () => {
+    const result = updateCustomerProfileSchema.safeParse({
+      body: {
+        phoneNumber: '+8801712345678'
       }
     });
 

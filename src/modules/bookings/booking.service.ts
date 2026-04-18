@@ -8,7 +8,7 @@ import {
   mergeCalendars,
   normalizeHours
 } from '../../common/utils/availability';
-import { PaginationOptions, paginateModel } from '../../common/utils/pagination';
+import { buildPaginationMeta, PaginationOptions } from '../../common/utils/pagination';
 import { env } from '../../config/env';
 import { hydrateUserSubscription, UserModel } from '../auth/auth.model';
 import { IServiceProviderService, ServiceProviderServiceModel } from '../service-provider/service-provider.model';
@@ -57,12 +57,32 @@ const getPlatformFeePercent = (): number => {
   return parsed;
 };
 
+const getReferenceId = (value: unknown): string => {
+  if (!value) {
+    return '';
+  }
+
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  if (value instanceof Types.ObjectId) {
+    return String(value);
+  }
+
+  if (typeof value === 'object' && '_id' in value) {
+    return String((value as { _id: unknown })._id);
+  }
+
+  return String(value);
+};
+
 const canAccessBooking = (booking: IBooking, actorId: string, role: string): boolean => {
   if (role === 'admin' || role === 'super_admin') {
     return true;
   }
 
-  return String(booking.customerId) === actorId || String(booking.providerId) === actorId;
+  return getReferenceId(booking.customerId) === actorId || getReferenceId(booking.providerId) === actorId;
 };
 
 const computeServiceSubtotal = (service: IServiceProviderService, durationHours: number): number => {
@@ -177,6 +197,7 @@ const serializeProvider = (user: {
   _id: unknown;
   fullName: string;
   email: string;
+  phoneNumber?: string;
   role: string;
   profileImage?: unknown;
   onboarding?: Record<string, unknown> | null;
@@ -191,11 +212,59 @@ const serializeProvider = (user: {
     _id: String(user._id),
     fullName: user.fullName,
     email: user.email,
+    phoneNumber: user.phoneNumber ?? null,
     role: user.role,
     profileImage:
       user.profileImage && typeof user.profileImage === 'object' && 'url' in user.profileImage
         ? user.profileImage.url
         : null,
+    serviceProvider:
+      user.role === 'service_provider' && onboarding && typeof onboarding === 'object' && 'serviceProvider' in onboarding
+        ? (onboarding as Record<string, any>).serviceProvider?.profileInfo ?? null
+        : null,
+    venueProvider:
+      user.role === 'venue_provider' && onboarding && typeof onboarding === 'object' && 'venueProvider' in onboarding
+        ? (onboarding as Record<string, any>).venueProvider?.profileInfo ?? null
+        : null,
+    eventPlanner:
+      user.role === 'event_planner' && onboarding && typeof onboarding === 'object' && 'eventProvider' in onboarding
+        ? (onboarding as Record<string, any>).eventProvider?.profileInfo ?? null
+        : null
+  };
+};
+
+const serializeBookingParty = (user: {
+  _id: unknown;
+  fullName: string;
+  email: string;
+  phoneNumber?: string;
+  role: string;
+  profileImage?: unknown;
+  coverImage?: unknown;
+  serviceCategories?: string[];
+  onboarding?: Record<string, unknown> | null;
+} | null | undefined) => {
+  if (!user) {
+    return null;
+  }
+
+  const onboarding = user.onboarding ?? null;
+
+  return {
+    _id: String(user._id),
+    fullName: user.fullName,
+    email: user.email,
+    phoneNumber: user.phoneNumber ?? null,
+    role: user.role,
+    profileImage:
+      user.profileImage && typeof user.profileImage === 'object' && 'url' in user.profileImage
+        ? user.profileImage.url
+        : null,
+    coverImage:
+      user.coverImage && typeof user.coverImage === 'object' && 'url' in user.coverImage
+        ? user.coverImage.url
+        : null,
+    serviceCategories: Array.isArray(user.serviceCategories) ? user.serviceCategories : [],
     serviceProvider:
       user.role === 'service_provider' && onboarding && typeof onboarding === 'object' && 'serviceProvider' in onboarding
         ? (onboarding as Record<string, any>).serviceProvider?.profileInfo ?? null
@@ -228,6 +297,19 @@ const ensureHoursAvailable = (
 };
 
 export class BookingService {
+  private static readonly bookingPartyPopulate = [
+    {
+      path: 'customerId',
+      model: UserModel,
+      select: 'fullName email phoneNumber role profileImage coverImage serviceCategories onboarding'
+    },
+    {
+      path: 'providerId',
+      model: UserModel,
+      select: 'fullName email phoneNumber role profileImage coverImage serviceCategories onboarding'
+    }
+  ] as const;
+
   private static buildStatusFilter(status?: BookingStatusFilter) {
     if (!status) {
       return {};
@@ -258,6 +340,41 @@ export class BookingService {
     }
 
     return user;
+  }
+
+  private static serializeBookingDocument(booking: any) {
+    const raw = typeof booking?.toObject === 'function' ? booking.toObject() : booking;
+
+    return {
+      ...raw,
+      customerId: getReferenceId(raw.customerId),
+      providerId: getReferenceId(raw.providerId),
+      targetId: getReferenceId(raw.targetId),
+      customer:
+        raw.customerId && typeof raw.customerId === 'object' && 'fullName' in raw.customerId
+          ? serializeBookingParty(raw.customerId)
+          : null,
+      provider:
+        raw.providerId && typeof raw.providerId === 'object' && 'fullName' in raw.providerId
+          ? serializeBookingParty(raw.providerId)
+          : null
+    };
+  }
+
+  private static async findAccessibleBookingDocument(bookingId: string, actorId: string, role: string) {
+    ensureObjectId(bookingId, 'bookingId');
+    ensureObjectId(actorId, 'actorId');
+
+    const booking = await BookingModel.findById(bookingId);
+    if (!booking) {
+      throw new AppError(404, 'Booking not found');
+    }
+
+    if (!canAccessBooking(booking, actorId, role)) {
+      throw new AppError(403, 'Access denied: you are not allowed to access this booking');
+    }
+
+    return booking;
   }
 
   private static async getTargetForCreate(payload: CreateBookingPayload) {
@@ -420,7 +537,7 @@ export class BookingService {
     }).populate({
       path: 'ownerId',
       model: UserModel,
-      select: 'fullName email role profileImage onboarding.serviceProvider'
+      select: 'fullName email phoneNumber role profileImage onboarding.serviceProvider'
     });
 
     if (!service) {
@@ -463,7 +580,7 @@ export class BookingService {
     }).populate({
       path: 'ownerId',
       model: UserModel,
-      select: 'fullName email role profileImage onboarding.venueProvider'
+      select: 'fullName email phoneNumber role profileImage onboarding.venueProvider'
     });
 
     if (!venue) {
@@ -506,7 +623,7 @@ export class BookingService {
       role: 'event_planner',
       isEmailVerified: true,
       'onboarding.eventProvider': { $exists: true }
-    }).select('fullName email role profileImage onboarding availabilityCalendar subscription');
+    }).select('fullName email phoneNumber role profileImage onboarding availabilityCalendar subscription');
 
     if (!eventPlanner) {
       throw new AppError(404, 'Event planner not found');
@@ -526,6 +643,7 @@ export class BookingService {
         _id: String(eventPlanner._id),
         fullName: eventPlanner.fullName,
         email: eventPlanner.email,
+        phoneNumber: eventPlanner.phoneNumber ?? null,
         role: eventPlanner.role,
         profileImage:
           eventPlanner.profileImage &&
@@ -550,50 +668,56 @@ export class BookingService {
 
   static async getMyBookings(customerId: string, pagination: PaginationOptions, status?: BookingStatusFilter) {
     ensureObjectId(customerId, 'customerId');
+    const filter = {
+      customerId,
+      ...this.buildStatusFilter(status)
+    };
+    const [bookings, total] = await Promise.all([
+      BookingModel.find(filter)
+        .sort({ [pagination.sortBy]: pagination.sortOrder })
+        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .populate(this.bookingPartyPopulate as any),
+      BookingModel.countDocuments(filter)
+    ]);
 
-    return paginateModel(
-      BookingModel,
-      {
-        customerId,
-        ...this.buildStatusFilter(status)
-      },
-      pagination
-    );
+    return {
+      meta: buildPaginationMeta(total, pagination),
+      data: bookings.map((booking) => this.serializeBookingDocument(booking))
+    };
   }
 
   static async getProviderBookings(providerId: string, pagination: PaginationOptions, status?: BookingStatusFilter) {
     ensureObjectId(providerId, 'providerId');
+    const filter = {
+      providerId,
+      ...this.buildStatusFilter(status)
+    };
+    const [bookings, total] = await Promise.all([
+      BookingModel.find(filter)
+        .sort({ [pagination.sortBy]: pagination.sortOrder })
+        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .populate(this.bookingPartyPopulate as any),
+      BookingModel.countDocuments(filter)
+    ]);
 
-    return paginateModel(
-      BookingModel,
-      {
-        providerId,
-        ...this.buildStatusFilter(status)
-      },
-      pagination
-    );
+    return {
+      meta: buildPaginationMeta(total, pagination),
+      data: bookings.map((booking) => this.serializeBookingDocument(booking))
+    };
   }
 
   static async getById(bookingId: string, actorId: string, role: string) {
-    ensureObjectId(bookingId, 'bookingId');
-    ensureObjectId(actorId, 'actorId');
-
-    const booking = await BookingModel.findById(bookingId);
-    if (!booking) {
-      throw new AppError(404, 'Booking not found');
-    }
-
-    if (!canAccessBooking(booking, actorId, role)) {
-      throw new AppError(403, 'Access denied: you are not allowed to access this booking');
-    }
-
-    return booking;
+    const booking = await this.findAccessibleBookingDocument(bookingId, actorId, role);
+    await booking.populate(this.bookingPartyPopulate as any);
+    return this.serializeBookingDocument(booking);
   }
 
   static async approve(bookingId: string, providerId: string, role: 'venue_provider' | 'service_provider' | 'event_planner') {
     await this.ensureSubscribedUser(providerId, role);
-    const booking = await this.getById(bookingId, providerId, role);
-    if (String(booking.providerId) !== providerId) {
+    const booking = await this.findAccessibleBookingDocument(bookingId, providerId, role);
+    if (getReferenceId(booking.providerId) !== providerId) {
       throw new AppError(403, 'Only the provider can approve this booking');
     }
 
@@ -631,14 +755,14 @@ export class BookingService {
     booking.payment.status = 'covered_by_subscription';
     booking.payment.coveredAt = new Date();
     await booking.save();
-
-    return booking;
+    await booking.populate(this.bookingPartyPopulate as any);
+    return this.serializeBookingDocument(booking);
   }
 
   static async reject(bookingId: string, providerId: string, role: 'venue_provider' | 'service_provider' | 'event_planner', reason?: string) {
     await this.ensureSubscribedUser(providerId, role);
-    const booking = await this.getById(bookingId, providerId, role);
-    if (String(booking.providerId) !== providerId) {
+    const booking = await this.findAccessibleBookingDocument(bookingId, providerId, role);
+    if (getReferenceId(booking.providerId) !== providerId) {
       throw new AppError(403, 'Only the provider can reject this booking');
     }
 
@@ -652,13 +776,13 @@ export class BookingService {
     booking.payment.status = 'covered_by_subscription';
     booking.payment.coveredAt = undefined;
     await booking.save();
-
-    return booking;
+    await booking.populate(this.bookingPartyPopulate as any);
+    return this.serializeBookingDocument(booking);
   }
 
   static async cancel(bookingId: string, customerId: string) {
-    const booking = await this.getById(bookingId, customerId, 'customer');
-    if (String(booking.customerId) !== customerId) {
+    const booking = await this.findAccessibleBookingDocument(bookingId, customerId, 'customer');
+    if (getReferenceId(booking.customerId) !== customerId) {
       throw new AppError(403, 'Only the customer can cancel this booking');
     }
 
@@ -669,13 +793,13 @@ export class BookingService {
     booking.status = 'cancelled';
     booking.cancelledAt = new Date();
     await booking.save();
-
-    return booking;
+    await booking.populate(this.bookingPartyPopulate as any);
+    return this.serializeBookingDocument(booking);
   }
 
   static async complete(bookingId: string, customerId: string) {
-    const booking = await this.getById(bookingId, customerId, 'customer');
-    if (String(booking.customerId) !== customerId) {
+    const booking = await this.findAccessibleBookingDocument(bookingId, customerId, 'customer');
+    if (getReferenceId(booking.customerId) !== customerId) {
       throw new AppError(403, 'Only the customer can complete this booking');
     }
 
@@ -690,7 +814,7 @@ export class BookingService {
     booking.status = 'completed';
     booking.completedAt = new Date();
     await booking.save();
-
-    return booking;
+    await booking.populate(this.bookingPartyPopulate as any);
+    return this.serializeBookingDocument(booking);
   }
 }

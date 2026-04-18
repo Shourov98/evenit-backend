@@ -45,6 +45,10 @@ const router = Router();
  *           type: string
  *           format: email
  *           example: marvin@example.com
+ *         phoneNumber:
+ *           type: string
+ *           nullable: true
+ *           example: +8801712345678
  *         role:
  *           type: string
  *           enum: [customer, service_provider, event_planner, venue_provider, admin, super_admin]
@@ -357,51 +361,20 @@ const router = Router();
  *     ServiceProviderProfileInfoUpdateInput:
  *       type: object
  *       properties:
- *         nidOrTradeLicenseNumber:
- *           type: string
- *           example: 1234567890123
- *         serviceName:
- *           type: string
- *           example: Premium Catering
- *         serviceCategory:
- *           type: string
- *           example: Catering
- *         serviceDescription:
- *           type: string
- *           example: Updated service description
  *         coverageArea:
  *           type: array
  *           items:
  *             type: string
  *           example: ["Dhaka", "Gazipur"]
  *         verification:
- *           type: object
- *           properties:
- *             businessType:
- *               type: string
- *               enum: [individual, company]
- *               example: company
- *             companyName:
- *               type: string
- *               example: Evenit Ltd
- *             nationalIdOrTradeLicenseFiles:
- *               type: array
- *               items:
- *                 type: string
- *                 format: uri
- *               example: ["https://example.com/trade-license.pdf"]
+ *           deprecated: true
+ *           description: Verification fields are not editable through the profile update API.
  *     EventPlannerProfileInfoUpdateInput:
  *       type: object
  *       properties:
- *         nidOrTradeLicenseNumber:
+ *         phoneNumber:
  *           type: string
- *           example: 1234567890123
- *         name:
- *           type: string
- *           example: Star Events
- *         description:
- *           type: string
- *           example: Updated planner description
+ *           example: +8801712345678
  *         coverageArea:
  *           type: array
  *           items:
@@ -411,50 +384,11 @@ const router = Router();
  *           type: string
  *           example: Banani, Dhaka
  *         verification:
- *           type: object
- *           properties:
- *             businessType:
- *               type: string
- *               enum: [individual, company]
- *               example: company
- *             companyName:
- *               type: string
- *               example: Star Events Ltd
- *             nationalIdOrTradeLicenseFiles:
- *               type: array
- *               items:
- *                 type: string
- *                 format: uri
- *               example: ["https://example.com/trade-license.pdf"]
+ *           deprecated: true
+ *           description: Verification fields are not editable through the profile update API.
  *     VenueProviderProfileInfoUpdateInput:
  *       type: object
  *       properties:
- *         nidOrTradeLicenseNumber:
- *           type: string
- *           example: 1234567890123
- *         nationalIdOrTradeLicenseFiles:
- *           type: array
- *           items:
- *             type: string
- *             format: uri
- *           example: ["https://cdn.example.com/trade-license.pdf"]
- *         businessName:
- *           type: string
- *           example: Royal Hall
- *         businessType:
- *           type: string
- *           enum: [individual, company]
- *           example: company
- *         legalBusinessName:
- *           type: string
- *           example: Royal Hall Ltd
- *         registrationNo:
- *           type: string
- *           example: TRD-123456
- *         businessMail:
- *           type: string
- *           format: email
- *           example: info@royalhall.com
  *         businessPhoneNo:
  *           type: string
  *           example: +8801700000000
@@ -462,57 +396,31 @@ const router = Router();
  *       type: object
  *       description: >
  *         Partial update payload for authenticated service providers.
- *         Common account fields can be updated at the top level.
- *         Provider-specific editable fields live inside `serviceProvider.profileInfo`.
- *         There is no common `phone` field on the user model.
+ *         Phone and location fields are editable through this endpoint.
+ *         `fullName`, `email`, categories, services, and verification fields are not editable here.
  *       properties:
- *         fullName:
+ *         phoneNumber:
  *           type: string
- *           description: Updates both the top-level user fullName and onboarding.serviceProvider.name.
- *           example: Marvin McKinney
- *         email:
- *           type: string
- *           format: email
- *           description: Updates both the top-level user email and onboarding.serviceProvider.email.
- *           example: marvin@example.com
- *         serviceCategories:
- *           type: array
- *           items:
- *             type: string
- *           description: Stored on the top-level user document for service providers only.
- *           example: ["Catering", "Decoration"]
+ *           example: +8801712345678
  *         serviceProvider:
  *           type: object
- *           description: Role-specific profile fields for service providers.
+ *           description: Role-specific editable fields for service providers.
  *           properties:
  *             profileInfo:
  *               $ref: '#/components/schemas/ServiceProviderProfileInfoUpdateInput'
- *             services:
- *               type: array
- *               items:
- *                 type: string
- *               description: Replaces onboarding.serviceProvider.services.
- *               example: ["Buffet", "Corporate Events"]
  *     EventPlannerProfileUpdateRequest:
  *       type: object
  *       description: >
  *         Partial update payload for authenticated event planners.
- *         Common account fields can be updated at the top level.
- *         Planner-specific editable fields live inside `eventPlanner.profileInfo`.
- *         There is no common `phone` field on the user model.
+ *         Phone and location fields are editable through this endpoint.
+ *         `fullName`, `email`, pricing, and verification fields are not editable here.
  *       properties:
- *         fullName:
+ *         phoneNumber:
  *           type: string
- *           description: Updates both the top-level user fullName and onboarding.eventProvider.fullName.
- *           example: Star Events
- *         email:
- *           type: string
- *           format: email
- *           description: Updates both the top-level user email and onboarding.eventProvider.email.
- *           example: planner@example.com
+ *           example: +8801712345678
  *         eventPlanner:
  *           type: object
- *           description: Role-specific profile fields for event planners.
+ *           description: Role-specific editable fields for event planners.
  *           properties:
  *             profileInfo:
  *               $ref: '#/components/schemas/EventPlannerProfileInfoUpdateInput'
@@ -520,42 +428,26 @@ const router = Router();
  *       type: object
  *       description: >
  *         Partial update payload for authenticated venue providers.
- *         Common account fields can be updated at the top level.
- *         Venue-specific editable fields live inside `venueProvider.profileInfo`.
- *         Venue providers do not have a common phone field, but they do have
- *         `businessPhoneNo` inside `venueProvider.profileInfo`.
+ *         Phone fields are editable through this endpoint.
+ *         `fullName`, `email`, business identity, and verification fields are not editable here.
  *       properties:
- *         fullName:
+ *         phoneNumber:
  *           type: string
- *           description: Updates both the top-level user fullName and onboarding.venueProvider.fullName.
- *           example: Royal Hall Owner
- *         email:
- *           type: string
- *           format: email
- *           description: Updates both the top-level user email and onboarding.venueProvider.email.
- *           example: venue@example.com
+ *           example: +8801712345678
  *         venueProvider:
  *           type: object
- *           description: Role-specific profile fields for venue providers.
+ *           description: Role-specific editable fields for venue providers.
  *           properties:
  *             profileInfo:
  *               $ref: '#/components/schemas/VenueProviderProfileInfoUpdateInput'
  *     CustomerProfileUpdateRequest:
  *       type: object
  *       description: >
- *         Partial update payload for authenticated customers.
- *         Only common account fields are available. There is currently no stored
- *         common `phone` field for customers.
+ *         Customers can update their common phone number only.
  *       properties:
- *         fullName:
+ *         phoneNumber:
  *           type: string
- *           description: Updates the top-level user fullName.
- *           example: Marvin McKinney
- *         email:
- *           type: string
- *           format: email
- *           description: Updates the top-level user email.
- *           example: marvin@example.com
+ *           example: +8801712345678
  *     AuthUserResponse:
  *       type: object
  *       properties:
@@ -623,6 +515,9 @@ const router = Router();
  *               type: string
  *             role:
  *               type: string
+ *             phoneNumber:
+ *               type: string
+ *               nullable: true
  *             serviceCategories:
  *               type: array
  *               items:
@@ -982,7 +877,7 @@ router.post(
  *             properties:
  *               payload:
  *                 type: string
- *                 example: '{"fullName":"Marvin McKinney","email":"marvin@example.com"}'
+ *                 example: '{"phoneNumber":"+8801712345678"}'
  *               profileImage:
  *                 type: string
  *                 format: binary
@@ -996,8 +891,6 @@ router.post(
  *         description: Validation error or role mismatch
  *       401:
  *         description: Unauthorized
- *       409:
- *         description: Duplicate email
  *
  * /api/v1/auth/profile/service-provider:
  *   patch:
@@ -1019,7 +912,7 @@ router.post(
  *             properties:
  *               payload:
  *                 type: string
- *                 example: '{"fullName":"Service Provider Example","serviceCategories":["Catering"],"serviceProvider":{"profileInfo":{"serviceName":"Premium Catering","serviceCategory":"Catering","coverageArea":["Dhaka"]}}}'
+ *                 example: '{"phoneNumber":"+8801712345678","serviceProvider":{"profileInfo":{"coverageArea":["Dhaka","Gazipur"]}}}'
  *               profileImage:
  *                 type: string
  *                 format: binary
@@ -1033,8 +926,6 @@ router.post(
  *         description: Validation error or role mismatch
  *       401:
  *         description: Unauthorized
- *       409:
- *         description: Duplicate email
  *
  * /api/v1/auth/profile/event-planner:
  *   patch:
@@ -1056,7 +947,7 @@ router.post(
  *             properties:
  *               payload:
  *                 type: string
- *                 example: '{"fullName":"Star Events","eventPlanner":{"profileInfo":{"name":"Star Events","address":"Banani, Dhaka","coverageArea":["Dhaka","Chattogram"]}}}'
+ *                 example: '{"phoneNumber":"+8801712345678","eventPlanner":{"profileInfo":{"address":"Banani, Dhaka","coverageArea":["Dhaka","Chattogram"]}}}'
  *               profileImage:
  *                 type: string
  *                 format: binary
@@ -1070,8 +961,6 @@ router.post(
  *         description: Validation error or role mismatch
  *       401:
  *         description: Unauthorized
- *       409:
- *         description: Duplicate email
  *
  * /api/v1/auth/profile/venue-provider:
  *   patch:
@@ -1093,7 +982,7 @@ router.post(
  *             properties:
  *               payload:
  *                 type: string
- *                 example: '{"fullName":"Royal Hall Owner","venueProvider":{"profileInfo":{"businessName":"Royal Hall","businessMail":"info@royalhall.com","businessPhoneNo":"+8801700000000"}}}'
+ *                 example: '{"phoneNumber":"+8801712345678","venueProvider":{"profileInfo":{"businessPhoneNo":"+8801700000000"}}}'
  *               profileImage:
  *                 type: string
  *                 format: binary
@@ -1107,8 +996,6 @@ router.post(
  *         description: Validation error or role mismatch
  *       401:
  *         description: Unauthorized
- *       409:
- *         description: Duplicate email
  */
 router.patch(
   '/profile/customer',

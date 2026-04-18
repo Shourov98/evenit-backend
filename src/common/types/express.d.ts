@@ -7,6 +7,7 @@ declare global {
         userId: string;
         email: string;
         fullName: string;
+        phoneNumber?: string | null;
         role:
           | 'super_admin'
           | 'admin'

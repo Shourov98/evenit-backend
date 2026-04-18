@@ -129,6 +129,7 @@ router.use(protect);
  *             _id: 680000000000000000000202
  *             fullName: Venue Provider Example
  *             email: venue@example.com
+ *             phoneNumber: +8801712345678
  *             role: venue_provider
  *             profileImage: https://cdn.example.com/venue-provider.jpg
  *             venueProvider:
@@ -202,9 +203,71 @@ router.use(protect);
  *         customerId:
  *           type: string
  *           example: 65f1a9d0f1b2c3d4e5f60001
+ *         customer:
+ *           type: object
+ *           nullable: true
+ *           properties:
+ *             _id:
+ *               type: string
+ *             fullName:
+ *               type: string
+ *             email:
+ *               type: string
+ *               format: email
+ *             phoneNumber:
+ *               type: string
+ *               nullable: true
+ *             role:
+ *               type: string
+ *               enum: [customer, service_provider, event_planner, venue_provider]
+ *             profileImage:
+ *               type: string
+ *               nullable: true
+ *             coverImage:
+ *               type: string
+ *               nullable: true
  *         providerId:
  *           type: string
  *           example: 65f1a9d0f1b2c3d4e5f60002
+ *         provider:
+ *           type: object
+ *           nullable: true
+ *           properties:
+ *             _id:
+ *               type: string
+ *             fullName:
+ *               type: string
+ *             email:
+ *               type: string
+ *               format: email
+ *             phoneNumber:
+ *               type: string
+ *               nullable: true
+ *             role:
+ *               type: string
+ *               enum: [customer, service_provider, event_planner, venue_provider]
+ *             profileImage:
+ *               type: string
+ *               nullable: true
+ *             coverImage:
+ *               type: string
+ *               nullable: true
+ *             serviceCategories:
+ *               type: array
+ *               items:
+ *                 type: string
+ *             serviceProvider:
+ *               type: object
+ *               nullable: true
+ *               additionalProperties: true
+ *             venueProvider:
+ *               type: object
+ *               nullable: true
+ *               additionalProperties: true
+ *             eventPlanner:
+ *               type: object
+ *               nullable: true
+ *               additionalProperties: true
  *         targetType:
  *           type: string
  *           enum: [venue, service, event]
@@ -490,6 +553,7 @@ router.post('/', authorize('customer'), validate(createBookingSchema), BookingCo
  *                   _id: 680000000000000000000201
  *                   fullName: Service Provider Example
  *                   email: provider@example.com
+ *                   phoneNumber: +8801712345678
  *                   role: service_provider
  *                 bookingMeta:
  *                   currency: BDT
@@ -595,6 +659,7 @@ router.post(
  *                   _id: 680000000000000000000202
  *                   fullName: Venue Provider Example
  *                   email: venue@example.com
+ *                   phoneNumber: +8801712345678
  *                   role: venue_provider
  *                 bookingMeta:
  *                   currency: BDT
@@ -688,6 +753,7 @@ router.post(
  *                   _id: 680000000000000000000103
  *                   fullName: Elite Event Planner
  *                   email: planner@example.com
+ *                   phoneNumber: +8801712345678
  *                   role: event_planner
  *                   eventPlanner:
  *                     name: Elite Event Planner
@@ -698,6 +764,7 @@ router.post(
  *                   _id: 680000000000000000000103
  *                   fullName: Elite Event Planner
  *                   email: planner@example.com
+ *                   phoneNumber: +8801712345678
  *                   role: event_planner
  *                 bookingMeta:
  *                   currency: BDT

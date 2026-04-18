@@ -199,50 +199,20 @@ export const submitVenueProviderOnboardingSchema = z.object({
 
 const updateServiceProviderProfileSchema = z
   .object({
-    nidOrTradeLicenseNumber: z.string().min(2).max(50).optional(),
-    serviceName: z.string().min(2).max(120).optional(),
-    serviceCategory: z.string().min(2).max(80).optional(),
-    serviceDescription: z.string().max(2000).optional(),
-    coverageArea: z.array(z.string().min(1)).min(1).max(30).optional(),
-    verification: z
-      .object({
-        businessType: z.enum(['individual', 'company']).optional(),
-        companyName: z.string().min(2).max(120).optional(),
-        nationalIdOrTradeLicenseFiles: z.array(z.string().url()).min(1).max(10).optional()
-      })
-      .optional()
+    coverageArea: z.array(z.string().min(1)).min(1).max(30).optional()
   })
   .strict();
 
 const updateEventPlannerProfileSchema = z
   .object({
-    nidOrTradeLicenseNumber: z.string().min(2).max(50).optional(),
-    name: z.string().min(2).max(120).optional(),
     phoneNumber: z.string().min(5).max(30).optional(),
-    description: z.string().max(2000).optional(),
     coverageArea: z.array(z.string().min(1)).min(1).max(30).optional(),
-    address: z.string().min(3).max(240).optional(),
-    hourlyRate: z.number().min(0).optional(),
-    currency: z.string().length(3).optional(),
-    verification: z
-      .object({
-        businessType: z.enum(['individual', 'company']).optional(),
-        companyName: z.string().min(2).max(120).optional(),
-        nationalIdOrTradeLicenseFiles: z.array(z.string().url()).min(1).max(10).optional()
-      })
-      .optional()
+    address: z.string().min(3).max(240).optional()
   })
   .strict();
 
 const updateVenueProviderProfileSchema = z
   .object({
-    nidOrTradeLicenseNumber: z.string().min(2).max(50).optional(),
-    nationalIdOrTradeLicenseFiles: z.array(z.string().url()).min(1).max(10).optional(),
-    businessName: z.string().min(2).max(120).optional(),
-    businessType: z.enum(['individual', 'company']).optional(),
-    legalBusinessName: z.string().min(2).max(120).optional(),
-    registrationNo: z.string().min(2).max(120).optional(),
-    businessMail: z.string().email().optional(),
     businessPhoneNo: z.string().min(5).max(30).optional()
   })
   .strict();
@@ -260,22 +230,22 @@ const buildProfileUpdateRequestSchema = (bodySchema: z.AnyZodObject) =>
     query: z.object({}).optional().default({})
   });
 
-export const updateCustomerProfileSchema = buildProfileUpdateRequestSchema(
-  z.object({
-    fullName: z.string().min(2).max(120).optional(),
-    email: z.string().email().optional()
-  })
-);
+export const updateCustomerProfileSchema = z.object({
+  body: z
+    .object({
+      phoneNumber: z.string().min(5).max(30).optional()
+    })
+    .strict(),
+  params: z.object({}).optional().default({}),
+  query: z.object({}).optional().default({})
+});
 
 export const updateServiceProviderProfileRequestSchema = buildProfileUpdateRequestSchema(
   z.object({
-    fullName: z.string().min(2).max(120).optional(),
-    email: z.string().email().optional(),
-    serviceCategories: z.array(z.string().min(1)).max(20).optional(),
+    phoneNumber: z.string().min(5).max(30).optional(),
     serviceProvider: z
       .object({
-        profileInfo: updateServiceProviderProfileSchema.optional(),
-        services: z.array(z.string().min(1)).max(100).optional()
+        profileInfo: updateServiceProviderProfileSchema.optional()
       })
       .strict()
       .optional()
@@ -284,8 +254,7 @@ export const updateServiceProviderProfileRequestSchema = buildProfileUpdateReque
 
 export const updateEventPlannerProfileRequestSchema = buildProfileUpdateRequestSchema(
   z.object({
-    fullName: z.string().min(2).max(120).optional(),
-    email: z.string().email().optional(),
+    phoneNumber: z.string().min(5).max(30).optional(),
     eventPlanner: z
       .object({
         profileInfo: updateEventPlannerProfileSchema.optional()
@@ -297,8 +266,7 @@ export const updateEventPlannerProfileRequestSchema = buildProfileUpdateRequestS
 
 export const updateVenueProviderProfileRequestSchema = buildProfileUpdateRequestSchema(
   z.object({
-    fullName: z.string().min(2).max(120).optional(),
-    email: z.string().email().optional(),
+    phoneNumber: z.string().min(5).max(30).optional(),
     venueProvider: z
       .object({
         profileInfo: updateVenueProviderProfileSchema.optional()
@@ -311,13 +279,10 @@ export const updateVenueProviderProfileRequestSchema = buildProfileUpdateRequest
 export const updateProfileSchema = z.object({
   body: z
     .object({
-      fullName: z.string().min(2).max(120).optional(),
-      email: z.string().email().optional(),
-      serviceCategories: z.array(z.string().min(1)).max(20).optional(),
+      phoneNumber: z.string().min(5).max(30).optional(),
       serviceProvider: z
         .object({
-          profileInfo: updateServiceProviderProfileSchema.optional(),
-          services: z.array(z.string().min(1)).max(100).optional()
+          profileInfo: updateServiceProviderProfileSchema.optional()
         })
         .strict()
         .optional(),

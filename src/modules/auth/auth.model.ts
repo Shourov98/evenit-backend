@@ -198,6 +198,7 @@ export const hydrateUserSubscription = (
 export interface IUser extends Document {
   fullName: string;
   email: string;
+  phoneNumber?: string;
   password: string;
   role: UserRole;
   serviceCategories: string[];
@@ -621,6 +622,12 @@ const userSchema = new Schema<IUser>(
       lowercase: true,
       trim: true,
       match: /^\S+@\S+\.\S+$/
+    },
+    phoneNumber: {
+      type: String,
+      trim: true,
+      minlength: 5,
+      maxlength: 30
     },
     password: {
       type: String,

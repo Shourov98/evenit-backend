@@ -889,7 +889,7 @@
               "name": "Update Customer Profile",
               "request": {
                 "method": "PATCH",
-                "description": "Updates only common customer account fields. There is no common phone field in the backend user model.",
+                "description": "Updates the customer common phone number. The API also accepts multipart form-data with a `payload` JSON field plus optional `profileImage` and `coverImage` files.",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -902,7 +902,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"fullName\": \"Customer Example Updated\",\n  \"email\": \"customer.updated@example.com\"\n}",
+                  "raw": "{\n  \"phoneNumber\": \"+8801712345678\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -1945,7 +1945,7 @@
               "name": "Update Service Provider Profile",
               "request": {
                 "method": "PATCH",
-                "description": "Updates common service provider account fields plus service categories and onboarding.serviceProvider profile data.",
+                "description": "Updates the common phone number plus service provider location fields inside `serviceProvider.profileInfo`. `fullName`, `email`, categories, services, and verification fields are not editable here. The API also accepts multipart form-data with a `payload` JSON field plus optional `profileImage` and `coverImage` files.",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -1958,7 +1958,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"fullName\": \"Service Provider Example Updated\",\n  \"email\": \"service.provider.updated@example.com\",\n  \"serviceCategories\": [\n    \"Catering\",\n    \"Decoration\"\n  ],\n  \"serviceProvider\": {\n    \"profileInfo\": {\n      \"nidOrTradeLicenseNumber\": \"SP-987654321\",\n      \"serviceName\": \"Premium Catering Plus\",\n      \"serviceCategory\": \"Catering\",\n      \"serviceDescription\": \"Updated service description for premium events.\",\n      \"coverageArea\": [\n        \"Dhaka\",\n        \"Gazipur\",\n        \"Narayanganj\"\n      ],\n      \"verification\": {\n        \"businessType\": \"company\",\n        \"companyName\": \"Service Provider Example Ltd\",\n        \"nationalIdOrTradeLicenseFiles\": [\n          \"https://example.com/service-provider/trade-license.pdf\"\n        ]\n      }\n    },\n    \"services\": [\n      \"Buffet\",\n      \"Corporate Events\",\n      \"Wedding Catering\"\n    ]\n  }\n}",
+                  "raw": "{\n  \"phoneNumber\": \"+8801712345678\",\n  \"serviceProvider\": {\n    \"profileInfo\": {\n      \"coverageArea\": [\n        \"Dhaka\",\n        \"Gazipur\",\n        \"Narayanganj\"\n      ]\n    }\n  }\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -3340,7 +3340,7 @@
               "name": "Update Venue Provider Profile",
               "request": {
                 "method": "PATCH",
-                "description": "Updates common venue provider account fields plus onboarding.venueProvider profile data, including businessPhoneNo.",
+                "description": "Updates the common phone number plus the venue provider business phone inside `venueProvider.profileInfo`. `fullName`, `email`, and business identity fields are not editable here. The API also accepts multipart form-data with a `payload` JSON field plus optional `profileImage` and `coverImage` files.",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -3353,7 +3353,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"fullName\": \"Venue Provider Example Updated\",\n  \"email\": \"venue.provider.updated@example.com\",\n  \"venueProvider\": {\n    \"profileInfo\": {\n      \"nidOrTradeLicenseNumber\": \"VP-987654321\",\n      \"businessName\": \"Royal Hall Premium\",\n      \"businessType\": \"company\",\n      \"legalBusinessName\": \"Royal Hall Premium Ltd\",\n      \"registrationNo\": \"TR-654321\",\n      \"businessMail\": \"business.updated@royalhall.com\",\n      \"businessPhoneNo\": \"+8801711111111\",\n      \"nationalIdOrTradeLicenseFiles\": [\n        \"https://example.com/venue-provider/trade-license.pdf\"\n      ]\n    }\n  }\n}",
+                  "raw": "{\n  \"phoneNumber\": \"+8801712345678\",\n  \"venueProvider\": {\n    \"profileInfo\": {\n      \"businessPhoneNo\": \"+8801711111111\"\n    }\n  }\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -4770,7 +4770,7 @@
               "name": "Update Event Planner Profile",
               "request": {
                 "method": "PATCH",
-                "description": "Updates common event planner account fields plus onboarding.eventProvider profile data.",
+                "description": "Updates the common phone number plus event planner location fields inside `eventPlanner.profileInfo`. `fullName`, `email`, pricing, and verification fields are not editable here. The API also accepts multipart form-data with a `payload` JSON field plus optional `profileImage` and `coverImage` files.",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -4783,7 +4783,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"fullName\": \"Event Planner Example Updated\",\n  \"email\": \"event.planner.updated@example.com\",\n  \"eventPlanner\": {\n    \"profileInfo\": {\n      \"nidOrTradeLicenseNumber\": \"EP-987654321\",\n      \"name\": \"Event Planner Example Pro\",\n      \"description\": \"Updated planner description for weddings and corporate events.\",\n      \"coverageArea\": [\n        \"Dhaka\",\n        \"Chattogram\",\n        \"Sylhet\"\n      ],\n      \"address\": \"Gulshan, Dhaka\",\n      \"verification\": {\n        \"businessType\": \"company\",\n        \"companyName\": \"Event Planner Example Ltd\",\n        \"nationalIdOrTradeLicenseFiles\": [\n          \"https://example.com/event-planner/trade-license.pdf\"\n        ]\n      }\n    }\n  }\n}",
+                  "raw": "{\n  \"phoneNumber\": \"+8801712345678\",\n  \"eventPlanner\": {\n    \"profileInfo\": {\n      \"coverageArea\": [\n        \"Dhaka\",\n        \"Chattogram\",\n        \"Sylhet\"\n      ],\n      \"address\": \"Gulshan, Dhaka\"\n    }\n  }\n}",
                   "options": {
                     "raw": {
                       "language": "json"

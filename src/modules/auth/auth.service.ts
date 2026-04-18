@@ -52,14 +52,11 @@ type SubmitVenueProviderOnboardingPayload = SubmitOnboardingCommonPayload &
 interface UpdateProfilePayload {
   userId: string;
   role: UserRole;
-  fullName?: string;
-  email?: string;
+  phoneNumber?: string;
   profileImageFile?: Express.Multer.File;
   coverImageFile?: Express.Multer.File;
-  serviceCategories?: string[];
   serviceProvider?: {
     profileInfo?: Partial<IServiceProviderOnboarding['profileInfo']>;
-    services?: string[];
   };
   eventPlanner?: {
     profileInfo?: Partial<IEventProviderOnboarding['profileInfo']>;
@@ -249,42 +246,14 @@ export class AuthService {
       throw new AppError(404, 'User not found');
     }
 
-    if (payload.email) {
-      const normalizedEmail = this.normalizeEmail(payload.email);
-
-      if (normalizedEmail !== user.email) {
-        const existing = await UserModel.findOne({
-          email: normalizedEmail,
-          _id: { $ne: user._id }
-        });
-
-        if (existing) {
-          throw new AppError(
-            409,
-            `This email is already registered as ${existing.role}. You should use a different email.`
-          );
-        }
-      }
-
-      user.email = normalizedEmail;
-    }
-
-    if (payload.fullName) {
-      user.fullName = payload.fullName.trim();
-    }
-
-    if (payload.serviceCategories) {
-      if (user.role !== 'service_provider') {
-        throw new AppError(400, 'serviceCategories can only be updated for service providers');
-      }
-
-      user.serviceCategories = payload.serviceCategories;
-    }
-
     if (payload.serviceProvider || payload.eventPlanner || payload.venueProvider) {
       if (!user.onboarding) {
         throw new AppError(400, 'Profile-specific onboarding data is not available for this user');
       }
+    }
+
+    if (payload.phoneNumber) {
+      user.phoneNumber = payload.phoneNumber.trim();
     }
 
     switch (user.role) {
@@ -318,10 +287,6 @@ export class AuthService {
           user.onboarding.serviceProvider.email = user.email;
           user.onboarding.serviceProvider.profileInfo = nextProfileInfo;
 
-          if (payload.serviceProvider.services) {
-            user.onboarding.serviceProvider.services = payload.serviceProvider.services;
-          }
-
           user.onboarding.verification = {
             businessType: nextVerification.businessType,
             companyName: nextVerification.companyName,
@@ -354,6 +319,7 @@ export class AuthService {
             ? {
                 ...existingProfileInfo,
                 ...payload.eventPlanner.profileInfo,
+                phoneNumber: payload.eventPlanner.profileInfo.phoneNumber ?? user.phoneNumber ?? existingProfileInfo.phoneNumber,
                 currency: payload.eventPlanner.profileInfo.currency
                   ? payload.eventPlanner.profileInfo.currency.toUpperCase()
                   : existingProfileInfo.currency,
@@ -394,6 +360,10 @@ export class AuthService {
                   : existingProfileInfo.businessMail
               }
             : existingProfileInfo;
+
+          if (payload.phoneNumber && !payload.venueProvider.profileInfo?.businessPhoneNo) {
+            nextProfileInfo.businessPhoneNo = user.phoneNumber ?? nextProfileInfo.businessPhoneNo;
+          }
 
           user.onboarding.venueProvider.fullName = user.fullName;
           user.onboarding.venueProvider.email = user.email;

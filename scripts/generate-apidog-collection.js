@@ -236,74 +236,38 @@ const customerAuth = folder('Auth', [
     tokenVar: 'customerToken',
     contentType: 'application/json',
     description:
-      'Updates only common customer account fields. There is no common phone field in the backend user model.',
+      'Updates the customer common phone number. The API also accepts multipart form-data with a `payload` JSON field plus optional `profileImage` and `coverImage` files.',
     body: jsonBody({
-      fullName: 'Customer Example Updated',
-      email: 'customer.updated@example.com'
+      phoneNumber: '+8801712345678'
     })
   }),
   buildProfileImageUploadRequest('customerToken', 'Customer')
 ]);
 
 const serviceProviderProfileUpdateBody = {
-  fullName: 'Service Provider Example Updated',
-  email: 'service.provider.updated@example.com',
-  serviceCategories: ['Catering', 'Decoration'],
+  phoneNumber: '+8801712345678',
   serviceProvider: {
     profileInfo: {
-      nidOrTradeLicenseNumber: 'SP-987654321',
-      serviceName: 'Premium Catering Plus',
-      serviceCategory: 'Catering',
-      serviceDescription: 'Updated service description for premium events.',
-      coverageArea: ['Dhaka', 'Gazipur', 'Narayanganj'],
-      verification: {
-        businessType: 'company',
-        companyName: 'Service Provider Example Ltd',
-        nationalIdOrTradeLicenseFiles: [
-          'https://example.com/service-provider/trade-license.pdf'
-        ]
-      }
-    },
-    services: ['Buffet', 'Corporate Events', 'Wedding Catering']
+      coverageArea: ['Dhaka', 'Gazipur', 'Narayanganj']
+    }
   }
 };
 
 const eventPlannerProfileUpdateBody = {
-  fullName: 'Event Planner Example Updated',
-  email: 'event.planner.updated@example.com',
+  phoneNumber: '+8801712345678',
   eventPlanner: {
     profileInfo: {
-      nidOrTradeLicenseNumber: 'EP-987654321',
-      name: 'Event Planner Example Pro',
-      description: 'Updated planner description for weddings and corporate events.',
       coverageArea: ['Dhaka', 'Chattogram', 'Sylhet'],
-      address: 'Gulshan, Dhaka',
-      verification: {
-        businessType: 'company',
-        companyName: 'Event Planner Example Ltd',
-        nationalIdOrTradeLicenseFiles: [
-          'https://example.com/event-planner/trade-license.pdf'
-        ]
-      }
+      address: 'Gulshan, Dhaka'
     }
   }
 };
 
 const venueProviderProfileUpdateBody = {
-  fullName: 'Venue Provider Example Updated',
-  email: 'venue.provider.updated@example.com',
+  phoneNumber: '+8801712345678',
   venueProvider: {
     profileInfo: {
-      nidOrTradeLicenseNumber: 'VP-987654321',
-      businessName: 'Royal Hall Premium',
-      businessType: 'company',
-      legalBusinessName: 'Royal Hall Premium Ltd',
-      registrationNo: 'TR-654321',
-      businessMail: 'business.updated@royalhall.com',
-      businessPhoneNo: '+8801711111111',
-      nationalIdOrTradeLicenseFiles: [
-        'https://example.com/venue-provider/trade-license.pdf'
-      ]
+      businessPhoneNo: '+8801711111111'
     }
   }
 };
@@ -492,7 +456,7 @@ const serviceProviderAuth = folder('Auth', [
     tokenVar: 'serviceProviderToken',
     contentType: 'application/json',
     description:
-      'Updates common service provider account fields plus service categories and onboarding.serviceProvider profile data.',
+      'Updates the common phone number plus service provider location fields inside `serviceProvider.profileInfo`. `fullName`, `email`, categories, services, and verification fields are not editable here. The API also accepts multipart form-data with a `payload` JSON field plus optional `profileImage` and `coverImage` files.',
     body: jsonBody(serviceProviderProfileUpdateBody)
   }),
   buildProfileImageUploadRequest('serviceProviderToken', 'Service Provider')
@@ -791,7 +755,7 @@ const venueProviderAuth = folder('Auth', [
     tokenVar: 'venueProviderToken',
     contentType: 'application/json',
     description:
-      'Updates common venue provider account fields plus onboarding.venueProvider profile data, including businessPhoneNo.',
+      'Updates the common phone number plus the venue provider business phone inside `venueProvider.profileInfo`. `fullName`, `email`, and business identity fields are not editable here. The API also accepts multipart form-data with a `payload` JSON field plus optional `profileImage` and `coverImage` files.',
     body: jsonBody(venueProviderProfileUpdateBody)
   }),
   buildProfileImageUploadRequest('venueProviderToken', 'Venue Provider')
@@ -1090,7 +1054,7 @@ const eventPlannerAuth = folder('Auth', [
     tokenVar: 'eventPlannerToken',
     contentType: 'application/json',
     description:
-      'Updates common event planner account fields plus onboarding.eventProvider profile data.',
+      'Updates the common phone number plus event planner location fields inside `eventPlanner.profileInfo`. `fullName`, `email`, pricing, and verification fields are not editable here. The API also accepts multipart form-data with a `payload` JSON field plus optional `profileImage` and `coverImage` files.',
     body: jsonBody(eventPlannerProfileUpdateBody)
   }),
   buildProfileImageUploadRequest('eventPlannerToken', 'Event Planner')

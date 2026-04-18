@@ -6,6 +6,7 @@ const serializeAuthUser = (user: {
   _id: unknown;
   fullName: string;
   email: string;
+  phoneNumber?: string;
   role: string;
   serviceCategories: string[];
   isEmailVerified: boolean;
@@ -17,6 +18,7 @@ const serializeAuthUser = (user: {
   id: String(user._id),
   fullName: user.fullName,
   email: user.email,
+  phoneNumber: user.phoneNumber ?? null,
   role: user.role,
   serviceCategories: user.serviceCategories,
   isEmailVerified: user.isEmailVerified,
