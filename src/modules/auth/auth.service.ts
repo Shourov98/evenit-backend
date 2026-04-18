@@ -167,6 +167,15 @@ export class AuthService {
     return email.trim().toLowerCase();
   }
 
+  private static getVerificationUrl(
+    verification:
+      | { nationalIdOrTradeLicenseFiles?: string[] | null }
+      | undefined,
+    fallbackUrl?: string
+  ) {
+    return verification?.nationalIdOrTradeLicenseFiles?.[0] ?? fallbackUrl ?? '';
+  }
+
   private static async authenticateUser(payload: { email: string; password: string }) {
     const user = await UserModel.findOne({ email: payload.email.toLowerCase() }).select(
       '+password'
@@ -290,7 +299,10 @@ export class AuthService {
           user.onboarding.verification = {
             businessType: nextVerification.businessType,
             companyName: nextVerification.companyName,
-            nationalIdOrTradeLicenseUrl: nextVerification.nationalIdOrTradeLicenseFiles[0]
+            nationalIdOrTradeLicenseUrl: this.getVerificationUrl(
+              nextVerification,
+              user.onboarding.verification?.nationalIdOrTradeLicenseUrl
+            )
           };
         }
 
@@ -333,7 +345,10 @@ export class AuthService {
           user.onboarding.verification = {
             businessType: nextVerification.businessType,
             companyName: nextVerification.companyName,
-            nationalIdOrTradeLicenseUrl: nextVerification.nationalIdOrTradeLicenseFiles[0]
+            nationalIdOrTradeLicenseUrl: this.getVerificationUrl(
+              nextVerification,
+              user.onboarding.verification?.nationalIdOrTradeLicenseUrl
+            )
           };
         }
 

@@ -1297,7 +1297,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseUrl}}/api/v1/bookings/my?page=1&limit=10&sortBy=createdAt&sortOrder=desc&status=pending",
+                  "raw": "{{baseUrl}}/api/v1/bookings/my?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -1323,10 +1323,6 @@
                     {
                       "key": "sortOrder",
                       "value": "desc"
-                    },
-                    {
-                      "key": "status",
-                      "value": "pending"
                     }
                   ]
                 }
@@ -2591,7 +2587,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseUrl}}/api/v1/bookings/provider?page=1&limit=10&sortBy=createdAt&sortOrder=desc&status=pending",
+                  "raw": "{{baseUrl}}/api/v1/bookings/provider?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -2617,10 +2613,6 @@
                     {
                       "key": "sortOrder",
                       "value": "desc"
-                    },
-                    {
-                      "key": "status",
-                      "value": "pending"
                     }
                   ]
                 }
@@ -2652,7 +2644,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseUrl}}/api/v1/bookings/service-provider?page=1&limit=10&sortBy=createdAt&sortOrder=desc&status=pending",
+                  "raw": "{{baseUrl}}/api/v1/bookings/service-provider?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -2678,10 +2670,6 @@
                     {
                       "key": "sortOrder",
                       "value": "desc"
-                    },
-                    {
-                      "key": "status",
-                      "value": "pending"
                     }
                   ]
                 }
@@ -4021,7 +4009,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseUrl}}/api/v1/bookings/provider?page=1&limit=10&sortBy=createdAt&sortOrder=desc&status=pending",
+                  "raw": "{{baseUrl}}/api/v1/bookings/provider?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -4047,10 +4035,6 @@
                     {
                       "key": "sortOrder",
                       "value": "desc"
-                    },
-                    {
-                      "key": "status",
-                      "value": "pending"
                     }
                   ]
                 }
@@ -4082,7 +4066,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseUrl}}/api/v1/bookings/venue-provider?page=1&limit=10&sortBy=createdAt&sortOrder=desc&status=pending",
+                  "raw": "{{baseUrl}}/api/v1/bookings/venue-provider?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -4108,10 +4092,6 @@
                     {
                       "key": "sortOrder",
                       "value": "desc"
-                    },
-                    {
-                      "key": "status",
-                      "value": "pending"
                     }
                   ]
                 }
@@ -5187,7 +5167,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseUrl}}/api/v1/bookings/provider?page=1&limit=10&sortBy=createdAt&sortOrder=desc&status=pending",
+                  "raw": "{{baseUrl}}/api/v1/bookings/provider?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -5213,10 +5193,6 @@
                     {
                       "key": "sortOrder",
                       "value": "desc"
-                    },
-                    {
-                      "key": "status",
-                      "value": "pending"
                     }
                   ]
                 }
@@ -5248,7 +5224,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseUrl}}/api/v1/bookings/event-planner?page=1&limit=10&sortBy=createdAt&sortOrder=desc&status=pending",
+                  "raw": "{{baseUrl}}/api/v1/bookings/event-planner?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -5274,10 +5250,6 @@
                     {
                       "key": "sortOrder",
                       "value": "desc"
-                    },
-                    {
-                      "key": "status",
-                      "value": "pending"
                     }
                   ]
                 }

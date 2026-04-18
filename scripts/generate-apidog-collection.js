@@ -139,8 +139,6 @@ const paginationQuery = [
   { key: 'sortOrder', value: 'desc' }
 ];
 
-const bookingListQuery = [...paginationQuery, { key: 'status', value: 'pending' }];
-
 const buildOrderChatFolder = (tokenVar, actorLabel) =>
   folder('Order Chat', [
     request(`Get ${actorLabel} Chat Conversations`, 'GET', '/api/v1/order-chats', {
@@ -342,7 +340,7 @@ const customerBookings = folder('Bookings', [
   }),
   request('Get My Bookings', 'GET', '/api/v1/bookings/my', {
     tokenVar: 'customerToken',
-    query: bookingListQuery,
+    query: paginationQuery,
     event: idCaptureEvent('bookingId')
   }),
   request('Get Booking By ID', 'GET', '/api/v1/bookings/{bookingId}', {
@@ -631,12 +629,12 @@ const serviceProviderUploads = folder('Uploads', [
 const serviceProviderBookings = folder('Bookings', [
   request('Get Provider Bookings', 'GET', '/api/v1/bookings/provider', {
     tokenVar: 'serviceProviderToken',
-    query: bookingListQuery,
+    query: paginationQuery,
     event: idCaptureEvent('bookingId')
   }),
   request('Get Service Provider Booking Requests', 'GET', '/api/v1/bookings/service-provider', {
     tokenVar: 'serviceProviderToken',
-    query: bookingListQuery,
+    query: paginationQuery,
     event: idCaptureEvent('bookingId')
   }),
   request('Get Booking By ID', 'GET', '/api/v1/bookings/{bookingId}', {
@@ -928,12 +926,12 @@ const venueProviderUploads = folder('Uploads', [
 const venueProviderBookings = folder('Bookings', [
   request('Get Provider Bookings', 'GET', '/api/v1/bookings/provider', {
     tokenVar: 'venueProviderToken',
-    query: bookingListQuery,
+    query: paginationQuery,
     event: idCaptureEvent('bookingId')
   }),
   request('Get Venue Provider Booking Requests', 'GET', '/api/v1/bookings/venue-provider', {
     tokenVar: 'venueProviderToken',
-    query: bookingListQuery,
+    query: paginationQuery,
     event: idCaptureEvent('bookingId')
   }),
   request('Get Booking By ID', 'GET', '/api/v1/bookings/{bookingId}', {
@@ -1113,12 +1111,12 @@ const eventPlannerUploads = folder('Uploads', [
 const eventPlannerBookings = folder('Bookings', [
   request('Get Provider Bookings', 'GET', '/api/v1/bookings/provider', {
     tokenVar: 'eventPlannerToken',
-    query: bookingListQuery,
+    query: paginationQuery,
     event: idCaptureEvent('bookingId')
   }),
   request('Get Event Planner Booking Requests', 'GET', '/api/v1/bookings/event-planner', {
     tokenVar: 'eventPlannerToken',
-    query: bookingListQuery,
+    query: paginationQuery,
     event: idCaptureEvent('bookingId')
   }),
   request('Get Booking By ID', 'GET', '/api/v1/bookings/{bookingId}', {
