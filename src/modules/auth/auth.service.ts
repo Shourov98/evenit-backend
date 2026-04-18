@@ -176,6 +176,42 @@ export class AuthService {
     return verification?.nationalIdOrTradeLicenseFiles?.[0] ?? fallbackUrl ?? '';
   }
 
+  private static getNestedVerification(
+    existingVerification:
+      | {
+          businessType?: IVerificationInfo['businessType'];
+          companyName?: string;
+          nationalIdOrTradeLicenseFiles?: string[] | null;
+        }
+      | undefined,
+    onboardingVerification?: IVerificationInfo,
+    incomingVerification?: Partial<{
+      businessType: IVerificationInfo['businessType'];
+      companyName?: string;
+      nationalIdOrTradeLicenseFiles: string[];
+    }>
+  ) {
+    const fallbackFiles = onboardingVerification?.nationalIdOrTradeLicenseUrl
+      ? [onboardingVerification.nationalIdOrTradeLicenseUrl]
+      : [];
+
+    return {
+      businessType:
+        incomingVerification?.businessType ??
+        existingVerification?.businessType ??
+        onboardingVerification?.businessType ??
+        'individual',
+      companyName:
+        incomingVerification?.companyName ??
+        existingVerification?.companyName ??
+        onboardingVerification?.companyName,
+      nationalIdOrTradeLicenseFiles:
+        incomingVerification?.nationalIdOrTradeLicenseFiles ??
+        existingVerification?.nationalIdOrTradeLicenseFiles ??
+        fallbackFiles
+    };
+  }
+
   private static async authenticateUser(payload: { email: string; password: string }) {
     const user = await UserModel.findOne({ email: payload.email.toLowerCase() }).select(
       '+password'
@@ -255,12 +291,6 @@ export class AuthService {
       throw new AppError(404, 'User not found');
     }
 
-    if (payload.serviceProvider || payload.eventPlanner || payload.venueProvider) {
-      if (!user.onboarding) {
-        throw new AppError(400, 'Profile-specific onboarding data is not available for this user');
-      }
-    }
-
     if (payload.phoneNumber) {
       user.phoneNumber = payload.phoneNumber.trim();
     }
@@ -271,18 +301,17 @@ export class AuthService {
           throw new AppError(400, 'Only service provider profile data can be updated for this user');
         }
 
-        if (payload.serviceProvider) {
+        if (payload.serviceProvider?.profileInfo) {
           if (!user.onboarding?.serviceProvider) {
             throw new AppError(400, 'Service provider onboarding has not been completed yet');
           }
 
           const existingProfileInfo = user.onboarding.serviceProvider.profileInfo;
-          const nextVerification = payload.serviceProvider.profileInfo?.verification
-            ? {
-                ...existingProfileInfo.verification,
-                ...payload.serviceProvider.profileInfo.verification
-              }
-            : existingProfileInfo.verification;
+          const nextVerification = this.getNestedVerification(
+            existingProfileInfo.verification,
+            user.onboarding.verification,
+            payload.serviceProvider.profileInfo?.verification
+          );
 
           const nextProfileInfo = payload.serviceProvider.profileInfo
             ? {
@@ -314,18 +343,17 @@ export class AuthService {
           throw new AppError(400, 'Only event planner profile data can be updated for this user');
         }
 
-        if (payload.eventPlanner) {
+        if (payload.eventPlanner?.profileInfo) {
           if (!user.onboarding?.eventProvider) {
             throw new AppError(400, 'Event planner onboarding has not been completed yet');
           }
 
           const existingProfileInfo = user.onboarding.eventProvider.profileInfo;
-          const nextVerification = payload.eventPlanner.profileInfo?.verification
-            ? {
-                ...existingProfileInfo.verification,
-                ...payload.eventPlanner.profileInfo.verification
-              }
-            : existingProfileInfo.verification;
+          const nextVerification = this.getNestedVerification(
+            existingProfileInfo.verification,
+            user.onboarding.verification,
+            payload.eventPlanner.profileInfo?.verification
+          );
 
           const nextProfileInfo = payload.eventPlanner.profileInfo
             ? {
@@ -360,7 +388,7 @@ export class AuthService {
           throw new AppError(400, 'Only venue provider profile data can be updated for this user');
         }
 
-        if (payload.venueProvider) {
+        if (payload.venueProvider?.profileInfo) {
           if (!user.onboarding?.venueProvider) {
             throw new AppError(400, 'Venue provider onboarding has not been completed yet');
           }
