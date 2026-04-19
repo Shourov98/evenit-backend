@@ -306,6 +306,11 @@ export class AuthService {
           throw new AppError(400, 'Only service provider profile data can be updated for this user');
         }
 
+        if (user.onboarding?.serviceProvider) {
+          user.onboarding.serviceProvider.name = user.fullName;
+          user.onboarding.serviceProvider.email = user.email;
+        }
+
         if (payload.serviceProvider?.profileInfo) {
           if (!user.onboarding?.serviceProvider) {
             throw new AppError(400, 'Service provider onboarding has not been completed yet');
@@ -346,6 +351,11 @@ export class AuthService {
       case 'event_planner': {
         if (payload.serviceProvider || payload.venueProvider) {
           throw new AppError(400, 'Only event planner profile data can be updated for this user');
+        }
+
+        if (user.onboarding?.eventProvider) {
+          user.onboarding.eventProvider.fullName = user.fullName;
+          user.onboarding.eventProvider.email = user.email;
         }
 
         if (payload.eventPlanner?.profileInfo) {
@@ -391,6 +401,11 @@ export class AuthService {
       case 'venue_provider': {
         if (payload.serviceProvider || payload.eventPlanner) {
           throw new AppError(400, 'Only venue provider profile data can be updated for this user');
+        }
+
+        if (user.onboarding?.venueProvider) {
+          user.onboarding.venueProvider.fullName = user.fullName;
+          user.onboarding.venueProvider.email = user.email;
         }
 
         if (payload.venueProvider?.profileInfo) {

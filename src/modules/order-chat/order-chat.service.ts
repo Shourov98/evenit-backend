@@ -290,54 +290,6 @@ export class OrderChatService {
     return conversation._id as Types.ObjectId;
   }
 
-  static async getConversationByBooking(bookingId: string, actorId: string) {
-    ensureObjectId(bookingId, 'bookingId');
-    ensureObjectId(actorId, 'actorId');
-
-    const booking = await BookingModel.findById(bookingId).select(
-      '_id customerId providerId targetType targetId status conversationId'
-    );
-
-    if (!booking) {
-      throw new AppError(404, 'Booking not found');
-    }
-
-    const customerId = String(booking.customerId);
-    const providerId = String(booking.providerId);
-    const isParticipant = actorId === customerId || actorId === providerId;
-
-    if (!isParticipant) {
-      throw new AppError(403, 'Only booking participants can access this conversation');
-    }
-
-    const assignedConversationId = await this.getOrAssignConversationIdForBooking(booking);
-    let conversation = assignedConversationId
-      ? await OrderChatConversationModel.findById(assignedConversationId)
-      : null;
-
-    if (!conversation) {
-      if (booking.status !== 'confirmed') {
-        throw new AppError(403, 'Conversation becomes available only after booking confirmation');
-      }
-
-      await this.activateConversationForBooking(booking);
-      conversation = await this.findPairConversation(customerId, providerId);
-    }
-
-    if (!conversation) {
-      throw new AppError(404, 'Conversation not found');
-    }
-
-    await this.syncBookingConversationId(booking, conversation._id as Types.ObjectId);
-    const context = await this.getConversationContext(String(conversation._id), actorId);
-
-    return {
-      conversation: context.conversation,
-      booking: serializeBooking(booking),
-      participants: context.participants
-    };
-  }
-
   static async getMessages(conversationId: string, actorId: string, pagination: PaginationOptions) {
     const context = await this.getConversationContext(conversationId, actorId);
     const total = await OrderChatMessageModel.countDocuments({ conversationId });

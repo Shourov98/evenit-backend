@@ -1405,7 +1405,21 @@
                     "{{bookingId}}"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const booking = json?.data || json?.booking || null;",
+                      "const conversationId = booking?.conversationId || null;",
+                      "if (conversationId) pm.collectionVariables.set('conversationId', String(conversationId));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Cancel Booking",
@@ -1474,45 +1488,6 @@
                       "key": "sortOrder",
                       "value": "desc"
                     }
-                  ]
-                }
-              },
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "type": "text/javascript",
-                    "exec": [
-                      "const json = pm.response.json();",
-                      "const direct = json?.conversation?._id || json?.data?.conversation?._id || json?.data?.[0]?.conversation?._id || json?.data?.[0]?._id || null;",
-                      "if (direct) pm.collectionVariables.set('conversationId', String(direct));"
-                    ]
-                  }
-                }
-              ]
-            },
-            {
-              "name": "Resolve Customer Conversation By Booking",
-              "request": {
-                "method": "GET",
-                "header": [
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{customerToken}}"
-                  }
-                ],
-                "url": {
-                  "raw": "{{baseUrl}}/api/v1/order-chats/bookings/{{bookingId}}/conversation",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "order-chats",
-                    "bookings",
-                    "{{bookingId}}",
-                    "conversation"
                   ]
                 }
               },
@@ -2842,7 +2817,21 @@
                     "{{bookingId}}"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const booking = json?.data || json?.booking || null;",
+                      "const conversationId = booking?.conversationId || null;",
+                      "if (conversationId) pm.collectionVariables.set('conversationId', String(conversationId));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Approve Booking As Service Provider",
@@ -2951,45 +2940,6 @@
                       "key": "sortOrder",
                       "value": "desc"
                     }
-                  ]
-                }
-              },
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "type": "text/javascript",
-                    "exec": [
-                      "const json = pm.response.json();",
-                      "const direct = json?.conversation?._id || json?.data?.conversation?._id || json?.data?.[0]?.conversation?._id || json?.data?.[0]?._id || null;",
-                      "if (direct) pm.collectionVariables.set('conversationId', String(direct));"
-                    ]
-                  }
-                }
-              ]
-            },
-            {
-              "name": "Resolve Service Provider Conversation By Booking",
-              "request": {
-                "method": "GET",
-                "header": [
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{serviceProviderToken}}"
-                  }
-                ],
-                "url": {
-                  "raw": "{{baseUrl}}/api/v1/order-chats/bookings/{{bookingId}}/conversation",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "order-chats",
-                    "bookings",
-                    "{{bookingId}}",
-                    "conversation"
                   ]
                 }
               },
@@ -4354,7 +4304,21 @@
                     "{{bookingId}}"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const booking = json?.data || json?.booking || null;",
+                      "const conversationId = booking?.conversationId || null;",
+                      "if (conversationId) pm.collectionVariables.set('conversationId', String(conversationId));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Approve Booking As Venue Provider",
@@ -4463,45 +4427,6 @@
                       "key": "sortOrder",
                       "value": "desc"
                     }
-                  ]
-                }
-              },
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "type": "text/javascript",
-                    "exec": [
-                      "const json = pm.response.json();",
-                      "const direct = json?.conversation?._id || json?.data?.conversation?._id || json?.data?.[0]?.conversation?._id || json?.data?.[0]?._id || null;",
-                      "if (direct) pm.collectionVariables.set('conversationId', String(direct));"
-                    ]
-                  }
-                }
-              ]
-            },
-            {
-              "name": "Resolve Venue Provider Conversation By Booking",
-              "request": {
-                "method": "GET",
-                "header": [
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{venueProviderToken}}"
-                  }
-                ],
-                "url": {
-                  "raw": "{{baseUrl}}/api/v1/order-chats/bookings/{{bookingId}}/conversation",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "order-chats",
-                    "bookings",
-                    "{{bookingId}}",
-                    "conversation"
                   ]
                 }
               },
@@ -5602,7 +5527,21 @@
                     "{{bookingId}}"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const booking = json?.data || json?.booking || null;",
+                      "const conversationId = booking?.conversationId || null;",
+                      "if (conversationId) pm.collectionVariables.set('conversationId', String(conversationId));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Approve Booking As Event Planner",
@@ -5711,45 +5650,6 @@
                       "key": "sortOrder",
                       "value": "desc"
                     }
-                  ]
-                }
-              },
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "type": "text/javascript",
-                    "exec": [
-                      "const json = pm.response.json();",
-                      "const direct = json?.conversation?._id || json?.data?.conversation?._id || json?.data?.[0]?.conversation?._id || json?.data?.[0]?._id || null;",
-                      "if (direct) pm.collectionVariables.set('conversationId', String(direct));"
-                    ]
-                  }
-                }
-              ]
-            },
-            {
-              "name": "Resolve Event Planner Conversation By Booking",
-              "request": {
-                "method": "GET",
-                "header": [
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{eventPlannerToken}}"
-                  }
-                ],
-                "url": {
-                  "raw": "{{baseUrl}}/api/v1/order-chats/bookings/{{bookingId}}/conversation",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "order-chats",
-                    "bookings",
-                    "{{bookingId}}",
-                    "conversation"
                   ]
                 }
               },
@@ -7462,7 +7362,21 @@
                     "{{bookingId}}"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const booking = json?.data || json?.booking || null;",
+                      "const conversationId = booking?.conversationId || null;",
+                      "if (conversationId) pm.collectionVariables.set('conversationId', String(conversationId));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Approve Booking",
@@ -9131,7 +9045,21 @@
                     "{{bookingId}}"
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const booking = json?.data || json?.booking || null;",
+                      "const conversationId = booking?.conversationId || null;",
+                      "if (conversationId) pm.collectionVariables.set('conversationId', String(conversationId));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Approve Booking",

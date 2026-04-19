@@ -3,7 +3,6 @@ import { protect } from '../../common/middlewares/auth.middleware';
 import { validate } from '../../common/middlewares/validate.middleware';
 import { OrderChatController } from './order-chat.controller';
 import {
-  orderChatBookingConversationSchema,
   orderChatConversationListQuerySchema,
   orderChatMessagesQuerySchema,
   sendOrderChatMessageSchema
@@ -25,7 +24,7 @@ router.use(protect);
  * /api/v1/order-chats:
  *   get:
  *     tags: [Order Chat]
- *     summary: Get booking-linked chat conversation list for the authenticated user
+ *     summary: Get shared customer-provider conversation list for the authenticated user
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -53,28 +52,6 @@ router.use(protect);
 router.get('/', validate(orderChatConversationListQuerySchema), OrderChatController.listConversations);
 
 /**
- * @openapi
- * /api/v1/order-chats/bookings/{bookingId}/conversation:
- *   get:
- *     tags: [Order Chat]
- *     summary: Resolve the shared conversation for a booking
- *     description: Returns the customer-provider conversation attached to this booking. If the pair already has an active conversation, it is reused. A confirmed booking activates the conversation if it does not already exist.
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: bookingId
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Conversation resolved
- *       403:
- *         description: Conversation is not available yet or user is not part of the booking
- *       404:
- *         description: Booking not found
- *
  * @openapi
  * /api/v1/order-chats/conversations/{conversationId}/messages:
  *   get:
@@ -136,11 +113,6 @@ router.get('/', validate(orderChatConversationListQuerySchema), OrderChatControl
  *       404:
  *         description: Conversation not found
  */
-router.get(
-  '/bookings/:bookingId/conversation',
-  validate(orderChatBookingConversationSchema),
-  OrderChatController.getConversationByBooking
-);
 router.get(
   '/conversations/:conversationId/messages',
   validate(orderChatMessagesQuerySchema),

@@ -30,12 +30,6 @@ export const orderChatMessagesQuerySchema = z.object({
   })
 });
 
-export const orderChatBookingConversationSchema = z.object({
-  body: z.object({}).optional().default({}),
-  params: bookingIdParamsSchema,
-  query: z.object({}).optional().default({})
-});
-
 export const sendOrderChatMessageSchema = z.object({
   body: z.object({
     content: z.string().trim().min(1).max(2000),

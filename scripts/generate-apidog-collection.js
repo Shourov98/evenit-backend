@@ -126,6 +126,14 @@ const conversationIdCaptureEvent = () =>
     "if (direct) pm.collectionVariables.set('conversationId', String(direct));"
   ]);
 
+const bookingConversationIdCaptureEvent = () =>
+  testEvent([
+    'const json = pm.response.json();',
+    'const booking = json?.data || json?.booking || null;',
+    'const conversationId = booking?.conversationId || null;',
+    "if (conversationId) pm.collectionVariables.set('conversationId', String(conversationId));"
+  ]);
+
 const request = (name, method, endpoint, options = {}) => ({
   name,
   request: {
@@ -157,10 +165,6 @@ const buildOrderChatFolder = (tokenVar, actorLabel) =>
         { key: 'sortBy', value: 'updatedAt' },
         { key: 'sortOrder', value: 'desc' }
       ],
-      event: conversationIdCaptureEvent()
-    }),
-    request(`Resolve ${actorLabel} Conversation By Booking`, 'GET', '/api/v1/order-chats/bookings/{bookingId}/conversation', {
-      tokenVar,
       event: conversationIdCaptureEvent()
     }),
     request(`Get ${actorLabel} Order Chat Messages`, 'GET', '/api/v1/order-chats/conversations/{conversationId}/messages', {
@@ -378,7 +382,8 @@ const customerBookings = folder('Bookings', [
     event: idCaptureEvent('bookingId')
   }),
   request('Get Booking By ID', 'GET', '/api/v1/bookings/{bookingId}', {
-    tokenVar: 'customerToken'
+    tokenVar: 'customerToken',
+    event: bookingConversationIdCaptureEvent()
   }),
   request('Cancel Booking', 'PATCH', '/api/v1/bookings/{bookingId}/cancel', {
     tokenVar: 'customerToken'
@@ -673,7 +678,8 @@ const serviceProviderBookings = folder('Bookings', [
     event: idCaptureEvent('bookingId')
   }),
   request('Get Booking By ID', 'GET', '/api/v1/bookings/{bookingId}', {
-    tokenVar: 'serviceProviderToken'
+    tokenVar: 'serviceProviderToken',
+    event: bookingConversationIdCaptureEvent()
   }),
   request('Approve Booking As Service Provider', 'PATCH', '/api/v1/bookings/service-provider/{bookingId}/approve', {
     tokenVar: 'serviceProviderToken'
@@ -971,7 +977,8 @@ const venueProviderBookings = folder('Bookings', [
     event: idCaptureEvent('bookingId')
   }),
   request('Get Booking By ID', 'GET', '/api/v1/bookings/{bookingId}', {
-    tokenVar: 'venueProviderToken'
+    tokenVar: 'venueProviderToken',
+    event: bookingConversationIdCaptureEvent()
   }),
   request('Approve Booking As Venue Provider', 'PATCH', '/api/v1/bookings/venue-provider/{bookingId}/approve', {
     tokenVar: 'venueProviderToken'
@@ -1157,7 +1164,8 @@ const eventPlannerBookings = folder('Bookings', [
     event: idCaptureEvent('bookingId')
   }),
   request('Get Booking By ID', 'GET', '/api/v1/bookings/{bookingId}', {
-    tokenVar: 'eventPlannerToken'
+    tokenVar: 'eventPlannerToken',
+    event: bookingConversationIdCaptureEvent()
   }),
   request('Approve Booking As Event Planner', 'PATCH', '/api/v1/bookings/event-planner/{bookingId}/approve', {
     tokenVar: 'eventPlannerToken'
@@ -1342,7 +1350,8 @@ const adminUsers = folder('Users', [
 
 const adminBookings = folder('Bookings', [
   request('Get Booking By ID', 'GET', '/api/v1/bookings/{bookingId}', {
-    tokenVar: 'adminToken'
+    tokenVar: 'adminToken',
+    event: bookingConversationIdCaptureEvent()
   }),
   request('Approve Booking', 'PATCH', '/api/v1/bookings/{bookingId}/approve', {
     tokenVar: 'adminToken'
@@ -1526,7 +1535,8 @@ const superAdminUsers = folder('Users', [
 
 const superAdminBookings = folder('Bookings', [
   request('Get Booking By ID', 'GET', '/api/v1/bookings/{bookingId}', {
-    tokenVar: 'superAdminToken'
+    tokenVar: 'superAdminToken',
+    event: bookingConversationIdCaptureEvent()
   }),
   request('Approve Booking', 'PATCH', '/api/v1/bookings/{bookingId}/approve', {
     tokenVar: 'superAdminToken'

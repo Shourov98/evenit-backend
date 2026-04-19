@@ -6330,7 +6330,7 @@
         "tags": [
           "Order Chat"
         ],
-        "summary": "Get booking-linked chat conversation list for the authenticated user",
+        "summary": "Get shared customer-provider conversation list for the authenticated user",
         "security": [
           {
             "bearerAuth": []
@@ -6373,41 +6373,6 @@
         "responses": {
           "200": {
             "description": "Conversation list returned"
-          }
-        }
-      }
-    },
-    "/api/v1/order-chats/bookings/{bookingId}/conversation": {
-      "get": {
-        "tags": [
-          "Order Chat"
-        ],
-        "summary": "Resolve the shared conversation for a booking",
-        "description": "Returns the customer-provider conversation attached to this booking. If the pair already has an active conversation, it is reused. A confirmed booking activates the conversation if it does not already exist.",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "bookingId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Conversation resolved"
-          },
-          "403": {
-            "description": "Conversation is not available yet or user is not part of the booking"
-          },
-          "404": {
-            "description": "Booking not found"
           }
         }
       }

@@ -41,18 +41,6 @@ export class OrderChatController {
     });
   });
 
-  static getConversationByBooking = catchAsync(async (req: Request, res: Response) => {
-    const user = getUser(req);
-    const result = await OrderChatService.getConversationByBooking(req.params.bookingId, user.userId);
-
-    return res.status(200).json({
-      success: true,
-      conversation: result.conversation,
-      booking: result.booking,
-      participants: result.participants
-    });
-  });
-
   static sendMessage = catchAsync(async (req: Request, res: Response) => {
     const user = getUser(req);
     const result = await OrderChatService.createMessage(

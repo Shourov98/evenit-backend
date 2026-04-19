@@ -541,11 +541,7 @@ const resolveActiveBookingSummary = () => {
   }
 };
 
-const resolveConversationId = async () => {
-  if (state.activeConversationId) {
-    return state.activeConversationId;
-  }
-
+const fetchBookingById = async () => {
   if (!state.activeBookingId) {
     throw new Error('Set an active booking first');
   }
@@ -560,17 +556,23 @@ const resolveConversationId = async () => {
     throw new Error('Login as a booking participant first');
   }
 
-  const response = await authRequest(
-    resolverRole,
-    `/api/v1/order-chats/bookings/${state.activeBookingId}/conversation`,
-    { method: 'GET' }
-  );
+  const response = await authRequest(resolverRole, `/api/v1/bookings/${state.activeBookingId}`, {
+    method: 'GET'
+  });
 
-  state.activeConversationId = response.conversation?._id || '';
-  if (!state.activeBookingSummary && response.booking) {
-    state.activeBookingSummary = response.booking;
-    renderBookingSummary();
+  state.activeBookingSummary = response.data || null;
+  state.activeConversationId = response.data?.conversationId || '';
+  renderBookingSummary();
+
+  return response.data || null;
+};
+
+const resolveConversationId = async () => {
+  if (state.activeConversationId) {
+    return state.activeConversationId;
   }
+
+  await fetchBookingById();
 
   if (!state.activeConversationId) {
     throw new Error('Conversation is not available for this booking yet');
