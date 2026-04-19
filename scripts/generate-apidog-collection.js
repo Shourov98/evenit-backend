@@ -15,6 +15,7 @@ const variables = [
   { key: 'venueId', value: '' },
   { key: 'eventPlannerId', value: '' },
   { key: 'bookingId', value: '' },
+  { key: 'conversationId', value: '' },
   { key: 'adminUserId', value: '' },
   { key: 'customerId', value: '' },
   { key: 'serviceProviderId', value: '' },
@@ -118,6 +119,13 @@ const idCaptureEvent = (variableName) =>
     `if (id) pm.collectionVariables.set('${variableName}', String(id));`
   ]);
 
+const conversationIdCaptureEvent = () =>
+  testEvent([
+    'const json = pm.response.json();',
+    'const direct = json?.conversation?._id || json?.data?.conversation?._id || json?.data?.[0]?.conversation?._id || json?.data?.[0]?._id || null;',
+    "if (direct) pm.collectionVariables.set('conversationId', String(direct));"
+  ]);
+
 const request = (name, method, endpoint, options = {}) => ({
   name,
   request: {
@@ -148,19 +156,25 @@ const buildOrderChatFolder = (tokenVar, actorLabel) =>
         { key: 'limit', value: '20' },
         { key: 'sortBy', value: 'updatedAt' },
         { key: 'sortOrder', value: 'desc' }
-      ]
+      ],
+      event: conversationIdCaptureEvent()
     }),
-    request(`Get ${actorLabel} Order Chat Messages`, 'GET', '/api/v1/order-chats/{bookingId}/messages', {
+    request(`Resolve ${actorLabel} Conversation By Booking`, 'GET', '/api/v1/order-chats/bookings/{bookingId}/conversation', {
+      tokenVar,
+      event: conversationIdCaptureEvent()
+    }),
+    request(`Get ${actorLabel} Order Chat Messages`, 'GET', '/api/v1/order-chats/conversations/{conversationId}/messages', {
       tokenVar,
       query: [
         { key: 'page', value: '1' },
         { key: 'limit', value: '50' }
       ]
     }),
-    request(`Send ${actorLabel} Order Chat Message`, 'POST', '/api/v1/order-chats/{bookingId}/messages', {
+    request(`Send ${actorLabel} Order Chat Message`, 'POST', '/api/v1/order-chats/conversations/{conversationId}/messages', {
       tokenVar,
       contentType: 'application/json',
       body: jsonBody({
+        bookingId: '{{bookingId}}',
         content: 'Hello, I want to confirm the booking details.'
       })
     })

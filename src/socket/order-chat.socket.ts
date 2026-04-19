@@ -98,11 +98,11 @@ export const registerOrderChatSocket = (io: Server): void => {
 
     socket.on('order-chat:join', async (payload, callback) => {
       try {
-        const bookingId = typeof payload?.bookingId === 'string' ? payload.bookingId : '';
+        const conversationId = typeof payload?.conversationId === 'string' ? payload.conversationId : '';
         const historyPage = Number.isFinite(Number(payload?.page)) ? Number(payload.page) : 1;
         const historyLimit = Number.isFinite(Number(payload?.limit)) ? Number(payload.limit) : 50;
 
-        const messages = await OrderChatService.getMessages(bookingId, user.userId, {
+        const messages = await OrderChatService.getMessages(conversationId, user.userId, {
           page: historyPage > 0 ? historyPage : 1,
           limit: historyLimit > 0 ? Math.min(historyLimit, 100) : 50,
           skip: (Math.max(historyPage, 1) - 1) * (historyLimit > 0 ? Math.min(historyLimit, 100) : 50),
@@ -110,11 +110,12 @@ export const registerOrderChatSocket = (io: Server): void => {
           sortOrder: 'desc'
         });
 
-        await socket.join(getOrderChatRoom(bookingId));
+        await socket.join(getOrderChatRoom(conversationId));
 
         callback?.({
           success: true,
-          booking: messages.booking,
+          conversation: messages.conversation,
+          bookings: messages.bookings,
           participants: messages.participants,
           meta: messages.meta,
           data: messages.data
@@ -128,8 +129,8 @@ export const registerOrderChatSocket = (io: Server): void => {
     });
 
     socket.on('order-chat:leave', async (payload, callback) => {
-      const bookingId = typeof payload?.bookingId === 'string' ? payload.bookingId : '';
-      await socket.leave(getOrderChatRoom(bookingId));
+      const conversationId = typeof payload?.conversationId === 'string' ? payload.conversationId : '';
+      await socket.leave(getOrderChatRoom(conversationId));
       callback?.({
         success: true
       });
@@ -137,14 +138,16 @@ export const registerOrderChatSocket = (io: Server): void => {
 
     socket.on('order-chat:message:send', async (payload, callback) => {
       try {
-        const bookingId = typeof payload?.bookingId === 'string' ? payload.bookingId : '';
+        const conversationId = typeof payload?.conversationId === 'string' ? payload.conversationId : '';
+        const bookingId = typeof payload?.bookingId === 'string' ? payload.bookingId : undefined;
         const content = typeof payload?.content === 'string' ? payload.content : '';
-        const result = await OrderChatService.createMessage(bookingId, user.userId, content);
-        const room = getOrderChatRoom(bookingId);
+        const result = await OrderChatService.createMessage(conversationId, user.userId, content, bookingId);
+        const room = getOrderChatRoom(conversationId);
 
         await socket.join(room);
         io.to(room).emit('order-chat:message:new', {
           success: true,
+          conversation: result.conversation,
           booking: result.booking,
           participants: result.participants,
           data: result.message
@@ -152,6 +155,7 @@ export const registerOrderChatSocket = (io: Server): void => {
 
         callback?.({
           success: true,
+          conversation: result.conversation,
           booking: result.booking,
           participants: result.participants,
           data: result.message

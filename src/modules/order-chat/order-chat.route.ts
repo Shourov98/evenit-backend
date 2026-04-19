@@ -3,6 +3,7 @@ import { protect } from '../../common/middlewares/auth.middleware';
 import { validate } from '../../common/middlewares/validate.middleware';
 import { OrderChatController } from './order-chat.controller';
 import {
+  orderChatBookingConversationSchema,
   orderChatConversationListQuerySchema,
   orderChatMessagesQuerySchema,
   sendOrderChatMessageSchema
@@ -53,15 +54,37 @@ router.get('/', validate(orderChatConversationListQuerySchema), OrderChatControl
 
 /**
  * @openapi
- * /api/v1/order-chats/{bookingId}/messages:
+ * /api/v1/order-chats/bookings/{bookingId}/conversation:
  *   get:
  *     tags: [Order Chat]
- *     summary: Get chat history for a booking
+ *     summary: Resolve the shared conversation for a booking
+ *     description: Returns the customer-provider conversation attached to this booking. If the pair already has an active conversation, it is reused. A confirmed booking activates the conversation if it does not already exist.
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: bookingId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Conversation resolved
+ *       403:
+ *         description: Conversation is not available yet or user is not part of the booking
+ *       404:
+ *         description: Booking not found
+ *
+ * @openapi
+ * /api/v1/order-chats/conversations/{conversationId}/messages:
+ *   get:
+ *     tags: [Order Chat]
+ *     summary: Get chat history for a conversation
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: conversationId
  *         required: true
  *         schema:
  *           type: string
@@ -77,17 +100,17 @@ router.get('/', validate(orderChatConversationListQuerySchema), OrderChatControl
  *       200:
  *         description: Chat history returned
  *       403:
- *         description: User is not part of this booking
+ *         description: User is not part of this conversation
  *       404:
- *         description: Booking not found
+ *         description: Conversation not found
  *   post:
  *     tags: [Order Chat]
- *     summary: Send a message for a booking
+ *     summary: Send a message for a conversation
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: bookingId
+ *         name: conversationId
  *         required: true
  *         schema:
  *           type: string
@@ -102,15 +125,31 @@ router.get('/', validate(orderChatConversationListQuerySchema), OrderChatControl
  *               content:
  *                 type: string
  *                 example: Can we confirm the setup timing?
+ *               bookingId:
+ *                 type: string
+ *                 description: Optional booking context for the message when the conversation contains multiple bookings.
  *     responses:
  *       201:
  *         description: Message sent
  *       403:
- *         description: User is not part of this booking
+ *         description: User is not part of this conversation
  *       404:
- *         description: Booking not found
+ *         description: Conversation not found
  */
-router.get('/:bookingId/messages', validate(orderChatMessagesQuerySchema), OrderChatController.getMessages);
-router.post('/:bookingId/messages', validate(sendOrderChatMessageSchema), OrderChatController.sendMessage);
+router.get(
+  '/bookings/:bookingId/conversation',
+  validate(orderChatBookingConversationSchema),
+  OrderChatController.getConversationByBooking
+);
+router.get(
+  '/conversations/:conversationId/messages',
+  validate(orderChatMessagesQuerySchema),
+  OrderChatController.getMessages
+);
+router.post(
+  '/conversations/:conversationId/messages',
+  validate(sendOrderChatMessageSchema),
+  OrderChatController.sendMessage
+);
 
 export const orderChatRouter = router;

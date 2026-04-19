@@ -229,6 +229,10 @@ router.use(protect);
  *         providerId:
  *           type: string
  *           example: 65f1a9d0f1b2c3d4e5f60002
+ *         conversationId:
+ *           type: string
+ *           nullable: true
+ *           description: Shared conversation id for the customer-provider pair. Becomes available once a conversation exists or the booking confirmation activates chat.
  *         provider:
  *           type: object
  *           nullable: true

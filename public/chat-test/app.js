@@ -11,6 +11,7 @@ const state = {
   selectedServiceId: '',
   selectedSlot: null,
   activeBookingId: '',
+  activeConversationId: '',
   activeBookingSummary: null,
   customerBookings: [],
   providerBookings: [],
@@ -498,6 +499,7 @@ const createBooking = async () => {
 
   const booking = response.data;
   state.activeBookingId = booking._id;
+  state.activeConversationId = booking.conversationId || '';
   elements.activeBookingId.value = booking._id;
   state.activeBookingSummary = booking;
   renderBookingSummary();
@@ -534,8 +536,47 @@ const resolveActiveBookingSummary = () => {
 
   if (booking) {
     state.activeBookingSummary = booking;
+    state.activeConversationId = booking.conversationId || state.activeConversationId;
     renderBookingSummary();
   }
+};
+
+const resolveConversationId = async () => {
+  if (state.activeConversationId) {
+    return state.activeConversationId;
+  }
+
+  if (!state.activeBookingId) {
+    throw new Error('Set an active booking first');
+  }
+
+  const resolverRole = state.sessions.customer.token
+    ? 'customer'
+    : state.sessions.provider.token
+      ? 'provider'
+      : '';
+
+  if (!resolverRole) {
+    throw new Error('Login as a booking participant first');
+  }
+
+  const response = await authRequest(
+    resolverRole,
+    `/api/v1/order-chats/bookings/${state.activeBookingId}/conversation`,
+    { method: 'GET' }
+  );
+
+  state.activeConversationId = response.conversation?._id || '';
+  if (!state.activeBookingSummary && response.booking) {
+    state.activeBookingSummary = response.booking;
+    renderBookingSummary();
+  }
+
+  if (!state.activeConversationId) {
+    throw new Error('Conversation is not available for this booking yet');
+  }
+
+  return state.activeConversationId;
 };
 
 const loadMessagesForRole = async (roleKey) => {
@@ -545,16 +586,13 @@ const loadMessagesForRole = async (roleKey) => {
     return;
   }
 
-  const response = await authRequest(roleKey, `/api/v1/order-chats/${state.activeBookingId}/messages?limit=100&page=1`, {
+  const conversationId = await resolveConversationId();
+
+  const response = await authRequest(roleKey, `/api/v1/order-chats/conversations/${conversationId}/messages?limit=100&page=1`, {
     method: 'GET'
   });
 
   state.messages[roleKey] = Array.isArray(response.data) ? response.data : [];
-
-  if (!state.activeBookingSummary && response.booking) {
-    state.activeBookingSummary = response.booking;
-    renderBookingSummary();
-  }
 
   renderMessages(roleKey);
 };
@@ -574,6 +612,7 @@ const loadChat = async () => {
 
   setLog('Loaded chat messages.', {
     bookingId: state.activeBookingId,
+    conversationId: state.activeConversationId,
     customerMessages: state.messages.customer.length,
     providerMessages: state.messages.provider.length
   });
@@ -584,12 +623,17 @@ const sendMessage = async (roleKey, content) => {
     throw new Error('Set an active booking first');
   }
 
-  const response = await authRequest(roleKey, `/api/v1/order-chats/${state.activeBookingId}/messages`, {
+  const conversationId = await resolveConversationId();
+
+  const response = await authRequest(roleKey, `/api/v1/order-chats/conversations/${conversationId}/messages`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ content })
+    body: JSON.stringify({
+      bookingId: state.activeBookingId,
+      content
+    })
   });
 
   await loadChat();
@@ -676,6 +720,7 @@ elements.loadProviderBookingsButton.addEventListener('click', async () => {
 
 elements.customerBookingsSelect.addEventListener('change', async (event) => {
   state.activeBookingId = event.target.value;
+  state.activeConversationId = '';
   elements.activeBookingId.value = state.activeBookingId;
   resolveActiveBookingSummary();
   try {
@@ -687,6 +732,7 @@ elements.customerBookingsSelect.addEventListener('change', async (event) => {
 
 elements.providerBookingsSelect.addEventListener('change', async (event) => {
   state.activeBookingId = event.target.value;
+  state.activeConversationId = '';
   elements.activeBookingId.value = state.activeBookingId;
   resolveActiveBookingSummary();
   try {
@@ -698,6 +744,7 @@ elements.providerBookingsSelect.addEventListener('change', async (event) => {
 
 elements.useBookingButton.addEventListener('click', async () => {
   state.activeBookingId = elements.activeBookingId.value.trim();
+  state.activeConversationId = '';
   resolveActiveBookingSummary();
   try {
     await loadChat();

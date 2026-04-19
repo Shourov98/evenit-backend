@@ -11,6 +11,7 @@ import {
 import { buildPaginationMeta, PaginationOptions } from '../../common/utils/pagination';
 import { env } from '../../config/env';
 import { hydrateUserSubscription, UserModel } from '../auth/auth.model';
+import { OrderChatService } from '../order-chat/order-chat.service';
 import { IServiceProviderService, ServiceProviderServiceModel } from '../service-provider/service-provider.model';
 import { IBooking, BookingModel } from './booking.model';
 import { IVenue, VenueProviderVenueModel } from '../venue-provider/venue-provider.model';
@@ -349,6 +350,7 @@ export class BookingService {
       ...raw,
       customerId: getReferenceId(raw.customerId),
       providerId: getReferenceId(raw.providerId),
+      conversationId: getReferenceId(raw.conversationId) || null,
       targetId: getReferenceId(raw.targetId),
       customer:
         raw.customerId && typeof raw.customerId === 'object' && 'fullName' in raw.customerId
@@ -710,6 +712,7 @@ export class BookingService {
 
   static async getById(bookingId: string, actorId: string, role: string) {
     const booking = await this.findAccessibleBookingDocument(bookingId, actorId, role);
+    await OrderChatService.getOrAssignConversationIdForBooking(booking);
     await booking.populate(this.bookingPartyPopulate as any);
     return this.serializeBookingDocument(booking);
   }
@@ -754,6 +757,7 @@ export class BookingService {
     booking.rejectionReason = undefined;
     booking.payment.status = 'covered_by_subscription';
     booking.payment.coveredAt = new Date();
+    booking.conversationId = await OrderChatService.activateConversationForBooking(booking);
     await booking.save();
     await booking.populate(this.bookingPartyPopulate as any);
     return this.serializeBookingDocument(booking);

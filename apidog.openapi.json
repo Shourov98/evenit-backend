@@ -1149,6 +1149,11 @@
             "type": "string",
             "example": "65f1a9d0f1b2c3d4e5f60002"
           },
+          "conversationId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Shared conversation id for the customer-provider pair. Becomes available once a conversation exists or the booking confirmation activates chat."
+          },
           "provider": {
             "type": "object",
             "nullable": true,
@@ -6372,12 +6377,13 @@
         }
       }
     },
-    "/api/v1/order-chats/{bookingId}/messages": {
+    "/api/v1/order-chats/bookings/{bookingId}/conversation": {
       "get": {
         "tags": [
           "Order Chat"
         ],
-        "summary": "Get chat history for a booking",
+        "summary": "Resolve the shared conversation for a booking",
+        "description": "Returns the customer-provider conversation attached to this booking. If the pair already has an active conversation, it is reused. A confirmed booking activates the conversation if it does not already exist.",
         "security": [
           {
             "bearerAuth": []
@@ -6387,6 +6393,40 @@
           {
             "in": "path",
             "name": "bookingId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Conversation resolved"
+          },
+          "403": {
+            "description": "Conversation is not available yet or user is not part of the booking"
+          },
+          "404": {
+            "description": "Booking not found"
+          }
+        }
+      }
+    },
+    "/api/v1/order-chats/conversations/{conversationId}/messages": {
+      "get": {
+        "tags": [
+          "Order Chat"
+        ],
+        "summary": "Get chat history for a conversation",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "conversationId",
             "required": true,
             "schema": {
               "type": "string"
@@ -6412,10 +6452,10 @@
             "description": "Chat history returned"
           },
           "403": {
-            "description": "User is not part of this booking"
+            "description": "User is not part of this conversation"
           },
           "404": {
-            "description": "Booking not found"
+            "description": "Conversation not found"
           }
         }
       },
@@ -6423,7 +6463,7 @@
         "tags": [
           "Order Chat"
         ],
-        "summary": "Send a message for a booking",
+        "summary": "Send a message for a conversation",
         "security": [
           {
             "bearerAuth": []
@@ -6432,7 +6472,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "bookingId",
+            "name": "conversationId",
             "required": true,
             "schema": {
               "type": "string"
@@ -6452,6 +6492,10 @@
                   "content": {
                     "type": "string",
                     "example": "Can we confirm the setup timing?"
+                  },
+                  "bookingId": {
+                    "type": "string",
+                    "description": "Optional booking context for the message when the conversation contains multiple bookings."
                   }
                 }
               }
@@ -6463,10 +6507,10 @@
             "description": "Message sent"
           },
           "403": {
-            "description": "User is not part of this booking"
+            "description": "User is not part of this conversation"
           },
           "404": {
-            "description": "Booking not found"
+            "description": "Conversation not found"
           }
         }
       }

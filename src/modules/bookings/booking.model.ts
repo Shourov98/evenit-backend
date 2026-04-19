@@ -12,6 +12,7 @@ export type PaymentStatus = (typeof PAYMENT_STATUSES)[number];
 export interface IBooking extends Document {
   customerId: Types.ObjectId;
   providerId: Types.ObjectId;
+  conversationId?: Types.ObjectId | null;
   targetType: BookingTargetType;
   targetId: Types.ObjectId;
   reservedSlots: string[];
@@ -53,6 +54,12 @@ const bookingSchema = new Schema<IBooking>(
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
+      index: true
+    },
+    conversationId: {
+      type: Schema.Types.ObjectId,
+      ref: 'OrderChatConversation',
+      default: null,
       index: true
     },
     targetType: {

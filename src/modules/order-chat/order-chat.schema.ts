@@ -6,6 +6,10 @@ const bookingIdParamsSchema = z.object({
   bookingId: z.string().regex(objectIdRegex, 'Invalid bookingId')
 });
 
+const conversationIdParamsSchema = z.object({
+  conversationId: z.string().regex(objectIdRegex, 'Invalid conversationId')
+});
+
 export const orderChatConversationListQuerySchema = z.object({
   body: z.object({}).optional().default({}),
   params: z.object({}).optional().default({}),
@@ -19,17 +23,24 @@ export const orderChatConversationListQuerySchema = z.object({
 
 export const orderChatMessagesQuerySchema = z.object({
   body: z.object({}).optional().default({}),
-  params: bookingIdParamsSchema,
+  params: conversationIdParamsSchema,
   query: z.object({
     page: z.coerce.number().int().positive().optional(),
     limit: z.coerce.number().int().positive().optional()
   })
 });
 
+export const orderChatBookingConversationSchema = z.object({
+  body: z.object({}).optional().default({}),
+  params: bookingIdParamsSchema,
+  query: z.object({}).optional().default({})
+});
+
 export const sendOrderChatMessageSchema = z.object({
   body: z.object({
-    content: z.string().trim().min(1).max(2000)
+    content: z.string().trim().min(1).max(2000),
+    bookingId: z.string().regex(objectIdRegex, 'Invalid bookingId').optional()
   }),
-  params: bookingIdParamsSchema,
+  params: conversationIdParamsSchema,
   query: z.object({}).optional().default({})
 });

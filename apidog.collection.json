@@ -51,6 +51,10 @@
       "value": ""
     },
     {
+      "key": "conversationId",
+      "value": ""
+    },
+    {
       "key": "adminUserId",
       "value": ""
     },
@@ -1472,7 +1476,59 @@
                     }
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const direct = json?.conversation?._id || json?.data?.conversation?._id || json?.data?.[0]?.conversation?._id || json?.data?.[0]?._id || null;",
+                      "if (direct) pm.collectionVariables.set('conversationId', String(direct));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Resolve Customer Conversation By Booking",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{customerToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/order-chats/bookings/{{bookingId}}/conversation",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "order-chats",
+                    "bookings",
+                    "{{bookingId}}",
+                    "conversation"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const direct = json?.conversation?._id || json?.data?.conversation?._id || json?.data?.[0]?.conversation?._id || json?.data?.[0]?._id || null;",
+                      "if (direct) pm.collectionVariables.set('conversationId', String(direct));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Get Customer Order Chat Messages",
@@ -1485,7 +1541,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseUrl}}/api/v1/order-chats/{{bookingId}}/messages?page=1&limit=50",
+                  "raw": "{{baseUrl}}/api/v1/order-chats/conversations/{{conversationId}}/messages?page=1&limit=50",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -1493,7 +1549,8 @@
                     "api",
                     "v1",
                     "order-chats",
-                    "{{bookingId}}",
+                    "conversations",
+                    "{{conversationId}}",
                     "messages"
                   ],
                   "query": [
@@ -1525,7 +1582,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"content\": \"Hello, I want to confirm the booking details.\"\n}",
+                  "raw": "{\n  \"bookingId\": \"{{bookingId}}\",\n  \"content\": \"Hello, I want to confirm the booking details.\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -1533,7 +1590,7 @@
                   }
                 },
                 "url": {
-                  "raw": "{{baseUrl}}/api/v1/order-chats/{{bookingId}}/messages",
+                  "raw": "{{baseUrl}}/api/v1/order-chats/conversations/{{conversationId}}/messages",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -1541,7 +1598,8 @@
                     "api",
                     "v1",
                     "order-chats",
-                    "{{bookingId}}",
+                    "conversations",
+                    "{{conversationId}}",
                     "messages"
                   ]
                 }
@@ -2895,7 +2953,59 @@
                     }
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const direct = json?.conversation?._id || json?.data?.conversation?._id || json?.data?.[0]?.conversation?._id || json?.data?.[0]?._id || null;",
+                      "if (direct) pm.collectionVariables.set('conversationId', String(direct));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Resolve Service Provider Conversation By Booking",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{serviceProviderToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/order-chats/bookings/{{bookingId}}/conversation",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "order-chats",
+                    "bookings",
+                    "{{bookingId}}",
+                    "conversation"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const direct = json?.conversation?._id || json?.data?.conversation?._id || json?.data?.[0]?.conversation?._id || json?.data?.[0]?._id || null;",
+                      "if (direct) pm.collectionVariables.set('conversationId', String(direct));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Get Service Provider Order Chat Messages",
@@ -2908,7 +3018,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseUrl}}/api/v1/order-chats/{{bookingId}}/messages?page=1&limit=50",
+                  "raw": "{{baseUrl}}/api/v1/order-chats/conversations/{{conversationId}}/messages?page=1&limit=50",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -2916,7 +3026,8 @@
                     "api",
                     "v1",
                     "order-chats",
-                    "{{bookingId}}",
+                    "conversations",
+                    "{{conversationId}}",
                     "messages"
                   ],
                   "query": [
@@ -2948,7 +3059,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"content\": \"Hello, I want to confirm the booking details.\"\n}",
+                  "raw": "{\n  \"bookingId\": \"{{bookingId}}\",\n  \"content\": \"Hello, I want to confirm the booking details.\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -2956,7 +3067,7 @@
                   }
                 },
                 "url": {
-                  "raw": "{{baseUrl}}/api/v1/order-chats/{{bookingId}}/messages",
+                  "raw": "{{baseUrl}}/api/v1/order-chats/conversations/{{conversationId}}/messages",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -2964,7 +3075,8 @@
                     "api",
                     "v1",
                     "order-chats",
-                    "{{bookingId}}",
+                    "conversations",
+                    "{{conversationId}}",
                     "messages"
                   ]
                 }
@@ -4353,7 +4465,59 @@
                     }
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const direct = json?.conversation?._id || json?.data?.conversation?._id || json?.data?.[0]?.conversation?._id || json?.data?.[0]?._id || null;",
+                      "if (direct) pm.collectionVariables.set('conversationId', String(direct));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Resolve Venue Provider Conversation By Booking",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{venueProviderToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/order-chats/bookings/{{bookingId}}/conversation",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "order-chats",
+                    "bookings",
+                    "{{bookingId}}",
+                    "conversation"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const direct = json?.conversation?._id || json?.data?.conversation?._id || json?.data?.[0]?.conversation?._id || json?.data?.[0]?._id || null;",
+                      "if (direct) pm.collectionVariables.set('conversationId', String(direct));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Get Venue Provider Order Chat Messages",
@@ -4366,7 +4530,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseUrl}}/api/v1/order-chats/{{bookingId}}/messages?page=1&limit=50",
+                  "raw": "{{baseUrl}}/api/v1/order-chats/conversations/{{conversationId}}/messages?page=1&limit=50",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -4374,7 +4538,8 @@
                     "api",
                     "v1",
                     "order-chats",
-                    "{{bookingId}}",
+                    "conversations",
+                    "{{conversationId}}",
                     "messages"
                   ],
                   "query": [
@@ -4406,7 +4571,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"content\": \"Hello, I want to confirm the booking details.\"\n}",
+                  "raw": "{\n  \"bookingId\": \"{{bookingId}}\",\n  \"content\": \"Hello, I want to confirm the booking details.\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -4414,7 +4579,7 @@
                   }
                 },
                 "url": {
-                  "raw": "{{baseUrl}}/api/v1/order-chats/{{bookingId}}/messages",
+                  "raw": "{{baseUrl}}/api/v1/order-chats/conversations/{{conversationId}}/messages",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -4422,7 +4587,8 @@
                     "api",
                     "v1",
                     "order-chats",
-                    "{{bookingId}}",
+                    "conversations",
+                    "{{conversationId}}",
                     "messages"
                   ]
                 }
@@ -5547,7 +5713,59 @@
                     }
                   ]
                 }
-              }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const direct = json?.conversation?._id || json?.data?.conversation?._id || json?.data?.[0]?.conversation?._id || json?.data?.[0]?._id || null;",
+                      "if (direct) pm.collectionVariables.set('conversationId', String(direct));"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Resolve Event Planner Conversation By Booking",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{eventPlannerToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/order-chats/bookings/{{bookingId}}/conversation",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "order-chats",
+                    "bookings",
+                    "{{bookingId}}",
+                    "conversation"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const json = pm.response.json();",
+                      "const direct = json?.conversation?._id || json?.data?.conversation?._id || json?.data?.[0]?.conversation?._id || json?.data?.[0]?._id || null;",
+                      "if (direct) pm.collectionVariables.set('conversationId', String(direct));"
+                    ]
+                  }
+                }
+              ]
             },
             {
               "name": "Get Event Planner Order Chat Messages",
@@ -5560,7 +5778,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseUrl}}/api/v1/order-chats/{{bookingId}}/messages?page=1&limit=50",
+                  "raw": "{{baseUrl}}/api/v1/order-chats/conversations/{{conversationId}}/messages?page=1&limit=50",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -5568,7 +5786,8 @@
                     "api",
                     "v1",
                     "order-chats",
-                    "{{bookingId}}",
+                    "conversations",
+                    "{{conversationId}}",
                     "messages"
                   ],
                   "query": [
@@ -5600,7 +5819,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"content\": \"Hello, I want to confirm the booking details.\"\n}",
+                  "raw": "{\n  \"bookingId\": \"{{bookingId}}\",\n  \"content\": \"Hello, I want to confirm the booking details.\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -5608,7 +5827,7 @@
                   }
                 },
                 "url": {
-                  "raw": "{{baseUrl}}/api/v1/order-chats/{{bookingId}}/messages",
+                  "raw": "{{baseUrl}}/api/v1/order-chats/conversations/{{conversationId}}/messages",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -5616,7 +5835,8 @@
                     "api",
                     "v1",
                     "order-chats",
-                    "{{bookingId}}",
+                    "conversations",
+                    "{{conversationId}}",
                     "messages"
                   ]
                 }
