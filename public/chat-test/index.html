@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EvenIt Booking Chat Tester</title>
+    <link rel="stylesheet" href="/chat-test/styles.css" />
+    <script src="/chat-test/app.js" defer></script>
+  </head>
+  <body>
+    <main class="layout">
+      <section class="hero">
+        <p class="eyebrow">EvenIt Backend Tester</p>
+        <h1>Booking Chat Test Page</h1>
+        <p class="lede">
+          Sign in as a customer and a service provider, create or select a booking, then send
+          booking-linked chat messages from both sides.
+        </p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Role Sessions</h2>
+          <button id="restore-button" type="button" class="ghost compact">Restore saved sessions</button>
+        </div>
+
+        <div class="grid two">
+          <form id="customer-login-form" class="card">
+            <div class="card-header">
+              <h3>Customer</h3>
+              <button id="customer-logout-button" type="button" class="ghost compact">Logout</button>
+            </div>
+            <label>
+              <span>Email</span>
+              <input id="customer-email" name="email" type="email" autocomplete="username" required />
+            </label>
+            <label>
+              <span>Password</span>
+              <input id="customer-password" name="password" type="password" autocomplete="current-password" required />
+            </label>
+            <button type="submit">Login Customer</button>
+            <dl class="identity-list">
+              <div>
+                <dt>Name</dt>
+                <dd id="customer-name">Not logged in</dd>
+              </div>
+              <div>
+                <dt>Role</dt>
+                <dd id="customer-role">-</dd>
+              </div>
+              <div>
+                <dt>User ID</dt>
+                <dd id="customer-user-id">-</dd>
+              </div>
+            </dl>
+          </form>
+
+          <form id="provider-login-form" class="card">
+            <div class="card-header">
+              <h3>Service Provider</h3>
+              <button id="provider-logout-button" type="button" class="ghost compact">Logout</button>
+            </div>
+            <label>
+              <span>Email</span>
+              <input id="provider-email" name="email" type="email" autocomplete="username" required />
+            </label>
+            <label>
+              <span>Password</span>
+              <input id="provider-password" name="password" type="password" autocomplete="current-password" required />
+            </label>
+            <button type="submit">Login Provider</button>
+            <dl class="identity-list">
+              <div>
+                <dt>Name</dt>
+                <dd id="provider-name">Not logged in</dd>
+              </div>
+              <div>
+                <dt>Role</dt>
+                <dd id="provider-role">-</dd>
+              </div>
+              <div>
+                <dt>User ID</dt>
+                <dd id="provider-user-id">-</dd>
+              </div>
+            </dl>
+          </form>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Booking Setup</h2>
+          <button id="refresh-services-button" type="button" class="ghost compact">Refresh services</button>
+        </div>
+
+        <div class="grid two">
+          <div class="card">
+            <h3>Published Service</h3>
+            <label>
+              <span>Select service</span>
+              <select id="service-select"></select>
+            </label>
+            <dl class="summary-list top-gap">
+              <div>
+                <dt>Service ID</dt>
+                <dd id="service-id">-</dd>
+              </div>
+              <div>
+                <dt>Owner user ID</dt>
+                <dd id="service-owner-id">-</dd>
+              </div>
+              <div>
+                <dt>Booking slot</dt>
+                <dd id="booking-slot">-</dd>
+              </div>
+              <div>
+                <dt>Context status</dt>
+                <dd id="context-status">Waiting for service selection</dd>
+              </div>
+            </dl>
+          </div>
+
+          <div class="card">
+            <h3>Create Service Booking</h3>
+            <label>
+              <span>Location</span>
+              <input id="booking-location" type="text" value="Banani, Dhaka" />
+            </label>
+            <label>
+              <span>Special instructions</span>
+              <textarea id="booking-instructions" rows="4" placeholder="Optional note for the provider"></textarea>
+            </label>
+            <p id="provider-match-status" class="inline-note">
+              Login both roles, then pick a service owned by the logged-in provider.
+            </p>
+            <div class="actions">
+              <button id="create-booking-button" type="button">Create booking from first available slot</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Booking Selection</h2>
+          <div class="actions inline-actions">
+            <button id="load-customer-bookings-button" type="button" class="ghost compact">Load customer bookings</button>
+            <button id="load-provider-bookings-button" type="button" class="ghost compact">Load provider bookings</button>
+            <button id="refresh-chat-button" type="button" class="ghost compact">Refresh chat</button>
+          </div>
+        </div>
+
+        <div class="grid two">
+          <div class="card">
+            <h3>Customer bookings</h3>
+            <select id="customer-bookings-select" size="8" class="listbox"></select>
+          </div>
+          <div class="card">
+            <h3>Provider bookings</h3>
+            <select id="provider-bookings-select" size="8" class="listbox"></select>
+          </div>
+        </div>
+
+        <div class="grid two top-gap">
+          <div class="card">
+            <h3>Active booking</h3>
+            <label>
+              <span>Booking ID</span>
+              <input id="active-booking-id" type="text" placeholder="Paste an existing booking id or create one above" />
+            </label>
+            <div class="actions top-gap">
+              <button id="use-booking-button" type="button">Use booking ID</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Booking summary</h3>
+            <dl class="summary-list">
+              <div>
+                <dt>Status</dt>
+                <dd id="active-booking-status">-</dd>
+              </div>
+              <div>
+                <dt>Target</dt>
+                <dd id="active-booking-target">-</dd>
+              </div>
+              <div>
+                <dt>Customer</dt>
+                <dd id="active-booking-customer">-</dd>
+              </div>
+              <div>
+                <dt>Provider</dt>
+                <dd id="active-booking-provider">-</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Chat</h2>
+          <p class="helper">Each side loads messages using its own token so you can verify participant access and sender attribution.</p>
+        </div>
+
+        <div class="grid two">
+          <div class="card chat-card">
+            <div class="card-header">
+              <h3>Customer chat view</h3>
+              <span id="customer-chat-meta" class="mini-status">No booking loaded</span>
+            </div>
+            <div id="customer-messages" class="messages"></div>
+            <form id="customer-message-form" class="message-form">
+              <textarea id="customer-message-input" rows="3" placeholder="Type as the customer"></textarea>
+              <button type="submit">Send as customer</button>
+            </form>
+          </div>
+
+          <div class="card chat-card">
+            <div class="card-header">
+              <h3>Provider chat view</h3>
+              <span id="provider-chat-meta" class="mini-status">No booking loaded</span>
+            </div>
+            <div id="provider-messages" class="messages"></div>
+            <form id="provider-message-form" class="message-form">
+              <textarea id="provider-message-input" rows="3" placeholder="Type as the provider"></textarea>
+              <button type="submit">Send as provider</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Activity</h2>
+        <pre id="log-output">Ready.</pre>
+      </section>
+    </main>
+  </body>
+</html>

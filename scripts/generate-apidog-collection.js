@@ -181,6 +181,21 @@ const buildProfileImageUploadRequest = (tokenVar, actorLabel) =>
     ])
   });
 
+const buildCoverImageUploadRequest = (tokenVar, actorLabel) =>
+  request(`Upload ${actorLabel} Cover Image`, 'POST', '/api/v1/uploads/cover-image', {
+    tokenVar,
+    description:
+      'Multipart/form-data request. Attach the new cover image file in the `image` field.',
+    body: formDataBody([
+      {
+        key: 'image',
+        type: 'file',
+        src: [],
+        description: 'Attach one image file for the authenticated user cover image.'
+      }
+    ])
+  });
+
 const customerAuth = folder('Auth', [
   request('Register Customer', 'POST', '/api/v1/auth/register', {
     contentType: 'application/json',
@@ -240,7 +255,8 @@ const customerAuth = folder('Auth', [
       phoneNumber: '+8801712345678'
     })
   }),
-  buildProfileImageUploadRequest('customerToken', 'Customer')
+  buildProfileImageUploadRequest('customerToken', 'Customer'),
+  buildCoverImageUploadRequest('customerToken', 'Customer')
 ]);
 
 const serviceProviderProfileUpdateBody = {
@@ -461,7 +477,8 @@ const serviceProviderAuth = folder('Auth', [
       'Updates the common `fullName` and phone number plus service provider location fields inside `serviceProvider.profileInfo`. `email`, categories, services, and verification fields are not editable here. The API also accepts multipart form-data with a `payload` JSON field plus optional `profileImage` and `coverImage` files.',
     body: jsonBody(serviceProviderProfileUpdateBody)
   }),
-  buildProfileImageUploadRequest('serviceProviderToken', 'Service Provider')
+  buildProfileImageUploadRequest('serviceProviderToken', 'Service Provider'),
+  buildCoverImageUploadRequest('serviceProviderToken', 'Service Provider')
 ]);
 
 const serviceProviderServices = folder('Services', [
@@ -760,7 +777,8 @@ const venueProviderAuth = folder('Auth', [
       'Updates the common `fullName` and phone number plus the venue provider business phone inside `venueProvider.profileInfo`. `email` and business identity fields are not editable here. The API also accepts multipart form-data with a `payload` JSON field plus optional `profileImage` and `coverImage` files.',
     body: jsonBody(venueProviderProfileUpdateBody)
   }),
-  buildProfileImageUploadRequest('venueProviderToken', 'Venue Provider')
+  buildProfileImageUploadRequest('venueProviderToken', 'Venue Provider'),
+  buildCoverImageUploadRequest('venueProviderToken', 'Venue Provider')
 ]);
 
 const venueProviderVenues = folder('Venues', [
@@ -1059,7 +1077,8 @@ const eventPlannerAuth = folder('Auth', [
       'Updates the common `fullName` and phone number plus event planner location fields inside `eventPlanner.profileInfo`. `email`, pricing, and verification fields are not editable here. The API also accepts multipart form-data with a `payload` JSON field plus optional `profileImage` and `coverImage` files.',
     body: jsonBody(eventPlannerProfileUpdateBody)
   }),
-  buildProfileImageUploadRequest('eventPlannerToken', 'Event Planner')
+  buildProfileImageUploadRequest('eventPlannerToken', 'Event Planner'),
+  buildCoverImageUploadRequest('eventPlannerToken', 'Event Planner')
 ]);
 
 const eventPlannerPublic = folder('Public APIs', [

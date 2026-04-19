@@ -959,6 +959,42 @@
                   ]
                 }
               }
+            },
+            {
+              "name": "Upload Customer Cover Image",
+              "request": {
+                "method": "POST",
+                "description": "Multipart/form-data request. Attach the new cover image file in the `image` field.",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{customerToken}}"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "image",
+                      "type": "file",
+                      "src": [],
+                      "description": "Attach one image file for the authenticated user cover image."
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/uploads/cover-image",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "uploads",
+                    "cover-image"
+                  ]
+                }
+              }
             }
           ]
         },
@@ -2008,6 +2044,42 @@
                     "v1",
                     "uploads",
                     "profile-image"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Upload Service Provider Cover Image",
+              "request": {
+                "method": "POST",
+                "description": "Multipart/form-data request. Attach the new cover image file in the `image` field.",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{serviceProviderToken}}"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "image",
+                      "type": "file",
+                      "src": [],
+                      "description": "Attach one image file for the authenticated user cover image."
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/uploads/cover-image",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "uploads",
+                    "cover-image"
                   ]
                 }
               }
@@ -3395,6 +3467,42 @@
                     "v1",
                     "uploads",
                     "profile-image"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Upload Venue Provider Cover Image",
+              "request": {
+                "method": "POST",
+                "description": "Multipart/form-data request. Attach the new cover image file in the `image` field.",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{venueProviderToken}}"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "image",
+                      "type": "file",
+                      "src": [],
+                      "description": "Attach one image file for the authenticated user cover image."
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/uploads/cover-image",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "uploads",
+                    "cover-image"
                   ]
                 }
               }
@@ -4817,6 +4925,42 @@
                     "v1",
                     "uploads",
                     "profile-image"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Upload Event Planner Cover Image",
+              "request": {
+                "method": "POST",
+                "description": "Multipart/form-data request. Attach the new cover image file in the `image` field.",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{eventPlannerToken}}"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "image",
+                      "type": "file",
+                      "src": [],
+                      "description": "Attach one image file for the authenticated user cover image."
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/uploads/cover-image",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "uploads",
+                    "cover-image"
                   ]
                 }
               }
