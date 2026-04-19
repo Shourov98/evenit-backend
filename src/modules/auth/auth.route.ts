@@ -396,9 +396,12 @@ const router = Router();
  *       type: object
  *       description: >
  *         Partial update payload for authenticated service providers.
- *         Phone and location fields are editable through this endpoint.
- *         `fullName`, `email`, categories, services, and verification fields are not editable here.
+ *         `fullName`, phone, and location fields are editable through this endpoint.
+ *         `email`, categories, services, and verification fields are not editable here.
  *       properties:
+ *         fullName:
+ *           type: string
+ *           example: Updated Service Provider Name
  *         phoneNumber:
  *           type: string
  *           example: +8801712345678
@@ -412,9 +415,12 @@ const router = Router();
  *       type: object
  *       description: >
  *         Partial update payload for authenticated event planners.
- *         Phone and location fields are editable through this endpoint.
- *         `fullName`, `email`, pricing, and verification fields are not editable here.
+ *         `fullName`, phone, and location fields are editable through this endpoint.
+ *         `email`, pricing, and verification fields are not editable here.
  *       properties:
+ *         fullName:
+ *           type: string
+ *           example: Updated Event Planner Name
  *         phoneNumber:
  *           type: string
  *           example: +8801712345678
@@ -428,9 +434,12 @@ const router = Router();
  *       type: object
  *       description: >
  *         Partial update payload for authenticated venue providers.
- *         Phone fields are editable through this endpoint.
- *         `fullName`, `email`, business identity, and verification fields are not editable here.
+ *         `fullName` and phone fields are editable through this endpoint.
+ *         `email`, business identity, and verification fields are not editable here.
  *       properties:
+ *         fullName:
+ *           type: string
+ *           example: Updated Venue Provider Name
  *         phoneNumber:
  *           type: string
  *           example: +8801712345678
@@ -443,8 +452,11 @@ const router = Router();
  *     CustomerProfileUpdateRequest:
  *       type: object
  *       description: >
- *         Customers can update their common phone number only.
+ *         Customers can update their common `fullName` and phone number fields.
  *       properties:
+ *         fullName:
+ *           type: string
+ *           example: Updated Customer Name
  *         phoneNumber:
  *           type: string
  *           example: +8801712345678
@@ -877,7 +889,7 @@ router.post(
  *             properties:
  *               payload:
  *                 type: string
- *                 example: '{"phoneNumber":"+8801712345678"}'
+ *                 example: '{"fullName":"Updated Customer Name","phoneNumber":"+8801712345678"}'
  *               profileImage:
  *                 type: string
  *                 format: binary
@@ -912,7 +924,7 @@ router.post(
  *             properties:
  *               payload:
  *                 type: string
- *                 example: '{"phoneNumber":"+8801712345678","serviceProvider":{"profileInfo":{"coverageArea":["Dhaka","Gazipur"]}}}'
+ *                 example: '{"fullName":"Updated Service Provider Name","phoneNumber":"+8801712345678","serviceProvider":{"profileInfo":{"coverageArea":["Dhaka","Gazipur"]}}}'
  *               profileImage:
  *                 type: string
  *                 format: binary
@@ -947,7 +959,7 @@ router.post(
  *             properties:
  *               payload:
  *                 type: string
- *                 example: '{"phoneNumber":"+8801712345678","eventPlanner":{"profileInfo":{"address":"Banani, Dhaka","coverageArea":["Dhaka","Chattogram"]}}}'
+ *                 example: '{"fullName":"Updated Event Planner Name","phoneNumber":"+8801712345678","eventPlanner":{"profileInfo":{"address":"Banani, Dhaka","coverageArea":["Dhaka","Chattogram"]}}}'
  *               profileImage:
  *                 type: string
  *                 format: binary
@@ -982,7 +994,7 @@ router.post(
  *             properties:
  *               payload:
  *                 type: string
- *                 example: '{"phoneNumber":"+8801712345678","venueProvider":{"profileInfo":{"businessPhoneNo":"+8801700000000"}}}'
+ *                 example: '{"fullName":"Updated Venue Provider Name","phoneNumber":"+8801712345678","venueProvider":{"profileInfo":{"businessPhoneNo":"+8801700000000"}}}'
  *               profileImage:
  *                 type: string
  *                 format: binary

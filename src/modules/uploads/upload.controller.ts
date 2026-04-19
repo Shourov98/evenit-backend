@@ -67,4 +67,23 @@ export class UploadController {
       data: uploaded
     });
   });
+
+  static uploadCoverImage = catchAsync(async (req: Request, res: Response) => {
+    if (!req.user?.userId || !req.user?.role) {
+      throw new AppError(401, 'Authentication required: sign in before uploading a cover image');
+    }
+
+    const file = req.file;
+    if (!file) {
+      throw new AppError(400, 'Cover image must be sent using the image field');
+    }
+
+    const uploaded = await UploadService.uploadCoverImage(req.user.userId, req.user.role, file);
+
+    return res.status(201).json({
+      success: true,
+      message: 'Cover image uploaded successfully',
+      data: uploaded
+    });
+  });
 }

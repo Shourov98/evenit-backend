@@ -233,6 +233,7 @@ const buildProfileUpdateRequestSchema = (bodySchema: z.AnyZodObject) =>
 export const updateCustomerProfileSchema = z.object({
   body: z
     .object({
+      fullName: fullNameRule.optional(),
       phoneNumber: z.string().min(5).max(30).optional()
     })
     .strict(),
@@ -242,6 +243,7 @@ export const updateCustomerProfileSchema = z.object({
 
 export const updateServiceProviderProfileRequestSchema = buildProfileUpdateRequestSchema(
   z.object({
+    fullName: fullNameRule.optional(),
     phoneNumber: z.string().min(5).max(30).optional(),
     serviceProvider: z
       .object({
@@ -254,6 +256,7 @@ export const updateServiceProviderProfileRequestSchema = buildProfileUpdateReque
 
 export const updateEventPlannerProfileRequestSchema = buildProfileUpdateRequestSchema(
   z.object({
+    fullName: fullNameRule.optional(),
     phoneNumber: z.string().min(5).max(30).optional(),
     eventPlanner: z
       .object({
@@ -266,6 +269,7 @@ export const updateEventPlannerProfileRequestSchema = buildProfileUpdateRequestS
 
 export const updateVenueProviderProfileRequestSchema = buildProfileUpdateRequestSchema(
   z.object({
+    fullName: fullNameRule.optional(),
     phoneNumber: z.string().min(5).max(30).optional(),
     venueProvider: z
       .object({
@@ -279,6 +283,7 @@ export const updateVenueProviderProfileRequestSchema = buildProfileUpdateRequest
 export const updateProfileSchema = z.object({
   body: z
     .object({
+      fullName: fullNameRule.optional(),
       phoneNumber: z.string().min(5).max(30).optional(),
       serviceProvider: z
         .object({

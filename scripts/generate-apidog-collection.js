@@ -234,8 +234,9 @@ const customerAuth = folder('Auth', [
     tokenVar: 'customerToken',
     contentType: 'application/json',
     description:
-      'Updates the customer common phone number. The API also accepts multipart form-data with a `payload` JSON field plus optional `profileImage` and `coverImage` files.',
+      'Updates the customer common `fullName` and phone number. The API also accepts multipart form-data with a `payload` JSON field plus optional `profileImage` and `coverImage` files.',
     body: jsonBody({
+      fullName: 'Updated Customer Name',
       phoneNumber: '+8801712345678'
     })
   }),
@@ -243,6 +244,7 @@ const customerAuth = folder('Auth', [
 ]);
 
 const serviceProviderProfileUpdateBody = {
+  fullName: 'Updated Service Provider Name',
   phoneNumber: '+8801712345678',
   serviceProvider: {
     profileInfo: {
@@ -252,6 +254,7 @@ const serviceProviderProfileUpdateBody = {
 };
 
 const eventPlannerProfileUpdateBody = {
+  fullName: 'Updated Event Planner Name',
   phoneNumber: '+8801712345678',
   eventPlanner: {
     profileInfo: {
@@ -262,6 +265,7 @@ const eventPlannerProfileUpdateBody = {
 };
 
 const venueProviderProfileUpdateBody = {
+  fullName: 'Updated Venue Provider Name',
   phoneNumber: '+8801712345678',
   venueProvider: {
     profileInfo: {
@@ -454,7 +458,7 @@ const serviceProviderAuth = folder('Auth', [
     tokenVar: 'serviceProviderToken',
     contentType: 'application/json',
     description:
-      'Updates the common phone number plus service provider location fields inside `serviceProvider.profileInfo`. `fullName`, `email`, categories, services, and verification fields are not editable here. The API also accepts multipart form-data with a `payload` JSON field plus optional `profileImage` and `coverImage` files.',
+      'Updates the common `fullName` and phone number plus service provider location fields inside `serviceProvider.profileInfo`. `email`, categories, services, and verification fields are not editable here. The API also accepts multipart form-data with a `payload` JSON field plus optional `profileImage` and `coverImage` files.',
     body: jsonBody(serviceProviderProfileUpdateBody)
   }),
   buildProfileImageUploadRequest('serviceProviderToken', 'Service Provider')
@@ -753,7 +757,7 @@ const venueProviderAuth = folder('Auth', [
     tokenVar: 'venueProviderToken',
     contentType: 'application/json',
     description:
-      'Updates the common phone number plus the venue provider business phone inside `venueProvider.profileInfo`. `fullName`, `email`, and business identity fields are not editable here. The API also accepts multipart form-data with a `payload` JSON field plus optional `profileImage` and `coverImage` files.',
+      'Updates the common `fullName` and phone number plus the venue provider business phone inside `venueProvider.profileInfo`. `email` and business identity fields are not editable here. The API also accepts multipart form-data with a `payload` JSON field plus optional `profileImage` and `coverImage` files.',
     body: jsonBody(venueProviderProfileUpdateBody)
   }),
   buildProfileImageUploadRequest('venueProviderToken', 'Venue Provider')
@@ -1052,7 +1056,7 @@ const eventPlannerAuth = folder('Auth', [
     tokenVar: 'eventPlannerToken',
     contentType: 'application/json',
     description:
-      'Updates the common phone number plus event planner location fields inside `eventPlanner.profileInfo`. `fullName`, `email`, pricing, and verification fields are not editable here. The API also accepts multipart form-data with a `payload` JSON field plus optional `profileImage` and `coverImage` files.',
+      'Updates the common `fullName` and phone number plus event planner location fields inside `eventPlanner.profileInfo`. `email`, pricing, and verification fields are not editable here. The API also accepts multipart form-data with a `payload` JSON field plus optional `profileImage` and `coverImage` files.',
     body: jsonBody(eventPlannerProfileUpdateBody)
   }),
   buildProfileImageUploadRequest('eventPlannerToken', 'Event Planner')

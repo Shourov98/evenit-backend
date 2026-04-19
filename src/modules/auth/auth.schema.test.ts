@@ -75,15 +75,14 @@ describe('auth onboarding schemas', () => {
     expect(result.success).toBe(true);
   });
 
-  it('rejects fullName and email updates for service provider profiles', () => {
+  it('accepts fullName updates for service provider profiles', () => {
     const result = updateServiceProviderProfileRequestSchema.safeParse({
       body: {
-        fullName: 'Blocked Update',
-        email: 'blocked@example.com'
+        fullName: 'Updated Provider Name'
       }
     });
 
-    expect(result.success).toBe(false);
+    expect(result.success).toBe(true);
   });
 
   it('accepts service provider location-only profile updates', () => {
@@ -117,15 +116,14 @@ describe('auth onboarding schemas', () => {
     expect(result.success).toBe(true);
   });
 
-  it('rejects event planner fullName and email updates', () => {
+  it('accepts event planner fullName updates', () => {
     const result = updateEventPlannerProfileRequestSchema.safeParse({
       body: {
-        fullName: 'Blocked Update',
-        email: 'blocked@example.com'
+        fullName: 'Updated Planner Name'
       }
     });
 
-    expect(result.success).toBe(false);
+    expect(result.success).toBe(true);
   });
 
   it('accepts venue provider phone-only updates', () => {
@@ -143,15 +141,14 @@ describe('auth onboarding schemas', () => {
     expect(result.success).toBe(true);
   });
 
-  it('rejects venue provider fullName and email updates', () => {
+  it('accepts venue provider fullName updates', () => {
     const result = updateVenueProviderProfileRequestSchema.safeParse({
       body: {
-        fullName: 'Blocked Update',
-        email: 'blocked@example.com'
+        fullName: 'Updated Venue Name'
       }
     });
 
-    expect(result.success).toBe(false);
+    expect(result.success).toBe(true);
   });
 
   it('accepts an empty customer profile update body', () => {
@@ -166,6 +163,16 @@ describe('auth onboarding schemas', () => {
     const result = updateCustomerProfileSchema.safeParse({
       body: {
         phoneNumber: '+8801712345678'
+      }
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('accepts a customer fullName-only update', () => {
+    const result = updateCustomerProfileSchema.safeParse({
+      body: {
+        fullName: 'Updated Customer Name'
       }
     });
 

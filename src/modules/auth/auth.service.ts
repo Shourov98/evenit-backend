@@ -52,6 +52,7 @@ type SubmitVenueProviderOnboardingPayload = SubmitOnboardingCommonPayload &
 interface UpdateProfilePayload {
   userId: string;
   role: UserRole;
+  fullName?: string;
   phoneNumber?: string;
   profileImageFile?: Express.Multer.File;
   coverImageFile?: Express.Multer.File;
@@ -289,6 +290,10 @@ export class AuthService {
 
     if (!user) {
       throw new AppError(404, 'User not found');
+    }
+
+    if (payload.fullName) {
+      user.fullName = payload.fullName.trim();
     }
 
     if (payload.phoneNumber) {

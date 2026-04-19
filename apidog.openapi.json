@@ -632,8 +632,12 @@
       },
       "ServiceProviderProfileUpdateRequest": {
         "type": "object",
-        "description": "Partial update payload for authenticated service providers. Phone and location fields are editable through this endpoint. `fullName`, `email`, categories, services, and verification fields are not editable here.\n",
+        "description": "Partial update payload for authenticated service providers. `fullName`, phone, and location fields are editable through this endpoint. `email`, categories, services, and verification fields are not editable here.\n",
         "properties": {
+          "fullName": {
+            "type": "string",
+            "example": "Updated Service Provider Name"
+          },
           "phoneNumber": {
             "type": "string",
             "example": 8801712345678
@@ -651,8 +655,12 @@
       },
       "EventPlannerProfileUpdateRequest": {
         "type": "object",
-        "description": "Partial update payload for authenticated event planners. Phone and location fields are editable through this endpoint. `fullName`, `email`, pricing, and verification fields are not editable here.\n",
+        "description": "Partial update payload for authenticated event planners. `fullName`, phone, and location fields are editable through this endpoint. `email`, pricing, and verification fields are not editable here.\n",
         "properties": {
+          "fullName": {
+            "type": "string",
+            "example": "Updated Event Planner Name"
+          },
           "phoneNumber": {
             "type": "string",
             "example": 8801712345678
@@ -670,8 +678,12 @@
       },
       "VenueProviderProfileUpdateRequest": {
         "type": "object",
-        "description": "Partial update payload for authenticated venue providers. Phone fields are editable through this endpoint. `fullName`, `email`, business identity, and verification fields are not editable here.\n",
+        "description": "Partial update payload for authenticated venue providers. `fullName` and phone fields are editable through this endpoint. `email`, business identity, and verification fields are not editable here.\n",
         "properties": {
+          "fullName": {
+            "type": "string",
+            "example": "Updated Venue Provider Name"
+          },
           "phoneNumber": {
             "type": "string",
             "example": 8801712345678
@@ -689,8 +701,12 @@
       },
       "CustomerProfileUpdateRequest": {
         "type": "object",
-        "description": "Customers can update their common phone number only.\n",
+        "description": "Customers can update their common `fullName` and phone number fields.\n",
         "properties": {
+          "fullName": {
+            "type": "string",
+            "example": "Updated Customer Name"
+          },
           "phoneNumber": {
             "type": "string",
             "example": 8801712345678
@@ -2439,6 +2455,47 @@
                 ]
               },
               "profileImage": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "publicId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "CoverImageUploadResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Cover image uploaded successfully"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "role": {
+                "type": "string",
+                "enum": [
+                  "customer",
+                  "service_provider",
+                  "event_planner",
+                  "venue_provider",
+                  "admin",
+                  "super_admin"
+                ]
+              },
+              "coverImage": {
                 "type": "object",
                 "properties": {
                   "url": {
@@ -4437,7 +4494,7 @@
                 "properties": {
                   "payload": {
                     "type": "string",
-                    "example": "{\"phoneNumber\":\"+8801712345678\"}"
+                    "example": "{\"fullName\":\"Updated Customer Name\",\"phoneNumber\":\"+8801712345678\"}"
                   },
                   "profileImage": {
                     "type": "string",
@@ -4494,7 +4551,7 @@
                 "properties": {
                   "payload": {
                     "type": "string",
-                    "example": "{\"phoneNumber\":\"+8801712345678\",\"serviceProvider\":{\"profileInfo\":{\"coverageArea\":[\"Dhaka\",\"Gazipur\"]}}}"
+                    "example": "{\"fullName\":\"Updated Service Provider Name\",\"phoneNumber\":\"+8801712345678\",\"serviceProvider\":{\"profileInfo\":{\"coverageArea\":[\"Dhaka\",\"Gazipur\"]}}}"
                   },
                   "profileImage": {
                     "type": "string",
@@ -4551,7 +4608,7 @@
                 "properties": {
                   "payload": {
                     "type": "string",
-                    "example": "{\"phoneNumber\":\"+8801712345678\",\"eventPlanner\":{\"profileInfo\":{\"address\":\"Banani, Dhaka\",\"coverageArea\":[\"Dhaka\",\"Chattogram\"]}}}"
+                    "example": "{\"fullName\":\"Updated Event Planner Name\",\"phoneNumber\":\"+8801712345678\",\"eventPlanner\":{\"profileInfo\":{\"address\":\"Banani, Dhaka\",\"coverageArea\":[\"Dhaka\",\"Chattogram\"]}}}"
                   },
                   "profileImage": {
                     "type": "string",
@@ -4608,7 +4665,7 @@
                 "properties": {
                   "payload": {
                     "type": "string",
-                    "example": "{\"phoneNumber\":\"+8801712345678\",\"venueProvider\":{\"profileInfo\":{\"businessPhoneNo\":\"+8801700000000\"}}}"
+                    "example": "{\"fullName\":\"Updated Venue Provider Name\",\"phoneNumber\":\"+8801712345678\",\"venueProvider\":{\"profileInfo\":{\"businessPhoneNo\":\"+8801700000000\"}}}"
                   },
                   "profileImage": {
                     "type": "string",
@@ -7883,6 +7940,57 @@
           },
           "400": {
             "description": "Profile image must be sent using the image field"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v1/uploads/cover-image": {
+      "post": {
+        "tags": [
+          "Uploads"
+        ],
+        "summary": "Upload the authenticated user's cover image",
+        "description": "Stores the image in a role-specific Cloudinary folder and replaces any previous cover image for that user.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "image"
+                ],
+                "properties": {
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Uploaded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoverImageUploadResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Cover image must be sent using the image field"
           },
           "401": {
             "description": "Unauthorized"

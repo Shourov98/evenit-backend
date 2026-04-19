@@ -889,7 +889,7 @@
               "name": "Update Customer Profile",
               "request": {
                 "method": "PATCH",
-                "description": "Updates the customer common phone number. The API also accepts multipart form-data with a `payload` JSON field plus optional `profileImage` and `coverImage` files.",
+                "description": "Updates the customer common `fullName` and phone number. The API also accepts multipart form-data with a `payload` JSON field plus optional `profileImage` and `coverImage` files.",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -902,7 +902,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"phoneNumber\": \"+8801712345678\"\n}",
+                  "raw": "{\n  \"fullName\": \"Updated Customer Name\",\n  \"phoneNumber\": \"+8801712345678\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -1941,7 +1941,7 @@
               "name": "Update Service Provider Profile",
               "request": {
                 "method": "PATCH",
-                "description": "Updates the common phone number plus service provider location fields inside `serviceProvider.profileInfo`. `fullName`, `email`, categories, services, and verification fields are not editable here. The API also accepts multipart form-data with a `payload` JSON field plus optional `profileImage` and `coverImage` files.",
+                "description": "Updates the common `fullName` and phone number plus service provider location fields inside `serviceProvider.profileInfo`. `email`, categories, services, and verification fields are not editable here. The API also accepts multipart form-data with a `payload` JSON field plus optional `profileImage` and `coverImage` files.",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -1954,7 +1954,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"phoneNumber\": \"+8801712345678\",\n  \"serviceProvider\": {\n    \"profileInfo\": {\n      \"coverageArea\": [\n        \"Dhaka\",\n        \"Gazipur\",\n        \"Narayanganj\"\n      ]\n    }\n  }\n}",
+                  "raw": "{\n  \"fullName\": \"Updated Service Provider Name\",\n  \"phoneNumber\": \"+8801712345678\",\n  \"serviceProvider\": {\n    \"profileInfo\": {\n      \"coverageArea\": [\n        \"Dhaka\",\n        \"Gazipur\",\n        \"Narayanganj\"\n      ]\n    }\n  }\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -3328,7 +3328,7 @@
               "name": "Update Venue Provider Profile",
               "request": {
                 "method": "PATCH",
-                "description": "Updates the common phone number plus the venue provider business phone inside `venueProvider.profileInfo`. `fullName`, `email`, and business identity fields are not editable here. The API also accepts multipart form-data with a `payload` JSON field plus optional `profileImage` and `coverImage` files.",
+                "description": "Updates the common `fullName` and phone number plus the venue provider business phone inside `venueProvider.profileInfo`. `email` and business identity fields are not editable here. The API also accepts multipart form-data with a `payload` JSON field plus optional `profileImage` and `coverImage` files.",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -3341,7 +3341,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"phoneNumber\": \"+8801712345678\",\n  \"venueProvider\": {\n    \"profileInfo\": {\n      \"businessPhoneNo\": \"+8801711111111\"\n    }\n  }\n}",
+                  "raw": "{\n  \"fullName\": \"Updated Venue Provider Name\",\n  \"phoneNumber\": \"+8801712345678\",\n  \"venueProvider\": {\n    \"profileInfo\": {\n      \"businessPhoneNo\": \"+8801711111111\"\n    }\n  }\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -4750,7 +4750,7 @@
               "name": "Update Event Planner Profile",
               "request": {
                 "method": "PATCH",
-                "description": "Updates the common phone number plus event planner location fields inside `eventPlanner.profileInfo`. `fullName`, `email`, pricing, and verification fields are not editable here. The API also accepts multipart form-data with a `payload` JSON field plus optional `profileImage` and `coverImage` files.",
+                "description": "Updates the common `fullName` and phone number plus event planner location fields inside `eventPlanner.profileInfo`. `email`, pricing, and verification fields are not editable here. The API also accepts multipart form-data with a `payload` JSON field plus optional `profileImage` and `coverImage` files.",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -4763,7 +4763,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"phoneNumber\": \"+8801712345678\",\n  \"eventPlanner\": {\n    \"profileInfo\": {\n      \"coverageArea\": [\n        \"Dhaka\",\n        \"Chattogram\",\n        \"Sylhet\"\n      ],\n      \"address\": \"Gulshan, Dhaka\"\n    }\n  }\n}",
+                  "raw": "{\n  \"fullName\": \"Updated Event Planner Name\",\n  \"phoneNumber\": \"+8801712345678\",\n  \"eventPlanner\": {\n    \"profileInfo\": {\n      \"coverageArea\": [\n        \"Dhaka\",\n        \"Chattogram\",\n        \"Sylhet\"\n      ],\n      \"address\": \"Gulshan, Dhaka\"\n    }\n  }\n}",
                   "options": {
                     "raw": {
                       "language": "json"

@@ -161,4 +161,49 @@ describe('AuthService.updateProfile', () => {
     expect(result.phoneNumber).toBe('+8801712345678');
     expect(save).toHaveBeenCalled();
   });
+
+  it('updates fullName and keeps provider onboarding names in sync', async () => {
+    const save = jest.fn().mockResolvedValue(undefined);
+    const user = {
+      _id: 'user-4',
+      role: 'event_planner',
+      fullName: 'Legacy Planner',
+      email: 'legacy@example.com',
+      phoneNumber: '+8801700000001',
+      subscription: {
+        status: 'subscribed',
+        planKey: 'basic_monthly'
+      },
+      onboarding: {
+        verification: {
+          businessType: 'company',
+          companyName: 'Legacy Planner Co',
+          nationalIdOrTradeLicenseUrl: 'https://cdn.example.com/legacy-license.pdf'
+        },
+        eventProvider: {
+          fullName: 'Legacy Planner',
+          email: 'legacy@example.com',
+          profileInfo: {
+            nidOrTradeLicenseNumber: 'EP-456',
+            name: 'Legacy Planner Profile',
+            coverageArea: ['Dhaka'],
+            address: 'Banani, Dhaka'
+          }
+        }
+      },
+      save
+    };
+
+    (UserModel.findById as jest.Mock).mockResolvedValue(user);
+
+    const result = await AuthService.updateProfile({
+      userId: 'user-4',
+      role: 'event_planner',
+      fullName: 'Updated Planner Name'
+    });
+
+    expect(result.fullName).toBe('Updated Planner Name');
+    expect(result.onboarding!.eventProvider!.fullName).toBe('Updated Planner Name');
+    expect(save).toHaveBeenCalled();
+  });
 });

@@ -64,6 +64,29 @@ const router = Router();
  *                   format: uri
  *                 publicId:
  *                   type: string
+ *     CoverImageUploadResponse:
+ *       type: object
+ *       properties:
+ *         success:
+ *           type: boolean
+ *           example: true
+ *         message:
+ *           type: string
+ *           example: Cover image uploaded successfully
+ *         data:
+ *           type: object
+ *           properties:
+ *             role:
+ *               type: string
+ *               enum: [customer, service_provider, event_planner, venue_provider, admin, super_admin]
+ *             coverImage:
+ *               type: object
+ *               properties:
+ *                 url:
+ *                   type: string
+ *                   format: uri
+ *                 publicId:
+ *                   type: string
  *
  * @openapi
  * /api/v1/uploads/images:
@@ -143,6 +166,38 @@ const router = Router();
  *         description: Unauthorized
  *
  * @openapi
+ * /api/v1/uploads/cover-image:
+ *   post:
+ *     tags: [Uploads]
+ *     summary: Upload the authenticated user's cover image
+ *     description: Stores the image in a role-specific Cloudinary folder and replaces any previous cover image for that user.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - image
+ *             properties:
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       201:
+ *         description: Uploaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CoverImageUploadResponse'
+ *       400:
+ *         description: Cover image must be sent using the image field
+ *       401:
+ *         description: Unauthorized
+ *
+ * @openapi
  * /api/v1/uploads/venue-images:
  *   post:
  *     tags: [Uploads]
@@ -188,6 +243,8 @@ router.post(
 );
 
 router.post('/profile-image', protect, imageUpload.single('image'), UploadController.uploadProfileImage);
+
+router.post('/cover-image', protect, imageUpload.single('image'), UploadController.uploadCoverImage);
 
 router.post(
   '/venue-images',
