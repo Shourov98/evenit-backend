@@ -97,6 +97,10 @@
     {
       "key": "notificationId",
       "value": ""
+    },
+    {
+      "key": "analyticsYear",
+      "value": "2024"
     }
   ],
   "item": [
@@ -4126,7 +4130,7 @@
                     {
                       "key": "payload",
                       "type": "text",
-                      "value": "{\n  \"information\": {\n    \"venueName\": \"Royal Hall\",\n    \"venueType\": \"Banquet\",\n    \"description\": \"Large indoor venue\",\n    \"addressLine\": \"Road 12, Dhanmondi\",\n    \"city\": \"Dhaka\",\n    \"area\": \"Dhanmondi\"\n  },\n  \"pricing\": {\n    \"basePrice\": 120000,\n    \"currency\": \"BDT\",\n    \"discount\": {\n      \"type\": \"percentage\",\n      \"value\": 15\n    },\n    \"amenities\": {\n      \"parking\": true,\n      \"airConditioned\": true,\n      \"stage\": true\n    }\n  },\n  \"capacity\": {\n    \"maximumGuests\": 500\n  },\n  \"media\": {\n    \"galleryImages\": [],\n    \"videoUrl\": \"https://youtube.com/watch?v=venue123\"\n  },\n  \"availabilityCalendar\": [\n    {\n      \"date\": \"2026-04-18\",\n      \"hours\": [\n        14,\n        15\n      ]\n    }\n  ]\n}",
+                      "value": "{\n  \"information\": {\n    \"venueName\": \"Royal Hall\",\n    \"venueType\": \"Banquet\",\n    \"description\": \"Large indoor venue\",\n    \"addressLine\": \"Road 12, Dhanmondi\",\n    \"city\": \"Dhaka\",\n    \"area\": \"Dhanmondi\"\n  },\n  \"pricing\": {\n    \"basePrice\": 120000,\n    \"currency\": \"BDT\",\n    \"discount\": {\n      \"type\": \"percentage\",\n      \"value\": 15\n    },\n    \"amenities\": {\n      \"wifi\": true,\n      \"parking\": true,\n      \"ac\": true,\n      \"catering\": false,\n      \"audioVideo\": true,\n      \"security\": true,\n      \"accessible\": false,\n      \"soundSystem\": true\n    }\n  },\n  \"capacity\": {\n    \"maximumGuests\": 500\n  },\n  \"media\": {\n    \"galleryImages\": [],\n    \"videoUrl\": \"https://youtube.com/watch?v=venue123\"\n  },\n  \"availabilityCalendar\": [\n    {\n      \"date\": \"2026-04-18\",\n      \"hours\": [\n        14,\n        15\n      ]\n    }\n  ]\n}",
                       "description": "JSON string payload. The backend uploads attached files and appends the returned URLs to media.galleryImages."
                     },
                     {
@@ -4188,7 +4192,7 @@
                     {
                       "key": "payload",
                       "type": "text",
-                      "value": "{\n  \"capacity\": {\n    \"maximumGuests\": 550\n  },\n  \"media\": {\n    \"galleryImages\": [],\n    \"videoUrl\": \"https://youtube.com/watch?v=updated-venue\"\n  },\n  \"availabilityCalendar\": [\n    {\n      \"date\": \"2026-04-19\",\n      \"hours\": [\n        18\n      ]\n    }\n  ]\n}",
+                      "value": "{\n  \"pricing\": {\n    \"amenities\": {\n      \"wifi\": true,\n      \"parking\": true,\n      \"ac\": true,\n      \"catering\": true,\n      \"audioVideo\": true,\n      \"security\": true,\n      \"accessible\": true,\n      \"soundSystem\": true\n    }\n  },\n  \"capacity\": {\n    \"maximumGuests\": 550\n  },\n  \"media\": {\n    \"galleryImages\": [],\n    \"videoUrl\": \"https://youtube.com/watch?v=updated-venue\"\n  },\n  \"availabilityCalendar\": [\n    {\n      \"date\": \"2026-04-19\",\n      \"hours\": [\n        18\n      ]\n    }\n  ]\n}",
                       "description": "JSON string payload. The backend uploads attached files and appends the returned URLs to media.galleryImages."
                     },
                     {
@@ -8116,6 +8120,67 @@
               }
             }
           ]
+        },
+        {
+          "name": "Analytics",
+          "item": [
+            {
+              "name": "Get Admin Analytics Overview",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/analytics/overview",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "analytics",
+                    "overview"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Get Admin Yearly Analytics",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{adminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/analytics/yearly?year=%7B%7BanalyticsYear%7D%7D",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "analytics",
+                    "yearly"
+                  ],
+                  "query": [
+                    {
+                      "key": "year",
+                      "value": "{{analyticsYear}}"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
         }
       ]
     },
@@ -9928,6 +9993,67 @@
                     "v1",
                     "notifications",
                     "read-all"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Analytics",
+          "item": [
+            {
+              "name": "Get Super Admin Analytics Overview",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{superAdminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/analytics/overview",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "analytics",
+                    "overview"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Get Super Admin Yearly Analytics",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{superAdminToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/analytics/yearly?year=%7B%7BanalyticsYear%7D%7D",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "analytics",
+                    "yearly"
+                  ],
+                  "query": [
+                    {
+                      "key": "year",
+                      "value": "{{analyticsYear}}"
+                    }
                   ]
                 }
               }

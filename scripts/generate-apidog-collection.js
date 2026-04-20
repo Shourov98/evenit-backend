@@ -26,7 +26,8 @@ const variables = [
   { key: 'eventPlannerUserId', value: '' },
   { key: 'adminUserSelfId', value: '' },
   { key: 'superAdminUserSelfId', value: '' },
-  { key: 'notificationId', value: '' }
+  { key: 'notificationId', value: '' },
+  { key: 'analyticsYear', value: '2024' }
 ];
 
 const toCollectionPath = (endpoint) =>
@@ -214,6 +215,17 @@ const buildNotificationsFolder = (tokenVar, actorLabel) =>
     }),
     request(`Mark All ${actorLabel} Notifications As Read`, 'PATCH', '/api/v1/notifications/read-all', {
       tokenVar
+    })
+  ]);
+
+const buildAnalyticsFolder = (tokenVar, actorLabel) =>
+  folder('Analytics', [
+    request(`Get ${actorLabel} Analytics Overview`, 'GET', '/api/v1/admin/analytics/overview', {
+      tokenVar
+    }),
+    request(`Get ${actorLabel} Yearly Analytics`, 'GET', '/api/v1/admin/analytics/yearly', {
+      tokenVar,
+      query: [{ key: 'year', value: '{{analyticsYear}}' }]
     })
   ]);
 
@@ -882,9 +894,14 @@ const venueProviderVenues = folder('Venues', [
                 value: 15
               },
               amenities: {
+                wifi: true,
                 parking: true,
-                airConditioned: true,
-                stage: true
+                ac: true,
+                catering: false,
+                audioVideo: true,
+                security: true,
+                accessible: false,
+                soundSystem: true
               }
             },
             capacity: {
@@ -928,6 +945,18 @@ const venueProviderVenues = folder('Venues', [
         key: 'payload',
         value: JSON.stringify(
           {
+            pricing: {
+              amenities: {
+                wifi: true,
+                parking: true,
+                ac: true,
+                catering: true,
+                audioVideo: true,
+                security: true,
+                accessible: true,
+                soundSystem: true
+              }
+            },
             capacity: {
               maximumGuests: 550
             },
@@ -1403,6 +1432,7 @@ const adminBookings = folder('Bookings', [
 ]);
 
 const adminNotifications = buildNotificationsFolder('adminToken', 'Admin');
+const adminAnalytics = buildAnalyticsFolder('adminToken', 'Admin');
 
 const superAdminAuth = folder('Auth', [
   request('Login Admin Or Super Admin', 'POST', '/api/v1/auth/admin/login', {
@@ -1590,6 +1620,7 @@ const superAdminBookings = folder('Bookings', [
 ]);
 
 const superAdminNotifications = buildNotificationsFolder('superAdminToken', 'Super Admin');
+const superAdminAnalytics = buildAnalyticsFolder('superAdminToken', 'Super Admin');
 
 const publicApis = folder('Public', [
   request('Root Status', 'GET', '/'),
@@ -1698,14 +1729,15 @@ const collection = {
       eventPlannerNotifications,
       eventPlannerSubscriptions
     ]),
-    folder('Admin', [adminAuth, adminUsers, adminModeration, adminBookings, adminNotifications]),
+    folder('Admin', [adminAuth, adminUsers, adminModeration, adminBookings, adminNotifications, adminAnalytics]),
     folder('Super Admin', [
       superAdminAuth,
       superAdminAdminUsers,
       superAdminUsers,
       superAdminModeration,
       superAdminBookings,
-      superAdminNotifications
+      superAdminNotifications,
+      superAdminAnalytics
     ])
   ]
 };

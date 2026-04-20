@@ -22,6 +22,14 @@ export const approvalRequestsQuerySchema = z.object({
   })
 });
 
+export const analyticsYearQuerySchema = z.object({
+  body: z.object({}).optional().default({}),
+  params: z.object({}).optional().default({}),
+  query: z.object({
+    year: z.coerce.number().int().min(2000).max(3000)
+  })
+});
+
 export const venueIdParamSchema = buildObjectIdParamSchema('venueId', 'venueId');
 
 export const serviceIdParamSchema = buildObjectIdParamSchema('serviceId', 'serviceId');

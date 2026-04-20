@@ -62,6 +62,11 @@ const router = Router();
  *             wifi: true
  *             parking: true
  *             ac: true
+ *             catering: false
+ *             audioVideo: true
+ *             security: true
+ *             accessible: false
+ *             soundSystem: true
  *         capacity:
  *           maximumGuests: 300
  *         media:
@@ -121,6 +126,11 @@ const router = Router();
  *                 wifi: true
  *                 parking: true
  *                 ac: true
+ *                 catering: false
+ *                 audioVideo: true
+ *                 security: true
+ *                 accessible: false
+ *                 soundSystem: true
  *         capacity:
  *           type: object
  *           required: [maximumGuests]
@@ -468,7 +478,7 @@ router.delete(
  *               payload:
  *                 type: string
  *                 description: JSON string matching VenueCreateRequest. Include `media.galleryImages` only for already-hosted image URLs. Files sent in `images` or `image` are uploaded by the backend automatically.
- *                 example: '{"information":{"venueName":"Grand Hall","venueType":"Banquet","description":"Premium event venue in central Dhaka.","addressLine":"123 Main Road","city":"Dhaka","area":"Farmgate"},"pricing":{"basePrice":5000,"currency":"BDT","discount":{"type":"percentage","value":10},"amenities":{"wifi":true,"parking":true,"ac":true}},"capacity":{"maximumGuests":300},"media":{"galleryImages":[],"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityCalendar":[{"date":"2026-03-20","hours":[8,9,10]}]}'
+ *                 example: '{"information":{"venueName":"Grand Hall","venueType":"Banquet","description":"Premium event venue in central Dhaka.","addressLine":"123 Main Road","city":"Dhaka","area":"Farmgate"},"pricing":{"basePrice":5000,"currency":"BDT","discount":{"type":"percentage","value":10},"amenities":{"wifi":true,"parking":true,"ac":true,"catering":false,"audioVideo":true,"security":true,"accessible":false,"soundSystem":true}},"capacity":{"maximumGuests":300},"media":{"galleryImages":[],"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityCalendar":[{"date":"2026-03-20","hours":[8,9,10]}]}'
  *               images:
  *                 type: array
  *                 items:
@@ -483,7 +493,7 @@ router.delete(
  *             validVenue:
  *               summary: Valid venue creation payload
  *               value:
- *                 payload: '{"information":{"venueName":"Grand Hall","venueType":"Banquet","description":"Premium event venue in central Dhaka.","addressLine":"123 Main Road","city":"Dhaka","area":"Farmgate"},"pricing":{"basePrice":5000,"currency":"BDT","discount":{"type":"percentage","value":10},"amenities":{"wifi":true,"parking":true,"ac":true}},"capacity":{"maximumGuests":300},"media":{"galleryImages":[],"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityCalendar":[{"date":"2026-03-20","hours":[8,9,10]}]}'
+ *                 payload: '{"information":{"venueName":"Grand Hall","venueType":"Banquet","description":"Premium event venue in central Dhaka.","addressLine":"123 Main Road","city":"Dhaka","area":"Farmgate"},"pricing":{"basePrice":5000,"currency":"BDT","discount":{"type":"percentage","value":10},"amenities":{"wifi":true,"parking":true,"ac":true,"catering":false,"audioVideo":true,"security":true,"accessible":false,"soundSystem":true}},"capacity":{"maximumGuests":300},"media":{"galleryImages":[],"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityCalendar":[{"date":"2026-03-20","hours":[8,9,10]}]}'
  *     responses:
  *       201:
  *         description: Venue created successfully
@@ -535,7 +545,7 @@ router.post(
  *               payload:
  *                 type: string
  *                 description: JSON string matching VenueUpdateRequest. Files sent in `images` or `image` are uploaded by the backend automatically.
- *                 example: '{"capacity":{"maximumGuests":550},"media":{"galleryImages":[],"videoUrl":"https://youtube.com/watch?v=updated-venue"},"availabilityCalendar":[{"date":"2026-04-19","hours":[18]}]}'
+ *                 example: '{"pricing":{"amenities":{"wifi":true,"parking":true,"ac":true,"catering":true,"audioVideo":true,"security":true,"accessible":true,"soundSystem":true}},"capacity":{"maximumGuests":550},"media":{"galleryImages":[],"videoUrl":"https://youtube.com/watch?v=updated-venue"},"availabilityCalendar":[{"date":"2026-04-19","hours":[18]}]}'
  *               images:
  *                 type: array
  *                 items:
@@ -550,7 +560,7 @@ router.post(
  *             validVenueUpdate:
  *               summary: Valid venue update payload
  *               value:
- *                 payload: '{"capacity":{"maximumGuests":550},"media":{"galleryImages":[],"videoUrl":"https://youtube.com/watch?v=updated-venue"},"availabilityCalendar":[{"date":"2026-04-19","hours":[18]}]}'
+ *                 payload: '{"pricing":{"amenities":{"wifi":true,"parking":true,"ac":true,"catering":true,"audioVideo":true,"security":true,"accessible":true,"soundSystem":true}},"capacity":{"maximumGuests":550},"media":{"galleryImages":[],"videoUrl":"https://youtube.com/watch?v=updated-venue"},"availabilityCalendar":[{"date":"2026-04-19","hours":[18]}]}'
  *     responses:
  *       200:
  *         description: Venue updated successfully

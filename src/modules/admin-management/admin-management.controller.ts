@@ -18,6 +18,24 @@ const getApprover = (req: Request): { userId: string; name: string; email: strin
 };
 
 export class AdminManagementController {
+  static getAnalyticsOverview = catchAsync(async (_req: Request, res: Response) => {
+    const data = await AdminManagementService.getAnalyticsOverview();
+
+    return res.status(200).json({
+      success: true,
+      data
+    });
+  });
+
+  static getYearlyAnalytics = catchAsync(async (req: Request, res: Response) => {
+    const data = await AdminManagementService.getYearlyAnalytics(Number(req.query.year));
+
+    return res.status(200).json({
+      success: true,
+      data
+    });
+  });
+
   static createAdmin = catchAsync(async (req: Request, res: Response) => {
     const admin = await AdminManagementService.createAdmin(req.body);
 

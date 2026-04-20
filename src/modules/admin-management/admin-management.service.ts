@@ -2,9 +2,10 @@ import { PaginationOptions, paginateModel } from '../../common/utils/pagination'
 import { AppError } from '../../common/errors/AppError';
 import { buildAdminOwnerInfo } from '../../common/utils/public-provider';
 import { createDefaultUserSubscription, UserModel, UserRole } from '../auth/auth.model';
+import { BookingModel } from '../bookings/booking.model';
 import { NotificationService } from '../notifications/notification.service';
 import { ServiceProviderServiceModel } from '../service-provider/service-provider.model';
-import { VenueProviderVenueModel } from '../venue-provider/venue-provider.model';
+import { normalizeVenueAmenities, VenueProviderVenueModel } from '../venue-provider/venue-provider.model';
 
 interface ApproverInfo {
   userId: string;
@@ -17,6 +18,20 @@ const ADMIN_OWNER_SELECT =
   'fullName email role isEmailVerified isBlocked profileImage onboarding.serviceProvider onboarding.venueProvider';
 const ADMIN_MANAGED_USER_SELECT =
   'fullName email role serviceCategories isEmailVerified isBlocked profileImage subscription onboarding createdAt updatedAt';
+const analyticsUserRoles = ['customer', 'event_planner', 'service_provider', 'venue_provider'] as const;
+const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+const getMonthRangeUtc = (year: number, month: number) => {
+  const start = new Date(Date.UTC(year, month, 1, 0, 0, 0, 0));
+  const end = new Date(Date.UTC(year, month + 1, 1, 0, 0, 0, 0));
+
+  return { start, end };
+};
+
+const getCurrentMonthRangeUtc = () => {
+  const now = new Date();
+  return getMonthRangeUtc(now.getUTCFullYear(), now.getUTCMonth());
+};
 
 const attachOwners = async <
   TDoc extends {
@@ -34,7 +49,14 @@ const attachOwners = async <
   });
 
   return populatedItems.map((item) => {
-    const itemObject = item.toObject();
+    const itemObject = item.toObject({ flattenMaps: true });
+
+    if (model === VenueProviderVenueModel && itemObject.pricing && typeof itemObject.pricing === 'object') {
+      itemObject.pricing = {
+        ...itemObject.pricing,
+        amenities: normalizeVenueAmenities((itemObject.pricing as Record<string, any>).amenities)
+      };
+    }
 
     return {
       ...itemObject,
@@ -388,5 +410,238 @@ export class AdminManagementService {
     });
 
     return service;
+  }
+
+  static async getAnalyticsOverview() {
+    const currentMonth = getCurrentMonthRangeUtc();
+    const activeRevenueStatuses = ['confirmed', 'completed'];
+
+    const [
+      totalUsers,
+      totalCustomers,
+      totalEventPlanners,
+      totalServiceProviders,
+      totalVenueProviders,
+      newUsersCurrentMonth,
+      newCustomersCurrentMonth,
+      newEventPlannersCurrentMonth,
+      newServiceProvidersCurrentMonth,
+      newVenueProvidersCurrentMonth,
+      revenueAggregation,
+      currentMonthRevenueAggregation
+    ] = await Promise.all([
+      UserModel.countDocuments({ role: { $in: analyticsUserRoles } }),
+      UserModel.countDocuments({ role: 'customer' }),
+      UserModel.countDocuments({ role: 'event_planner' }),
+      UserModel.countDocuments({ role: 'service_provider' }),
+      UserModel.countDocuments({ role: 'venue_provider' }),
+      UserModel.countDocuments({
+        role: { $in: analyticsUserRoles },
+        createdAt: { $gte: currentMonth.start, $lt: currentMonth.end }
+      }),
+      UserModel.countDocuments({
+        role: 'customer',
+        createdAt: { $gte: currentMonth.start, $lt: currentMonth.end }
+      }),
+      UserModel.countDocuments({
+        role: 'event_planner',
+        createdAt: { $gte: currentMonth.start, $lt: currentMonth.end }
+      }),
+      UserModel.countDocuments({
+        role: 'service_provider',
+        createdAt: { $gte: currentMonth.start, $lt: currentMonth.end }
+      }),
+      UserModel.countDocuments({
+        role: 'venue_provider',
+        createdAt: { $gte: currentMonth.start, $lt: currentMonth.end }
+      }),
+      BookingModel.aggregate([
+        { $match: { status: { $in: activeRevenueStatuses } } },
+        {
+          $group: {
+            _id: null,
+            totalRevenue: { $sum: '$pricing.totalAmount' },
+            totalPlatformRevenue: { $sum: '$pricing.platformFeeAmount' },
+            totalBookings: { $sum: 1 }
+          }
+        }
+      ]),
+      BookingModel.aggregate([
+        {
+          $match: {
+            status: { $in: activeRevenueStatuses },
+            createdAt: { $gte: currentMonth.start, $lt: currentMonth.end }
+          }
+        },
+        {
+          $group: {
+            _id: null,
+            currentMonthRevenue: { $sum: '$pricing.totalAmount' },
+            currentMonthPlatformRevenue: { $sum: '$pricing.platformFeeAmount' },
+            currentMonthBookings: { $sum: 1 }
+          }
+        }
+      ])
+    ]);
+
+    const revenue = revenueAggregation[0] ?? {
+      totalRevenue: 0,
+      totalPlatformRevenue: 0,
+      totalBookings: 0
+    };
+    const currentRevenue = currentMonthRevenueAggregation[0] ?? {
+      currentMonthRevenue: 0,
+      currentMonthPlatformRevenue: 0,
+      currentMonthBookings: 0
+    };
+
+    return {
+      revenue: {
+        totalRevenue: Number(revenue.totalRevenue ?? 0),
+        totalPlatformRevenue: Number(revenue.totalPlatformRevenue ?? 0),
+        totalBookings: Number(revenue.totalBookings ?? 0),
+        currentMonthRevenue: Number(currentRevenue.currentMonthRevenue ?? 0),
+        currentMonthPlatformRevenue: Number(currentRevenue.currentMonthPlatformRevenue ?? 0),
+        currentMonthBookings: Number(currentRevenue.currentMonthBookings ?? 0)
+      },
+      users: {
+        totalUsers,
+        totalCustomers,
+        totalEventPlanners,
+        totalServiceProviders,
+        totalVenueProviders,
+        currentMonth: {
+          newUsers: newUsersCurrentMonth,
+          newCustomers: newCustomersCurrentMonth,
+          newEventPlanners: newEventPlannersCurrentMonth,
+          newServiceProviders: newServiceProvidersCurrentMonth,
+          newVenueProviders: newVenueProvidersCurrentMonth
+        }
+      }
+    };
+  }
+
+  static async getYearlyAnalytics(year: number) {
+    const yearStart = new Date(Date.UTC(year, 0, 1, 0, 0, 0, 0));
+    const nextYearStart = new Date(Date.UTC(year + 1, 0, 1, 0, 0, 0, 0));
+    const activeRevenueStatuses = ['confirmed', 'completed'];
+
+    const [monthlyRevenueAggregation, monthlyUserAggregation] = await Promise.all([
+      BookingModel.aggregate([
+        {
+          $match: {
+            status: { $in: activeRevenueStatuses },
+            createdAt: { $gte: yearStart, $lt: nextYearStart }
+          }
+        },
+        {
+          $group: {
+            _id: { $month: '$createdAt' },
+            revenue: { $sum: '$pricing.totalAmount' },
+            platformRevenue: { $sum: '$pricing.platformFeeAmount' },
+            bookings: { $sum: 1 }
+          }
+        },
+        { $sort: { _id: 1 } }
+      ]),
+      UserModel.aggregate([
+        {
+          $match: {
+            role: { $in: analyticsUserRoles },
+            createdAt: { $gte: yearStart, $lt: nextYearStart }
+          }
+        },
+        {
+          $group: {
+            _id: { month: { $month: '$createdAt' }, role: '$role' },
+            count: { $sum: 1 }
+          }
+        },
+        { $sort: { '_id.month': 1 } }
+      ])
+    ]);
+
+    const revenueMap = new Map(
+      monthlyRevenueAggregation.map((item) => [
+        Number(item._id),
+        {
+          revenue: Number(item.revenue ?? 0),
+          platformRevenue: Number(item.platformRevenue ?? 0),
+          bookings: Number(item.bookings ?? 0)
+        }
+      ])
+    );
+
+    const userMap = new Map<
+      number,
+      {
+        totalNewUsers: number;
+        newCustomers: number;
+        newEventPlanners: number;
+        newServiceProviders: number;
+        newVenueProviders: number;
+      }
+    >();
+
+    for (const item of monthlyUserAggregation) {
+      const month = Number(item._id.month);
+      const count = Number(item.count ?? 0);
+      const current =
+        userMap.get(month) ??
+        {
+          totalNewUsers: 0,
+          newCustomers: 0,
+          newEventPlanners: 0,
+          newServiceProviders: 0,
+          newVenueProviders: 0
+        };
+
+      current.totalNewUsers += count;
+
+      if (item._id.role === 'customer') {
+        current.newCustomers = count;
+      } else if (item._id.role === 'event_planner') {
+        current.newEventPlanners = count;
+      } else if (item._id.role === 'service_provider') {
+        current.newServiceProviders = count;
+      } else if (item._id.role === 'venue_provider') {
+        current.newVenueProviders = count;
+      }
+
+      userMap.set(month, current);
+    }
+
+    return {
+      year,
+      monthly: MONTH_LABELS.map((label, index) => {
+        const monthNumber = index + 1;
+        const revenue = revenueMap.get(monthNumber) ?? {
+          revenue: 0,
+          platformRevenue: 0,
+          bookings: 0
+        };
+        const users =
+          userMap.get(monthNumber) ?? {
+            totalNewUsers: 0,
+            newCustomers: 0,
+            newEventPlanners: 0,
+            newServiceProviders: 0,
+            newVenueProviders: 0
+          };
+
+        return {
+          month: monthNumber,
+          label,
+          revenue: revenue.revenue,
+          platformRevenue: revenue.platformRevenue,
+          bookings: revenue.bookings,
+          totalNewUsers: users.totalNewUsers,
+          newCustomers: users.newCustomers,
+          newEventPlanners: users.newEventPlanners,
+          newServiceProviders: users.newServiceProviders,
+          newVenueProviders: users.newVenueProviders
+        };
+      })
+    };
   }
 }

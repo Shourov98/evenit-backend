@@ -5,6 +5,7 @@ import { validate } from '../../common/middlewares/validate.middleware';
 import { AdminManagementController } from './admin-management.controller';
 import {
   adminUserIdParamSchema,
+  analyticsYearQuerySchema,
   approvalRequestsQuerySchema,
   customerIdParamSchema,
   createAdminSchema,
@@ -30,7 +31,165 @@ router.use(protect, authorize('admin', 'super_admin'));
  *       $ref: '#/components/schemas/VenueListResponse'
  *     AdminPendingServiceListResponse:
  *       $ref: '#/components/schemas/ServiceListResponse'
+ *     AdminAnalyticsOverviewResponse:
+ *       type: object
+ *       properties:
+ *         success:
+ *           type: boolean
+ *           example: true
+ *         data:
+ *           type: object
+ *           properties:
+ *             revenue:
+ *               type: object
+ *               properties:
+ *                 totalRevenue:
+ *                   type: number
+ *                   example: 125000
+ *                 totalPlatformRevenue:
+ *                   type: number
+ *                   example: 12500
+ *                 totalBookings:
+ *                   type: integer
+ *                   example: 128
+ *                 currentMonthRevenue:
+ *                   type: number
+ *                   example: 9000
+ *                 currentMonthPlatformRevenue:
+ *                   type: number
+ *                   example: 900
+ *                 currentMonthBookings:
+ *                   type: integer
+ *                   example: 11
+ *             users:
+ *               type: object
+ *               properties:
+ *                 totalUsers:
+ *                   type: integer
+ *                   example: 850
+ *                 totalCustomers:
+ *                   type: integer
+ *                   example: 420
+ *                 totalEventPlanners:
+ *                   type: integer
+ *                   example: 90
+ *                 totalServiceProviders:
+ *                   type: integer
+ *                   example: 220
+ *                 totalVenueProviders:
+ *                   type: integer
+ *                   example: 120
+ *                 currentMonth:
+ *                   type: object
+ *                   properties:
+ *                     newUsers:
+ *                       type: integer
+ *                       example: 32
+ *                     newCustomers:
+ *                       type: integer
+ *                       example: 16
+ *                     newEventPlanners:
+ *                       type: integer
+ *                       example: 4
+ *                     newServiceProviders:
+ *                       type: integer
+ *                       example: 8
+ *                     newVenueProviders:
+ *                       type: integer
+ *                       example: 4
+ *     AdminYearlyAnalyticsResponse:
+ *       type: object
+ *       properties:
+ *         success:
+ *           type: boolean
+ *           example: true
+ *         data:
+ *           type: object
+ *           properties:
+ *             year:
+ *               type: integer
+ *               example: 2024
+ *             monthly:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   month:
+ *                     type: integer
+ *                     example: 1
+ *                   label:
+ *                     type: string
+ *                     example: Jan
+ *                   revenue:
+ *                     type: number
+ *                     example: 15000
+ *                   platformRevenue:
+ *                     type: number
+ *                     example: 1500
+ *                   bookings:
+ *                     type: integer
+ *                     example: 17
+ *                   totalNewUsers:
+ *                     type: integer
+ *                     example: 68
+ *                   newCustomers:
+ *                     type: integer
+ *                     example: 31
+ *                   newEventPlanners:
+ *                     type: integer
+ *                     example: 7
+ *                   newServiceProviders:
+ *                     type: integer
+ *                     example: 18
+ *                   newVenueProviders:
+ *                     type: integer
+ *                     example: 12
  */
+
+/**
+ * @openapi
+ * /api/v1/admin/analytics/overview:
+ *   get:
+ *     tags: [Admin]
+ *     summary: Get dashboard analytics overview
+ *     description: Returns total revenue, total users by role, and current-month new user counts. Available to admin and super_admin.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Analytics overview returned
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AdminAnalyticsOverviewResponse'
+ */
+router.get('/analytics/overview', AdminManagementController.getAnalyticsOverview);
+
+/**
+ * @openapi
+ * /api/v1/admin/analytics/yearly:
+ *   get:
+ *     tags: [Admin]
+ *     summary: Get monthly revenue and user growth for a year
+ *     description: Returns monthly revenue and new-user counts for the selected year. Available to admin and super_admin.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: year
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 2024
+ *     responses:
+ *       200:
+ *         description: Yearly analytics returned
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AdminYearlyAnalyticsResponse'
+ */
+router.get('/analytics/yearly', validate(analyticsYearQuerySchema), AdminManagementController.getYearlyAnalytics);
 
 /**
  * @openapi

@@ -14,7 +14,7 @@ import { buildPublicProviderInfo } from '../../common/utils/public-provider';
 import { hydrateUserSubscription, UserModel } from '../auth/auth.model';
 import { BookingModel } from '../bookings/booking.model';
 import { NotificationService } from '../notifications/notification.service';
-import { VenueProviderVenueModel } from './venue-provider.model';
+import { normalizeVenueAmenities, VenueProviderVenueModel } from './venue-provider.model';
 
 type CreateVenuePayload = {
   information: {
@@ -64,6 +64,7 @@ const normalizeCurrency = <
   T extends {
     pricing?: {
       currency?: string;
+      amenities?: Record<string, boolean>;
     };
   }
 >(
@@ -72,6 +73,11 @@ const normalizeCurrency = <
   if (payload.pricing?.currency) {
     payload.pricing.currency = payload.pricing.currency.toUpperCase();
   }
+
+  if (payload.pricing) {
+    payload.pricing.amenities = normalizeVenueAmenities(payload.pricing.amenities);
+  }
+
   return payload;
 };
 
@@ -80,11 +86,15 @@ const serializeVenue = <T extends { toObject?: () => Record<string, unknown>; ow
 ) => {
   const plain =
     typeof venue?.toObject === 'function'
-      ? venue.toObject()
+      ? (venue as any).toObject({ flattenMaps: true })
       : ({ ...venue } as Record<string, unknown>);
 
   return {
     ...plain,
+    pricing: {
+      ...(plain.pricing as Record<string, unknown>),
+      amenities: normalizeVenueAmenities((plain.pricing as Record<string, any> | undefined)?.amenities)
+    },
     availability: availabilityEntriesToCalendar((plain.availabilityCalendar as AvailabilityEntry[] | undefined) ?? [])
   };
 };

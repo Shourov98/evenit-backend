@@ -15,7 +15,7 @@ import { NotificationService } from '../notifications/notification.service';
 import { OrderChatService } from '../order-chat/order-chat.service';
 import { IServiceProviderService, ServiceProviderServiceModel } from '../service-provider/service-provider.model';
 import { IBooking, BookingModel } from './booking.model';
-import { IVenue, VenueProviderVenueModel } from '../venue-provider/venue-provider.model';
+import { IVenue, normalizeVenueAmenities, VenueProviderVenueModel } from '../venue-provider/venue-provider.model';
 
 type CreateBookingPayload = {
   targetType: 'venue' | 'service' | 'event';
@@ -623,7 +623,11 @@ export class BookingService {
     return {
       targetType: 'venue',
       target: {
-        ...venue.toObject(),
+        ...venue.toObject({ flattenMaps: true }),
+        pricing: {
+          ...venue.toObject({ flattenMaps: true }).pricing,
+          amenities: normalizeVenueAmenities(venue.toObject({ flattenMaps: true }).pricing?.amenities)
+        },
         availability: undefined,
         availabilityCalendar: undefined
       },

@@ -115,8 +115,13 @@ router.use(protect);
  *                 type: fixed
  *                 value: 100
  *               amenities:
+ *                 wifi: true
  *                 parking: true
+ *                 ac: true
  *                 catering: true
+ *                 audioVideo: false
+ *                 security: true
+ *                 accessible: false
  *                 soundSystem: true
  *             capacity:
  *               maximumGuests: 200

@@ -3,6 +3,44 @@ import { AvailabilityEntry } from '../../common/utils/availability';
 
 const DISCOUNT_TYPES = ['percentage', 'fixed'] as const;
 export type DiscountType = (typeof DISCOUNT_TYPES)[number];
+export const VENUE_AMENITY_KEYS = [
+  'wifi',
+  'parking',
+  'ac',
+  'catering',
+  'audioVideo',
+  'security',
+  'accessible',
+  'soundSystem'
+] as const;
+export type VenueAmenityKey = (typeof VENUE_AMENITY_KEYS)[number];
+
+export const DEFAULT_VENUE_AMENITIES: Record<VenueAmenityKey, boolean> = {
+  wifi: false,
+  parking: false,
+  ac: false,
+  catering: false,
+  audioVideo: false,
+  security: false,
+  accessible: false,
+  soundSystem: false
+};
+
+export const normalizeVenueAmenities = (value?: unknown): Record<VenueAmenityKey, boolean> => {
+  const source =
+    value instanceof Map ? Object.fromEntries(value.entries()) : value && typeof value === 'object' ? value : {};
+
+  return {
+    wifi: Boolean((source as Record<string, unknown>).wifi),
+    parking: Boolean((source as Record<string, unknown>).parking),
+    ac: Boolean((source as Record<string, unknown>).ac),
+    catering: Boolean((source as Record<string, unknown>).catering),
+    audioVideo: Boolean((source as Record<string, unknown>).audioVideo),
+    security: Boolean((source as Record<string, unknown>).security),
+    accessible: Boolean((source as Record<string, unknown>).accessible),
+    soundSystem: Boolean((source as Record<string, unknown>).soundSystem)
+  };
+};
 
 export interface IVenueReview {
   reviewerName: string;
