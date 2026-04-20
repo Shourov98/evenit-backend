@@ -13,6 +13,7 @@ import { PaginationOptions, paginateModel } from '../../common/utils/pagination'
 import { buildPublicProviderInfo } from '../../common/utils/public-provider';
 import { hydrateUserSubscription, UserModel } from '../auth/auth.model';
 import { BookingModel } from '../bookings/booking.model';
+import { NotificationService } from '../notifications/notification.service';
 import { VenueProviderVenueModel } from './venue-provider.model';
 
 type CreateVenuePayload = {
@@ -126,11 +127,13 @@ export class VenueProviderService {
     if (owner.subscription.status !== 'subscribed') {
       throw new AppError(403, 'A subscribed account is required for this action');
     }
+
+    return owner;
   }
 
   static async create(ownerId: string, payload: CreateVenuePayload) {
     ensureObjectId(ownerId, 'ownerId');
-    await this.ensureSubscribedVenueProvider(ownerId);
+    const owner = await this.ensureSubscribedVenueProvider(ownerId);
 
     const result = await VenueProviderVenueModel.create({
       ownerId,
@@ -139,6 +142,13 @@ export class VenueProviderService {
       publishStatus: 'pending',
       approvedBy: undefined,
       approvedAt: undefined
+    });
+
+    await NotificationService.notifyAdminsOfNewVenueRequest({
+      venueId: String(result._id),
+      venueName: result.information.venueName,
+      ownerId,
+      ownerName: owner.fullName
     });
 
     return serializeVenue(result);

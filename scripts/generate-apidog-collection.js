@@ -25,7 +25,8 @@ const variables = [
   { key: 'venueProviderUserId', value: '' },
   { key: 'eventPlannerUserId', value: '' },
   { key: 'adminUserSelfId', value: '' },
-  { key: 'superAdminUserSelfId', value: '' }
+  { key: 'superAdminUserSelfId', value: '' },
+  { key: 'notificationId', value: '' }
 ];
 
 const toCollectionPath = (endpoint) =>
@@ -181,6 +182,38 @@ const buildOrderChatFolder = (tokenVar, actorLabel) =>
         bookingId: '{{bookingId}}',
         content: 'Hello, I want to confirm the booking details.'
       })
+    })
+  ]);
+
+const notificationIdCaptureEvent = () =>
+  testEvent([
+    'const json = pm.response.json();',
+    'const data = json?.data;',
+    'const firstItem = Array.isArray(data) ? data[0] : null;',
+    'const id = firstItem?._id || data?._id || null;',
+    "if (id) pm.collectionVariables.set('notificationId', String(id));"
+  ]);
+
+const buildNotificationsFolder = (tokenVar, actorLabel) =>
+  folder('Notifications', [
+    request(`Get ${actorLabel} Notifications`, 'GET', '/api/v1/notifications', {
+      tokenVar,
+      query: [
+        { key: 'page', value: '1' },
+        { key: 'limit', value: '20' },
+        { key: 'sortBy', value: 'createdAt' },
+        { key: 'sortOrder', value: 'desc' }
+      ],
+      event: notificationIdCaptureEvent()
+    }),
+    request(`Get ${actorLabel} Unread Notification Count`, 'GET', '/api/v1/notifications/unread-count', {
+      tokenVar
+    }),
+    request(`Mark ${actorLabel} Notification As Read`, 'PATCH', '/api/v1/notifications/{notificationId}/read', {
+      tokenVar
+    }),
+    request(`Mark All ${actorLabel} Notifications As Read`, 'PATCH', '/api/v1/notifications/read-all', {
+      tokenVar
     })
   ]);
 
@@ -409,6 +442,7 @@ const customerSubscriptions = folder('Subscriptions', [
 ]);
 
 const customerOrderChat = buildOrderChatFolder('customerToken', 'Customer');
+const customerNotifications = buildNotificationsFolder('customerToken', 'Customer');
 
 const serviceProviderAuth = folder('Auth', [
   request('Register Service Provider', 'POST', '/api/v1/auth/register', {
@@ -712,6 +746,7 @@ const serviceProviderSubscriptions = folder('Subscriptions', [
 ]);
 
 const serviceProviderOrderChat = buildOrderChatFolder('serviceProviderToken', 'Service Provider');
+const serviceProviderNotifications = buildNotificationsFolder('serviceProviderToken', 'Service Provider');
 
 const venueProviderAuth = folder('Auth', [
   request('Register Venue Provider', 'POST', '/api/v1/auth/register', {
@@ -1011,6 +1046,7 @@ const venueProviderSubscriptions = folder('Subscriptions', [
 ]);
 
 const venueProviderOrderChat = buildOrderChatFolder('venueProviderToken', 'Venue Provider');
+const venueProviderNotifications = buildNotificationsFolder('venueProviderToken', 'Venue Provider');
 
 const eventPlannerAuth = folder('Auth', [
   request('Register Event Planner', 'POST', '/api/v1/auth/register', {
@@ -1198,6 +1234,7 @@ const eventPlannerSubscriptions = folder('Subscriptions', [
 ]);
 
 const eventPlannerOrderChat = buildOrderChatFolder('eventPlannerToken', 'Event Planner');
+const eventPlannerNotifications = buildNotificationsFolder('eventPlannerToken', 'Event Planner');
 
 const adminAuth = folder('Auth', [
   request('Login Admin Or Super Admin', 'POST', '/api/v1/auth/admin/login', {
@@ -1364,6 +1401,8 @@ const adminBookings = folder('Bookings', [
     })
   })
 ]);
+
+const adminNotifications = buildNotificationsFolder('adminToken', 'Admin');
 
 const superAdminAuth = folder('Auth', [
   request('Login Admin Or Super Admin', 'POST', '/api/v1/auth/admin/login', {
@@ -1550,6 +1589,8 @@ const superAdminBookings = folder('Bookings', [
   })
 ]);
 
+const superAdminNotifications = buildNotificationsFolder('superAdminToken', 'Super Admin');
+
 const publicApis = folder('Public', [
   request('Root Status', 'GET', '/'),
   request('Health Check', 'GET', '/health'),
@@ -1628,13 +1669,14 @@ const collection = {
   variable: variables,
   item: [
     publicApis,
-    folder('Customer', [customerAuth, customerBookings, customerOrderChat, customerSubscriptions]),
+    folder('Customer', [customerAuth, customerBookings, customerOrderChat, customerNotifications, customerSubscriptions]),
     folder('Service Provider', [
       serviceProviderAuth,
       serviceProviderServices,
       serviceProviderUploads,
       serviceProviderBookings,
       serviceProviderOrderChat,
+      serviceProviderNotifications,
       serviceProviderSubscriptions
     ]),
     folder('Venue Provider', [
@@ -1643,6 +1685,7 @@ const collection = {
       venueProviderUploads,
       venueProviderBookings,
       venueProviderOrderChat,
+      venueProviderNotifications,
       venueProviderSubscriptions
     ]),
     folder('Event Planner', [
@@ -1652,15 +1695,17 @@ const collection = {
       eventPlannerUploads,
       eventPlannerBookings,
       eventPlannerOrderChat,
+      eventPlannerNotifications,
       eventPlannerSubscriptions
     ]),
-    folder('Admin', [adminAuth, adminUsers, adminModeration, adminBookings]),
+    folder('Admin', [adminAuth, adminUsers, adminModeration, adminBookings, adminNotifications]),
     folder('Super Admin', [
       superAdminAuth,
       superAdminAdminUsers,
       superAdminUsers,
       superAdminModeration,
-      superAdminBookings
+      superAdminBookings,
+      superAdminNotifications
     ])
   ]
 };

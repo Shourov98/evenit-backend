@@ -4,6 +4,7 @@ import { buildPaginationMeta, PaginationOptions } from '../../common/utils/pagin
 import { getUserPresence } from '../../socket/presence';
 import { UserModel } from '../auth/auth.model';
 import { BookingModel, IBooking } from '../bookings/booking.model';
+import { NotificationService } from '../notifications/notification.service';
 import { ServiceProviderServiceModel } from '../service-provider/service-provider.model';
 import { VenueProviderVenueModel } from '../venue-provider/venue-provider.model';
 import {
@@ -377,6 +378,16 @@ export class OrderChatService {
         }
       });
     }
+
+    const preview = normalizedContent.length > 80 ? `${normalizedContent.slice(0, 77)}...` : normalizedContent;
+    await NotificationService.notifyChatMessage({
+      recipientId: context.counterpart._id,
+      senderId,
+      senderName: context.actor.fullName,
+      conversationId,
+      bookingId: linkedBooking ? String(linkedBooking._id) : null,
+      preview
+    });
 
     return {
       conversation: context.conversation,

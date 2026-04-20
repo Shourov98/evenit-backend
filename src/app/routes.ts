@@ -3,6 +3,7 @@ import { adminManagementRouter } from '../modules/admin-management/admin-managem
 import { authRouter } from '../modules/auth/auth.route';
 import { bookingRouter } from '../modules/bookings/booking.route';
 import { eventPlannerRouter } from '../modules/event-planner/event-planner.route';
+import { notificationRouter } from '../modules/notifications/notification.route';
 import { orderChatRouter } from '../modules/order-chat/order-chat.route';
 import { publicRouter } from '../modules/public/public.route';
 import { serviceProviderRouter } from '../modules/service-provider/service-provider.route';
@@ -51,6 +52,7 @@ router.get('/health', (_req, res) => {
 router.use('/api/v1/auth', authRouter);
 router.use('/api/v1/bookings', bookingRouter);
 router.use('/api/v1/event-planners', eventPlannerRouter);
+router.use('/api/v1/notifications', notificationRouter);
 router.use('/api/v1/order-chats', orderChatRouter);
 router.use('/api/v1/public', publicRouter);
 router.use('/api/v1/service-provider', serviceProviderRouter);

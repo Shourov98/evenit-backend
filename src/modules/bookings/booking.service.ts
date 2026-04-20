@@ -11,6 +11,7 @@ import {
 import { buildPaginationMeta, PaginationOptions } from '../../common/utils/pagination';
 import { env } from '../../config/env';
 import { hydrateUserSubscription, UserModel } from '../auth/auth.model';
+import { NotificationService } from '../notifications/notification.service';
 import { OrderChatService } from '../order-chat/order-chat.service';
 import { IServiceProviderService, ServiceProviderServiceModel } from '../service-provider/service-provider.model';
 import { IBooking, BookingModel } from './booking.model';
@@ -495,7 +496,7 @@ export class BookingService {
     const totalAmount = Number((targetData.subtotal + taxAmount).toFixed(2));
 
     try {
-      return await BookingModel.create({
+      const booking = await BookingModel.create({
         customerId,
         providerId: targetData.providerId,
         targetType: payload.targetType,
@@ -520,6 +521,29 @@ export class BookingService {
           status: 'covered_by_subscription'
         }
       });
+
+      let targetLabel = 'booking';
+      if (payload.targetType === 'venue') {
+        targetLabel = (targetData.target as IVenue).information.venueName;
+      } else if (payload.targetType === 'service') {
+        targetLabel = (targetData.target as IServiceProviderService).information.serviceName;
+      } else {
+        targetLabel =
+          ((targetData.target as typeof customer).onboarding as Record<string, any>)?.eventProvider?.profileInfo?.name ??
+          (targetData.target as typeof customer).fullName;
+      }
+
+      await NotificationService.notifyBookingRequestCreated({
+        bookingId: String(booking._id),
+        providerId: getReferenceId(targetData.providerId),
+        customerName: customer.fullName,
+        targetLabel,
+        targetType: payload.targetType,
+        targetId: payload.targetId,
+        bookingDate: payload.bookingDate
+      });
+
+      return booking;
     } catch (error) {
       const duplicateKeyError = error as { code?: number };
       if (duplicateKeyError?.code === 11000) {
@@ -760,6 +784,24 @@ export class BookingService {
     booking.conversationId = await OrderChatService.activateConversationForBooking(booking);
     await booking.save();
     await booking.populate(this.bookingPartyPopulate as any);
+    await NotificationService.notifyBookingStatusChanged({
+      bookingId: String(booking._id),
+      customerId: getReferenceId(booking.customerId),
+      providerName:
+        typeof booking.providerId === 'object' && booking.providerId && 'fullName' in booking.providerId
+          ? String((booking.providerId as any).fullName)
+          : 'Provider',
+      targetLabel:
+        booking.targetType === 'venue'
+          ? 'your venue booking'
+          : booking.targetType === 'service'
+            ? 'your service booking'
+            : 'your event planner booking',
+      targetType: booking.targetType,
+      targetId: getReferenceId(booking.targetId),
+      status: 'confirmed',
+      bookingDate: booking.bookingDate
+    });
     return this.serializeBookingDocument(booking);
   }
 
@@ -781,6 +823,24 @@ export class BookingService {
     booking.payment.coveredAt = undefined;
     await booking.save();
     await booking.populate(this.bookingPartyPopulate as any);
+    await NotificationService.notifyBookingStatusChanged({
+      bookingId: String(booking._id),
+      customerId: getReferenceId(booking.customerId),
+      providerName:
+        typeof booking.providerId === 'object' && booking.providerId && 'fullName' in booking.providerId
+          ? String((booking.providerId as any).fullName)
+          : 'Provider',
+      targetLabel:
+        booking.targetType === 'venue'
+          ? 'your venue booking'
+          : booking.targetType === 'service'
+            ? 'your service booking'
+            : 'your event planner booking',
+      targetType: booking.targetType,
+      targetId: getReferenceId(booking.targetId),
+      status: 'rejected',
+      bookingDate: booking.bookingDate
+    });
     return this.serializeBookingDocument(booking);
   }
 

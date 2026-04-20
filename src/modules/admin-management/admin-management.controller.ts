@@ -1,16 +1,19 @@
 import { Request, Response } from 'express';
+import { AppError } from '../../common/errors/AppError';
 import { catchAsync } from '../../common/utils/catchAsync';
 import { parsePagination } from '../../common/utils/pagination';
 import { AdminManagementService } from './admin-management.service';
 
-const getApprover = (req: Request): { name: string; email: string } | null => {
-  if (!req.user?.fullName || !req.user?.email) {
+const getApprover = (req: Request): { userId: string; name: string; email: string; role: any } | null => {
+  if (!req.user?.userId || !req.user?.fullName || !req.user?.email || !req.user?.role) {
     return null;
   }
 
   return {
+    userId: req.user.userId,
     name: req.user.fullName,
-    email: req.user.email
+    email: req.user.email,
+    role: req.user.role
   };
 };
 
@@ -329,7 +332,12 @@ export class AdminManagementController {
   });
 
   static rejectVenue = catchAsync(async (req: Request, res: Response) => {
-    const venue = await AdminManagementService.rejectVenue(req.params.venueId);
+    const approver = getApprover(req);
+    if (!approver) {
+      throw new AppError(401, 'Authentication required: sign in before rejecting venues');
+    }
+
+    const venue = await AdminManagementService.rejectVenue(req.params.venueId, approver);
     return res.status(200).json({
       success: true,
       message: 'Venue rejected successfully',
@@ -355,7 +363,12 @@ export class AdminManagementController {
   });
 
   static rejectService = catchAsync(async (req: Request, res: Response) => {
-    const service = await AdminManagementService.rejectService(req.params.serviceId);
+    const approver = getApprover(req);
+    if (!approver) {
+      throw new AppError(401, 'Authentication required: sign in before rejecting services');
+    }
+
+    const service = await AdminManagementService.rejectService(req.params.serviceId, approver);
     return res.status(200).json({
       success: true,
       message: 'Service rejected successfully',

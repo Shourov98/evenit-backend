@@ -2,12 +2,15 @@ import { PaginationOptions, paginateModel } from '../../common/utils/pagination'
 import { AppError } from '../../common/errors/AppError';
 import { buildAdminOwnerInfo } from '../../common/utils/public-provider';
 import { createDefaultUserSubscription, UserModel, UserRole } from '../auth/auth.model';
+import { NotificationService } from '../notifications/notification.service';
 import { ServiceProviderServiceModel } from '../service-provider/service-provider.model';
 import { VenueProviderVenueModel } from '../venue-provider/venue-provider.model';
 
 interface ApproverInfo {
+  userId: string;
   name: string;
   email: string;
+  role: UserRole;
 }
 
 const ADMIN_OWNER_SELECT =
@@ -305,11 +308,20 @@ export class AdminManagementService {
     venue.approvedBy = approver;
     venue.approvedAt = new Date();
     await venue.save();
+    await NotificationService.notifyVenueDecision({
+      venueId: String(venue._id),
+      venueName: venue.information.venueName,
+      ownerId: String(venue.ownerId),
+      decision: 'approved',
+      actorId: approver.userId,
+      actorName: approver.name,
+      actorRole: approver.role
+    });
 
     return venue;
   }
 
-  static async rejectVenue(venueId: string) {
+  static async rejectVenue(venueId: string, approver: ApproverInfo) {
     const venue = await VenueProviderVenueModel.findOne({ _id: venueId, isDeleted: false });
     if (!venue) {
       throw new AppError(404, 'Venue not found');
@@ -319,6 +331,15 @@ export class AdminManagementService {
     venue.approvedBy = undefined;
     venue.approvedAt = undefined;
     await venue.save();
+    await NotificationService.notifyVenueDecision({
+      venueId: String(venue._id),
+      venueName: venue.information.venueName,
+      ownerId: String(venue.ownerId),
+      decision: 'rejected',
+      actorId: approver.userId,
+      actorName: approver.name,
+      actorRole: approver.role
+    });
 
     return venue;
   }
@@ -333,11 +354,20 @@ export class AdminManagementService {
     service.approvedBy = approver;
     service.approvedAt = new Date();
     await service.save();
+    await NotificationService.notifyServiceDecision({
+      serviceId: String(service._id),
+      serviceName: service.information.serviceName,
+      ownerId: String(service.ownerId),
+      decision: 'approved',
+      actorId: approver.userId,
+      actorName: approver.name,
+      actorRole: approver.role
+    });
 
     return service;
   }
 
-  static async rejectService(serviceId: string) {
+  static async rejectService(serviceId: string, approver: ApproverInfo) {
     const service = await ServiceProviderServiceModel.findOne({ _id: serviceId, isDeleted: false });
     if (!service) {
       throw new AppError(404, 'Service not found');
@@ -347,6 +377,15 @@ export class AdminManagementService {
     service.approvedBy = undefined;
     service.approvedAt = undefined;
     await service.save();
+    await NotificationService.notifyServiceDecision({
+      serviceId: String(service._id),
+      serviceName: service.information.serviceName,
+      ownerId: String(service.ownerId),
+      decision: 'rejected',
+      actorId: approver.userId,
+      actorName: approver.name,
+      actorRole: approver.role
+    });
 
     return service;
   }

@@ -13,6 +13,7 @@ import { PaginationOptions, paginateModel } from '../../common/utils/pagination'
 import { buildPublicProviderInfo } from '../../common/utils/public-provider';
 import { hydrateUserSubscription, UserModel } from '../auth/auth.model';
 import { BookingModel } from '../bookings/booking.model';
+import { NotificationService } from '../notifications/notification.service';
 import { ServiceProviderServiceModel } from './service-provider.model';
 
 type CreateServicePayload = {
@@ -129,11 +130,13 @@ export class ServiceProviderService {
     if (owner.subscription.status !== 'subscribed') {
       throw new AppError(403, 'A subscribed account is required for this action');
     }
+
+    return owner;
   }
 
   static async create(ownerId: string, payload: CreateServicePayload) {
     ensureObjectId(ownerId, 'ownerId');
-    await this.ensureSubscribedServiceProvider(ownerId);
+    const owner = await this.ensureSubscribedServiceProvider(ownerId);
 
     const service = await ServiceProviderServiceModel.create({
       ownerId,
@@ -142,6 +145,13 @@ export class ServiceProviderService {
       publishStatus: 'pending',
       approvedBy: undefined,
       approvedAt: undefined
+    });
+
+    await NotificationService.notifyAdminsOfNewServiceRequest({
+      serviceId: String(service._id),
+      serviceName: service.information.serviceName,
+      ownerId,
+      ownerName: owner.fullName
     });
 
     return serializeService(service);
