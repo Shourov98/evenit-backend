@@ -49,13 +49,20 @@ const attachOwners = async <
   });
 
   return populatedItems.map((item) => {
-    const itemObject = item.toObject({ flattenMaps: true });
+    const itemObject = item.toObject({ flattenMaps: true }) as unknown as Record<string, unknown>;
 
-    if (model === VenueProviderVenueModel && itemObject.pricing && typeof itemObject.pricing === 'object') {
-      itemObject.pricing = {
-        ...itemObject.pricing,
-        amenities: normalizeVenueAmenities((itemObject.pricing as Record<string, any>).amenities)
-      };
+    if (model === VenueProviderVenueModel) {
+      const pricing =
+        itemObject.pricing && typeof itemObject.pricing === 'object'
+          ? (itemObject.pricing as Record<string, unknown>)
+          : null;
+
+      if (pricing) {
+        itemObject.pricing = {
+          ...pricing,
+          amenities: normalizeVenueAmenities(pricing.amenities)
+        };
+      }
     }
 
     return {
