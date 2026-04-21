@@ -48,6 +48,11 @@ export const adminUserIdParamSchema = buildObjectIdParamSchema('adminUserId', 'a
 
 export const customerIdParamSchema = buildObjectIdParamSchema('customerId', 'customerId');
 
+export const subscriptionUserIdParamSchema = buildObjectIdParamSchema(
+  'subscriptionUserId',
+  'subscriptionUserId'
+);
+
 export const serviceProviderUserIdParamSchema = buildObjectIdParamSchema(
   'serviceProviderId',
   'serviceProviderId'

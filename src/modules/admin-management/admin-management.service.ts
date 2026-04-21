@@ -1,7 +1,12 @@
-import { PaginationOptions, paginateModel } from '../../common/utils/pagination';
+import { buildPaginationMeta, PaginationOptions, paginateModel } from '../../common/utils/pagination';
 import { AppError } from '../../common/errors/AppError';
 import { buildAdminOwnerInfo } from '../../common/utils/public-provider';
-import { createDefaultUserSubscription, UserModel, UserRole } from '../auth/auth.model';
+import {
+  createDefaultUserSubscription,
+  IUserSubscription,
+  UserModel,
+  UserRole
+} from '../auth/auth.model';
 import { BookingModel } from '../bookings/booking.model';
 import { NotificationService } from '../notifications/notification.service';
 import { ServiceProviderServiceModel } from '../service-provider/service-provider.model';
@@ -18,7 +23,15 @@ const ADMIN_OWNER_SELECT =
   'fullName email role isEmailVerified isBlocked profileImage onboarding.serviceProvider onboarding.venueProvider';
 const ADMIN_MANAGED_USER_SELECT =
   'fullName email role serviceCategories isEmailVerified isBlocked profileImage subscription onboarding createdAt updatedAt';
+const ADMIN_SUBSCRIPTION_SELECT =
+  'fullName email role isBlocked subscription createdAt updatedAt';
 const analyticsUserRoles = ['customer', 'event_planner', 'service_provider', 'venue_provider'] as const;
+const subscriptionManagedRoles = [
+  'customer',
+  'event_planner',
+  'service_provider',
+  'venue_provider'
+] as const;
 const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 const getMonthRangeUtc = (year: number, month: number) => {
@@ -31,6 +44,142 @@ const getMonthRangeUtc = (year: number, month: number) => {
 const getCurrentMonthRangeUtc = () => {
   const now = new Date();
   return getMonthRangeUtc(now.getUTCFullYear(), now.getUTCMonth());
+};
+
+const addBillingCycle = (value: Date, cycle: 'monthly' | 'yearly') => {
+  const next = new Date(value);
+
+  if (cycle === 'yearly') {
+    next.setUTCFullYear(next.getUTCFullYear() + 1);
+    return next;
+  }
+
+  next.setUTCMonth(next.getUTCMonth() + 1);
+  return next;
+};
+
+const getSubscriptionExpiryDate = (subscription: IUserSubscription): Date | null => {
+  const paidAnchor = subscription.payment.paidAt ?? subscription.activatedAt;
+
+  if (!paidAnchor) {
+    return null;
+  }
+
+  return addBillingCycle(new Date(paidAnchor), subscription.payment.billingCycle);
+};
+
+const getSubscriptionAccessStatus = (subscription: IUserSubscription): 'paid' | 'expired' => {
+  const expiryDate = getSubscriptionExpiryDate(subscription);
+
+  if (
+    subscription.status === 'subscribed' &&
+    subscription.payment.status === 'paid' &&
+    (!expiryDate || expiryDate.getTime() >= Date.now())
+  ) {
+    return 'paid';
+  }
+
+  return 'expired';
+};
+
+const buildSubscriptionListFilter = () => ({
+  role: { $in: subscriptionManagedRoles },
+  $or: [
+    { 'subscription.status': 'subscribed' },
+    { 'subscription.stripeSubscriptionId': { $exists: true, $nin: [null, ''] } }
+  ]
+});
+
+const formatDate = (value?: Date | null) => (value ? new Date(value).toISOString() : null);
+
+const mapSubscriptionSummary = (user: {
+  _id: unknown;
+  fullName: string;
+  email: string;
+  role: UserRole;
+  isBlocked: boolean;
+  subscription: IUserSubscription;
+  createdAt: Date;
+  updatedAt: Date;
+}) => {
+  const expiryDate = getSubscriptionExpiryDate(user.subscription);
+
+  return {
+    id: String(user._id),
+    userId: String(user._id),
+    fullName: user.fullName,
+    email: user.email,
+    role: user.role,
+    isBlocked: user.isBlocked,
+    transactionId: user.subscription.stripeSubscriptionId ?? null,
+    customerId: user.subscription.stripeCustomerId ?? null,
+    plan: user.subscription.plan,
+    planValidity: user.subscription.payment.billingCycle,
+    amountPaid: user.subscription.payment.amount,
+    currency: user.subscription.payment.currency,
+    subscriptionStatus: user.subscription.status,
+    paymentStatus: user.subscription.payment.status,
+    accessStatus: getSubscriptionAccessStatus(user.subscription),
+    activatedAt: formatDate(user.subscription.activatedAt),
+    paidAt: formatDate(user.subscription.payment.paidAt),
+    expiryDate: formatDate(expiryDate),
+    createdAt: formatDate(user.createdAt),
+    updatedAt: formatDate(user.updatedAt)
+  };
+};
+
+const mapSubscriptionDetails = (user: {
+  _id: unknown;
+  fullName: string;
+  email: string;
+  role: UserRole;
+  isBlocked: boolean;
+  subscription: IUserSubscription;
+  createdAt: Date;
+  updatedAt: Date;
+}) => {
+  const summary = mapSubscriptionSummary(user);
+
+  return {
+    id: summary.id,
+    user: {
+      id: summary.userId,
+      fullName: summary.fullName,
+      email: summary.email,
+      role: summary.role,
+      isBlocked: summary.isBlocked
+    },
+    subscription: {
+      transactionId: summary.transactionId,
+      customerId: summary.customerId,
+      plan: summary.plan,
+      planValidity: summary.planValidity,
+      amountPaid: summary.amountPaid,
+      currency: summary.currency,
+      subscriptionStatus: summary.subscriptionStatus,
+      paymentStatus: summary.paymentStatus,
+      accessStatus: summary.accessStatus,
+      activatedAt: summary.activatedAt,
+      paidAt: summary.paidAt,
+      expiryDate: summary.expiryDate
+    },
+    transactionDetails: {
+      transactionId: summary.transactionId,
+      plan: summary.plan,
+      userRole: summary.role,
+      date: summary.paidAt ?? summary.activatedAt,
+      name: summary.fullName,
+      accountNumberMasked: null,
+      email: summary.email,
+      transactionAmount: summary.amountPaid,
+      currency: summary.currency,
+      status: summary.accessStatus,
+      expiryDate: summary.expiryDate,
+      planValidity: summary.planValidity
+    },
+    createdAt: summary.createdAt,
+    updatedAt: summary.updatedAt
+  };
 };
 
 const attachOwners = async <
@@ -169,6 +318,65 @@ export class AdminManagementService {
 
   static async getCustomers(pagination: PaginationOptions) {
     return this.getUsersByRole('customer', pagination);
+  }
+
+  static async getSubscriptionUsers(pagination: PaginationOptions) {
+    const filter = buildSubscriptionListFilter();
+    const sort = { [pagination.sortBy]: pagination.sortOrder };
+
+    const [users, total] = await Promise.all([
+      UserModel.find(filter)
+        .select(ADMIN_SUBSCRIPTION_SELECT)
+        .sort(sort)
+        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .lean(),
+      UserModel.countDocuments(filter)
+    ]);
+
+    return {
+      meta: buildPaginationMeta(total, pagination),
+      data: users.map((user) =>
+        mapSubscriptionSummary(
+          user as unknown as {
+            _id: unknown;
+            fullName: string;
+            email: string;
+            role: UserRole;
+            isBlocked: boolean;
+            subscription: IUserSubscription;
+            createdAt: Date;
+            updatedAt: Date;
+          }
+        )
+      )
+    };
+  }
+
+  static async getSubscriptionUserById(subscriptionUserId: string) {
+    const user = await UserModel.findOne({
+      _id: subscriptionUserId,
+      ...buildSubscriptionListFilter()
+    })
+      .select(ADMIN_SUBSCRIPTION_SELECT)
+      .lean();
+
+    if (!user) {
+      throw new AppError(404, 'Subscription record not found');
+    }
+
+    return mapSubscriptionDetails(
+      user as unknown as {
+        _id: unknown;
+        fullName: string;
+        email: string;
+        role: UserRole;
+        isBlocked: boolean;
+        subscription: IUserSubscription;
+        createdAt: Date;
+        updatedAt: Date;
+      }
+    );
   }
 
   static async getBlockedCustomers(pagination: PaginationOptions) {

@@ -77,6 +77,28 @@ export class AdminManagementController {
     });
   });
 
+  static getSubscriptionUsers = catchAsync(async (req: Request, res: Response) => {
+    const pagination = parsePagination(req.query as Record<string, unknown>);
+    const subscriptions = await AdminManagementService.getSubscriptionUsers(pagination);
+
+    return res.status(200).json({
+      success: true,
+      meta: subscriptions.meta,
+      data: subscriptions.data
+    });
+  });
+
+  static getSubscriptionUserById = catchAsync(async (req: Request, res: Response) => {
+    const subscription = await AdminManagementService.getSubscriptionUserById(
+      req.params.subscriptionUserId
+    );
+
+    return res.status(200).json({
+      success: true,
+      data: subscription
+    });
+  });
+
   static getBlockedCustomers = catchAsync(async (req: Request, res: Response) => {
     const pagination = parsePagination(req.query as Record<string, unknown>);
     const customers = await AdminManagementService.getBlockedCustomers(pagination);

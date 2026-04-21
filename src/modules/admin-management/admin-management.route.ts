@@ -12,6 +12,7 @@ import {
   eventPlannerUserIdParamSchema,
   serviceIdParamSchema,
   serviceProviderUserIdParamSchema,
+  subscriptionUserIdParamSchema,
   venueIdParamSchema,
   venueProviderUserIdParamSchema
 } from './admin-management.schema';
@@ -282,6 +283,69 @@ router.patch(
   authorize('super_admin'),
   validate(adminUserIdParamSchema),
   AdminManagementController.unblockAdmin
+);
+
+/**
+ * @openapi
+ * /api/v1/admin/subscriptions:
+ *   get:
+ *     tags: [Admin]
+ *     summary: Get paginated subscription management list
+ *     description: Returns paginated subscription records for users who have an active or historical paid subscription reference.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           example: 10
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           example: createdAt
+ *       - in: query
+ *         name: sortOrder
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *     responses:
+ *       200:
+ *         description: Paginated subscription list
+ */
+router.get('/subscriptions', validate(approvalRequestsQuerySchema), AdminManagementController.getSubscriptionUsers);
+
+/**
+ * @openapi
+ * /api/v1/admin/subscriptions/{subscriptionUserId}:
+ *   get:
+ *     tags: [Admin]
+ *     summary: Get one user's subscription transaction details
+ *     description: Returns subscription, payment, expiry, and transaction-oriented details for a specific subscribed user.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: subscriptionUserId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Subscription details
+ *       404:
+ *         description: Subscription record not found
+ */
+router.get(
+  '/subscriptions/:subscriptionUserId',
+  validate(subscriptionUserIdParamSchema),
+  AdminManagementController.getSubscriptionUserById
 );
 
 /**
