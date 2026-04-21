@@ -1,6 +1,7 @@
 import { isValidObjectId } from 'mongoose';
 import { AppError } from '../../common/errors/AppError';
 import {
+  ALL_BOOKING_HOURS,
   AvailabilityEntry,
   availabilityEntriesToCalendar,
   buildCalendarWindow,
@@ -26,7 +27,7 @@ type CreateServicePayload = {
   };
   pricing: {
     amount: number;
-    pricingType: 'fixed' | 'hourly' | 'daily' | 'package';
+    pricingType: 'hourly';
     currency: string;
     discount?: {
       type: 'percentage' | 'fixed';
@@ -67,11 +68,16 @@ const normalizeCurrency = <
   T extends {
     pricing?: {
       currency?: string;
+      pricingType?: string;
     };
   }
 >(
   payload: T
 ) => {
+  if (payload.pricing) {
+    payload.pricing.pricingType = 'hourly';
+  }
+
   if (payload.pricing?.currency) {
     payload.pricing.currency = payload.pricing.currency.toUpperCase();
   }
@@ -339,10 +345,14 @@ export class ServiceProviderService {
     };
   }
 
-  static async blockAvailability(ownerId: string, serviceId: string, date: string, hours: number[]) {
+  static async blockAvailability(ownerId: string, serviceId: string, date: string) {
     await this.ensureSubscribedServiceProvider(ownerId);
     const service = await this.getById(ownerId, serviceId);
-    service.availabilityCalendar = upsertAvailabilityEntry(service.availabilityCalendar, date, hours);
+    service.availabilityCalendar = upsertAvailabilityEntry(
+      service.availabilityCalendar,
+      date,
+      ALL_BOOKING_HOURS
+    );
     await service.save();
 
     return {
@@ -351,10 +361,14 @@ export class ServiceProviderService {
     };
   }
 
-  static async unblockAvailability(ownerId: string, serviceId: string, date: string, hours: number[]) {
+  static async unblockAvailability(ownerId: string, serviceId: string, date: string) {
     await this.ensureSubscribedServiceProvider(ownerId);
     const service = await this.getById(ownerId, serviceId);
-    service.availabilityCalendar = removeAvailabilityEntryHours(service.availabilityCalendar, date, hours);
+    service.availabilityCalendar = removeAvailabilityEntryHours(
+      service.availabilityCalendar,
+      date,
+      ALL_BOOKING_HOURS
+    );
     await service.save();
 
     return {

@@ -126,9 +126,12 @@ const eventProviderDetailsSchema = z.object({
   profileInfo: z.object({
     nidOrTradeLicenseNumber: z.string().min(2).max(50),
     name: z.string().min(2).max(120),
+    phoneNumber: z.string().min(5).max(30).optional(),
     description: z.string().max(2000).optional(),
     coverageArea: z.array(z.string().min(1)).min(1).max(30),
     address: z.string().min(3).max(240),
+    hourlyRate: z.number().min(0).optional(),
+    currency: z.string().length(3).optional(),
     verification: z
       .object({
         businessType: z.enum(['individual', 'company']),
@@ -207,7 +210,9 @@ const updateEventPlannerProfileSchema = z
   .object({
     phoneNumber: z.string().min(5).max(30).optional(),
     coverageArea: z.array(z.string().min(1)).min(1).max(30).optional(),
-    address: z.string().min(3).max(240).optional()
+    address: z.string().min(3).max(240).optional(),
+    hourlyRate: z.number().min(0).optional(),
+    currency: z.string().length(3).optional()
   })
   .strict();
 

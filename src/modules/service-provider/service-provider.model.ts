@@ -4,7 +4,7 @@ import { AvailabilityEntry } from '../../common/utils/availability';
 const DISCOUNT_TYPES = ['percentage', 'fixed'] as const;
 export type ServiceDiscountType = (typeof DISCOUNT_TYPES)[number];
 
-const PRICING_TYPES = ['fixed', 'hourly', 'daily', 'package'] as const;
+const PRICING_TYPES = ['hourly'] as const;
 export type ServicePricingType = (typeof PRICING_TYPES)[number];
 
 export interface IServiceReview {
@@ -86,7 +86,7 @@ const serviceProviderServiceSchema = new Schema<IServiceProviderService>(
     },
     pricing: {
       amount: { type: Number, required: true, min: 0 },
-      pricingType: { type: String, enum: PRICING_TYPES, required: true, default: 'fixed' },
+      pricingType: { type: String, enum: PRICING_TYPES, required: true, default: 'hourly' },
       currency: { type: String, required: true, default: 'BDT', uppercase: true, minlength: 3, maxlength: 3 },
       discount: {
         type: {

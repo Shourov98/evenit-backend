@@ -53,7 +53,7 @@ const router = Router();
  *           city: Dhaka
  *           area: Farmgate
  *         pricing:
- *           basePrice: 5000
+ *           pricePerPerson: 5000
  *           currency: BDT
  *           discount:
  *             type: percentage
@@ -102,9 +102,13 @@ const router = Router();
  *               example: Farmgate
  *         pricing:
  *           type: object
- *           required: [basePrice]
+ *           required: [pricePerPerson]
  *           properties:
  *             basePrice:
+ *               type: number
+ *               example: 5000
+ *               deprecated: true
+ *             pricePerPerson:
  *               type: number
  *               example: 5000
  *             currency:
@@ -393,7 +397,7 @@ router.get('/venues/:venueId', validate(venueIdParamSchema), VenueProviderContro
  *         description: Availability returned
  *   patch:
  *     tags: [VenueProvider]
- *     summary: Block venue availability hours
+ *     summary: Block venue availability for a full day
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -402,21 +406,17 @@ router.get('/venues/:venueId', validate(venueIdParamSchema), VenueProviderContro
  *         application/json:
  *           schema:
  *             type: object
- *             required: [date, hours]
+ *             required: [date]
  *             properties:
  *               date:
  *                 type: string
  *                 format: date
- *               hours:
- *                 type: array
- *                 items:
- *                   type: integer
  *     responses:
  *       200:
  *         description: Availability blocked successfully
  *   delete:
  *     tags: [VenueProvider]
- *     summary: Unblock venue availability hours
+ *     summary: Unblock venue availability for a full day
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -425,15 +425,11 @@ router.get('/venues/:venueId', validate(venueIdParamSchema), VenueProviderContro
  *         application/json:
  *           schema:
  *             type: object
- *             required: [date, hours]
+ *             required: [date]
  *             properties:
  *               date:
  *                 type: string
  *                 format: date
- *               hours:
- *                 type: array
- *                 items:
- *                   type: integer
  *     responses:
  *       200:
  *         description: Availability unblocked successfully
@@ -478,7 +474,7 @@ router.delete(
  *               payload:
  *                 type: string
  *                 description: JSON string matching VenueCreateRequest. Include `media.galleryImages` only for already-hosted image URLs. Files sent in `images` or `image` are uploaded by the backend automatically.
- *                 example: '{"information":{"venueName":"Grand Hall","venueType":"Banquet","description":"Premium event venue in central Dhaka.","addressLine":"123 Main Road","city":"Dhaka","area":"Farmgate"},"pricing":{"basePrice":5000,"currency":"BDT","discount":{"type":"percentage","value":10},"amenities":{"wifi":true,"parking":true,"ac":true,"catering":false,"audioVideo":true,"security":true,"accessible":false,"soundSystem":true}},"capacity":{"maximumGuests":300},"media":{"galleryImages":[],"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityCalendar":[{"date":"2026-03-20","hours":[8,9,10]}]}'
+ *                 example: '{"information":{"venueName":"Grand Hall","venueType":"Banquet","description":"Premium event venue in central Dhaka.","addressLine":"123 Main Road","city":"Dhaka","area":"Farmgate"},"pricing":{"pricePerPerson":5000,"currency":"BDT","discount":{"type":"percentage","value":10},"amenities":{"wifi":true,"parking":true,"ac":true,"catering":false,"audioVideo":true,"security":true,"accessible":false,"soundSystem":true}},"capacity":{"maximumGuests":300},"media":{"galleryImages":[],"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityCalendar":[{"date":"2026-03-20","hours":[8,9,10]}]}'
  *               images:
  *                 type: array
  *                 items:
@@ -493,7 +489,7 @@ router.delete(
  *             validVenue:
  *               summary: Valid venue creation payload
  *               value:
- *                 payload: '{"information":{"venueName":"Grand Hall","venueType":"Banquet","description":"Premium event venue in central Dhaka.","addressLine":"123 Main Road","city":"Dhaka","area":"Farmgate"},"pricing":{"basePrice":5000,"currency":"BDT","discount":{"type":"percentage","value":10},"amenities":{"wifi":true,"parking":true,"ac":true,"catering":false,"audioVideo":true,"security":true,"accessible":false,"soundSystem":true}},"capacity":{"maximumGuests":300},"media":{"galleryImages":[],"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityCalendar":[{"date":"2026-03-20","hours":[8,9,10]}]}'
+ *                 payload: '{"information":{"venueName":"Grand Hall","venueType":"Banquet","description":"Premium event venue in central Dhaka.","addressLine":"123 Main Road","city":"Dhaka","area":"Farmgate"},"pricing":{"pricePerPerson":5000,"currency":"BDT","discount":{"type":"percentage","value":10},"amenities":{"wifi":true,"parking":true,"ac":true,"catering":false,"audioVideo":true,"security":true,"accessible":false,"soundSystem":true}},"capacity":{"maximumGuests":300},"media":{"galleryImages":[],"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityCalendar":[{"date":"2026-03-20","hours":[8,9,10]}]}'
  *     responses:
  *       201:
  *         description: Venue created successfully

@@ -34,7 +34,7 @@ const router = Router();
  *         description: Only event planners can access this endpoint
  *   patch:
  *     tags: [EventPlanner]
- *     summary: Block event planner availability hours
+ *     summary: Block event planner availability for a full day
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -43,17 +43,12 @@ const router = Router();
  *         application/json:
  *           schema:
  *             type: object
- *             required: [date, hours]
+ *             required: [date]
  *             properties:
  *               date:
  *                 type: string
  *                 format: date
  *                 example: 2026-04-18
- *               hours:
- *                 type: array
- *                 items:
- *                   type: integer
- *                 example: [10, 11, 12]
  *     responses:
  *       200:
  *         description: Availability blocked successfully
@@ -63,7 +58,7 @@ const router = Router();
  *         description: Only event planners can access this endpoint
  *   delete:
  *     tags: [EventPlanner]
- *     summary: Unblock event planner availability hours
+ *     summary: Unblock event planner availability for a full day
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -72,17 +67,12 @@ const router = Router();
  *         application/json:
  *           schema:
  *             type: object
- *             required: [date, hours]
+ *             required: [date]
  *             properties:
  *               date:
  *                 type: string
  *                 format: date
  *                 example: 2026-04-18
- *               hours:
- *                 type: array
- *                 items:
- *                   type: integer
- *                 example: [10, 11]
  *     responses:
  *       200:
  *         description: Availability unblocked successfully

@@ -383,6 +383,12 @@ const router = Router();
  *         address:
  *           type: string
  *           example: Banani, Dhaka
+ *         hourlyRate:
+ *           type: number
+ *           example: 7500
+ *         currency:
+ *           type: string
+ *           example: BDT
  *         verification:
  *           deprecated: true
  *           description: Verification fields are not editable through the profile update API.
@@ -415,8 +421,8 @@ const router = Router();
  *       type: object
  *       description: >
  *         Partial update payload for authenticated event planners.
- *         `fullName`, phone, and location fields are editable through this endpoint.
- *         `email`, pricing, and verification fields are not editable here.
+ *         `fullName`, phone, location, and hourly pricing fields are editable through this endpoint.
+ *         `email` and verification fields are not editable here.
  *       properties:
  *         fullName:
  *           type: string
@@ -959,7 +965,7 @@ router.post(
  *             properties:
  *               payload:
  *                 type: string
- *                 example: '{"fullName":"Updated Event Planner Name","phoneNumber":"+8801712345678","eventPlanner":{"profileInfo":{"address":"Banani, Dhaka","coverageArea":["Dhaka","Chattogram"]}}}'
+ *                 example: '{"fullName":"Updated Event Planner Name","phoneNumber":"+8801712345678","eventPlanner":{"profileInfo":{"address":"Banani, Dhaka","coverageArea":["Dhaka","Chattogram"],"hourlyRate":7500,"currency":"BDT"}}}'
  *               profileImage:
  *                 type: string
  *                 format: binary

@@ -46,11 +46,7 @@ export class EventPlannerController {
   });
 
   static blockMyAvailability = catchAsync(async (req: Request, res: Response) => {
-    const result = await EventPlannerService.blockAvailability(
-      getUserId(req),
-      req.body.date,
-      req.body.hours
-    );
+    const result = await EventPlannerService.blockAvailability(getUserId(req), req.body.date);
 
     return res.status(200).json({
       success: true,
@@ -60,11 +56,7 @@ export class EventPlannerController {
   });
 
   static unblockMyAvailability = catchAsync(async (req: Request, res: Response) => {
-    const result = await EventPlannerService.unblockAvailability(
-      getUserId(req),
-      req.body.date,
-      req.body.hours
-    );
+    const result = await EventPlannerService.unblockAvailability(getUserId(req), req.body.date);
 
     return res.status(200).json({
       success: true,

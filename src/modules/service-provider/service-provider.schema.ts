@@ -54,7 +54,7 @@ const createServiceBodySchema = z.object({
   }),
   pricing: z.object({
     amount: z.number().min(0),
-    pricingType: z.enum(['fixed', 'hourly', 'daily', 'package']).default('fixed'),
+    pricingType: z.literal('hourly').default('hourly'),
     currency: z.string().length(3).default('BDT'),
     discount: z
       .object({
@@ -88,7 +88,7 @@ const updateServiceBodySchema = z
     pricing: z
       .object({
         amount: z.number().min(0).optional(),
-        pricingType: z.enum(['fixed', 'hourly', 'daily', 'package']).optional(),
+        pricingType: z.literal('hourly').optional(),
         currency: z.string().length(3).optional(),
         discount: z
           .object({
@@ -168,8 +168,7 @@ export const serviceAvailabilityQuerySchema = z.object({
 
 export const updateServiceAvailabilitySchema = z.object({
   body: z.object({
-    date: z.string().regex(dateRegex, 'date must be in YYYY-MM-DD format'),
-    hours: hoursSchema
+    date: z.string().regex(dateRegex, 'date must be in YYYY-MM-DD format')
   }),
   params: z.object({
     serviceId: z.string().regex(objectIdRegex, 'Invalid serviceId')

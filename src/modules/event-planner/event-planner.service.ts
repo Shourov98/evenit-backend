@@ -1,6 +1,7 @@
 import { isValidObjectId } from 'mongoose';
 import { AppError } from '../../common/errors/AppError';
 import {
+  ALL_BOOKING_HOURS,
   AvailabilityEntry,
   availabilityEntriesToCalendar,
   buildCalendarWindow,
@@ -220,9 +221,13 @@ export class EventPlannerService {
     };
   }
 
-  static async blockAvailability(eventPlannerId: string, date: string, hours: number[]) {
+  static async blockAvailability(eventPlannerId: string, date: string) {
     const eventPlanner = await this.ensureSubscribedEventPlanner(eventPlannerId);
-    eventPlanner.availabilityCalendar = upsertAvailabilityEntry(eventPlanner.availabilityCalendar, date, hours);
+    eventPlanner.availabilityCalendar = upsertAvailabilityEntry(
+      eventPlanner.availabilityCalendar,
+      date,
+      ALL_BOOKING_HOURS
+    );
     await eventPlanner.save();
 
     return {
@@ -231,9 +236,13 @@ export class EventPlannerService {
     };
   }
 
-  static async unblockAvailability(eventPlannerId: string, date: string, hours: number[]) {
+  static async unblockAvailability(eventPlannerId: string, date: string) {
     const eventPlanner = await this.ensureSubscribedEventPlanner(eventPlannerId);
-    eventPlanner.availabilityCalendar = removeAvailabilityEntryHours(eventPlanner.availabilityCalendar, date, hours);
+    eventPlanner.availabilityCalendar = removeAvailabilityEntryHours(
+      eventPlanner.availabilityCalendar,
+      date,
+      ALL_BOOKING_HOURS
+    );
     await eventPlanner.save();
 
     return {

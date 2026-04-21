@@ -38,6 +38,7 @@ type BookingContextCalendar = Record<
 type BookingStatusFilter = 'pending' | 'approved' | 'rejected' | 'completed' | 'confirmed' | 'cancelled';
 
 const activeBookingStatuses = ['pending', 'approved', 'confirmed'] as const;
+const VAT_PERCENT = 20;
 
 const ensureObjectId = (id: string, label: string): void => {
   if (!isValidObjectId(id)) {
@@ -88,17 +89,7 @@ const canAccessBooking = (booking: IBooking, actorId: string, role: string): boo
 };
 
 const computeServiceSubtotal = (service: IServiceProviderService, durationHours: number): number => {
-  switch (service.pricing.pricingType) {
-    case 'hourly':
-      return service.pricing.amount * durationHours;
-    case 'daily':
-      return service.pricing.amount;
-    case 'package':
-      return service.pricing.amount;
-    case 'fixed':
-    default:
-      return service.pricing.amount;
-  }
+  return service.pricing.amount * durationHours;
 };
 
 const applyDiscount = (
@@ -403,7 +394,7 @@ export class BookingService {
       ensureHoursAvailable(venue.availabilityCalendar, payload.bookingDate, payload.hours, 'Venue');
       return {
         providerId: venue.ownerId,
-        subtotal: venue.pricing.basePrice * payload.hours.length,
+        subtotal: applyDiscount(venue.pricing.basePrice * payload.guest_count, venue.pricing.discount),
         currency: venue.pricing.currency,
         target: venue
       };
@@ -441,10 +432,30 @@ export class BookingService {
     }
 
     ensureHoursAvailable(eventPlanner.availabilityCalendar, payload.bookingDate, payload.hours, 'Event planner');
+    const eventPlannerProfile =
+      eventPlanner.onboarding &&
+      typeof eventPlanner.onboarding === 'object' &&
+      'eventProvider' in eventPlanner.onboarding &&
+      (eventPlanner.onboarding as Record<string, any>).eventProvider?.profileInfo
+        ? ((eventPlanner.onboarding as Record<string, any>).eventProvider.profileInfo as Record<string, unknown>)
+        : null;
+    const hourlyRate =
+      eventPlannerProfile && typeof eventPlannerProfile.hourlyRate === 'number'
+        ? eventPlannerProfile.hourlyRate
+        : null;
+    const currency =
+      eventPlannerProfile && typeof eventPlannerProfile.currency === 'string'
+        ? eventPlannerProfile.currency
+        : eventPlanner.subscription.payment.currency;
+
+    if (hourlyRate === null) {
+      throw new AppError(400, 'Event planner hourly rate is not configured');
+    }
+
     return {
       providerId: eventPlanner._id as Types.ObjectId,
-      subtotal: 0,
-      currency: eventPlanner.subscription.payment.currency,
+      subtotal: hourlyRate * payload.hours.length,
+      currency,
       target: eventPlanner
     };
   }
@@ -492,7 +503,7 @@ export class BookingService {
     }
 
     const platformFeeAmount = Number(((targetData.subtotal * getPlatformFeePercent()) / 100).toFixed(2));
-    const taxAmount = 0;
+    const taxAmount = Number(((targetData.subtotal * VAT_PERCENT) / 100).toFixed(2));
     const totalAmount = Number((targetData.subtotal + taxAmount).toFixed(2));
 
     try {
@@ -509,7 +520,13 @@ export class BookingService {
         location: payload.location,
         specialInstructions: payload.specialInstructions,
         pricing: {
-          unitAmount: Number((targetData.subtotal / durationHours || 0).toFixed(2)),
+          unitAmount: Number(
+            (
+              payload.targetType === 'venue'
+                ? targetData.subtotal / (payload.guest_count || 1)
+                : targetData.subtotal / durationHours || 0
+            ).toFixed(2)
+          ),
           subtotal: targetData.subtotal,
           taxAmount,
           platformFeeAmount,

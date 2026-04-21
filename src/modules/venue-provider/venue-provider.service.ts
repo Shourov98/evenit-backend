@@ -1,6 +1,7 @@
 import { isValidObjectId } from 'mongoose';
 import { AppError } from '../../common/errors/AppError';
 import {
+  ALL_BOOKING_HOURS,
   AvailabilityEntry,
   availabilityEntriesToCalendar,
   buildCalendarWindow,
@@ -26,7 +27,8 @@ type CreateVenuePayload = {
     area?: string;
   };
   pricing: {
-    basePrice: number;
+    basePrice?: number;
+    pricePerPerson?: number;
     currency: string;
     discount?: {
       type: 'percentage' | 'fixed';
@@ -63,6 +65,8 @@ const ensureObjectId = (id: string, label: string): void => {
 const normalizeCurrency = <
   T extends {
     pricing?: {
+      basePrice?: number;
+      pricePerPerson?: number;
       currency?: string;
       amenities?: Record<string, boolean>;
     };
@@ -70,6 +74,14 @@ const normalizeCurrency = <
 >(
   payload: T
 ) => {
+  if (payload.pricing) {
+    if (typeof payload.pricing.pricePerPerson === 'number') {
+      payload.pricing.basePrice = payload.pricing.pricePerPerson;
+    } else if (typeof payload.pricing.basePrice === 'number') {
+      payload.pricing.pricePerPerson = payload.pricing.basePrice;
+    }
+  }
+
   if (payload.pricing?.currency) {
     payload.pricing.currency = payload.pricing.currency.toUpperCase();
   }
@@ -93,6 +105,9 @@ const serializeVenue = <T extends { toObject?: () => Record<string, unknown>; ow
     ...plain,
     pricing: {
       ...(plain.pricing as Record<string, unknown>),
+      pricePerPerson:
+        Number((plain.pricing as Record<string, unknown> | undefined)?.basePrice ?? 0) || 0,
+      pricingModel: 'per_person',
       amenities: normalizeVenueAmenities((plain.pricing as Record<string, any> | undefined)?.amenities)
     },
     availability: availabilityEntriesToCalendar((plain.availabilityCalendar as AvailabilityEntry[] | undefined) ?? [])
@@ -338,10 +353,14 @@ export class VenueProviderService {
     };
   }
 
-  static async blockAvailability(ownerId: string, venueId: string, date: string, hours: number[]) {
+  static async blockAvailability(ownerId: string, venueId: string, date: string) {
     await this.ensureSubscribedVenueProvider(ownerId);
     const venue = await this.getById(ownerId, venueId);
-    venue.availabilityCalendar = upsertAvailabilityEntry(venue.availabilityCalendar, date, hours);
+    venue.availabilityCalendar = upsertAvailabilityEntry(
+      venue.availabilityCalendar,
+      date,
+      ALL_BOOKING_HOURS
+    );
     await venue.save();
 
     return {
@@ -350,10 +369,14 @@ export class VenueProviderService {
     };
   }
 
-  static async unblockAvailability(ownerId: string, venueId: string, date: string, hours: number[]) {
+  static async unblockAvailability(ownerId: string, venueId: string, date: string) {
     await this.ensureSubscribedVenueProvider(ownerId);
     const venue = await this.getById(ownerId, venueId);
-    venue.availabilityCalendar = removeAvailabilityEntryHours(venue.availabilityCalendar, date, hours);
+    venue.availabilityCalendar = removeAvailabilityEntryHours(
+      venue.availabilityCalendar,
+      date,
+      ALL_BOOKING_HOURS
+    );
     await venue.save();
 
     return {

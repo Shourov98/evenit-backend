@@ -57,7 +57,7 @@ const router = Router();
  *             - corporate
  *         pricing:
  *           amount: 50000
- *           pricingType: package
+ *           pricingType: hourly
  *           currency: BDT
  *           discount:
  *             type: percentage
@@ -110,8 +110,8 @@ const router = Router();
  *               example: 15000
  *             pricingType:
  *               type: string
- *               enum: [fixed, hourly, daily, package]
- *               example: fixed
+ *               enum: [hourly]
+ *               example: hourly
  *             currency:
  *               type: string
  *               example: BDT
@@ -392,7 +392,7 @@ router.get('/services/:serviceId', validate(serviceIdParamSchema), ServiceProvid
  *         description: Availability returned
  *   patch:
  *     tags: [ServiceProvider]
- *     summary: Block service availability hours
+ *     summary: Block service availability for a full day
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -401,21 +401,17 @@ router.get('/services/:serviceId', validate(serviceIdParamSchema), ServiceProvid
  *         application/json:
  *           schema:
  *             type: object
- *             required: [date, hours]
+ *             required: [date]
  *             properties:
  *               date:
  *                 type: string
  *                 format: date
- *               hours:
- *                 type: array
- *                 items:
- *                   type: integer
  *     responses:
  *       200:
  *         description: Availability blocked successfully
  *   delete:
  *     tags: [ServiceProvider]
- *     summary: Unblock service availability hours
+ *     summary: Unblock service availability for a full day
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -424,15 +420,11 @@ router.get('/services/:serviceId', validate(serviceIdParamSchema), ServiceProvid
  *         application/json:
  *           schema:
  *             type: object
- *             required: [date, hours]
+ *             required: [date]
  *             properties:
  *               date:
  *                 type: string
  *                 format: date
- *               hours:
- *                 type: array
- *                 items:
- *                   type: integer
  *     responses:
  *       200:
  *         description: Availability unblocked successfully
@@ -477,7 +469,7 @@ router.delete(
  *               payload:
  *                 type: string
  *                 description: JSON string matching ServiceCreateRequest. Include `media.galleryImages` only for already-hosted image URLs. Files sent in `images` or `image` are uploaded by the backend automatically.
- *                 example: '{"information":{"serviceName":"Premium Catering","category":"Catering","description":"Corporate and wedding catering service.","serviceArea":["Dhaka","Gazipur"],"tags":["wedding","corporate"]},"pricing":{"amount":50000,"pricingType":"package","currency":"BDT","discount":{"type":"percentage","value":10}},"settings":{"amenities":{"deliveryIncluded":true,"setupIncluded":true},"capacity":300},"media":{"galleryImages":[],"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityCalendar":[{"date":"2026-03-20","hours":[10,11]},{"date":"2026-03-21","hours":[14,15]}]}'
+ *                 example: '{"information":{"serviceName":"Premium Catering","category":"Catering","description":"Corporate and wedding catering service.","serviceArea":["Dhaka","Gazipur"],"tags":["wedding","corporate"]},"pricing":{"amount":50000,"pricingType":"hourly","currency":"BDT","discount":{"type":"percentage","value":10}},"settings":{"amenities":{"deliveryIncluded":true,"setupIncluded":true},"capacity":300},"media":{"galleryImages":[],"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityCalendar":[{"date":"2026-03-20","hours":[10,11]},{"date":"2026-03-21","hours":[14,15]}]}'
  *               images:
  *                 type: array
  *                 items:
@@ -492,7 +484,7 @@ router.delete(
  *             validService:
  *               summary: Valid service creation payload
  *               value:
- *                 payload: '{"information":{"serviceName":"Premium Catering","category":"Catering","description":"Corporate and wedding catering service.","serviceArea":["Dhaka","Gazipur"],"tags":["wedding","corporate"]},"pricing":{"amount":50000,"pricingType":"package","currency":"BDT","discount":{"type":"percentage","value":10}},"settings":{"amenities":{"deliveryIncluded":true,"setupIncluded":true},"capacity":300},"media":{"galleryImages":[],"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityCalendar":[{"date":"2026-03-20","hours":[10,11]},{"date":"2026-03-21","hours":[14,15]}]}'
+ *                 payload: '{"information":{"serviceName":"Premium Catering","category":"Catering","description":"Corporate and wedding catering service.","serviceArea":["Dhaka","Gazipur"],"tags":["wedding","corporate"]},"pricing":{"amount":50000,"pricingType":"hourly","currency":"BDT","discount":{"type":"percentage","value":10}},"settings":{"amenities":{"deliveryIncluded":true,"setupIncluded":true},"capacity":300},"media":{"galleryImages":[],"videoUrl":"https://www.youtube.com/watch?v=abc123"},"availabilityCalendar":[{"date":"2026-03-20","hours":[10,11]},{"date":"2026-03-21","hours":[14,15]}]}'
  *     responses:
  *       201:
  *         description: Service created successfully

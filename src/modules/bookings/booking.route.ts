@@ -110,6 +110,8 @@ router.use(protect);
  *               area: Banani
  *             pricing:
  *               basePrice: 1701
+ *               pricePerPerson: 1701
+ *               pricingModel: per_person
  *               currency: BDT
  *               discount:
  *                 type: fixed
@@ -317,13 +319,14 @@ router.use(protect);
  *               example: 15000
  *             taxAmount:
  *               type: number
- *               example: 0
+ *               description: VAT amount at 20% of subtotal
+ *               example: 3000
  *             platformFeeAmount:
  *               type: number
  *               example: 1500
  *             totalAmount:
  *               type: number
- *               example: 15000
+ *               example: 18000
  *             currency:
  *               type: string
  *               example: BDT
@@ -551,7 +554,7 @@ router.post('/', authorize('customer'), validate(createBookingSchema), BookingCo
  *                     tags: [wedding, corporate]
  *                   pricing:
  *                     amount: 50000
- *                     pricingType: package
+ *                     pricingType: hourly
  *                     currency: BDT
  *                   settings:
  *                     amenities:
@@ -769,6 +772,8 @@ router.post(
  *                     description: Wedding and corporate event planning.
  *                     coverageArea: [Dhaka, Chattogram]
  *                     address: Gulshan, Dhaka
+ *                     hourlyRate: 7500
+ *                     currency: BDT
  *                 provider:
  *                   _id: 680000000000000000000103
  *                   fullName: Elite Event Planner

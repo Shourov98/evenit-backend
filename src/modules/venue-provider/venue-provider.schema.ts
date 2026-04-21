@@ -54,7 +54,8 @@ const venueBodySchema = z.object({
     area: z.string().max(80).optional()
   }),
   pricing: z.object({
-    basePrice: z.number().min(0),
+    basePrice: z.number().min(0).optional(),
+    pricePerPerson: z.number().min(0).optional(),
     currency: z.string().length(3).default('BDT'),
     discount: z
       .object({
@@ -63,6 +64,14 @@ const venueBodySchema = z.object({
       })
       .optional(),
     amenities: z.record(z.boolean()).optional().default({})
+  }).superRefine((pricing, ctx) => {
+    if (typeof pricing.basePrice !== 'number' && typeof pricing.pricePerPerson !== 'number') {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['pricePerPerson'],
+        message: 'pricePerPerson is required'
+      });
+    }
   }),
   capacity: z.object({
     maximumGuests: z.number().int().min(1)
@@ -89,6 +98,7 @@ const updateVenueBodySchema = z
     pricing: z
       .object({
         basePrice: z.number().min(0).optional(),
+        pricePerPerson: z.number().min(0).optional(),
         currency: z.string().length(3).optional(),
         discount: z
           .object({
@@ -168,8 +178,7 @@ export const venueAvailabilityQuerySchema = z.object({
 
 export const updateVenueAvailabilitySchema = z.object({
   body: z.object({
-    date: z.string().regex(dateRegex, 'date must be in YYYY-MM-DD format'),
-    hours: hoursSchema
+    date: z.string().regex(dateRegex, 'date must be in YYYY-MM-DD format')
   }),
   params: z.object({
     venueId: z.string().regex(objectIdRegex, 'Invalid venueId')

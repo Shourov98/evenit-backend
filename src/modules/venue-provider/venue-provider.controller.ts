@@ -129,12 +129,7 @@ export class VenueProviderController {
 
   static blockAvailability = catchAsync(async (req: Request, res: Response) => {
     const userId = getUserId(req);
-    const result = await VenueProviderService.blockAvailability(
-      userId,
-      req.params.venueId,
-      req.body.date,
-      req.body.hours
-    );
+    const result = await VenueProviderService.blockAvailability(userId, req.params.venueId, req.body.date);
 
     return res.status(200).json({
       success: true,
@@ -145,12 +140,7 @@ export class VenueProviderController {
 
   static unblockAvailability = catchAsync(async (req: Request, res: Response) => {
     const userId = getUserId(req);
-    const result = await VenueProviderService.unblockAvailability(
-      userId,
-      req.params.venueId,
-      req.body.date,
-      req.body.hours
-    );
+    const result = await VenueProviderService.unblockAvailability(userId, req.params.venueId, req.body.date);
 
     return res.status(200).json({
       success: true,
