@@ -93,6 +93,9 @@ const normalizeCurrency = <
   return payload;
 };
 
+const hasReviewableVenueChanges = (payload: UpdateVenuePatchPayload) =>
+  Boolean(payload.information || payload.pricing || payload.capacity || payload.media);
+
 const serializeVenue = <T extends { toObject?: () => Record<string, unknown>; ownerId?: unknown }>(
   venue: T
 ) => {
@@ -273,6 +276,7 @@ export class VenueProviderService {
     await this.ensureSubscribedVenueProvider(ownerId);
     const venue = await this.getById(ownerId, venueId);
     const normalizedPayload = normalizeCurrency(payload);
+    const requiresReview = hasReviewableVenueChanges(normalizedPayload);
 
     if (normalizedPayload.information) {
       venue.information = {
@@ -322,9 +326,11 @@ export class VenueProviderService {
       venue.availabilityCalendar = normalizeAvailabilityEntries(normalizedPayload.availabilityCalendar);
     }
 
-    venue.publishStatus = 'pending';
-    venue.approvedBy = undefined;
-    venue.approvedAt = undefined;
+    if (requiresReview) {
+      venue.publishStatus = 'pending';
+      venue.approvedBy = undefined;
+      venue.approvedAt = undefined;
+    }
 
     await venue.save();
     return serializeVenue(venue);

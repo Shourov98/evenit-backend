@@ -84,6 +84,9 @@ const normalizeCurrency = <
   return payload;
 };
 
+const hasReviewableServiceChanges = (payload: UpdateServicePatchPayload) =>
+  Boolean(payload.information || payload.pricing || payload.settings || payload.media);
+
 const serializeService = <T extends { toObject?: () => Record<string, unknown>; ownerId?: unknown }>(
   service: T
 ) => {
@@ -257,6 +260,7 @@ export class ServiceProviderService {
     await this.ensureSubscribedServiceProvider(ownerId);
     const service = await this.getById(ownerId, serviceId);
     const normalizedPayload = normalizeCurrency(payload);
+    const requiresReview = hasReviewableServiceChanges(normalizedPayload);
 
     if (normalizedPayload.information) {
       service.information = {
@@ -314,9 +318,11 @@ export class ServiceProviderService {
       service.availabilityCalendar = normalizeAvailabilityEntries(normalizedPayload.availabilityCalendar);
     }
 
-    service.publishStatus = 'pending';
-    service.approvedBy = undefined;
-    service.approvedAt = undefined;
+    if (requiresReview) {
+      service.publishStatus = 'pending';
+      service.approvedBy = undefined;
+      service.approvedAt = undefined;
+    }
 
     await service.save();
     return serializeService(service);
