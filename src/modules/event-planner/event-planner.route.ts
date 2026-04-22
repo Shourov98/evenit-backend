@@ -12,6 +12,66 @@ const router = Router();
 
 /**
  * @openapi
+ * components:
+ *   schemas:
+ *     EventPlannerDashboardAnalytics:
+ *       type: object
+ *       properties:
+ *         totalEvents:
+ *           type: integer
+ *           example: 24
+ *         upcomingBookings:
+ *           type: integer
+ *           example: 47
+ *         monthlyRevenue:
+ *           type: number
+ *           example: 18420
+ *         currency:
+ *           type: string
+ *           example: GBP
+ *         averageRating:
+ *           type: number
+ *           example: 4.8
+ *         totalReviews:
+ *           type: integer
+ *           example: 18
+ *         month:
+ *           type: string
+ *           example: 2026-04
+ *     EventPlannerDashboardAnalyticsResponse:
+ *       type: object
+ *       properties:
+ *         success:
+ *           type: boolean
+ *           example: true
+ *         data:
+ *           $ref: '#/components/schemas/EventPlannerDashboardAnalytics'
+ *       example:
+ *         success: true
+ *         data:
+ *           totalEvents: 24
+ *           upcomingBookings: 47
+ *           monthlyRevenue: 18420
+ *           currency: GBP
+ *           averageRating: 4.8
+ *           totalReviews: 18
+ *           month: 2026-04
+ *
+ * /api/v1/event-planners/me/analytics:
+ *   get:
+ *     tags: [EventPlanner]
+ *     summary: Get event planner dashboard analytics
+ *     description: Returns the event planner dashboard card metrics including total events, upcoming bookings, current month revenue, and average rating.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Dashboard analytics returned
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/EventPlannerDashboardAnalyticsResponse'
+ *
  * /api/v1/event-planners/me/availability:
  *   get:
  *     tags: [EventPlanner]

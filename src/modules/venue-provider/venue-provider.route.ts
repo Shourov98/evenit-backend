@@ -255,6 +255,48 @@ const router = Router();
  *           type: string
  *         data:
  *           $ref: '#/components/schemas/VenueEntity'
+ *     VenueProviderDashboardAnalytics:
+ *       type: object
+ *       properties:
+ *         totalVenues:
+ *           type: integer
+ *           example: 24
+ *         upcomingBookings:
+ *           type: integer
+ *           example: 47
+ *         monthlyRevenue:
+ *           type: number
+ *           example: 18420
+ *         currency:
+ *           type: string
+ *           example: GBP
+ *         averageRating:
+ *           type: number
+ *           example: 4.8
+ *         totalReviews:
+ *           type: integer
+ *           example: 18
+ *         month:
+ *           type: string
+ *           example: 2026-04
+ *     VenueProviderDashboardAnalyticsResponse:
+ *       type: object
+ *       properties:
+ *         success:
+ *           type: boolean
+ *           example: true
+ *         data:
+ *           $ref: '#/components/schemas/VenueProviderDashboardAnalytics'
+ *       example:
+ *         success: true
+ *         data:
+ *           totalVenues: 24
+ *           upcomingBookings: 47
+ *           monthlyRevenue: 18420
+ *           currency: GBP
+ *           averageRating: 4.8
+ *           totalReviews: 18
+ *           month: 2026-04
  */
 
 /**
@@ -436,6 +478,23 @@ router.get('/venues/:venueId', validate(venueIdParamSchema), VenueProviderContro
  */
 router.use(protect, authorize('venue_provider'));
 
+/**
+ * @openapi
+ * /api/v1/venue-provider/dashboard/analytics:
+ *   get:
+ *     tags: [VenueProvider]
+ *     summary: Get venue provider dashboard analytics
+ *     description: Returns the venue provider dashboard card metrics including total venues, upcoming bookings, current month revenue, and average rating.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Dashboard analytics returned
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/VenueProviderDashboardAnalyticsResponse'
+ */
 router.get('/dashboard/analytics', VenueProviderController.getDashboardAnalytics);
 
 router.get(

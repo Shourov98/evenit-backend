@@ -250,6 +250,48 @@ const router = Router();
  *           type: string
  *         data:
  *           $ref: '#/components/schemas/ServiceEntity'
+ *     ServiceProviderDashboardAnalytics:
+ *       type: object
+ *       properties:
+ *         totalServices:
+ *           type: integer
+ *           example: 24
+ *         upcomingBookings:
+ *           type: integer
+ *           example: 47
+ *         monthlyRevenue:
+ *           type: number
+ *           example: 18420
+ *         currency:
+ *           type: string
+ *           example: GBP
+ *         averageRating:
+ *           type: number
+ *           example: 4.8
+ *         totalReviews:
+ *           type: integer
+ *           example: 18
+ *         month:
+ *           type: string
+ *           example: 2026-04
+ *     ServiceProviderDashboardAnalyticsResponse:
+ *       type: object
+ *       properties:
+ *         success:
+ *           type: boolean
+ *           example: true
+ *         data:
+ *           $ref: '#/components/schemas/ServiceProviderDashboardAnalytics'
+ *       example:
+ *         success: true
+ *         data:
+ *           totalServices: 24
+ *           upcomingBookings: 47
+ *           monthlyRevenue: 18420
+ *           currency: GBP
+ *           averageRating: 4.8
+ *           totalReviews: 18
+ *           month: 2026-04
  */
 
 /**
@@ -431,6 +473,23 @@ router.get('/services/:serviceId', validate(serviceIdParamSchema), ServiceProvid
  */
 router.use(protect, authorize('service_provider'));
 
+/**
+ * @openapi
+ * /api/v1/service-provider/dashboard/analytics:
+ *   get:
+ *     tags: [ServiceProvider]
+ *     summary: Get service provider dashboard analytics
+ *     description: Returns the service provider dashboard card metrics including total services, upcoming bookings, current month revenue, and average rating.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Dashboard analytics returned
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ServiceProviderDashboardAnalyticsResponse'
+ */
 router.get('/dashboard/analytics', ServiceProviderController.getDashboardAnalytics);
 
 router.get(
