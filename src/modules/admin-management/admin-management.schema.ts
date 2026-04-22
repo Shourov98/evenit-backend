@@ -61,3 +61,25 @@ export const serviceProviderUserIdParamSchema = buildObjectIdParamSchema(
 export const venueProviderUserIdParamSchema = buildObjectIdParamSchema('venueProviderId', 'venueProviderId');
 
 export const eventPlannerUserIdParamSchema = buildObjectIdParamSchema('eventPlannerId', 'eventPlannerId');
+
+export const updateAdminProfileSchema = z.object({
+  body: z
+    .object({
+      fullName: z.string().trim().min(3).max(80).optional(),
+      phoneNumber: z.string().trim().min(6).max(30).optional()
+    })
+    .refine((value) => value.fullName !== undefined || value.phoneNumber !== undefined, {
+      message: 'Provide at least one field to update'
+    }),
+  params: z.object({}).optional().default({}),
+  query: z.object({}).optional().default({})
+});
+
+export const changeAdminPasswordSchema = z.object({
+  body: z.object({
+    currentPassword: z.string().min(8).max(64),
+    newPassword: z.string().min(8).max(64)
+  }),
+  params: z.object({}).optional().default({}),
+  query: z.object({}).optional().default({})
+});

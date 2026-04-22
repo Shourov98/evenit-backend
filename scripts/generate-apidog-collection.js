@@ -1277,6 +1277,25 @@ const adminAuth = folder('Auth', [
   request('Get Current User', 'GET', '/api/v1/auth/me', {
     tokenVar: 'adminToken',
     event: idCaptureEvent('adminUserSelfId')
+  }),
+  request('Get My Admin Profile', 'GET', '/api/v1/admin/profile', {
+    tokenVar: 'adminToken'
+  }),
+  request('Update My Admin Profile', 'PATCH', '/api/v1/admin/profile', {
+    tokenVar: 'adminToken',
+    contentType: 'application/json',
+    body: jsonBody({
+      fullName: 'Admin Example Updated',
+      phoneNumber: '+8801812345678'
+    })
+  }),
+  request('Change My Admin Password', 'PATCH', '/api/v1/admin/change-password', {
+    tokenVar: 'adminToken',
+    contentType: 'application/json',
+    body: jsonBody({
+      currentPassword: 'StrongAdminPass123',
+      newPassword: 'StrongerAdminPass456'
+    })
   })
 ]);
 
@@ -1446,6 +1465,17 @@ const superAdminAuth = folder('Auth', [
   request('Get Current User', 'GET', '/api/v1/auth/me', {
     tokenVar: 'superAdminToken',
     event: idCaptureEvent('superAdminUserSelfId')
+  }),
+  request('Get My Super Admin Profile', 'GET', '/api/v1/admin/profile', {
+    tokenVar: 'superAdminToken'
+  }),
+  request('Change My Super Admin Password', 'PATCH', '/api/v1/admin/change-password', {
+    tokenVar: 'superAdminToken',
+    contentType: 'application/json',
+    body: jsonBody({
+      currentPassword: 'StrongSuperAdminPass123',
+      newPassword: 'StrongerSuperAdminPass456'
+    })
   })
 ]);
 

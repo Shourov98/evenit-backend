@@ -7,12 +7,14 @@ import {
   adminUserIdParamSchema,
   analyticsYearQuerySchema,
   approvalRequestsQuerySchema,
+  changeAdminPasswordSchema,
   customerIdParamSchema,
   createAdminSchema,
   eventPlannerUserIdParamSchema,
   serviceIdParamSchema,
   serviceProviderUserIdParamSchema,
   subscriptionUserIdParamSchema,
+  updateAdminProfileSchema,
   venueIdParamSchema,
   venueProviderUserIdParamSchema
 } from './admin-management.schema';
@@ -145,6 +147,103 @@ router.use(protect, authorize('admin', 'super_admin'));
  *                   newVenueProviders:
  *                     type: integer
  *                     example: 12
+ *     AdminSelfProfile:
+ *       type: object
+ *       properties:
+ *         _id:
+ *           type: string
+ *           example: 6807f0c6c1b2f4a9d9123456
+ *         fullName:
+ *           type: string
+ *           example: Admin Example
+ *         email:
+ *           type: string
+ *           format: email
+ *           example: admin@example.com
+ *         phoneNumber:
+ *           type: string
+ *           nullable: true
+ *           example: +8801712345678
+ *         role:
+ *           type: string
+ *           enum: [admin, super_admin]
+ *           example: admin
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *     AdminSelfProfileResponse:
+ *       type: object
+ *       properties:
+ *         success:
+ *           type: boolean
+ *           example: true
+ *         data:
+ *           $ref: '#/components/schemas/AdminSelfProfile'
+ *       example:
+ *         success: true
+ *         data:
+ *           _id: 6807f0c6c1b2f4a9d9123456
+ *           fullName: Admin Example
+ *           email: admin@example.com
+ *           phoneNumber: +8801712345678
+ *           role: admin
+ *           createdAt: '2026-04-20T08:00:00.000Z'
+ *           updatedAt: '2026-04-23T06:30:00.000Z'
+ *     AdminUpdateProfileRequest:
+ *       type: object
+ *       properties:
+ *         fullName:
+ *           type: string
+ *           example: Admin Example Updated
+ *         phoneNumber:
+ *           type: string
+ *           example: +8801812345678
+ *     AdminUpdateProfileResponse:
+ *       type: object
+ *       properties:
+ *         success:
+ *           type: boolean
+ *           example: true
+ *         message:
+ *           type: string
+ *           example: Profile updated successfully
+ *         data:
+ *           $ref: '#/components/schemas/AdminSelfProfile'
+ *       example:
+ *         success: true
+ *         message: Profile updated successfully
+ *         data:
+ *           _id: 6807f0c6c1b2f4a9d9123456
+ *           fullName: Admin Example Updated
+ *           email: admin@example.com
+ *           phoneNumber: +8801812345678
+ *           role: admin
+ *           createdAt: '2026-04-20T08:00:00.000Z'
+ *           updatedAt: '2026-04-23T06:30:00.000Z'
+ *     AdminChangePasswordRequest:
+ *       type: object
+ *       required: [currentPassword, newPassword]
+ *       properties:
+ *         currentPassword:
+ *           type: string
+ *           format: password
+ *           example: StrongAdminPass123
+ *         newPassword:
+ *           type: string
+ *           format: password
+ *           example: StrongerAdminPass456
+ *     AdminChangePasswordResponse:
+ *       type: object
+ *       properties:
+ *         success:
+ *           type: boolean
+ *           example: true
+ *         message:
+ *           type: string
+ *           example: Password changed successfully
  *     AdminRecentRegisteredUser:
  *       type: object
  *       properties:
@@ -639,6 +738,79 @@ router.use(protect, authorize('admin', 'super_admin'));
  *           createdAt: '2026-04-20T08:00:00.000Z'
  *           updatedAt: '2026-04-22T10:30:00.000Z'
  */
+
+/**
+ * @openapi
+ * /api/v1/admin/profile:
+ *   get:
+ *     tags: [Admin]
+ *     summary: Get authenticated admin profile
+ *     description: Returns the profile of the authenticated `admin` or `super_admin`.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Profile returned
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AdminSelfProfileResponse'
+ *   patch:
+ *     tags: [Admin]
+ *     summary: Update authenticated admin profile
+ *     description: Allows only `admin` to update `fullName` and `phoneNumber`. `super_admin` is forbidden. Email cannot be changed.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/AdminUpdateProfileRequest'
+ *     responses:
+ *       200:
+ *         description: Profile updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AdminUpdateProfileResponse'
+ *       403:
+ *         description: Forbidden
+ */
+router.get('/profile', AdminManagementController.getMyProfile);
+router.patch(
+  '/profile',
+  authorize('admin'),
+  validate(updateAdminProfileSchema),
+  AdminManagementController.updateMyProfile
+);
+
+/**
+ * @openapi
+ * /api/v1/admin/change-password:
+ *   patch:
+ *     tags: [Admin]
+ *     summary: Change authenticated admin password
+ *     description: Allows authenticated `admin` and `super_admin` users to change their own password.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/AdminChangePasswordRequest'
+ *     responses:
+ *       200:
+ *         description: Password changed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AdminChangePasswordResponse'
+ *       400:
+ *         description: Current password is incorrect or new password matches current password
+ */
+router.patch('/change-password', validate(changeAdminPasswordSchema), AdminManagementController.changeMyPassword);
 
 /**
  * @openapi

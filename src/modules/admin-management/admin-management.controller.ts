@@ -18,6 +18,46 @@ const getApprover = (req: Request): { userId: string; name: string; email: strin
 };
 
 export class AdminManagementController {
+  static getMyProfile = catchAsync(async (req: Request, res: Response) => {
+    if (!req.user?.userId) {
+      throw new AppError(401, 'Authentication required');
+    }
+
+    const data = await AdminManagementService.getMyProfile(req.user.userId);
+
+    return res.status(200).json({
+      success: true,
+      data
+    });
+  });
+
+  static updateMyProfile = catchAsync(async (req: Request, res: Response) => {
+    if (!req.user?.userId) {
+      throw new AppError(401, 'Authentication required');
+    }
+
+    const data = await AdminManagementService.updateMyProfile(req.user.userId, req.body);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Profile updated successfully',
+      data
+    });
+  });
+
+  static changeMyPassword = catchAsync(async (req: Request, res: Response) => {
+    if (!req.user?.userId) {
+      throw new AppError(401, 'Authentication required');
+    }
+
+    await AdminManagementService.changeMyPassword(req.user.userId, req.body);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Password changed successfully'
+    });
+  });
+
   static getRecentRegisteredUsers = catchAsync(async (_req: Request, res: Response) => {
     const data = await AdminManagementService.getRecentRegisteredUsers();
 

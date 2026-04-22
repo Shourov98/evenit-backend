@@ -271,6 +271,24 @@ const serializeManagedUser = (user: {
   registeredAt: formatDate(user.createdAt)
 });
 
+const serializeAdminProfile = (user: {
+  _id: unknown;
+  fullName: string;
+  email: string;
+  phoneNumber?: string;
+  role: UserRole;
+  createdAt: Date;
+  updatedAt: Date;
+}) => ({
+  _id: String(user._id),
+  fullName: user.fullName,
+  email: user.email,
+  phoneNumber: user.phoneNumber ?? null,
+  role: user.role,
+  createdAt: formatDate(user.createdAt),
+  updatedAt: formatDate(user.updatedAt)
+});
+
 export class AdminManagementService {
   private static async getUsersByRole(
     role: Extract<UserRole, 'customer' | 'service_provider' | 'venue_provider' | 'event_planner'>,
@@ -329,6 +347,77 @@ export class AdminManagementService {
       isBlocked: false,
       subscription: createDefaultUserSubscription('admin')
     });
+  }
+
+  static async getMyProfile(userId: string) {
+    const user = await UserModel.findOne({
+      _id: userId,
+      role: { $in: ['admin', 'super_admin'] }
+    }).select('fullName email phoneNumber role createdAt updatedAt');
+
+    if (!user) {
+      throw new AppError(404, 'Admin user not found');
+    }
+
+    return serializeAdminProfile(user as unknown as Parameters<typeof serializeAdminProfile>[0]);
+  }
+
+  static async updateMyProfile(
+    userId: string,
+    payload: {
+      fullName?: string;
+      phoneNumber?: string;
+    }
+  ) {
+    const user = await UserModel.findOne({
+      _id: userId,
+      role: 'admin'
+    }).select('fullName email phoneNumber role createdAt updatedAt');
+
+    if (!user) {
+      throw new AppError(404, 'Admin user not found');
+    }
+
+    if (payload.fullName !== undefined) {
+      user.fullName = payload.fullName;
+    }
+
+    if (payload.phoneNumber !== undefined) {
+      user.phoneNumber = payload.phoneNumber;
+    }
+
+    await user.save();
+
+    return serializeAdminProfile(user as unknown as Parameters<typeof serializeAdminProfile>[0]);
+  }
+
+  static async changeMyPassword(
+    userId: string,
+    payload: {
+      currentPassword: string;
+      newPassword: string;
+    }
+  ) {
+    const user = await UserModel.findOne({
+      _id: userId,
+      role: { $in: ['admin', 'super_admin'] }
+    }).select('+password');
+
+    if (!user) {
+      throw new AppError(404, 'Admin user not found');
+    }
+
+    const isCurrentPasswordValid = await user.comparePassword(payload.currentPassword);
+    if (!isCurrentPasswordValid) {
+      throw new AppError(400, 'Current password is incorrect');
+    }
+
+    if (payload.currentPassword === payload.newPassword) {
+      throw new AppError(400, 'New password must be different from current password');
+    }
+
+    user.password = payload.newPassword;
+    await user.save();
   }
 
   static async blockAdmin(adminUserId: string) {
