@@ -96,6 +96,29 @@ const normalizeCurrency = <
 const hasReviewableVenueChanges = (payload: UpdateVenuePatchPayload) =>
   Boolean(payload.information || payload.pricing || payload.capacity || payload.media);
 
+const toComparable = (value: unknown): unknown => {
+  if (value instanceof Map) {
+    return Object.fromEntries(
+      Array.from(value.entries()).map(([key, nestedValue]) => [key, toComparable(nestedValue)])
+    );
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((item) => toComparable(item));
+  }
+
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>).map(([key, nestedValue]) => [key, toComparable(nestedValue)])
+    );
+  }
+
+  return value;
+};
+
+const areEqual = (left: unknown, right: unknown) =>
+  JSON.stringify(toComparable(left)) === JSON.stringify(toComparable(right));
+
 const serializeVenue = <T extends { toObject?: () => Record<string, unknown>; ownerId?: unknown }>(
   venue: T
 ) => {
@@ -276,47 +299,61 @@ export class VenueProviderService {
     await this.ensureSubscribedVenueProvider(ownerId);
     const venue = await this.getById(ownerId, venueId);
     const normalizedPayload = normalizeCurrency(payload);
-    const requiresReview = hasReviewableVenueChanges(normalizedPayload);
+    const nextInformation = normalizedPayload.information
+      ? {
+          ...venue.information,
+          ...normalizedPayload.information
+        }
+      : venue.information;
+    const nextPricing = normalizedPayload.pricing
+      ? {
+          ...venue.pricing,
+          ...normalizedPayload.pricing
+        }
+      : venue.pricing;
+    const nextCapacity = normalizedPayload.capacity
+      ? {
+          ...venue.capacity,
+          ...normalizedPayload.capacity
+        }
+      : venue.capacity;
+    const nextMedia = normalizedPayload.media
+      ? {
+          ...venue.media,
+          ...normalizedPayload.media
+        }
+      : venue.media;
+
+    if (normalizedPayload.pricing?.discount === null) {
+      nextPricing.discount = undefined;
+    }
+
+    if (normalizedPayload.media?.videoUrl === null) {
+      nextMedia.videoUrl = undefined;
+    }
+
+    const requiresReview =
+      hasReviewableVenueChanges(normalizedPayload) &&
+      (!areEqual(venue.information, nextInformation) ||
+        !areEqual(venue.pricing, nextPricing) ||
+        !areEqual(venue.capacity, nextCapacity) ||
+        !areEqual(venue.media, nextMedia));
 
     if (normalizedPayload.information) {
-      venue.information = {
-        ...venue.information,
-        ...normalizedPayload.information
-      };
+      venue.information = nextInformation;
     }
 
     if (normalizedPayload.pricing) {
-      const nextPricing = {
-        ...venue.pricing,
-        ...normalizedPayload.pricing
-      };
-
-      if (normalizedPayload.pricing.discount === null) {
-        nextPricing.discount = undefined;
-      }
-
       venue.pricing = {
         ...nextPricing
       };
     }
 
     if (normalizedPayload.capacity) {
-      venue.capacity = {
-        ...venue.capacity,
-        ...normalizedPayload.capacity
-      };
+      venue.capacity = nextCapacity;
     }
 
     if (normalizedPayload.media) {
-      const nextMedia = {
-        ...venue.media,
-        ...normalizedPayload.media
-      };
-
-      if (normalizedPayload.media.videoUrl === null) {
-        nextMedia.videoUrl = undefined;
-      }
-
       venue.media = {
         ...nextMedia
       };

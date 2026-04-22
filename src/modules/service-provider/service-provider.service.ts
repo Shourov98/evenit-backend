@@ -87,6 +87,29 @@ const normalizeCurrency = <
 const hasReviewableServiceChanges = (payload: UpdateServicePatchPayload) =>
   Boolean(payload.information || payload.pricing || payload.settings || payload.media);
 
+const toComparable = (value: unknown): unknown => {
+  if (value instanceof Map) {
+    return Object.fromEntries(
+      Array.from(value.entries()).map(([key, nestedValue]) => [key, toComparable(nestedValue)])
+    );
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((item) => toComparable(item));
+  }
+
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>).map(([key, nestedValue]) => [key, toComparable(nestedValue)])
+    );
+  }
+
+  return value;
+};
+
+const areEqual = (left: unknown, right: unknown) =>
+  JSON.stringify(toComparable(left)) === JSON.stringify(toComparable(right));
+
 const serializeService = <T extends { toObject?: () => Record<string, unknown>; ownerId?: unknown }>(
   service: T
 ) => {
@@ -260,55 +283,67 @@ export class ServiceProviderService {
     await this.ensureSubscribedServiceProvider(ownerId);
     const service = await this.getById(ownerId, serviceId);
     const normalizedPayload = normalizeCurrency(payload);
-    const requiresReview = hasReviewableServiceChanges(normalizedPayload);
+    const nextInformation = normalizedPayload.information
+      ? {
+          ...service.information,
+          ...normalizedPayload.information
+        }
+      : service.information;
+    const nextPricing = normalizedPayload.pricing
+      ? {
+          ...service.pricing,
+          ...normalizedPayload.pricing
+        }
+      : service.pricing;
+    const nextSettings = normalizedPayload.settings
+      ? {
+          ...service.settings,
+          ...normalizedPayload.settings
+        }
+      : service.settings;
+    const nextMedia = normalizedPayload.media
+      ? {
+          ...service.media,
+          ...normalizedPayload.media
+        }
+      : service.media;
+
+    if (normalizedPayload.pricing?.discount === null) {
+      nextPricing.discount = undefined;
+    }
+
+    if (normalizedPayload.settings?.capacity === null) {
+      nextSettings.capacity = undefined;
+    }
+
+    if (normalizedPayload.media?.videoUrl === null) {
+      nextMedia.videoUrl = undefined;
+    }
+
+    const requiresReview =
+      hasReviewableServiceChanges(normalizedPayload) &&
+      (!areEqual(service.information, nextInformation) ||
+        !areEqual(service.pricing, nextPricing) ||
+        !areEqual(service.settings, nextSettings) ||
+        !areEqual(service.media, nextMedia));
 
     if (normalizedPayload.information) {
-      service.information = {
-        ...service.information,
-        ...normalizedPayload.information
-      };
+      service.information = nextInformation;
     }
 
     if (normalizedPayload.pricing) {
-      const nextPricing = {
-        ...service.pricing,
-        ...normalizedPayload.pricing
-      };
-
-      if (normalizedPayload.pricing.discount === null) {
-        nextPricing.discount = undefined;
-      }
-
       service.pricing = {
         ...nextPricing
       };
     }
 
     if (normalizedPayload.settings) {
-      const nextSettings = {
-        ...service.settings,
-        ...normalizedPayload.settings
-      };
-
-      if (normalizedPayload.settings.capacity === null) {
-        nextSettings.capacity = undefined;
-      }
-
       service.settings = {
         ...nextSettings
       };
     }
 
     if (normalizedPayload.media) {
-      const nextMedia = {
-        ...service.media,
-        ...normalizedPayload.media
-      };
-
-      if (normalizedPayload.media.videoUrl === null) {
-        nextMedia.videoUrl = undefined;
-      }
-
       service.media = {
         ...nextMedia
       };
