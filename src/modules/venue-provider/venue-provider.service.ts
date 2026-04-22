@@ -15,7 +15,7 @@ import { buildPublicProviderInfo } from '../../common/utils/public-provider';
 import { hydrateUserSubscription, UserModel } from '../auth/auth.model';
 import { BookingModel } from '../bookings/booking.model';
 import { NotificationService } from '../notifications/notification.service';
-import { normalizeVenueAmenities, VenueProviderVenueModel } from './venue-provider.model';
+import { DiscountType, normalizeVenueAmenities, VenueProviderVenueModel } from './venue-provider.model';
 
 type CreateVenuePayload = {
   information: {
@@ -118,6 +118,27 @@ const toComparable = (value: unknown): unknown => {
 
 const areEqual = (left: unknown, right: unknown) =>
   JSON.stringify(toComparable(left)) === JSON.stringify(toComparable(right));
+
+const sanitizeVenuePricing = <
+  T extends {
+    discount?: {
+      type: DiscountType;
+      value: number;
+    };
+  }
+>(
+  pricing: T
+) => {
+  const nextPricing = {
+    ...pricing
+  };
+
+  if (!nextPricing.discount) {
+    delete nextPricing.discount;
+  }
+
+  return nextPricing;
+};
 
 const serializeVenue = <T extends { toObject?: () => Record<string, unknown>; ownerId?: unknown }>(
   venue: T
@@ -332,21 +353,12 @@ export class VenueProviderService {
       nextMedia.videoUrl = undefined;
     }
 
-    const requiresReview =
-      hasReviewableVenueChanges(normalizedPayload) &&
-      (!areEqual(venue.information, nextInformation) ||
-        !areEqual(venue.pricing, nextPricing) ||
-        !areEqual(venue.capacity, nextCapacity) ||
-        !areEqual(venue.media, nextMedia));
-
     if (normalizedPayload.information) {
       venue.information = nextInformation;
     }
 
     if (normalizedPayload.pricing) {
-      venue.pricing = {
-        ...nextPricing
-      };
+      venue.pricing = sanitizeVenuePricing(nextPricing);
     }
 
     if (normalizedPayload.capacity) {
@@ -361,12 +373,6 @@ export class VenueProviderService {
 
     if (normalizedPayload.availabilityCalendar) {
       venue.availabilityCalendar = normalizeAvailabilityEntries(normalizedPayload.availabilityCalendar);
-    }
-
-    if (requiresReview) {
-      venue.publishStatus = 'pending';
-      venue.approvedBy = undefined;
-      venue.approvedAt = undefined;
     }
 
     await venue.save();

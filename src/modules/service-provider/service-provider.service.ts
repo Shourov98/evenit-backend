@@ -15,7 +15,7 @@ import { buildPublicProviderInfo } from '../../common/utils/public-provider';
 import { hydrateUserSubscription, UserModel } from '../auth/auth.model';
 import { BookingModel } from '../bookings/booking.model';
 import { NotificationService } from '../notifications/notification.service';
-import { ServiceProviderServiceModel } from './service-provider.model';
+import { ServiceDiscountType, ServiceProviderServiceModel } from './service-provider.model';
 
 type CreateServicePayload = {
   information: {
@@ -109,6 +109,27 @@ const toComparable = (value: unknown): unknown => {
 
 const areEqual = (left: unknown, right: unknown) =>
   JSON.stringify(toComparable(left)) === JSON.stringify(toComparable(right));
+
+const sanitizeServicePricing = <
+  T extends {
+    discount?: {
+      type: ServiceDiscountType;
+      value: number;
+    };
+  }
+>(
+  pricing: T
+) => {
+  const nextPricing = {
+    ...pricing
+  };
+
+  if (!nextPricing.discount) {
+    delete nextPricing.discount;
+  }
+
+  return nextPricing;
+};
 
 const serializeService = <T extends { toObject?: () => Record<string, unknown>; ownerId?: unknown }>(
   service: T
@@ -320,21 +341,12 @@ export class ServiceProviderService {
       nextMedia.videoUrl = undefined;
     }
 
-    const requiresReview =
-      hasReviewableServiceChanges(normalizedPayload) &&
-      (!areEqual(service.information, nextInformation) ||
-        !areEqual(service.pricing, nextPricing) ||
-        !areEqual(service.settings, nextSettings) ||
-        !areEqual(service.media, nextMedia));
-
     if (normalizedPayload.information) {
       service.information = nextInformation;
     }
 
     if (normalizedPayload.pricing) {
-      service.pricing = {
-        ...nextPricing
-      };
+      service.pricing = sanitizeServicePricing(nextPricing);
     }
 
     if (normalizedPayload.settings) {
@@ -351,12 +363,6 @@ export class ServiceProviderService {
 
     if (normalizedPayload.availabilityCalendar) {
       service.availabilityCalendar = normalizeAvailabilityEntries(normalizedPayload.availabilityCalendar);
-    }
-
-    if (requiresReview) {
-      service.publishStatus = 'pending';
-      service.approvedBy = undefined;
-      service.approvedAt = undefined;
     }
 
     await service.save();
