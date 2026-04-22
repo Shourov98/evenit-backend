@@ -68,6 +68,15 @@ export class ServiceProviderController {
     });
   });
 
+  static getDashboardAnalytics = catchAsync(async (req: Request, res: Response) => {
+    const analytics = await ServiceProviderService.getDashboardAnalytics(getUserId(req));
+
+    return res.status(200).json({
+      success: true,
+      data: analytics
+    });
+  });
+
   static getServiceById = catchAsync(async (req: Request, res: Response) => {
     const service = await ServiceProviderService.getPublicById(req.params.serviceId);
 

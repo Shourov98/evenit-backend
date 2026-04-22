@@ -13,6 +13,15 @@ const getUserId = (req: Request): string => {
 };
 
 export class EventPlannerController {
+  static getMyDashboardAnalytics = catchAsync(async (req: Request, res: Response) => {
+    const analytics = await EventPlannerService.getDashboardAnalytics(getUserId(req));
+
+    return res.status(200).json({
+      success: true,
+      data: analytics
+    });
+  });
+
   static getAll = catchAsync(async (req: Request, res: Response) => {
     const pagination = parsePagination(req.query as Record<string, unknown>);
     const eventPlanners = await EventPlannerService.getAll(pagination);

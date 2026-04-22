@@ -1,4 +1,4 @@
-import { isValidObjectId } from 'mongoose';
+import { isValidObjectId, Types } from 'mongoose';
 import { AppError } from '../../common/errors/AppError';
 import {
   ALL_BOOKING_HOURS,
@@ -15,6 +15,7 @@ import { buildPublicProviderInfo } from '../../common/utils/public-provider';
 import { hydrateUserSubscription, UserModel } from '../auth/auth.model';
 import { BookingModel } from '../bookings/booking.model';
 import { NotificationService } from '../notifications/notification.service';
+import { ReviewModel } from '../reviews/review.model';
 import { DiscountType, normalizeVenueAmenities, VenueProviderVenueModel } from './venue-provider.model';
 
 type CreateVenuePayload = {
@@ -182,6 +183,22 @@ const buildConfirmedBookingCalendar = async (venueId: string, range: { from: str
   return calendar;
 };
 
+const getCurrentMonthWindow = () => {
+  const now = new Date();
+  const year = now.getUTCFullYear();
+  const month = now.getUTCMonth();
+  const fromDate = new Date(Date.UTC(year, month, 1));
+  const toDate = new Date(Date.UTC(year, month + 1, 0));
+
+  return {
+    from: fromDate.toISOString().slice(0, 10),
+    to: toDate.toISOString().slice(0, 10),
+    month: `${year}-${String(month + 1).padStart(2, '0')}`
+  };
+};
+
+const getTodayUtcDate = () => new Date().toISOString().slice(0, 10);
+
 export class VenueProviderService {
   private static async ensureSubscribedVenueProvider(ownerId: string) {
     const owner = await UserModel.findById(ownerId);
@@ -248,6 +265,75 @@ export class VenueProviderService {
     return {
       ...venues,
       data: venues.data.map((venue) => serializeVenue(venue))
+    };
+  }
+
+  static async getDashboardAnalytics(ownerId: string) {
+    ensureObjectId(ownerId, 'ownerId');
+
+    const providerObjectId = new Types.ObjectId(ownerId);
+    const currentMonth = getCurrentMonthWindow();
+    const today = getTodayUtcDate();
+
+    const [totalVenues, upcomingBookings, revenueSummary, ratingSummary] = await Promise.all([
+      VenueProviderVenueModel.countDocuments({
+        ownerId,
+        isDeleted: false
+      }),
+      BookingModel.countDocuments({
+        providerId: ownerId,
+        targetType: 'venue',
+        status: { $in: ['pending', 'approved', 'confirmed'] },
+        bookingDate: { $gte: today }
+      }),
+      BookingModel.aggregate([
+        {
+          $match: {
+            providerId: providerObjectId,
+            targetType: 'venue',
+            status: { $in: ['confirmed', 'completed'] },
+            bookingDate: {
+              $gte: currentMonth.from,
+              $lte: currentMonth.to
+            }
+          }
+        },
+        {
+          $group: {
+            _id: '$pricing.currency',
+            total: { $sum: '$pricing.totalAmount' }
+          }
+        },
+        { $sort: { total: -1 } }
+      ]),
+      ReviewModel.aggregate([
+        {
+          $match: {
+            providerId: providerObjectId,
+            targetType: 'venue'
+          }
+        },
+        {
+          $group: {
+            _id: null,
+            averageRating: { $avg: '$rating' },
+            totalReviews: { $sum: 1 }
+          }
+        }
+      ])
+    ]);
+
+    const primaryRevenue = revenueSummary[0] ?? null;
+    const rating = ratingSummary[0] ?? null;
+
+    return {
+      totalVenues,
+      upcomingBookings,
+      monthlyRevenue: primaryRevenue?.total ?? 0,
+      currency: primaryRevenue?._id ?? 'BDT',
+      averageRating: rating ? Number(rating.averageRating.toFixed(1)) : 0,
+      totalReviews: rating?.totalReviews ?? 0,
+      month: currentMonth.month
     };
   }
 

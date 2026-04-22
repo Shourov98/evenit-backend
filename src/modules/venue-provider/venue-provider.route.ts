@@ -436,6 +436,8 @@ router.get('/venues/:venueId', validate(venueIdParamSchema), VenueProviderContro
  */
 router.use(protect, authorize('venue_provider'));
 
+router.get('/dashboard/analytics', VenueProviderController.getDashboardAnalytics);
+
 router.get(
   '/venues/:venueId/availability',
   validate(venueAvailabilityQuerySchema),

@@ -18,6 +18,15 @@ const getApprover = (req: Request): { userId: string; name: string; email: strin
 };
 
 export class AdminManagementController {
+  static getRecentRegisteredUsers = catchAsync(async (_req: Request, res: Response) => {
+    const data = await AdminManagementService.getRecentRegisteredUsers();
+
+    return res.status(200).json({
+      success: true,
+      data
+    });
+  });
+
   static getAnalyticsOverview = catchAsync(async (_req: Request, res: Response) => {
     const data = await AdminManagementService.getAnalyticsOverview();
 

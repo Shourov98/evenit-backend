@@ -82,6 +82,13 @@ const router = Router();
  *         description: Only event planners can access this endpoint
  */
 router.get(
+  '/me/analytics',
+  protect,
+  authorize('event_planner'),
+  EventPlannerController.getMyDashboardAnalytics
+);
+
+router.get(
   '/me/availability',
   protect,
   authorize('event_planner'),

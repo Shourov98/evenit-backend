@@ -145,7 +145,519 @@ router.use(protect, authorize('admin', 'super_admin'));
  *                   newVenueProviders:
  *                     type: integer
  *                     example: 12
+ *     AdminRecentRegisteredUser:
+ *       type: object
+ *       properties:
+ *         _id:
+ *           type: string
+ *           example: 6807f0c6c1b2f4a9d9123456
+ *         fullName:
+ *           type: string
+ *           example: Saif Ul
+ *         email:
+ *           type: string
+ *           format: email
+ *           example: saif@example.com
+ *         phoneNumber:
+ *           type: string
+ *           nullable: true
+ *           example: +8801712345678
+ *         role:
+ *           type: string
+ *           enum: [customer, event_planner, service_provider, venue_provider]
+ *           example: service_provider
+ *         serviceCategories:
+ *           type: array
+ *           items:
+ *             type: string
+ *           example: [Catering, Decoration]
+ *         isEmailVerified:
+ *           type: boolean
+ *           example: true
+ *         isBlocked:
+ *           type: boolean
+ *           example: false
+ *         profileImage:
+ *           type: string
+ *           nullable: true
+ *           example: https://cdn.example.com/profiles/saif.jpg
+ *         coverImage:
+ *           type: string
+ *           nullable: true
+ *           example: https://cdn.example.com/covers/saif-cover.jpg
+ *         subscription:
+ *           type: object
+ *           nullable: true
+ *           properties:
+ *             plan:
+ *               type: string
+ *               example: service_provider_plan
+ *             status:
+ *               type: string
+ *               example: subscribed
+ *             activatedAt:
+ *               type: string
+ *               format: date-time
+ *               nullable: true
+ *             stripeCustomerId:
+ *               type: string
+ *               nullable: true
+ *             stripeSubscriptionId:
+ *               type: string
+ *               nullable: true
+ *             payment:
+ *               type: object
+ *               properties:
+ *                 amount:
+ *                   type: number
+ *                   example: 500
+ *                 currency:
+ *                   type: string
+ *                   example: GBP
+ *                 billingCycle:
+ *                   type: string
+ *                   example: monthly
+ *                 status:
+ *                   type: string
+ *                   example: paid
+ *                 paidAt:
+ *                   type: string
+ *                   format: date-time
+ *                   nullable: true
+ *         onboarding:
+ *           type: object
+ *           nullable: true
+ *           additionalProperties: true
+ *         availabilityCalendar:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               date:
+ *                 type: string
+ *                 format: date
+ *               hours:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *         registeredAt:
+ *           type: string
+ *           format: date-time
+ *     AdminRecentRegisteredUsersResponse:
+ *       type: object
+ *       properties:
+ *         success:
+ *           type: boolean
+ *           example: true
+ *         data:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/AdminRecentRegisteredUser'
+ *       example:
+ *         success: true
+ *         data:
+ *           - _id: 6807f0c6c1b2f4a9d9123456
+ *             fullName: Saif Ul
+ *             email: saif@example.com
+ *             phoneNumber: +8801712345678
+ *             role: service_provider
+ *             serviceCategories:
+ *               - Catering
+ *               - Decoration
+ *             isEmailVerified: true
+ *             isBlocked: false
+ *             profileImage: https://cdn.example.com/profiles/saif.jpg
+ *             coverImage: https://cdn.example.com/covers/saif-cover.jpg
+ *             subscription:
+ *               plan: service_provider_plan
+ *               status: subscribed
+ *               activatedAt: '2026-04-20T08:10:15.000Z'
+ *               stripeCustomerId: cus_123456
+ *               stripeSubscriptionId: sub_123456
+ *               payment:
+ *                 amount: 500
+ *                 currency: GBP
+ *                 billingCycle: monthly
+ *                 status: paid
+ *                 paidAt: '2026-04-20T08:10:15.000Z'
+ *             onboarding:
+ *               submittedAt: '2026-04-20T08:15:10.000Z'
+ *               serviceProvider:
+ *                 profileInfo:
+ *                   serviceName: Saif Catering
+ *                   serviceCategory: Catering
+ *             availabilityCalendar: []
+ *             createdAt: '2026-04-20T08:00:00.000Z'
+ *             updatedAt: '2026-04-22T10:30:00.000Z'
+ *             registeredAt: '2026-04-20T08:00:00.000Z'
+ *           - _id: 6807f0c6c1b2f4a9d9123457
+ *             fullName: Nadia Rahman
+ *             email: nadia@example.com
+ *             phoneNumber: +8801812345678
+ *             role: venue_provider
+ *             serviceCategories: []
+ *             isEmailVerified: false
+ *             isBlocked: false
+ *             profileImage: null
+ *             coverImage: null
+ *             subscription:
+ *               plan: venue_provider_plan
+ *               status: not_subscribed
+ *               activatedAt: null
+ *               stripeCustomerId: null
+ *               stripeSubscriptionId: null
+ *               payment:
+ *                 amount: 50000
+ *                 currency: GBP
+ *                 billingCycle: yearly
+ *                 status: unpaid
+ *                 paidAt: null
+ *             onboarding:
+ *               submittedAt: null
+ *               venueProvider:
+ *                 profileInfo:
+ *                   businessName: Skyline Rooftop
+ *             availabilityCalendar: []
+ *             createdAt: '2026-04-19T14:20:00.000Z'
+ *             updatedAt: '2026-04-19T14:20:00.000Z'
+ *             registeredAt: '2026-04-19T14:20:00.000Z'
+ *     AdminSubscriptionListItem:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           example: 6807f0c6c1b2f4a9d9123456
+ *         userId:
+ *           type: string
+ *           example: 6807f0c6c1b2f4a9d9123456
+ *         fullName:
+ *           type: string
+ *           example: Saif Ul
+ *         email:
+ *           type: string
+ *           format: email
+ *           example: saif@example.com
+ *         role:
+ *           type: string
+ *           example: service_provider
+ *         isBlocked:
+ *           type: boolean
+ *           example: false
+ *         transactionId:
+ *           type: string
+ *           nullable: true
+ *           example: sub_123456
+ *         customerId:
+ *           type: string
+ *           nullable: true
+ *           example: cus_123456
+ *         plan:
+ *           type: string
+ *           example: service_provider_plan
+ *         planValidity:
+ *           type: string
+ *           example: monthly
+ *         amountPaid:
+ *           type: number
+ *           example: 500
+ *         currency:
+ *           type: string
+ *           example: GBP
+ *         subscriptionStatus:
+ *           type: string
+ *           example: subscribed
+ *         paymentStatus:
+ *           type: string
+ *           example: paid
+ *         accessStatus:
+ *           type: string
+ *           example: paid
+ *         activatedAt:
+ *           type: string
+ *           format: date-time
+ *           nullable: true
+ *         paidAt:
+ *           type: string
+ *           format: date-time
+ *           nullable: true
+ *         expiryDate:
+ *           type: string
+ *           format: date-time
+ *           nullable: true
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *     AdminSubscriptionListResponse:
+ *       type: object
+ *       properties:
+ *         success:
+ *           type: boolean
+ *           example: true
+ *         meta:
+ *           type: object
+ *           properties:
+ *             page:
+ *               type: integer
+ *               example: 1
+ *             limit:
+ *               type: integer
+ *               example: 10
+ *             total:
+ *               type: integer
+ *               example: 2
+ *             totalPages:
+ *               type: integer
+ *               example: 1
+ *             hasNextPage:
+ *               type: boolean
+ *               example: false
+ *             hasPrevPage:
+ *               type: boolean
+ *               example: false
+ *         data:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/AdminSubscriptionListItem'
+ *       example:
+ *         success: true
+ *         meta:
+ *           page: 1
+ *           limit: 10
+ *           total: 2
+ *           totalPages: 1
+ *           hasNextPage: false
+ *           hasPrevPage: false
+ *         data:
+ *           - id: 6807f0c6c1b2f4a9d9123456
+ *             userId: 6807f0c6c1b2f4a9d9123456
+ *             fullName: Saif Ul
+ *             email: saif@example.com
+ *             role: service_provider
+ *             isBlocked: false
+ *             transactionId: sub_123456
+ *             customerId: cus_123456
+ *             plan: service_provider_plan
+ *             planValidity: monthly
+ *             amountPaid: 500
+ *             currency: GBP
+ *             subscriptionStatus: subscribed
+ *             paymentStatus: paid
+ *             accessStatus: paid
+ *             activatedAt: '2026-04-20T08:10:15.000Z'
+ *             paidAt: '2026-04-20T08:10:15.000Z'
+ *             expiryDate: '2026-05-20T08:10:15.000Z'
+ *             createdAt: '2026-04-20T08:00:00.000Z'
+ *             updatedAt: '2026-04-22T10:30:00.000Z'
+ *           - id: 6807f0c6c1b2f4a9d9123457
+ *             userId: 6807f0c6c1b2f4a9d9123457
+ *             fullName: Nadia Rahman
+ *             email: nadia@example.com
+ *             role: venue_provider
+ *             isBlocked: false
+ *             transactionId: null
+ *             customerId: null
+ *             plan: venue_provider_plan
+ *             planValidity: yearly
+ *             amountPaid: 50000
+ *             currency: GBP
+ *             subscriptionStatus: not_subscribed
+ *             paymentStatus: unpaid
+ *             accessStatus: expired
+ *             activatedAt: null
+ *             paidAt: null
+ *             expiryDate: null
+ *             createdAt: '2026-04-19T14:20:00.000Z'
+ *             updatedAt: '2026-04-19T14:20:00.000Z'
+ *     AdminSubscriptionDetailsResponse:
+ *       type: object
+ *       properties:
+ *         success:
+ *           type: boolean
+ *           example: true
+ *         data:
+ *           type: object
+ *           properties:
+ *             id:
+ *               type: string
+ *               example: 6807f0c6c1b2f4a9d9123456
+ *             user:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   example: 6807f0c6c1b2f4a9d9123456
+ *                 fullName:
+ *                   type: string
+ *                   example: Saif Ul
+ *                 email:
+ *                   type: string
+ *                   example: saif@example.com
+ *                 role:
+ *                   type: string
+ *                   example: service_provider
+ *                 isBlocked:
+ *                   type: boolean
+ *                   example: false
+ *             subscription:
+ *               type: object
+ *               properties:
+ *                 transactionId:
+ *                   type: string
+ *                   nullable: true
+ *                   example: sub_123456
+ *                 customerId:
+ *                   type: string
+ *                   nullable: true
+ *                   example: cus_123456
+ *                 plan:
+ *                   type: string
+ *                   example: service_provider_plan
+ *                 planValidity:
+ *                   type: string
+ *                   example: monthly
+ *                 amountPaid:
+ *                   type: number
+ *                   example: 500
+ *                 currency:
+ *                   type: string
+ *                   example: GBP
+ *                 subscriptionStatus:
+ *                   type: string
+ *                   example: subscribed
+ *                 paymentStatus:
+ *                   type: string
+ *                   example: paid
+ *                 accessStatus:
+ *                   type: string
+ *                   example: paid
+ *                 activatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                   nullable: true
+ *                 paidAt:
+ *                   type: string
+ *                   format: date-time
+ *                   nullable: true
+ *                 expiryDate:
+ *                   type: string
+ *                   format: date-time
+ *                   nullable: true
+ *             transactionDetails:
+ *               type: object
+ *               properties:
+ *                 transactionId:
+ *                   type: string
+ *                   nullable: true
+ *                   example: sub_123456
+ *                 plan:
+ *                   type: string
+ *                   example: service_provider_plan
+ *                 userRole:
+ *                   type: string
+ *                   example: service_provider
+ *                 date:
+ *                   type: string
+ *                   format: date-time
+ *                   nullable: true
+ *                 name:
+ *                   type: string
+ *                   example: Saif Ul
+ *                 accountNumberMasked:
+ *                   type: string
+ *                   nullable: true
+ *                   example: null
+ *                 email:
+ *                   type: string
+ *                   example: saif@example.com
+ *                 transactionAmount:
+ *                   type: number
+ *                   example: 500
+ *                 currency:
+ *                   type: string
+ *                   example: GBP
+ *                 status:
+ *                   type: string
+ *                   example: paid
+ *                 expiryDate:
+ *                   type: string
+ *                   format: date-time
+ *                   nullable: true
+ *                 planValidity:
+ *                   type: string
+ *                   example: monthly
+ *             createdAt:
+ *               type: string
+ *               format: date-time
+ *             updatedAt:
+ *               type: string
+ *               format: date-time
+ *       example:
+ *         success: true
+ *         data:
+ *           id: 6807f0c6c1b2f4a9d9123456
+ *           user:
+ *             id: 6807f0c6c1b2f4a9d9123456
+ *             fullName: Saif Ul
+ *             email: saif@example.com
+ *             role: service_provider
+ *             isBlocked: false
+ *           subscription:
+ *             transactionId: sub_123456
+ *             customerId: cus_123456
+ *             plan: service_provider_plan
+ *             planValidity: monthly
+ *             amountPaid: 500
+ *             currency: GBP
+ *             subscriptionStatus: subscribed
+ *             paymentStatus: paid
+ *             accessStatus: paid
+ *             activatedAt: '2026-04-20T08:10:15.000Z'
+ *             paidAt: '2026-04-20T08:10:15.000Z'
+ *             expiryDate: '2026-05-20T08:10:15.000Z'
+ *           transactionDetails:
+ *             transactionId: sub_123456
+ *             plan: service_provider_plan
+ *             userRole: service_provider
+ *             date: '2026-04-20T08:10:15.000Z'
+ *             name: Saif Ul
+ *             accountNumberMasked: null
+ *             email: saif@example.com
+ *             transactionAmount: 500
+ *             currency: GBP
+ *             status: paid
+ *             expiryDate: '2026-05-20T08:10:15.000Z'
+ *             planValidity: monthly
+ *           createdAt: '2026-04-20T08:00:00.000Z'
+ *           updatedAt: '2026-04-22T10:30:00.000Z'
  */
+
+/**
+ * @openapi
+ * /api/v1/admin/recent-registered-users:
+ *   get:
+ *     tags: [Admin]
+ *     summary: Get the 5 most recently registered non-admin users
+ *     description: Returns the latest 5 registered users excluding `admin` and `super_admin`, with their available profile, subscription, onboarding, and registration metadata.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Recent registered users returned
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AdminRecentRegisteredUsersResponse'
+ */
+router.get('/recent-registered-users', AdminManagementController.getRecentRegisteredUsers);
 
 /**
  * @openapi
@@ -318,6 +830,10 @@ router.patch(
  *     responses:
  *       200:
  *         description: Paginated subscription list
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AdminSubscriptionListResponse'
  */
 router.get('/subscriptions', validate(approvalRequestsQuerySchema), AdminManagementController.getSubscriptionUsers);
 
@@ -339,6 +855,10 @@ router.get('/subscriptions', validate(approvalRequestsQuerySchema), AdminManagem
  *     responses:
  *       200:
  *         description: Subscription details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AdminSubscriptionDetailsResponse'
  *       404:
  *         description: Subscription record not found
  */

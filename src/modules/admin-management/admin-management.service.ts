@@ -23,6 +23,8 @@ const ADMIN_OWNER_SELECT =
   'fullName email role isEmailVerified isBlocked profileImage onboarding.serviceProvider onboarding.venueProvider';
 const ADMIN_MANAGED_USER_SELECT =
   'fullName email role serviceCategories isEmailVerified isBlocked profileImage subscription onboarding createdAt updatedAt';
+const ADMIN_RECENT_REGISTERED_USER_SELECT =
+  'fullName email phoneNumber role serviceCategories isEmailVerified isBlocked profileImage coverImage subscription onboarding availabilityCalendar createdAt updatedAt';
 const ADMIN_SUBSCRIPTION_SELECT =
   'fullName email role isBlocked subscription createdAt updatedAt';
 const analyticsUserRoles = ['customer', 'event_planner', 'service_provider', 'venue_provider'] as const;
@@ -234,6 +236,41 @@ const attachOwner = async <
   return populatedItem;
 };
 
+const serializeManagedUser = (user: {
+  _id: unknown;
+  fullName: string;
+  email: string;
+  phoneNumber?: string;
+  role: UserRole;
+  serviceCategories?: string[];
+  isEmailVerified: boolean;
+  isBlocked: boolean;
+  subscription?: IUserSubscription;
+  profileImage?: { url?: string } | null;
+  coverImage?: { url?: string } | null;
+  onboarding?: Record<string, unknown> | null;
+  availabilityCalendar?: unknown[];
+  createdAt: Date;
+  updatedAt: Date;
+}) => ({
+  _id: String(user._id),
+  fullName: user.fullName,
+  email: user.email,
+  phoneNumber: user.phoneNumber ?? null,
+  role: user.role,
+  serviceCategories: user.serviceCategories ?? [],
+  isEmailVerified: user.isEmailVerified,
+  isBlocked: user.isBlocked,
+  profileImage: user.profileImage?.url ?? null,
+  coverImage: user.coverImage?.url ?? null,
+  subscription: user.subscription ?? null,
+  onboarding: user.onboarding ?? null,
+  availabilityCalendar: user.availabilityCalendar ?? [],
+  createdAt: formatDate(user.createdAt),
+  updatedAt: formatDate(user.updatedAt),
+  registeredAt: formatDate(user.createdAt)
+});
+
 export class AdminManagementService {
   private static async getUsersByRole(
     role: Extract<UserRole, 'customer' | 'service_provider' | 'venue_provider' | 'event_planner'>,
@@ -314,6 +351,20 @@ export class AdminManagementService {
     admin.isBlocked = false;
     await admin.save();
     return admin;
+  }
+
+  static async getRecentRegisteredUsers() {
+    const users = await UserModel.find({
+      role: { $nin: ['admin', 'super_admin'] }
+    })
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .select(ADMIN_RECENT_REGISTERED_USER_SELECT)
+      .lean();
+
+    return users.map((user) =>
+      serializeManagedUser(user as unknown as Parameters<typeof serializeManagedUser>[0])
+    );
   }
 
   static async getCustomers(pagination: PaginationOptions) {

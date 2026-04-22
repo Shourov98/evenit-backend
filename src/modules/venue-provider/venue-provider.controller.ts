@@ -68,6 +68,15 @@ export class VenueProviderController {
     });
   });
 
+  static getDashboardAnalytics = catchAsync(async (req: Request, res: Response) => {
+    const analytics = await VenueProviderService.getDashboardAnalytics(getUserId(req));
+
+    return res.status(200).json({
+      success: true,
+      data: analytics
+    });
+  });
+
   static getVenueById = catchAsync(async (req: Request, res: Response) => {
     const venue = await VenueProviderService.getPublicById(req.params.venueId);
 

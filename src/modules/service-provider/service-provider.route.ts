@@ -431,6 +431,8 @@ router.get('/services/:serviceId', validate(serviceIdParamSchema), ServiceProvid
  */
 router.use(protect, authorize('service_provider'));
 
+router.get('/dashboard/analytics', ServiceProviderController.getDashboardAnalytics);
+
 router.get(
   '/services/:serviceId/availability',
   validate(serviceAvailabilityQuerySchema),
