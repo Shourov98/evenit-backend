@@ -276,6 +276,9 @@ const serializeAdminProfile = (user: {
   fullName: string;
   email: string;
   phoneNumber?: string;
+  profileImage?: {
+    url?: string;
+  } | null;
   role: UserRole;
   createdAt: Date;
   updatedAt: Date;
@@ -284,6 +287,7 @@ const serializeAdminProfile = (user: {
   fullName: user.fullName,
   email: user.email,
   phoneNumber: user.phoneNumber ?? null,
+  profileImage: user.profileImage?.url ?? null,
   role: user.role,
   createdAt: formatDate(user.createdAt),
   updatedAt: formatDate(user.updatedAt)
@@ -353,7 +357,7 @@ export class AdminManagementService {
     const user = await UserModel.findOne({
       _id: userId,
       role: { $in: ['admin', 'super_admin'] }
-    }).select('fullName email phoneNumber role createdAt updatedAt');
+    }).select('fullName email phoneNumber profileImage role createdAt updatedAt');
 
     if (!user) {
       throw new AppError(404, 'Admin user not found');
@@ -372,7 +376,7 @@ export class AdminManagementService {
     const user = await UserModel.findOne({
       _id: userId,
       role: 'admin'
-    }).select('fullName email phoneNumber role createdAt updatedAt');
+    }).select('fullName email phoneNumber profileImage role createdAt updatedAt');
 
     if (!user) {
       throw new AppError(404, 'Admin user not found');

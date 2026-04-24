@@ -164,6 +164,10 @@ router.use(protect, authorize('admin', 'super_admin'));
  *           type: string
  *           nullable: true
  *           example: +8801712345678
+ *         profileImage:
+ *           type: string
+ *           nullable: true
+ *           example: https://cdn.example.com/profiles/admin-example.jpg
  *         role:
  *           type: string
  *           enum: [admin, super_admin]
@@ -189,6 +193,7 @@ router.use(protect, authorize('admin', 'super_admin'));
  *           fullName: Admin Example
  *           email: admin@example.com
  *           phoneNumber: +8801712345678
+ *           profileImage: https://cdn.example.com/profiles/admin-example.jpg
  *           role: admin
  *           createdAt: '2026-04-20T08:00:00.000Z'
  *           updatedAt: '2026-04-23T06:30:00.000Z'
@@ -220,6 +225,7 @@ router.use(protect, authorize('admin', 'super_admin'));
  *           fullName: Admin Example Updated
  *           email: admin@example.com
  *           phoneNumber: +8801812345678
+ *           profileImage: https://cdn.example.com/profiles/admin-example.jpg
  *           role: admin
  *           createdAt: '2026-04-20T08:00:00.000Z'
  *           updatedAt: '2026-04-23T06:30:00.000Z'
