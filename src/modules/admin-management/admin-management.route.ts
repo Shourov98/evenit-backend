@@ -193,14 +193,14 @@ router.use(protect, authorize('admin', 'super_admin'));
  *           _id: 6807f0c6c1b2f4a9d9123456
  *           fullName: Admin Example
  *           email: admin@example.com
- *           phoneNumber: +8801712345678
- *           profileImage: https://cdn.example.com/profiles/admin-example.jpg
+ *           phoneNumber: null
+ *           profileImage: null
  *           role: admin
  *           createdAt: '2026-04-20T08:00:00.000Z'
  *           updatedAt: '2026-04-23T06:30:00.000Z'
  *     AdminCreateRequest:
  *       type: object
- *       required: [fullName, email, password, profileImage]
+ *       required: [fullName, email, password]
  *       properties:
  *         fullName:
  *           type: string
@@ -235,7 +235,7 @@ router.use(protect, authorize('admin', 'super_admin'));
  *           fullName: Admin Example
  *           email: admin@example.com
  *           phoneNumber: null
- *           profileImage: https://cdn.example.com/profiles/admin-example.jpg
+ *           profileImage: null
  *           role: admin
  *           createdAt: '2026-04-26T12:00:00.000Z'
  *           updatedAt: '2026-04-26T12:00:00.000Z'
@@ -939,7 +939,7 @@ router.get('/analytics/yearly', validate(analyticsYearQuerySchema), AdminManagem
  *         multipart/form-data:
  *           schema:
  *             type: object
- *             required: [fullName, email, password, profileImage]
+ *             required: [fullName, email, password]
  *             properties:
  *               fullName:
  *                 type: string

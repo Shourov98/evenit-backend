@@ -99,9 +99,6 @@ export class AdminManagementController {
 
   static createAdmin = catchAsync(async (req: Request, res: Response) => {
     const profileImageFile = AdminManagementController.getAdminProfileImageFile(req);
-    if (!profileImageFile) {
-      throw new AppError(400, 'Profile image must be sent using the profileImage field');
-    }
 
     const admin = await AdminManagementService.createAdmin({
       ...req.body,

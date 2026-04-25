@@ -8444,6 +8444,7 @@
               "name": "Create Admin User",
               "request": {
                 "method": "POST",
+                "description": "Create an admin user. The profile image file is optional.",
                 "header": [
                   {
                     "key": "Content-Type",
@@ -8476,7 +8477,7 @@
                       "key": "profileImage",
                       "type": "file",
                       "src": [],
-                      "description": "Attach one profile image file for the new admin user."
+                      "description": "Optional profile image file for the new admin user."
                     }
                   ]
                 },

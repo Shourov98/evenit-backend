@@ -359,21 +359,19 @@ export class AdminManagementService {
     });
 
     try {
-      if (!payload.profileImageFile) {
-        throw new AppError(400, 'Profile image must be sent using the profileImage field');
+      if (payload.profileImageFile) {
+        const [uploadedProfileImage] = await UploadService.uploadImages(
+          [payload.profileImageFile],
+          'admins/profile-images'
+        );
+
+        admin.profileImage = {
+          url: uploadedProfileImage.url,
+          publicId: uploadedProfileImage.publicId
+        };
+
+        await admin.save();
       }
-
-      const [uploadedProfileImage] = await UploadService.uploadImages(
-        [payload.profileImageFile],
-        'admins/profile-images'
-      );
-
-      admin.profileImage = {
-        url: uploadedProfileImage.url,
-        publicId: uploadedProfileImage.publicId
-      };
-
-      await admin.save();
     } catch (error) {
       await admin.deleteOne();
       throw error;

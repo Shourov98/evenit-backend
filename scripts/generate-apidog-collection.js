@@ -1483,6 +1483,7 @@ const superAdminAdminUsers = folder('Admin Users', [
   request('Create Admin User', 'POST', '/api/v1/admin/admin-users', {
     tokenVar: 'superAdminToken',
     contentType: 'multipart/form-data',
+    description: 'Create an admin user. The profile image file is optional.',
     body: formDataBody([
       { key: 'fullName', value: 'Admin Example' },
       { key: 'email', value: 'new.admin@example.com' },
@@ -1491,7 +1492,7 @@ const superAdminAdminUsers = folder('Admin Users', [
         key: 'profileImage',
         type: 'file',
         src: [],
-        description: 'Attach one profile image file for the new admin user.'
+        description: 'Optional profile image file for the new admin user.'
       }
     ]),
     event: idCaptureEvent('adminUserId')
