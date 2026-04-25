@@ -1,6 +1,7 @@
 import { buildPaginationMeta, PaginationOptions, paginateModel } from '../../common/utils/pagination';
 import { AppError } from '../../common/errors/AppError';
 import { buildAdminOwnerInfo } from '../../common/utils/public-provider';
+import { UploadService } from '../uploads/upload.service';
 import {
   createDefaultUserSubscription,
   IUserSubscription,
@@ -335,13 +336,18 @@ export class AdminManagementService {
     return user;
   }
 
-  static async createAdmin(payload: { fullName: string; email: string; password: string }) {
+  static async createAdmin(payload: {
+    fullName: string;
+    email: string;
+    password: string;
+    profileImageFile?: Express.Multer.File;
+  }) {
     const existing = await UserModel.findOne({ email: payload.email.toLowerCase() });
     if (existing) {
       throw new AppError(409, 'Email already in use');
     }
 
-    return UserModel.create({
+    const admin = await UserModel.create({
       fullName: payload.fullName,
       email: payload.email.toLowerCase(),
       password: payload.password,
@@ -351,6 +357,39 @@ export class AdminManagementService {
       isBlocked: false,
       subscription: createDefaultUserSubscription('admin')
     });
+
+    try {
+      if (!payload.profileImageFile) {
+        throw new AppError(400, 'Profile image must be sent using the profileImage field');
+      }
+
+      const [uploadedProfileImage] = await UploadService.uploadImages(
+        [payload.profileImageFile],
+        'admins/profile-images'
+      );
+
+      admin.profileImage = {
+        url: uploadedProfileImage.url,
+        publicId: uploadedProfileImage.publicId
+      };
+
+      await admin.save();
+    } catch (error) {
+      await admin.deleteOne();
+      throw error;
+    }
+
+    const createdAdmin = await UserModel.findById(admin._id)
+      .select('fullName email phoneNumber profileImage role createdAt updatedAt')
+      .lean();
+
+    if (!createdAdmin) {
+      throw new AppError(500, 'Admin created but could not be loaded');
+    }
+
+    return serializeAdminProfile(
+      createdAdmin as unknown as Parameters<typeof serializeAdminProfile>[0]
+    );
   }
 
   static async getMyProfile(userId: string) {

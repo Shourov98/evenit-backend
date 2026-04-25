@@ -18,6 +18,18 @@ const getApprover = (req: Request): { userId: string; name: string; email: strin
 };
 
 export class AdminManagementController {
+  private static getAdminProfileImageFile(req: Request) {
+    if (req.file) {
+      return req.file;
+    }
+
+    if (!req.files || Array.isArray(req.files)) {
+      return undefined;
+    }
+
+    return req.files.profileImage?.[0] ?? req.files.image?.[0];
+  }
+
   static getMyProfile = catchAsync(async (req: Request, res: Response) => {
     if (!req.user?.userId) {
       throw new AppError(401, 'Authentication required');
@@ -86,7 +98,15 @@ export class AdminManagementController {
   });
 
   static createAdmin = catchAsync(async (req: Request, res: Response) => {
-    const admin = await AdminManagementService.createAdmin(req.body);
+    const profileImageFile = AdminManagementController.getAdminProfileImageFile(req);
+    if (!profileImageFile) {
+      throw new AppError(400, 'Profile image must be sent using the profileImage field');
+    }
+
+    const admin = await AdminManagementService.createAdmin({
+      ...req.body,
+      profileImageFile
+    });
 
     return res.status(201).json({
       success: true,

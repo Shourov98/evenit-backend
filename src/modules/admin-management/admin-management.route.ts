@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { authorize } from '../../common/middlewares/authorize.middleware';
 import { protect } from '../../common/middlewares/auth.middleware';
+import { imageUpload } from '../../common/middlewares/upload.middleware';
 import { validate } from '../../common/middlewares/validate.middleware';
 import { AdminManagementController } from './admin-management.controller';
 import {
@@ -197,6 +198,47 @@ router.use(protect, authorize('admin', 'super_admin'));
  *           role: admin
  *           createdAt: '2026-04-20T08:00:00.000Z'
  *           updatedAt: '2026-04-23T06:30:00.000Z'
+ *     AdminCreateRequest:
+ *       type: object
+ *       required: [fullName, email, password, profileImage]
+ *       properties:
+ *         fullName:
+ *           type: string
+ *           example: Admin Example
+ *         email:
+ *           type: string
+ *           format: email
+ *           example: admin@example.com
+ *         password:
+ *           type: string
+ *           format: password
+ *           example: StrongAdminPass123
+ *         profileImage:
+ *           type: string
+ *           format: binary
+ *     AdminCreateResponse:
+ *       type: object
+ *       properties:
+ *         success:
+ *           type: boolean
+ *           example: true
+ *         message:
+ *           type: string
+ *           example: Admin created successfully
+ *         data:
+ *           $ref: '#/components/schemas/AdminSelfProfile'
+ *       example:
+ *         success: true
+ *         message: Admin created successfully
+ *         data:
+ *           _id: 6807f0c6c1b2f4a9d9123456
+ *           fullName: Admin Example
+ *           email: admin@example.com
+ *           phoneNumber: null
+ *           profileImage: https://cdn.example.com/profiles/admin-example.jpg
+ *           role: admin
+ *           createdAt: '2026-04-26T12:00:00.000Z'
+ *           updatedAt: '2026-04-26T12:00:00.000Z'
  *     AdminUpdateProfileRequest:
  *       type: object
  *       properties:
@@ -894,10 +936,10 @@ router.get('/analytics/yearly', validate(analyticsYearQuerySchema), AdminManagem
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
- *             required: [fullName, email, password]
+ *             required: [fullName, email, password, profileImage]
  *             properties:
  *               fullName:
  *                 type: string
@@ -907,13 +949,32 @@ router.get('/analytics/yearly', validate(analyticsYearQuerySchema), AdminManagem
  *               password:
  *                 type: string
  *                 format: password
+ *               profileImage:
+ *                 type: string
+ *                 format: binary
+ *               image:
+ *                 type: string
+ *                 format: binary
  *     responses:
  *       201:
  *         description: Admin created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AdminCreateResponse'
  *       403:
  *         description: Forbidden
  */
-router.post('/admin-users', authorize('super_admin'), validate(createAdminSchema), AdminManagementController.createAdmin);
+router.post(
+  '/admin-users',
+  authorize('super_admin'),
+  imageUpload.fields([
+    { name: 'profileImage', maxCount: 1 },
+    { name: 'image', maxCount: 1 }
+  ]),
+  validate(createAdminSchema),
+  AdminManagementController.createAdmin
+);
 
 /**
  * @openapi

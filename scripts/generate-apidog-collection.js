@@ -1482,12 +1482,18 @@ const superAdminAuth = folder('Auth', [
 const superAdminAdminUsers = folder('Admin Users', [
   request('Create Admin User', 'POST', '/api/v1/admin/admin-users', {
     tokenVar: 'superAdminToken',
-    contentType: 'application/json',
-    body: jsonBody({
-      fullName: 'Admin Example',
-      email: 'new.admin@example.com',
-      password: 'StrongAdminPass123'
-    }),
+    contentType: 'multipart/form-data',
+    body: formDataBody([
+      { key: 'fullName', value: 'Admin Example' },
+      { key: 'email', value: 'new.admin@example.com' },
+      { key: 'password', value: 'StrongAdminPass123' },
+      {
+        key: 'profileImage',
+        type: 'file',
+        src: [],
+        description: 'Attach one profile image file for the new admin user.'
+      }
+    ]),
     event: idCaptureEvent('adminUserId')
   }),
   request('Block Admin User', 'PATCH', '/api/v1/admin/admin-users/{adminUserId}/block', {

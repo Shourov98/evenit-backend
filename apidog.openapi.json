@@ -185,6 +185,859 @@
           }
         }
       },
+      "AdminSelfProfile": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "6807f0c6c1b2f4a9d9123456"
+          },
+          "fullName": {
+            "type": "string",
+            "example": "Admin Example"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "admin@example.com"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true,
+            "example": 8801712345678
+          },
+          "profileImage": {
+            "type": "string",
+            "nullable": true,
+            "example": "https://cdn.example.com/profiles/admin-example.jpg"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "super_admin"
+            ],
+            "example": "admin"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AdminSelfProfileResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/AdminSelfProfile"
+          }
+        },
+        "example": {
+          "success": true,
+          "data": {
+            "_id": "6807f0c6c1b2f4a9d9123456",
+            "fullName": "Admin Example",
+            "email": "admin@example.com",
+            "phoneNumber": 8801712345678,
+            "profileImage": "https://cdn.example.com/profiles/admin-example.jpg",
+            "role": "admin",
+            "createdAt": "2026-04-20T08:00:00.000Z",
+            "updatedAt": "2026-04-23T06:30:00.000Z"
+          }
+        }
+      },
+      "AdminCreateRequest": {
+        "type": "object",
+        "required": [
+          "fullName",
+          "email",
+          "password",
+          "profileImage"
+        ],
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "example": "Admin Example"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "admin@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "StrongAdminPass123"
+          },
+          "profileImage": {
+            "type": "string",
+            "format": "binary"
+          }
+        }
+      },
+      "AdminCreateResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Admin created successfully"
+          },
+          "data": {
+            "$ref": "#/components/schemas/AdminSelfProfile"
+          }
+        },
+        "example": {
+          "success": true,
+          "message": "Admin created successfully",
+          "data": {
+            "_id": "6807f0c6c1b2f4a9d9123456",
+            "fullName": "Admin Example",
+            "email": "admin@example.com",
+            "phoneNumber": null,
+            "profileImage": "https://cdn.example.com/profiles/admin-example.jpg",
+            "role": "admin",
+            "createdAt": "2026-04-26T12:00:00.000Z",
+            "updatedAt": "2026-04-26T12:00:00.000Z"
+          }
+        }
+      },
+      "AdminUpdateProfileRequest": {
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "example": "Admin Example Updated"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "example": 8801812345678
+          }
+        }
+      },
+      "AdminUpdateProfileResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Profile updated successfully"
+          },
+          "data": {
+            "$ref": "#/components/schemas/AdminSelfProfile"
+          }
+        },
+        "example": {
+          "success": true,
+          "message": "Profile updated successfully",
+          "data": {
+            "_id": "6807f0c6c1b2f4a9d9123456",
+            "fullName": "Admin Example Updated",
+            "email": "admin@example.com",
+            "phoneNumber": 8801812345678,
+            "profileImage": "https://cdn.example.com/profiles/admin-example.jpg",
+            "role": "admin",
+            "createdAt": "2026-04-20T08:00:00.000Z",
+            "updatedAt": "2026-04-23T06:30:00.000Z"
+          }
+        }
+      },
+      "AdminChangePasswordRequest": {
+        "type": "object",
+        "required": [
+          "currentPassword",
+          "newPassword"
+        ],
+        "properties": {
+          "currentPassword": {
+            "type": "string",
+            "format": "password",
+            "example": "StrongAdminPass123"
+          },
+          "newPassword": {
+            "type": "string",
+            "format": "password",
+            "example": "StrongerAdminPass456"
+          }
+        }
+      },
+      "AdminChangePasswordResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Password changed successfully"
+          }
+        }
+      },
+      "AdminRecentRegisteredUser": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "6807f0c6c1b2f4a9d9123456"
+          },
+          "fullName": {
+            "type": "string",
+            "example": "Saif Ul"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "saif@example.com"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true,
+            "example": 8801712345678
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "customer",
+              "event_planner",
+              "service_provider",
+              "venue_provider"
+            ],
+            "example": "service_provider"
+          },
+          "serviceCategories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "Catering",
+              "Decoration"
+            ]
+          },
+          "isEmailVerified": {
+            "type": "boolean",
+            "example": true
+          },
+          "isBlocked": {
+            "type": "boolean",
+            "example": false
+          },
+          "profileImage": {
+            "type": "string",
+            "nullable": true,
+            "example": "https://cdn.example.com/profiles/saif.jpg"
+          },
+          "coverImage": {
+            "type": "string",
+            "nullable": true,
+            "example": "https://cdn.example.com/covers/saif-cover.jpg"
+          },
+          "subscription": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "plan": {
+                "type": "string",
+                "example": "service_provider_plan"
+              },
+              "status": {
+                "type": "string",
+                "example": "subscribed"
+              },
+              "activatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              },
+              "stripeCustomerId": {
+                "type": "string",
+                "nullable": true
+              },
+              "stripeSubscriptionId": {
+                "type": "string",
+                "nullable": true
+              },
+              "payment": {
+                "type": "object",
+                "properties": {
+                  "amount": {
+                    "type": "number",
+                    "example": 500
+                  },
+                  "currency": {
+                    "type": "string",
+                    "example": "GBP"
+                  },
+                  "billingCycle": {
+                    "type": "string",
+                    "example": "monthly"
+                  },
+                  "status": {
+                    "type": "string",
+                    "example": "paid"
+                  },
+                  "paidAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          },
+          "onboarding": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": true
+          },
+          "availabilityCalendar": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "hours": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "registeredAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AdminRecentRegisteredUsersResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminRecentRegisteredUser"
+            }
+          }
+        },
+        "example": {
+          "success": true,
+          "data": [
+            {
+              "_id": "6807f0c6c1b2f4a9d9123456",
+              "fullName": "Saif Ul",
+              "email": "saif@example.com",
+              "phoneNumber": 8801712345678,
+              "role": "service_provider",
+              "serviceCategories": [
+                "Catering",
+                "Decoration"
+              ],
+              "isEmailVerified": true,
+              "isBlocked": false,
+              "profileImage": "https://cdn.example.com/profiles/saif.jpg",
+              "coverImage": "https://cdn.example.com/covers/saif-cover.jpg",
+              "subscription": {
+                "plan": "service_provider_plan",
+                "status": "subscribed",
+                "activatedAt": "2026-04-20T08:10:15.000Z",
+                "stripeCustomerId": "cus_123456",
+                "stripeSubscriptionId": "sub_123456",
+                "payment": {
+                  "amount": 500,
+                  "currency": "GBP",
+                  "billingCycle": "monthly",
+                  "status": "paid",
+                  "paidAt": "2026-04-20T08:10:15.000Z"
+                }
+              },
+              "onboarding": {
+                "submittedAt": "2026-04-20T08:15:10.000Z",
+                "serviceProvider": {
+                  "profileInfo": {
+                    "serviceName": "Saif Catering",
+                    "serviceCategory": "Catering"
+                  }
+                }
+              },
+              "availabilityCalendar": [],
+              "createdAt": "2026-04-20T08:00:00.000Z",
+              "updatedAt": "2026-04-22T10:30:00.000Z",
+              "registeredAt": "2026-04-20T08:00:00.000Z"
+            },
+            {
+              "_id": "6807f0c6c1b2f4a9d9123457",
+              "fullName": "Nadia Rahman",
+              "email": "nadia@example.com",
+              "phoneNumber": 8801812345678,
+              "role": "venue_provider",
+              "serviceCategories": [],
+              "isEmailVerified": false,
+              "isBlocked": false,
+              "profileImage": null,
+              "coverImage": null,
+              "subscription": {
+                "plan": "venue_provider_plan",
+                "status": "not_subscribed",
+                "activatedAt": null,
+                "stripeCustomerId": null,
+                "stripeSubscriptionId": null,
+                "payment": {
+                  "amount": 50000,
+                  "currency": "GBP",
+                  "billingCycle": "yearly",
+                  "status": "unpaid",
+                  "paidAt": null
+                }
+              },
+              "onboarding": {
+                "submittedAt": null,
+                "venueProvider": {
+                  "profileInfo": {
+                    "businessName": "Skyline Rooftop"
+                  }
+                }
+              },
+              "availabilityCalendar": [],
+              "createdAt": "2026-04-19T14:20:00.000Z",
+              "updatedAt": "2026-04-19T14:20:00.000Z",
+              "registeredAt": "2026-04-19T14:20:00.000Z"
+            }
+          ]
+        }
+      },
+      "AdminSubscriptionListItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "6807f0c6c1b2f4a9d9123456"
+          },
+          "userId": {
+            "type": "string",
+            "example": "6807f0c6c1b2f4a9d9123456"
+          },
+          "fullName": {
+            "type": "string",
+            "example": "Saif Ul"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "saif@example.com"
+          },
+          "role": {
+            "type": "string",
+            "example": "service_provider"
+          },
+          "isBlocked": {
+            "type": "boolean",
+            "example": false
+          },
+          "transactionId": {
+            "type": "string",
+            "nullable": true,
+            "example": "sub_123456"
+          },
+          "customerId": {
+            "type": "string",
+            "nullable": true,
+            "example": "cus_123456"
+          },
+          "plan": {
+            "type": "string",
+            "example": "service_provider_plan"
+          },
+          "planValidity": {
+            "type": "string",
+            "example": "monthly"
+          },
+          "amountPaid": {
+            "type": "number",
+            "example": 500
+          },
+          "currency": {
+            "type": "string",
+            "example": "GBP"
+          },
+          "subscriptionStatus": {
+            "type": "string",
+            "example": "subscribed"
+          },
+          "paymentStatus": {
+            "type": "string",
+            "example": "paid"
+          },
+          "accessStatus": {
+            "type": "string",
+            "example": "paid"
+          },
+          "activatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "paidAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "expiryDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AdminSubscriptionListResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "page": {
+                "type": "integer",
+                "example": 1
+              },
+              "limit": {
+                "type": "integer",
+                "example": 10
+              },
+              "total": {
+                "type": "integer",
+                "example": 2
+              },
+              "totalPages": {
+                "type": "integer",
+                "example": 1
+              },
+              "hasNextPage": {
+                "type": "boolean",
+                "example": false
+              },
+              "hasPrevPage": {
+                "type": "boolean",
+                "example": false
+              }
+            }
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminSubscriptionListItem"
+            }
+          }
+        },
+        "example": {
+          "success": true,
+          "meta": {
+            "page": 1,
+            "limit": 10,
+            "total": 2,
+            "totalPages": 1,
+            "hasNextPage": false,
+            "hasPrevPage": false
+          },
+          "data": [
+            {
+              "id": "6807f0c6c1b2f4a9d9123456",
+              "userId": "6807f0c6c1b2f4a9d9123456",
+              "fullName": "Saif Ul",
+              "email": "saif@example.com",
+              "role": "service_provider",
+              "isBlocked": false,
+              "transactionId": "sub_123456",
+              "customerId": "cus_123456",
+              "plan": "service_provider_plan",
+              "planValidity": "monthly",
+              "amountPaid": 500,
+              "currency": "GBP",
+              "subscriptionStatus": "subscribed",
+              "paymentStatus": "paid",
+              "accessStatus": "paid",
+              "activatedAt": "2026-04-20T08:10:15.000Z",
+              "paidAt": "2026-04-20T08:10:15.000Z",
+              "expiryDate": "2026-05-20T08:10:15.000Z",
+              "createdAt": "2026-04-20T08:00:00.000Z",
+              "updatedAt": "2026-04-22T10:30:00.000Z"
+            },
+            {
+              "id": "6807f0c6c1b2f4a9d9123457",
+              "userId": "6807f0c6c1b2f4a9d9123457",
+              "fullName": "Nadia Rahman",
+              "email": "nadia@example.com",
+              "role": "venue_provider",
+              "isBlocked": false,
+              "transactionId": null,
+              "customerId": null,
+              "plan": "venue_provider_plan",
+              "planValidity": "yearly",
+              "amountPaid": 50000,
+              "currency": "GBP",
+              "subscriptionStatus": "not_subscribed",
+              "paymentStatus": "unpaid",
+              "accessStatus": "expired",
+              "activatedAt": null,
+              "paidAt": null,
+              "expiryDate": null,
+              "createdAt": "2026-04-19T14:20:00.000Z",
+              "updatedAt": "2026-04-19T14:20:00.000Z"
+            }
+          ]
+        }
+      },
+      "AdminSubscriptionDetailsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "6807f0c6c1b2f4a9d9123456"
+              },
+              "user": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "example": "6807f0c6c1b2f4a9d9123456"
+                  },
+                  "fullName": {
+                    "type": "string",
+                    "example": "Saif Ul"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "saif@example.com"
+                  },
+                  "role": {
+                    "type": "string",
+                    "example": "service_provider"
+                  },
+                  "isBlocked": {
+                    "type": "boolean",
+                    "example": false
+                  }
+                }
+              },
+              "subscription": {
+                "type": "object",
+                "properties": {
+                  "transactionId": {
+                    "type": "string",
+                    "nullable": true,
+                    "example": "sub_123456"
+                  },
+                  "customerId": {
+                    "type": "string",
+                    "nullable": true,
+                    "example": "cus_123456"
+                  },
+                  "plan": {
+                    "type": "string",
+                    "example": "service_provider_plan"
+                  },
+                  "planValidity": {
+                    "type": "string",
+                    "example": "monthly"
+                  },
+                  "amountPaid": {
+                    "type": "number",
+                    "example": 500
+                  },
+                  "currency": {
+                    "type": "string",
+                    "example": "GBP"
+                  },
+                  "subscriptionStatus": {
+                    "type": "string",
+                    "example": "subscribed"
+                  },
+                  "paymentStatus": {
+                    "type": "string",
+                    "example": "paid"
+                  },
+                  "accessStatus": {
+                    "type": "string",
+                    "example": "paid"
+                  },
+                  "activatedAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "nullable": true
+                  },
+                  "paidAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "nullable": true
+                  },
+                  "expiryDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "nullable": true
+                  }
+                }
+              },
+              "transactionDetails": {
+                "type": "object",
+                "properties": {
+                  "transactionId": {
+                    "type": "string",
+                    "nullable": true,
+                    "example": "sub_123456"
+                  },
+                  "plan": {
+                    "type": "string",
+                    "example": "service_provider_plan"
+                  },
+                  "userRole": {
+                    "type": "string",
+                    "example": "service_provider"
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "nullable": true
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "Saif Ul"
+                  },
+                  "accountNumberMasked": {
+                    "type": "string",
+                    "nullable": true,
+                    "example": null
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "saif@example.com"
+                  },
+                  "transactionAmount": {
+                    "type": "number",
+                    "example": 500
+                  },
+                  "currency": {
+                    "type": "string",
+                    "example": "GBP"
+                  },
+                  "status": {
+                    "type": "string",
+                    "example": "paid"
+                  },
+                  "expiryDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "nullable": true
+                  },
+                  "planValidity": {
+                    "type": "string",
+                    "example": "monthly"
+                  }
+                }
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "example": {
+          "success": true,
+          "data": {
+            "id": "6807f0c6c1b2f4a9d9123456",
+            "user": {
+              "id": "6807f0c6c1b2f4a9d9123456",
+              "fullName": "Saif Ul",
+              "email": "saif@example.com",
+              "role": "service_provider",
+              "isBlocked": false
+            },
+            "subscription": {
+              "transactionId": "sub_123456",
+              "customerId": "cus_123456",
+              "plan": "service_provider_plan",
+              "planValidity": "monthly",
+              "amountPaid": 500,
+              "currency": "GBP",
+              "subscriptionStatus": "subscribed",
+              "paymentStatus": "paid",
+              "accessStatus": "paid",
+              "activatedAt": "2026-04-20T08:10:15.000Z",
+              "paidAt": "2026-04-20T08:10:15.000Z",
+              "expiryDate": "2026-05-20T08:10:15.000Z"
+            },
+            "transactionDetails": {
+              "transactionId": "sub_123456",
+              "plan": "service_provider_plan",
+              "userRole": "service_provider",
+              "date": "2026-04-20T08:10:15.000Z",
+              "name": "Saif Ul",
+              "accountNumberMasked": null,
+              "email": "saif@example.com",
+              "transactionAmount": 500,
+              "currency": "GBP",
+              "status": "paid",
+              "expiryDate": "2026-05-20T08:10:15.000Z",
+              "planValidity": "monthly"
+            },
+            "createdAt": "2026-04-20T08:00:00.000Z",
+            "updatedAt": "2026-04-22T10:30:00.000Z"
+          }
+        }
+      },
       "AuthUser": {
         "type": "object",
         "properties": {
@@ -774,6 +1627,14 @@
             "type": "string",
             "example": "Banani, Dhaka"
           },
+          "hourlyRate": {
+            "type": "number",
+            "example": 7500
+          },
+          "currency": {
+            "type": "string",
+            "example": "BDT"
+          },
           "verification": {
             "deprecated": true,
             "description": "Verification fields are not editable through the profile update API."
@@ -814,7 +1675,7 @@
       },
       "EventPlannerProfileUpdateRequest": {
         "type": "object",
-        "description": "Partial update payload for authenticated event planners. `fullName`, phone, and location fields are editable through this endpoint. `email`, pricing, and verification fields are not editable here.\n",
+        "description": "Partial update payload for authenticated event planners. `fullName`, phone, location, and hourly pricing fields are editable through this endpoint. `email` and verification fields are not editable here.\n",
         "properties": {
           "fullName": {
             "type": "string",
@@ -1124,6 +1985,8 @@
               },
               "pricing": {
                 "basePrice": 1701,
+                "pricePerPerson": 1701,
+                "pricingModel": "per_person",
                 "currency": "BDT",
                 "discount": {
                   "type": "fixed",
@@ -1435,7 +2298,8 @@
               },
               "taxAmount": {
                 "type": "number",
-                "example": 0
+                "description": "VAT amount at 20% of subtotal",
+                "example": 3000
               },
               "platformFeeAmount": {
                 "type": "number",
@@ -1443,7 +2307,7 @@
               },
               "totalAmount": {
                 "type": "number",
-                "example": 15000
+                "example": 18000
               },
               "currency": {
                 "type": "string",
@@ -1684,6 +2548,63 @@
           "specialInstructions": {
             "type": "string",
             "example": "Need wedding planning consultation."
+          }
+        }
+      },
+      "EventPlannerDashboardAnalytics": {
+        "type": "object",
+        "properties": {
+          "totalEvents": {
+            "type": "integer",
+            "example": 24
+          },
+          "upcomingBookings": {
+            "type": "integer",
+            "example": 47
+          },
+          "monthlyRevenue": {
+            "type": "number",
+            "example": 18420
+          },
+          "currency": {
+            "type": "string",
+            "example": "GBP"
+          },
+          "averageRating": {
+            "type": "number",
+            "example": 4.8
+          },
+          "totalReviews": {
+            "type": "integer",
+            "example": 18
+          },
+          "month": {
+            "type": "string",
+            "example": "2026-04"
+          }
+        }
+      },
+      "EventPlannerDashboardAnalyticsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/EventPlannerDashboardAnalytics"
+          }
+        },
+        "example": {
+          "success": true,
+          "data": {
+            "totalEvents": 24,
+            "upcomingBookings": 47,
+            "monthlyRevenue": 18420,
+            "currency": "GBP",
+            "averageRating": 4.8,
+            "totalReviews": 18,
+            "month": "2026-04"
           }
         }
       },
@@ -2390,7 +3311,7 @@
           },
           "pricing": {
             "amount": 50000,
-            "pricingType": "package",
+            "pricingType": "hourly",
             "currency": "BDT",
             "discount": {
               "type": "percentage",
@@ -2484,12 +3405,9 @@
               "pricingType": {
                 "type": "string",
                 "enum": [
-                  "fixed",
-                  "hourly",
-                  "daily",
-                  "package"
+                  "hourly"
                 ],
-                "example": "fixed"
+                "example": "hourly"
               },
               "currency": {
                 "type": "string",
@@ -2704,6 +3622,63 @@
           }
         }
       },
+      "ServiceProviderDashboardAnalytics": {
+        "type": "object",
+        "properties": {
+          "totalServices": {
+            "type": "integer",
+            "example": 24
+          },
+          "upcomingBookings": {
+            "type": "integer",
+            "example": 47
+          },
+          "monthlyRevenue": {
+            "type": "number",
+            "example": 18420
+          },
+          "currency": {
+            "type": "string",
+            "example": "GBP"
+          },
+          "averageRating": {
+            "type": "number",
+            "example": 4.8
+          },
+          "totalReviews": {
+            "type": "integer",
+            "example": 18
+          },
+          "month": {
+            "type": "string",
+            "example": "2026-04"
+          }
+        }
+      },
+      "ServiceProviderDashboardAnalyticsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/ServiceProviderDashboardAnalytics"
+          }
+        },
+        "example": {
+          "success": true,
+          "data": {
+            "totalServices": 24,
+            "upcomingBookings": 47,
+            "monthlyRevenue": 18420,
+            "currency": "GBP",
+            "averageRating": 4.8,
+            "totalReviews": 18,
+            "month": "2026-04"
+          }
+        }
+      },
       "SiteContent": {
         "type": "object",
         "properties": {
@@ -2761,6 +3736,109 @@
           "content": {
             "type": "string",
             "example": "<h1>About Us</h1><p>EvenIt helps users book event services faster.</p>"
+          }
+        }
+      },
+      "SiteContentListResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SiteContent"
+            }
+          }
+        },
+        "example": {
+          "success": true,
+          "data": [
+            {
+              "_id": "67f0ef57ab12cd34ef56ab78",
+              "section": "about-us",
+              "content": "<h1>About Us</h1><p>EvenIt helps users book event services faster.</p>",
+              "updatedBy": {
+                "userId": "6807f0c6c1b2f4a9d9123456",
+                "fullName": "Admin User",
+                "email": "admin@example.com"
+              },
+              "createdAt": "2026-04-20T08:00:00.000Z",
+              "updatedAt": "2026-04-23T06:30:00.000Z"
+            },
+            {
+              "_id": "67f0ef57ab12cd34ef56ab79",
+              "section": "mission",
+              "content": "<p>Our mission is to simplify event planning.</p>",
+              "updatedBy": {
+                "userId": "6807f0c6c1b2f4a9d9123456",
+                "fullName": "Admin User",
+                "email": "admin@example.com"
+              },
+              "createdAt": "2026-04-18T09:15:00.000Z",
+              "updatedAt": "2026-04-22T11:10:00.000Z"
+            }
+          ]
+        }
+      },
+      "SiteContentSingleResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/SiteContent"
+          }
+        },
+        "example": {
+          "success": true,
+          "data": {
+            "_id": "67f0ef57ab12cd34ef56ab78",
+            "section": "about-us",
+            "content": "<h1>About Us</h1><p>EvenIt helps users book event services faster.</p>",
+            "updatedBy": {
+              "userId": "6807f0c6c1b2f4a9d9123456",
+              "fullName": "Admin User",
+              "email": "admin@example.com"
+            },
+            "createdAt": "2026-04-20T08:00:00.000Z",
+            "updatedAt": "2026-04-23T06:30:00.000Z"
+          }
+        }
+      },
+      "SiteContentUpsertResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Site content saved successfully"
+          },
+          "data": {
+            "$ref": "#/components/schemas/SiteContent"
+          }
+        },
+        "example": {
+          "success": true,
+          "message": "Site content saved successfully",
+          "data": {
+            "_id": "67f0ef57ab12cd34ef56ab78",
+            "section": "about-us",
+            "content": "<h1>About Us</h1><p>EvenIt helps users book event services faster.</p>",
+            "updatedBy": {
+              "userId": "6807f0c6c1b2f4a9d9123456",
+              "fullName": "Admin User",
+              "email": "admin@example.com"
+            },
+            "createdAt": "2026-04-20T08:00:00.000Z",
+            "updatedAt": "2026-04-23T06:30:00.000Z"
           }
         }
       },
@@ -3119,7 +4197,7 @@
             "area": "Farmgate"
           },
           "pricing": {
-            "basePrice": 5000,
+            "pricePerPerson": 5000,
             "currency": "BDT",
             "discount": {
               "type": "percentage",
@@ -3196,10 +4274,15 @@
           "pricing": {
             "type": "object",
             "required": [
-              "basePrice"
+              "pricePerPerson"
             ],
             "properties": {
               "basePrice": {
+                "type": "number",
+                "example": 5000,
+                "deprecated": true
+              },
+              "pricePerPerson": {
                 "type": "number",
                 "example": 5000
               },
@@ -3423,10 +4506,195 @@
             "$ref": "#/components/schemas/VenueEntity"
           }
         }
+      },
+      "VenueProviderDashboardAnalytics": {
+        "type": "object",
+        "properties": {
+          "totalVenues": {
+            "type": "integer",
+            "example": 24
+          },
+          "upcomingBookings": {
+            "type": "integer",
+            "example": 47
+          },
+          "monthlyRevenue": {
+            "type": "number",
+            "example": 18420
+          },
+          "currency": {
+            "type": "string",
+            "example": "GBP"
+          },
+          "averageRating": {
+            "type": "number",
+            "example": 4.8
+          },
+          "totalReviews": {
+            "type": "integer",
+            "example": 18
+          },
+          "month": {
+            "type": "string",
+            "example": "2026-04"
+          }
+        }
+      },
+      "VenueProviderDashboardAnalyticsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/VenueProviderDashboardAnalytics"
+          }
+        },
+        "example": {
+          "success": true,
+          "data": {
+            "totalVenues": 24,
+            "upcomingBookings": 47,
+            "monthlyRevenue": 18420,
+            "currency": "GBP",
+            "averageRating": 4.8,
+            "totalReviews": 18,
+            "month": "2026-04"
+          }
+        }
       }
     }
   },
   "paths": {
+    "/api/v1/admin/profile": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get authenticated admin profile",
+        "description": "Returns the profile of the authenticated `admin` or `super_admin`.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminSelfProfileResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Update authenticated admin profile",
+        "description": "Allows only `admin` to update `fullName` and `phoneNumber`. `super_admin` is forbidden. Email cannot be changed.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminUpdateProfileRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Profile updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUpdateProfileResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/v1/admin/change-password": {
+      "patch": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Change authenticated admin password",
+        "description": "Allows authenticated `admin` and `super_admin` users to change their own password.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminChangePasswordRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password changed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminChangePasswordResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Current password is incorrect or new password matches current password"
+          }
+        }
+      }
+    },
+    "/api/v1/admin/recent-registered-users": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get the 5 most recently registered non-admin users",
+        "description": "Returns the latest 5 registered users excluding `admin` and `super_admin`, with their available profile, subscription, onboarding, and registration metadata.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Recent registered users returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminRecentRegisteredUsersResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/admin/analytics/overview": {
       "get": {
         "tags": [
@@ -3505,13 +4773,14 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
                 "type": "object",
                 "required": [
                   "fullName",
                   "email",
-                  "password"
+                  "password",
+                  "profileImage"
                 ],
                 "properties": {
                   "fullName": {
@@ -3524,6 +4793,14 @@
                   "password": {
                     "type": "string",
                     "format": "password"
+                  },
+                  "profileImage": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
                   }
                 }
               }
@@ -3532,7 +4809,14 @@
         },
         "responses": {
           "201": {
-            "description": "Admin created successfully"
+            "description": "Admin created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCreateResponse"
+                }
+              }
+            }
           },
           "403": {
             "description": "Forbidden"
@@ -3606,6 +4890,108 @@
           },
           "404": {
             "description": "Admin not found"
+          }
+        }
+      }
+    },
+    "/api/v1/admin/subscriptions": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get paginated subscription management list",
+        "description": "Returns paginated subscription records for users who have an active or historical paid subscription reference.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "example": 10
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortBy",
+            "schema": {
+              "type": "string",
+              "example": "createdAt"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortOrder",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated subscription list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminSubscriptionListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/subscriptions/{subscriptionUserId}": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get one user's subscription transaction details",
+        "description": "Returns subscription, payment, expiry, and transaction-oriented details for a specific subscribed user.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionUserId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subscription details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminSubscriptionDetailsResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Subscription record not found"
           }
         }
       }
@@ -5161,7 +6547,7 @@
                 "properties": {
                   "payload": {
                     "type": "string",
-                    "example": "{\"fullName\":\"Updated Event Planner Name\",\"phoneNumber\":\"+8801712345678\",\"eventPlanner\":{\"profileInfo\":{\"address\":\"Banani, Dhaka\",\"coverageArea\":[\"Dhaka\",\"Chattogram\"]}}}"
+                    "example": "{\"fullName\":\"Updated Event Planner Name\",\"phoneNumber\":\"+8801712345678\",\"eventPlanner\":{\"profileInfo\":{\"address\":\"Banani, Dhaka\",\"coverageArea\":[\"Dhaka\",\"Chattogram\"],\"hourlyRate\":7500,\"currency\":\"BDT\"}}}"
                   },
                   "profileImage": {
                     "type": "string",
@@ -5378,7 +6764,7 @@
                       },
                       "pricing": {
                         "amount": 50000,
-                        "pricingType": "package",
+                        "pricingType": "hourly",
                         "currency": "BDT"
                       },
                       "settings": {
@@ -5666,7 +7052,9 @@
                           "Dhaka",
                           "Chattogram"
                         ],
-                        "address": "Gulshan, Dhaka"
+                        "address": "Gulshan, Dhaka",
+                        "hourlyRate": 7500,
+                        "currency": "BDT"
                       }
                     },
                     "provider": {
@@ -6649,6 +8037,32 @@
         }
       }
     },
+    "/api/v1/event-planners/me/analytics": {
+      "get": {
+        "tags": [
+          "EventPlanner"
+        ],
+        "summary": "Get event planner dashboard analytics",
+        "description": "Returns the event planner dashboard card metrics including total events, upcoming bookings, current month revenue, and average rating.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dashboard analytics returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventPlannerDashboardAnalyticsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/event-planners/me/availability": {
       "get": {
         "tags": [
@@ -6687,7 +8101,7 @@
         "tags": [
           "EventPlanner"
         ],
-        "summary": "Block event planner availability hours",
+        "summary": "Block event planner availability for a full day",
         "security": [
           {
             "bearerAuth": []
@@ -6700,25 +8114,13 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "date",
-                  "hours"
+                  "date"
                 ],
                 "properties": {
                   "date": {
                     "type": "string",
                     "format": "date",
                     "example": "2026-04-18"
-                  },
-                  "hours": {
-                    "type": "array",
-                    "items": {
-                      "type": "integer"
-                    },
-                    "example": [
-                      10,
-                      11,
-                      12
-                    ]
                   }
                 }
               }
@@ -6741,7 +8143,7 @@
         "tags": [
           "EventPlanner"
         ],
-        "summary": "Unblock event planner availability hours",
+        "summary": "Unblock event planner availability for a full day",
         "security": [
           {
             "bearerAuth": []
@@ -6754,24 +8156,13 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "date",
-                  "hours"
+                  "date"
                 ],
                 "properties": {
                   "date": {
                     "type": "string",
                     "format": "date",
                     "example": "2026-04-18"
-                  },
-                  "hours": {
-                    "type": "array",
-                    "items": {
-                      "type": "integer"
-                    },
-                    "example": [
-                      10,
-                      11
-                    ]
                   }
                 }
               }
@@ -8104,7 +9495,7 @@
                   "payload": {
                     "type": "string",
                     "description": "JSON string matching ServiceCreateRequest. Include `media.galleryImages` only for already-hosted image URLs. Files sent in `images` or `image` are uploaded by the backend automatically.",
-                    "example": "{\"information\":{\"serviceName\":\"Premium Catering\",\"category\":\"Catering\",\"description\":\"Corporate and wedding catering service.\",\"serviceArea\":[\"Dhaka\",\"Gazipur\"],\"tags\":[\"wedding\",\"corporate\"]},\"pricing\":{\"amount\":50000,\"pricingType\":\"package\",\"currency\":\"BDT\",\"discount\":{\"type\":\"percentage\",\"value\":10}},\"settings\":{\"amenities\":{\"deliveryIncluded\":true,\"setupIncluded\":true},\"capacity\":300},\"media\":{\"galleryImages\":[],\"videoUrl\":\"https://www.youtube.com/watch?v=abc123\"},\"availabilityCalendar\":[{\"date\":\"2026-03-20\",\"hours\":[10,11]},{\"date\":\"2026-03-21\",\"hours\":[14,15]}]}"
+                    "example": "{\"information\":{\"serviceName\":\"Premium Catering\",\"category\":\"Catering\",\"description\":\"Corporate and wedding catering service.\",\"serviceArea\":[\"Dhaka\",\"Gazipur\"],\"tags\":[\"wedding\",\"corporate\"]},\"pricing\":{\"amount\":50000,\"pricingType\":\"hourly\",\"currency\":\"BDT\",\"discount\":{\"type\":\"percentage\",\"value\":10}},\"settings\":{\"amenities\":{\"deliveryIncluded\":true,\"setupIncluded\":true},\"capacity\":300},\"media\":{\"galleryImages\":[],\"videoUrl\":\"https://www.youtube.com/watch?v=abc123\"},\"availabilityCalendar\":[{\"date\":\"2026-03-20\",\"hours\":[10,11]},{\"date\":\"2026-03-21\",\"hours\":[14,15]}]}"
                   },
                   "images": {
                     "type": "array",
@@ -8125,7 +9516,7 @@
                 "validService": {
                   "summary": "Valid service creation payload",
                   "value": {
-                    "payload": "{\"information\":{\"serviceName\":\"Premium Catering\",\"category\":\"Catering\",\"description\":\"Corporate and wedding catering service.\",\"serviceArea\":[\"Dhaka\",\"Gazipur\"],\"tags\":[\"wedding\",\"corporate\"]},\"pricing\":{\"amount\":50000,\"pricingType\":\"package\",\"currency\":\"BDT\",\"discount\":{\"type\":\"percentage\",\"value\":10}},\"settings\":{\"amenities\":{\"deliveryIncluded\":true,\"setupIncluded\":true},\"capacity\":300},\"media\":{\"galleryImages\":[],\"videoUrl\":\"https://www.youtube.com/watch?v=abc123\"},\"availabilityCalendar\":[{\"date\":\"2026-03-20\",\"hours\":[10,11]},{\"date\":\"2026-03-21\",\"hours\":[14,15]}]}"
+                    "payload": "{\"information\":{\"serviceName\":\"Premium Catering\",\"category\":\"Catering\",\"description\":\"Corporate and wedding catering service.\",\"serviceArea\":[\"Dhaka\",\"Gazipur\"],\"tags\":[\"wedding\",\"corporate\"]},\"pricing\":{\"amount\":50000,\"pricingType\":\"hourly\",\"currency\":\"BDT\",\"discount\":{\"type\":\"percentage\",\"value\":10}},\"settings\":{\"amenities\":{\"deliveryIncluded\":true,\"setupIncluded\":true},\"capacity\":300},\"media\":{\"galleryImages\":[],\"videoUrl\":\"https://www.youtube.com/watch?v=abc123\"},\"availabilityCalendar\":[{\"date\":\"2026-03-20\",\"hours\":[10,11]},{\"date\":\"2026-03-21\",\"hours\":[14,15]}]}"
                   }
                 }
               }
@@ -8370,7 +9761,7 @@
         "tags": [
           "ServiceProvider"
         ],
-        "summary": "Block service availability hours",
+        "summary": "Block service availability for a full day",
         "security": [
           {
             "bearerAuth": []
@@ -8383,19 +9774,12 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "date",
-                  "hours"
+                  "date"
                 ],
                 "properties": {
                   "date": {
                     "type": "string",
                     "format": "date"
-                  },
-                  "hours": {
-                    "type": "array",
-                    "items": {
-                      "type": "integer"
-                    }
                   }
                 }
               }
@@ -8412,7 +9796,7 @@
         "tags": [
           "ServiceProvider"
         ],
-        "summary": "Unblock service availability hours",
+        "summary": "Unblock service availability for a full day",
         "security": [
           {
             "bearerAuth": []
@@ -8425,19 +9809,12 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "date",
-                  "hours"
+                  "date"
                 ],
                 "properties": {
                   "date": {
                     "type": "string",
                     "format": "date"
-                  },
-                  "hours": {
-                    "type": "array",
-                    "items": {
-                      "type": "integer"
-                    }
                   }
                 }
               }
@@ -8451,6 +9828,32 @@
         }
       }
     },
+    "/api/v1/service-provider/dashboard/analytics": {
+      "get": {
+        "tags": [
+          "ServiceProvider"
+        ],
+        "summary": "Get service provider dashboard analytics",
+        "description": "Returns the service provider dashboard card metrics including total services, upcoming bookings, current month revenue, and average rating.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dashboard analytics returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceProviderDashboardAnalyticsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/site-content": {
       "get": {
         "tags": [
@@ -8459,7 +9862,14 @@
         "summary": "Get all site content sections",
         "responses": {
           "200": {
-            "description": "All available site content"
+            "description": "All available site content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SiteContentListResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -8489,7 +9899,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Requested site content"
+            "description": "Requested site content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SiteContentSingleResponse"
+                }
+              }
+            }
           },
           "404": {
             "description": "Content not found"
@@ -8535,7 +9952,14 @@
         },
         "responses": {
           "200": {
-            "description": "Content saved successfully"
+            "description": "Content saved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SiteContentUpsertResponse"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"
@@ -9163,7 +10587,7 @@
                   "payload": {
                     "type": "string",
                     "description": "JSON string matching VenueCreateRequest. Include `media.galleryImages` only for already-hosted image URLs. Files sent in `images` or `image` are uploaded by the backend automatically.",
-                    "example": "{\"information\":{\"venueName\":\"Grand Hall\",\"venueType\":\"Banquet\",\"description\":\"Premium event venue in central Dhaka.\",\"addressLine\":\"123 Main Road\",\"city\":\"Dhaka\",\"area\":\"Farmgate\"},\"pricing\":{\"basePrice\":5000,\"currency\":\"BDT\",\"discount\":{\"type\":\"percentage\",\"value\":10},\"amenities\":{\"wifi\":true,\"parking\":true,\"ac\":true,\"catering\":false,\"audioVideo\":true,\"security\":true,\"accessible\":false,\"soundSystem\":true}},\"capacity\":{\"maximumGuests\":300},\"media\":{\"galleryImages\":[],\"videoUrl\":\"https://www.youtube.com/watch?v=abc123\"},\"availabilityCalendar\":[{\"date\":\"2026-03-20\",\"hours\":[8,9,10]}]}"
+                    "example": "{\"information\":{\"venueName\":\"Grand Hall\",\"venueType\":\"Banquet\",\"description\":\"Premium event venue in central Dhaka.\",\"addressLine\":\"123 Main Road\",\"city\":\"Dhaka\",\"area\":\"Farmgate\"},\"pricing\":{\"pricePerPerson\":5000,\"currency\":\"BDT\",\"discount\":{\"type\":\"percentage\",\"value\":10},\"amenities\":{\"wifi\":true,\"parking\":true,\"ac\":true,\"catering\":false,\"audioVideo\":true,\"security\":true,\"accessible\":false,\"soundSystem\":true}},\"capacity\":{\"maximumGuests\":300},\"media\":{\"galleryImages\":[],\"videoUrl\":\"https://www.youtube.com/watch?v=abc123\"},\"availabilityCalendar\":[{\"date\":\"2026-03-20\",\"hours\":[8,9,10]}]}"
                   },
                   "images": {
                     "type": "array",
@@ -9184,7 +10608,7 @@
                 "validVenue": {
                   "summary": "Valid venue creation payload",
                   "value": {
-                    "payload": "{\"information\":{\"venueName\":\"Grand Hall\",\"venueType\":\"Banquet\",\"description\":\"Premium event venue in central Dhaka.\",\"addressLine\":\"123 Main Road\",\"city\":\"Dhaka\",\"area\":\"Farmgate\"},\"pricing\":{\"basePrice\":5000,\"currency\":\"BDT\",\"discount\":{\"type\":\"percentage\",\"value\":10},\"amenities\":{\"wifi\":true,\"parking\":true,\"ac\":true,\"catering\":false,\"audioVideo\":true,\"security\":true,\"accessible\":false,\"soundSystem\":true}},\"capacity\":{\"maximumGuests\":300},\"media\":{\"galleryImages\":[],\"videoUrl\":\"https://www.youtube.com/watch?v=abc123\"},\"availabilityCalendar\":[{\"date\":\"2026-03-20\",\"hours\":[8,9,10]}]}"
+                    "payload": "{\"information\":{\"venueName\":\"Grand Hall\",\"venueType\":\"Banquet\",\"description\":\"Premium event venue in central Dhaka.\",\"addressLine\":\"123 Main Road\",\"city\":\"Dhaka\",\"area\":\"Farmgate\"},\"pricing\":{\"pricePerPerson\":5000,\"currency\":\"BDT\",\"discount\":{\"type\":\"percentage\",\"value\":10},\"amenities\":{\"wifi\":true,\"parking\":true,\"ac\":true,\"catering\":false,\"audioVideo\":true,\"security\":true,\"accessible\":false,\"soundSystem\":true}},\"capacity\":{\"maximumGuests\":300},\"media\":{\"galleryImages\":[],\"videoUrl\":\"https://www.youtube.com/watch?v=abc123\"},\"availabilityCalendar\":[{\"date\":\"2026-03-20\",\"hours\":[8,9,10]}]}"
                   }
                 }
               }
@@ -9429,7 +10853,7 @@
         "tags": [
           "VenueProvider"
         ],
-        "summary": "Block venue availability hours",
+        "summary": "Block venue availability for a full day",
         "security": [
           {
             "bearerAuth": []
@@ -9442,19 +10866,12 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "date",
-                  "hours"
+                  "date"
                 ],
                 "properties": {
                   "date": {
                     "type": "string",
                     "format": "date"
-                  },
-                  "hours": {
-                    "type": "array",
-                    "items": {
-                      "type": "integer"
-                    }
                   }
                 }
               }
@@ -9471,7 +10888,7 @@
         "tags": [
           "VenueProvider"
         ],
-        "summary": "Unblock venue availability hours",
+        "summary": "Unblock venue availability for a full day",
         "security": [
           {
             "bearerAuth": []
@@ -9484,19 +10901,12 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "date",
-                  "hours"
+                  "date"
                 ],
                 "properties": {
                   "date": {
                     "type": "string",
                     "format": "date"
-                  },
-                  "hours": {
-                    "type": "array",
-                    "items": {
-                      "type": "integer"
-                    }
                   }
                 }
               }
@@ -9506,6 +10916,32 @@
         "responses": {
           "200": {
             "description": "Availability unblocked successfully"
+          }
+        }
+      }
+    },
+    "/api/v1/venue-provider/dashboard/analytics": {
+      "get": {
+        "tags": [
+          "VenueProvider"
+        ],
+        "summary": "Get venue provider dashboard analytics",
+        "description": "Returns the venue provider dashboard card metrics including total venues, upcoming bookings, current month revenue, and average rating.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dashboard analytics returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VenueProviderDashboardAnalyticsResponse"
+                }
+              }
+            }
           }
         }
       }

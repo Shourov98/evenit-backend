@@ -8447,7 +8447,7 @@
                 "header": [
                   {
                     "key": "Content-Type",
-                    "value": "application/json"
+                    "value": "multipart/form-data"
                   },
                   {
                     "key": "Authorization",
@@ -8455,13 +8455,30 @@
                   }
                 ],
                 "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"fullName\": \"Admin Example\",\n  \"email\": \"new.admin@example.com\",\n  \"password\": \"StrongAdminPass123\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "fullName",
+                      "type": "text",
+                      "value": "Admin Example"
+                    },
+                    {
+                      "key": "email",
+                      "type": "text",
+                      "value": "new.admin@example.com"
+                    },
+                    {
+                      "key": "password",
+                      "type": "text",
+                      "value": "StrongAdminPass123"
+                    },
+                    {
+                      "key": "profileImage",
+                      "type": "file",
+                      "src": [],
+                      "description": "Attach one profile image file for the new admin user."
                     }
-                  }
+                  ]
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/admin/admin-users",
