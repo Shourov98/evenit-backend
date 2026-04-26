@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import { app } from './app/app';
 import { env } from './config/env';
 import { connectDatabase } from './config/database';
-import { seedAdminUser } from './modules/auth/admin-seed';
+import { seedSuperAdminUser } from './modules/auth/super-admin-seed';
 import { initializeSocketServer } from './socket';
 
 const server = http.createServer(app);
@@ -11,7 +11,7 @@ initializeSocketServer(server);
 
 const start = async (): Promise<void> => {
   await connectDatabase(env.MONGO_URI);
-  await seedAdminUser();
+  await seedSuperAdminUser();
 
   server.listen(env.PORT, () => {
     console.log(`Server running on http://localhost:${env.PORT}`);

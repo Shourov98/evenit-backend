@@ -139,6 +139,10 @@ VENUE_PROVIDER_SUBSCRIPTION_PAYMENT_LINK=
 PLATFORM_FEE_PERCENT=10
 RESEND_API_KEY=
 RESEND_FROM_EMAIL=onboarding@resend.dev
+SUPER_ADMIN_NAME=Super Admin
+SUPER_ADMIN_EMAIL=
+SUPER_ADMIN_PASSWORD=
+# Legacy fallback vars still supported:
 ADMIN_NAME=Admin
 ADMIN_EMAIL=
 ADMIN_PASSWORD=
@@ -150,7 +154,8 @@ Notes:
 
 - Empty Stripe values disable or partially limit Stripe-backed flows.
 - Empty Resend configuration causes OTP delivery to fall back to terminal logging.
-- `ADMIN_EMAIL` and `ADMIN_PASSWORD` are used by the admin seed flow.
+- `SUPER_ADMIN_EMAIL` and `SUPER_ADMIN_PASSWORD` are used by the startup super-admin seed flow.
+- `ADMIN_EMAIL` and `ADMIN_PASSWORD` are still accepted as legacy fallbacks.
 
 ## API Surface
 
